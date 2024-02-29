@@ -1,0 +1,397 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Things">
+      <UniqueIdentifier>{abd90cd5-9a16-4402-bb56-cc14889119ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Non-Things">
+      <UniqueIdentifier>{4853be5d-16b0-402d-b713-22c497d16049}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Non-Things\Non-Thing Headers">
+      <UniqueIdentifier>{0a5cf1a4-cf7d-466a-98f9-51da134e52ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{206aa645-5ad9-43b8-b86d-3c73bba1e939}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AnimThing.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="ball.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="barrel.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="bouy.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="character.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="chunk.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="deathWad.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="demon.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="dispenser.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="doofus.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="dude.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="explode.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="fire.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="fireball.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="firebomb.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="flag.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="flagbase.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="grenade.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="heatseeker.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="hood.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="item3d.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="mine.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="napalm.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="navnet.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="ostrich.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="person.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="PowerUp.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="pylon.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="rocket.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="sentry.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="SndRelay.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundThing.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="thing.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="Thing3d.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="trigger.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="warp.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon.cpp">
+      <Filter>Things</Filter>
+    </ClCompile>
+    <ClCompile Include="alphablitforpostal.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="Anim3D.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="BufQ.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="bulletFest.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="crawler.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="cutscene.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="encrypt.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="gameedit.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSettings.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="grip.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="IdBank.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="InputSettings.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="InputSettingsDlg.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="keys.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="Log.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="logtab.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="MemFileFest.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuSettings.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuTrans.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="net.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="NetBrowse.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="NetClient.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="NetDlg.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="netmsgr.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="NetServer.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="organ.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="Personatorium.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="ProtoBSDIP.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="realm.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="scene.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="score.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="settings.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="smash.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="socket.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="StockPile.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="TexEdit.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="toolbar.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="TriggerRegions.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="update.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+    <ClCompile Include="yatime.cpp">
+      <Filter>Non-Things</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="alpha.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Average.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CapFlag_Gskirts.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="collision.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CompileOptions.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CtrlBuf.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Econsite.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="encrypt.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Gconsite.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Goal_Gskirts.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Hconsite.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Hskirts.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="InputSettingsDlg.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MacVideo.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Mconsite.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MemFileFest.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MPathStuff.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Mpskirts.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Mskirts.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="netbrowse.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="netclient.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="NetInput.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="netserver.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="organ.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Pconsite.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="PostalAttrib.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtoBSDIP.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtoIPX.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtoTAPI.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="sprites.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="TexEdit.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="title.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="toolbar.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="WinVideo.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="yatime.h">
+      <Filter>Non-Things\Non-Thing Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\cursor1.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\eye.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\guy.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\mouth.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\rws.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sign.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\skull.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\teeth.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Postal Overview.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="res\Postal.rc" />
+  </ItemGroup>
+</Project>

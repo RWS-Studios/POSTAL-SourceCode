@@ -1,0 +1,5 @@
+SCC = This is a Source Code Control file
+
+[Video.mak]
+SCC_Aux_Path = "\\narnia\archive\vss"
+SCC_Project_Name = "$/Projects/Postal/Meister Plus/RSPiX/Src/GREEN/Video/Win95", EPOBAAAA

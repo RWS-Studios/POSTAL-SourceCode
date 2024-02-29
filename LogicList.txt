@@ -1,0 +1,21 @@
+/////////////////////////////////////////////////////////////////////////////////
+// This file is designed to help in the implementation of logic tables.
+// Please update this as needed.  Thanks!  (This summarized aivars.cpp)
+/////////////////////////////////////////////////////////////////////////////////
+// Last Updated:  05/27/97
+/////////////////////////////////////////////////////////////////////////////////
+
+GET_ACTION / SET_ACTION = {"Guard","Advance","Retreat","Engage","Popout","Run&Shoot","Hide" }
+TARGET_DIST = { "VeryClose", "Close", "Medium", "Far", "OffScreen" }
+POPOUT_AVAIL = { "false", "true" }
+RUNSHOOT_AVAIL = { "false", "true" }
+SAFETY_AVAIL = { "false", "true" }
+PYLON_AVAIL = { "none", "popout", "runshoot", "safety" }
+MY_HEALTH = { "low", "med", "high" }
+DUDE_HEALTH = {" dead", "low", "med", "high" }
+IS_TRIGGERED = { "false", "true" }
+USER1 = { "default" }
+RECENTLY_SHOT = { "false", "true" } 
+
+
+

@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{63aa4ffd-22a2-4989-9db4-5224ca65f585}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;hpj;bat;for;f90</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{cfaf329e-c99c-435e-ad6a-2fd59424f606}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;fi;fd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{33a29714-543b-48d6-9039-3607259a3bdd}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="RSPiX\Src\GREEN\Hot\hot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RSPiX\Src\GREEN\Image\Image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RSPiX\Src\GREEN\Image\Imagecon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RSPiX\Src\GREEN\Image\ImageFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RSPiX\Src\GREEN\InputEvent\InputEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RSPiX\Src\GREEN\Mix\mix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RSPiX\Src\GREEN\Mix\MixBuf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RSPiX\Src\GREEN\Image\pal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RSPiX\Src\GREEN\Image\PalFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RSPiX\Src\GREEN\Sample\sample.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RSPiX\Src\GREEN\Snd\snd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RSPiX\Src\GREEN\SndFx\SndFx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RSPiX\Src\GREEN\Task\task.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="RSPiX\Src\green\hot\hot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RSPiX\Src\GREEN\IMAGE\IMAGE.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RSPiX\Src\green\image\ImageFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RSPiX\Src\green\InputEvent\InputEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RSPiX\Src\green\mix\mix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RSPiX\Src\green\mix\mixbuf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RSPiX\Src\green\image\pal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RSPiX\Src\green\image\PalFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RSPiX\Src\green\sample\sample.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RSPiX\Src\green\snd\snd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RSPiX\Src\green\SndFx\SndFx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RSPiX\Src\green\task\task.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,266 @@
+
+Updated: Dec 22, 2000
+
+
+This is a collection of information that should be useful for anyone that needs to work with the Postal source files.
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Postal Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Several variations of Postal have been created.  Knowing what they are may clarify some of these notes as well as some of the comments in the source files.
+
+	Postal Demo		- basically Postal (US) with just one level
+				- PC/Mac downloadable self-installing files
+
+	Postal (US)		- the original version
+				- PC/Mac combo CD
+
+	Postal (UK)		- slightly reduced violence
+				- PC/Mac combo CD
+
+	Postal (French) 	- slightly reduced violence
+				- game text translated to French
+				- PC/Mac combo CD
+
+	Postal (German) 	- slightly reduced violence
+				- game text translated to German
+				- PC/Mac combo CD
+
+	Postal Special Delivery - add-on pack consisting of 4 new levels
+				- PC/Mac combo CD
+
+	Postal Spawn		- multiplayer-only, client-only version
+				- included with Special Delivery
+
+	Japan Add On 		- Japanese voices
+				- Special Delivery levels
+				- Japan levels (Tokyo & Osaka)
+				- PC CD
+
+	Japan Super Postal	- Japanese voices
+				- original levels
+				- Special Delivery levels
+				- Japan levels (Tokyo & Osaka)
+				- PC CD
+
+	Postal Plus		- original version plus Special Delivery levels
+				- PC CD
+
+	Postal Plus MP		- multiplayer-only, client-only version
+				- included with Postal Plus
+
+In theory, all these versions could be built from the current code base.  However, we haven't actually tried to rebuild any of the earlier versions because there hasn't been any need to do so.  As of this writing, the project files are setup to build Japan Add On, Japan Super Postal, Postal Plus, and Postal Plus MP.
+
+Several compiler preprocessor definitions are used to determine which version will be built: TARGET, LOCALE and SPAWN.  These values must be defined on the compiler command line.  For Visual C++, that is accomplished by modifying the project settings.  See elsewhere in these notes for more details on Visual C++ projects.
+
+For more information about these values, see CompileOptions.h.
+
+CompileOptions.h is an important file with lots of useful information in it.  It defines many of the macros used thoughout the rest of the source.
+
+Other usefull preprocessor macros are:
+
+	_DEBUG - enables the compilation of code that aids in debugging
+	
+	NDEBUG - disables debug features
+
+	WIN32 and _WINDOWS - enables Win32-specific code
+
+	TRACENASSERT - enable trace() and assert() independently of _DEBUG
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Windows / Visual C++
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The current Windows versions are being built with Microsoft Visual C++ 6.0.
+
+The file "Postal.dsw" defines the overall "workspace".  When you open the workspace, you'll see a bunch of projects listed in the project window.  Here's an explanation of what the projects are:
+
+The following set of projects builds the RSPiX library upon which the game is built.  See elsewhere in these notes for details about RSPiX.
+	BLiT files
+	BLiT 3D files
+	Blue Audio files
+	Blue files
+	Blue Video files
+	Cyan files
+	Green files
+	Orange Files
+	WishPiX files
+
+The following project builds the files that are shared by all versions of Postal.
+	Postal Common files
+
+The following projects build specific Postal products.  Each project builds the same files but with different project settings.  In particular, the project settings contain different preprocessor definitions, which cause the files to compile differently, thereby producing a different version of Postal.  Each of these projects is dependant on the projects listed above, so those projects will be automatically rebuilt as needed.
+	Japan Add On files - builds the Japan Add-On product
+	Super Postal files - builds the Japan Super Postal product
+	Postal Plus files - builds the Postal Plus product
+	Postal Plus MP files - builds the Postal Plus multiplayer-only ("spawn") product
+
+So, you really only need one of these projects to build a particular version of the game.  Normally, you'd set one of these as the "default project" and then you'd just ignore the others.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Mac / CodeWarrior
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Mac version was built with Metrowerks CodeWarrior, although I can't remember the version number.
+
+Many C/C++ compatibility problems were discovered and resolved while porting to the Mac.  Hopefully that will help when it comes to the future ports to other platforms.
+
+Only Postal and Special Delivery were compiled for the Mac.  Subsequent versions of the game were not recompiled for Mac.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+STL
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+One big problem encountered during the Mac port was the use of the Standard Template Library (STL).  There were lots of subtle differences between the Metrowerks and Microsoft versions of STL that had to be worked around.
+
+Near the end of the project, we discovered some problems with STL (unrelated to the porting issues) and replaced STL with our own versions.  But there definitely is some code that still uses STL.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SmartHeap
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+SmartHeap is a product developed by Microquill that helps detect memory-related problems.  It also supplies faster versions of all the standard C/C++ heap management functions.  SmartHeap was used on both the Windows and Mac version of Postal.
+
+The use of SmartHeap can be disabled by defining NOSHMALLOC on the compiler command line.  This should be done for platforms for which SmartHeap is not available.
+
+ 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+RSPiX
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The game is built on top of our cross-platform library, called "RSPiX" (pronounced "risp-icks").  RSPiX is organized into several levels, from low-level to high-level functional.  Each level is named after a color.
+
+The lowest level is "Blue".  It supplies the minimum, core functionality necessary to write a game.  The Blue API includes graphics functions, audio functions, and input (mouse, keyboard, joystick) functions.
+
+We have two separate sets of source code for the Blue layer: one for Windows and another for Mac.  One of the key steps in porting Postal to another platform is to rewrite the Blue layer for the new platform.  For reference, it took roughly 3-4 weeks to create the Mac version of Blue.  However, the Blue API was still evolving, so that included a few major rewrites and lots of revisions.  Now that the API is defined, it should be much faster to rewrite it for another platform.
+
+The next level is "Cyan".  It supplies some additional features that go beyond the "core" functionality supplied by Blue.  The Cyan API contains functions to display message boxes, manipulate the mouse cursor, print to a printer, and so on.
+
+Once again, we have both Windows and Mac versions of Cyan.  Postal doesn't use all of the Cyan API (for instance, it doesn't use the printer functions) so not all of Cyan would need to be ported.  I don't have a good estimate on how long it took to port Cyan to the Mac because it was done over time, in bits and pieces, as new functionality was needed.  Cyan is smaller than Blue, though, and again, not all of it is needed for Postal.
+
+The next two levels are "Green" and "Orange".  Green offers functionality that builds on Blue or Cyan functionality.  Orange offers functionality built on Green or completely independent of any lower levels.  Those distinctions became rather blurry at some points, but that shouldn't really effect a porting effort.  In theory, you wouldn't have to change anything in Green or Orange.
+
+The game itself uses functions in all of the RSPiX layers.  Once you port RSPiX, you should be well on your way to having the whole game ported.
+
+From what I recall, there were a few places (like less than 5) in the game code where we had to resort to using conditional compilation to do things slightly differently for Windows versus the Mac.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Big/Little Endian
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Windows uses a little-endian memory architecture, Mac uses big-endian.
+
+RSPiX automatically takes care of all the issues.  The original version of the game was released with both PC and Mac versions on a single CD, and with both versions using the same asset files.
+
+A new platform should not have any problems, as long as the endian nature of that platform is properly defined in the ported version of the blue layer (see rspix\blue\blue.h and rspix\blue\system.h).
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Source Directory Structure
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(root directory contains workspace/project files and game-specific source files)
+	/Build
+		(all build output goes into this directory and subdirectories)
+	/res
+		(icons, cursors, etc., all of which are compiled into exe file)
+	/RSPiX
+		/c
+			/Mac    (various commercial headers and libs used by mac version)
+			/Win32  (various commercial headers and libs used by win32 version)
+		/Inc
+			RSPiX.h (master header file for RSPiX)
+			RSPiXMac.h (mac version)
+			RSPiXWin32.h (win32 version)
+		/Res
+			RSPiXMac.rsrc (mac resource file)
+		/Src
+			/BLUE
+				/Mac    (mac version of blue API)
+				/Win32  (win32 version of blue API)
+				blue.h
+				system.h
+			/CYAN
+				/Mac    (mac version of cyan API)
+				/Win32  (win32 version of cyan API)
+				cyan.h
+			/GREEN (all the modules that make up the green API)
+			/ORANGE (all the modules that make up the orange API)
+	/WishPiX (stuff that will eventually become part of RSPiX)
+		/Menu (menu manager)
+		/Prefs (reads and writes values to .ini files)
+		/ResourceManager (manages resources)
+		/Spry (sprite array class)
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Postal Plus.ini
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+NOTE: The actual name of this file MUST be different for each version of Postal!  I'm just using the latest Postal Plus version of the file as an example.  The file name is defined in CompileOptions.h for each version of the game.
+
+This is the primary configuration file used by the game at runtime.  It defines things like the current audio settings, the current keyboard, mouse and joystick mappings, and so on.
+
+The "Paths" section is particularly important.  The individual paths listed in this section tell the game where to look for various types of assets.  During development, you'll probably want to set the paths to point at your local hard drive or a shared network drive.
+
+When the game is installed by an end-user, these paths are changed to point at the CD or their local hard drive, depending on which groups of assets the user has selected to be copied to their hard drive.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SAK files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Normally, when the game loads assets, it gets them out of ".sak" files (think "sack").
+
+A sak file is a single file containing a number of smaller files.  It is much faster to open a single, large file file from a CD than it is to open a bunch of smaller files.  Hence the reason for using sak files.
+
+However, during development, it can be annoying to have to constantly rebuild the sak files every time an individual asset file is changed.  To get around this, if the game cannot find a particular sak file, it will look for a "NoSakDir" entry in the "Paths" section of the .ini file.  If this entry is found, it is assumed that it specifies an alternate path where the individual asset files can be found.  The game will then load the individual files directly from the file system instead of from a sak file.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+CD Directory Structure
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+I'm not sure there's anything worth mentioning here that can't be observed from looking at a Postal Plus CD.  The folder names are (hopefully) self-explanatory.  Maybe it's worth saying that the /res folder contains all the game assets.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Assets
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Having to rebuild any game assets would open up a whole new pandora's box.  Therefore, we're strongly recommending that all the game assets be used "as is".
+
+The title screens can be easily modified, thereby allowing for whatever logo changes are required.  Other than that, it seems unlikely that any of the "core" game assets should need to be modified.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Multiplayer Issues
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Here's a quick overview of multiplayer mode, in particular pointing out the two key flaws of the design and implementation.
+
+One computer is designated the "host" and the other computers all connect to it.  The host manages a "lobby" where players select various options and chat while waiting for other players to join.  When all the players have joined and are ready to go, the host starts the game.  Once the game is started, it is not possible for new players to join.  That's sucky thing #1.
+
+Once the game is running, everything is peer-to-peer.  The only information the peers send each other is the local players' input data, which is encoded as a 32-bit value (where various bits indicate whether the player is running or walking, which direction, whether the fire button was pressed, etc.).  No position, velocity or accelleration data is transmitted.  NOTHING else is transmitted.
+
+This technique relies on each client being 100% deterministic.  In other words, if we feed a client a particular stream of player input values, we rely on that client being able to reproduce with 100% accuracy what another client would do given the same set of input values.  If all the clients do the same thing given the same set of input values, then that's all the clients need to reproduce the same game action.
+
+Getting this to work required two key steps.  First, we had to make sure that all variables were properly initialized.  Of course, good programming practices says variables should always be initialized before being used, but in practice, some variables slip through the cracks because their initial value doesn't have a noticeable effect.  We eventually forced the issue by ensuring that all allocated memory was initialized to 0 upon allocation.  Once this was done, it became inevitable that programmers would rely on that happening.  So, in any port, it is important to make sure that all allocated memory is initialized to the same value each time.  In the PC and Mac versions, this was handled via SmartHeap (a commercial memory management/debugging library).  On other platforms, you may need to override the standard memory allocation functions with your own versions that clear out memory.
+
+Second, we had to make sure that the random number generators used on each client would return the same sequence of numbers.  We simplied supplied our own random number generator, which returns a deterministic pattern of pseudo-random numbers.  The key is to make sure that all code uses that function to get random numbers, instead of some other system library function.
+
+However, dispite our best efforts, there was still a serious flaw lurking behind the scenes that eventually caused serious problems that we couldn't work around.  It seems that different Floating Point Units return slightly different results given the same values.  This was first seen when pitting PC and Mac versions of the game against each other in multiplayer mode.  Every once in a while, the two versions would go out of sync with one another.  It was eventually tracked down to slightly different floating point results that accumulated over time until eventually they resulted in two different courses of action on each client.  For instance, on the PC a character might get hit by a bullet, while on the Mac the same character would be just 1 pixel out of the way and the bullet would miss.  Once something like that happens, the two clients would be hopelessly out-of-sync.
+
+Later, similar problems were noticed between Intel and AMD processors.
+
+Unfortunately, the only way to avoid these problems is to redo the entire multiplayer infrastructure from scratch.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

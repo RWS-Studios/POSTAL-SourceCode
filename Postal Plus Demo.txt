@@ -1,0 +1,46 @@
+Postal Plus Demo
+================
+
+Postal Plus Demo is very similar to Postal Plus, except that it only
+comes with a single leve and does not include the editor or
+multiplayer support.
+
+Multiplayer was dropped from the demo because it was considiered highly
+unlikely that someone downloading this new demo (created in June 2001)
+will be able to find anyone else to play against.  And multiplayer has
+traditionally been difficult to test because of all the different versions
+of the game already out there.  And we didn't want to spend a lot of time
+on putting together this demo.  Put it all together, and you get why
+we dropped it.
+
+
+Separate Assets
+---------------
+
+The demo uses separate \res and \sak folders along with its own set of
+\make files.  This is necessary because the full game's .sak files are
+too big for a downloadable demo.  The demo's .sak files are smaller
+because they only include the files the demo actually uses.
+
+The root folder for the demo is \PostalPlus\Demo.
+
+
+Changes from Postal Plus
+------------------------
+
+Copied "Postal Plus.dsp" to "Postal Plus Demo.dsp".  Renamed all
+cases of "Postal Plus" to "Postal Plus Demo" (except for
+"Postal Plus.ico", which will work fine for the demo.)
+
+Add Postal Plus Demo.dsp to the workspace.
+
+Copied "Postal Plus.ini" to "Postal Plus Demo.ini".  Changed network
+path to point at demo's root folder.
+
+Created new "res\levels\Postal Plus Demo realms.ini" that includes
+just one single-player level and one gauntlet level.
+
+Cleaned up a bunch of macros in CompileSettings.h and added a few
+new ones.  This changes applies to Postal Plus, too, but it shouldn't
+effect anything in that product.
+

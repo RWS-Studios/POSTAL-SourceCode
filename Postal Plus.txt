@@ -1,0 +1,91 @@
+Postal Plus
+===========
+
+Postal Plus is basically the latest version of the code (which adds new
+features and improvements) with the original Postal levels along with
+the Special Delivery evels.
+
+The basic method for getting here was to start with the "Postal Japan"
+product and remove the japanese levels, characters and voices.
+
+
+
+Changes since Super Postal (Japan versions)
+------------------------------------------
+
+Did a "share and branch" of the "Meister Japan" SourceSafe project to
+create the "Meister Plus" SourceSafe project.  The new project was labeled
+"From Meister Japan" to make it easier to see where the differences are.
+It also makes it possible to rebuild the Postal Japan products from this
+code base.
+
+Added projects for Super Postal and Japan Add On.  They seem to work, but
+unfortunately the final exe does not match the exe that was released to
+Japan.  At least one reason for the difference is that the error messages
+were changed and that affects all targets.  There may be other such
+differences, but I'm not sure what they are and I didn't have time now
+to try to work it all out.
+
+Changed the workspace (.dsw) and project (.dsp) files to use the new
+Postal Plus sourcesafe project.  This was a huge pain-in-the-ass.
+
+Removed the no-longer-uesful Alpha processor build targets.
+
+Added new icons to the resources, and instituted a new method for selecting
+which icon will be used on a per-project basis.  In the Project Settings,
+the Resources tab contains a field for "Preprocessor Definitions".  Enter
+the name of the TARGET, such as "POSTAL_PLUS" or "SUPER POSTAL" and the
+appropriate icon will be used (do NOT use TARGET=POSTAL PLUS, which will
+not work).  When adding a new icon, simply define a "Condition" by
+specifying the target for which the icon is intended.
+
+Added START_MENU_ADDON_ITEM macro to control whether an additional item
+is added to the single-player START menu.  Previously, the inclusion of
+the additional menu item was based on the TARGET macro, which was more
+difficult to maintain.
+
+Added TITLE_SHOW_DISTRIBUTOR macro to control whether the distributor
+screen is show during the title sequence.
+
+Added conditional compilation sections to remove the Japanese characters
+and their voices.  They are now only included if TARGET is set to either
+of the Japanese products.
+
+Removed an unwanted trace from SampleMaster.h (was previously added to
+determine the value for MAX_SOUNDS).
+
+Changed the Postal Plus MP project ("SPAWN") to use Pentium instead of
+"Blend" for code generation (a left-over setting from long ago).  Also
+changed the executable name from "pspawn" to "Postal Plus MP".
+
+Added REQUIRE_POSTAL_CD macro to differentiate the test for the original
+Postal CD from the test to see if the CD= path specifies a CD-ROM drive.
+
+If the MUST_BE_ON_CD macro is used in debug mode, then even if the CD
+path is not a CD-ROM drive, the program will be allowed to continue
+after displaying the error message.
+
+Added AUDIO_SAK_SEPARATOR_CHAR macro to allow easy setting of the
+separator.  The Japanese products use a "j" instead of the original "_"
+so as to differentiate the Japanese-language sak files from the
+original English saks.
+
+Moved the definition of the APP_NAME and PREFS_FILE macros into
+CompileOptions.h, which should make it easier to maintain.
+
+Made major changes to the error messages in Localize.cpp.  The general
+intention was to reduce the verbage and instead refer the user to the
+help files for detailed information on resolving the problems.
+
+In several places, changed to using the ENGLISH_LOCALE macro instead of
+a series of tests for specific LOCALE's.
+
+Added MAIN_MENU_TITLE macro to control the text that is displayed at
+the top of the game's main menu.  The value is set in CompileOptions.h
+based on TARGET, LOCALE, etc.
+
+Discovered strings that had not been properly converted into French or
+German and took a rough stab at what they should have been.  This was
+deemed to be better than what they had been set to, which was something
+like "RETRANSLATE: ORIGINAL LEVELS".
+

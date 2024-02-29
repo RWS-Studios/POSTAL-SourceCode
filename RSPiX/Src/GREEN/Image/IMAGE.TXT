@@ -1,0 +1,42 @@
+The new versions of CImage and CPal are now on the server and a tlib.cfg file is available.
+
+\\narnia\projects\source\green\image
+
+We have done away with the CPalImage and instead gone with a CImage that may or may not have a CPal.  The new CImage as it stands now has several 8, 16, 24, and 32 bit standards but all are 128-bit memory aligned, uncompressed, and stored right side up.  Jon mentioned that he will work on making the Blu Display format a standard right-side-up format to finally eliminate the confusion and conversions.  Currently the CImage can load from BMP8 or BMP24 files and then be converted from those formats to one of the standard image types.  In the future we will probably add  CImage::Save and CImage:Load functions that will deal with images in a native format.
+
+Currently there are several standard conversion functions that convert from BMP8 to other 8-bit palette formats as well as 16, 24, and 32 bit buffer formats, and from BMP24 to 16, 24 and 32 bit buffer formats.  If you wish to create your own type of image, you may.  You can then supply your own conversion function and support the formats that make the most sense.  For example, we didn't feel it necessary to be able to convert from BMP24 to an 8-bit palette format because it would be more reasonable for you to load a BMP8 file if you were going to use paletized image formats.  There is an array of function pointers to conversion functions that is indexed by the image type, so in order to add support for your new image type, choose a name for your type and add it to the enumerated types, then add a pointer to your conversion function to the array, and add your implementation to imagecon.cpp or to your own file.
+
+Here is a description of the image files
+
+image.h		Header file for the CImage class
+image.cpp	Implementation for CImage class
+pal.h		Header file for the CPal class	Added 10/30/96; broke out of image.h
+pal.cpp		Implementation for CPal class	Added 10/30/96; broke out of image.cpp
+imagetyp.h	Enumerated types of images	Obsoleted 10/30/96; now in image.h,pal.h,image.cpp,pal.cpp
+imageafp.h	Array of conversion function pointers
+imagecon.h	Header file with prototypes of conversion functions
+imagecon.cpp	Implementation of standard image types
+
+Jeff will soon be modifying his blit routines to use the new image format, and I will be modifying the sprite and animation libraries to use both the new image format and the new blit routines.
+
+WARNING: The new image.cpp and image.h have been updated in the source\green\image tlib so if you have old projects that depend on the CPalImage, do not extract the new image library.
+
+--------------------------------------------------------------------------------------
+NEW WARNING 5/16/96
+--------------------------------------------------------------------------------------
+
+Upon Jeff's request for some additional fields in the standard image, we have
+added lBufferWidth, lBufferHeight, lXPos, lYPos so that an image can be positioned
+within a larger buffer.  I also added a ulDestination type so that an image can
+be saved in one format and converted to the desired format on load.  This may be
+handy if you want to save the file in a compressed format to save disk space, but
+when loaded, you want to decompress it into a sprite or background format.  
+
+The warning is that since the header information of the CImage has changed, any
+files that were saved using CImage::Save will not load.  The load function will
+tell you that it cannot load this version of the file.  Also, any libraries such
+as that use CImage should be updated wiht the new image to avoid conflicts between
+the two different headers.  This was the problem I ran into when I was using the
+new CImage and a version of the Blit library that was compiled using the old CImage.
+
+Bill

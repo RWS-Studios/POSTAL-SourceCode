@@ -1,0 +1,161 @@
+color 244,size 48,
+color 245,ctab 320,`Running With Scissors`;;skip 15,
+color 244,size 36,`Executive Producer`;color 245,size 28,`Vince Desi`;
+skip 25,
+color 244,size 36,`Project Director`;color 245,size 28,`Mike Riedel`;
+skip 25,
+color 244,size 36,`Art Director`;color 245,size 28,`Randy Briley`;skip 0,
+color 244,size 36,`Level Design`;color 245,size 28,
+				`David De Gasperis`;
+				`Steve Macomber`;
+				`Steve Wik`;skip 0;
+color 244,size 36,`Postal Programmers`;color 245,size 28,
+				`Bill Harman`;
+				`Jonathan Isabelle`;skip 0,
+color 244,size 36,`Visual Effects Programming`;color 245,size 28,`Jeff Diamond`;
+skip 25,
+color 244,size 36,`Associate Producer`;color 245,size 28,`Amy Searcy`;`Grant Collier`;
+skip 25,
+color 244,size 36,`3D Engine, Blitters and Alpha Effects`;color 245,size 28,`Jeff Diamond`;skip 0,
+color 244,size 32,`Character Logic, Navigation and Weapons`;color 245,size 28,`Bill Harman`;skip 0,
+color 244,size 32,`Player Logic`;`Particle Effects and User Interface`;color 245,size 28,`Jonathan Isabelle`;skip 0,
+color 244,size 36,`Shell, Networking and Mac Version`;color 245,size 28,`Mike Riedel`;;skip 0,
+color 244,size 36,`RSPiX Library Programming`;color 245,size 28,
+`Jeff Diamond`;
+`Bill Harman`;
+`Jonathan Isabelle`;
+`Mike Riedel`;
+;;skip 0,
+color 244,size 36,`Additional Programming`;color 245,size 28,
+`Steve Andrusyszyn`;
+`Jon Beck`;
+`Alix Chen`;
+`Paul Lin`;
+`Andy Muir`;
+skip 25,
+color 244,size 36,`2013 Update`;color 245,size 28,
+`Ryan C. Gordon`;
+`Jon Merchant`;
+`Mike Jaret`;
+`Joe Pagac`;
+`Bob Richardson`;
+skip 25,
+color 244,size 36,`Android Port`;color 245,size 28,
+`Emile Belanger`;
+skip 25,
+color 244,size 36,`2015 Update`;color 245,size 28,
+`Rick Foltz`;
+`Emile Belanger`;
+skip 25,
+color 244,size 36,`Special Thanks`;color 245,size 28,
+`Nate Muller`;
+`Matt Nickerson`;
+skip 25,
+color 244,size 36,`3D Animation`;color 245,size 28,`Randy Briley`;skip 0,
+color 244,size 36,`2D Animation`;color 245,size 28,`Steve Wik`;skip 0,
+color 244,size 36,`Background Design and Layout`;color 245,size 28,
+	`David De Gasperis`;
+	`Steve Macomber`;
+	`Steve Wik`;
+	;
+color 244,size 36,`Background Art`;color 245,size 28,
+	`Jared Binder`;
+	`Randy Briley`;
+	`Mik Coldron`;
+	`David De Gasperis`;
+	`Steve Macomber`;
+	;
+color 244,size 36,`Cutscene Design and Art`;color 245,size 28,`Randy Briley`;skip 0,
+color 244,size 36,`Additional Art`;color 245,size 28,
+	`Jared Binder`;
+	`Steve Macomber`;
+	`Steve Wik`;
+	;
+
+skip 25,
+color 244,size 36,`Game Design`;color 245,size 28,
+	`Randy Briley`;
+	`Jeff Diamond`;
+	`Bill Harman`;
+	`Jonathan Isabelle`;
+	`Mike Riedel`;
+	`Steve Wik`;
+	skip 0,
+
+color 244,size 36,`Story`;color 245,size 28,
+	`Mike Riedel`;
+	`Steve Wik`;
+	`The Pain Killer`;
+	skip 0,
+
+color 244,size 36,`Cutscene Text`;color 245,size 28,
+	`Vince Desi`;
+	`Steve Wik`;
+	`The Pain Killer`;
+	;
+
+skip 25,
+
+color 244,size 36,`Music and Ambient Sound Design`;color 245,size 28,`Christian A. Salyer`;skip 0,
+color 244,size 36,`Additional Sound Effects`;color 245,size 28,`Amy Searcy`;
+
+skip 25,
+
+color 244,size 36,`Voice Talent`;color 245,size 24,rtab 280,
+	`Tony Agee`,ltab 360
+	`Andrea Barrett`;rtab 280,
+	`John Barrow`,ltab 360,
+	`Randy Briley`;rtab 280,
+	`Leah Dalton`,ltab 360,
+	`Jeff Diamond`;rtab 280,
+	`Vince Desi`,ltab 360,
+	`Bill Harman`;rtab 280,
+	`Brandon Howell`,ltab 360,
+	`Stephanie Howell`;rtab 280
+	`Rick Hunter`,ltab 360,
+	`Caryn Isabelle`;rtab 280,
+	`Douglas M. Levy`,ltab 360,
+	`Paul Lin`;rtab 280,
+	`Jerod Lollar`,ltab 360,
+	`Verne Love`;rtab 280,
+	`Celina Martinez`,ltab 360,
+	`Kim-Loan Nguyen`;rtab 280,
+	`Mike Riedel`,ltab 360,
+	`Scott Riedle`;rtab 280,
+	`Tina Naughton`,ltab 360,
+	`Ruben Raminez`;rtab 280,
+	`Paul Roque`,ltab 360,
+	`Amy Searcy`;rtab 280,
+	`Ruben Sierra`,ltab 360,
+	`Burney Starks`;rtab 280
+	`Debbie Tasler`,ltab 360,
+	`Steve Wik`;rtab 280;
+	;
+
+skip 125,ctab 320,
+color 244,size 36,`Testing`;color 245,size 28,`Absolute Quality, Inc.`;`ST Labs`;
+skip 125,color 245,size 48,
+`THE END`;
+skip 125,color 245,size 24,
+`Copyright MCMXCVII Running With Scissors`;
+skip 60,
+size 28,
+`The depictions in this game`;
+`are completely fictional.`;
+`Any similarities to actual`;
+`people or tragic events`;
+`depicted in this game`;
+`are entirely coincidental.`;
+`This game is protected`;
+`by all international`;
+`copyright laws.`;
+`Copyright infringement will`;
+`be punishable by death in`;
+`any country accessible`;
+`by air travel.`;
+skip 30,
+color 244,size 15,
+`GAME ID # I124QNDS`;
+skip 150,
+
+end

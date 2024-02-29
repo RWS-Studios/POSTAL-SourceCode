@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{659ac108-af58-4521-8a66-23e139b85f79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{130134f4-6370-4786-8f9e-2ed03e8fb9b0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\cursor1.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Postal Plus.ini" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\eye.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\guy.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\mouth.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Postal Plus.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\rws.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\sign.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\skull.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\teeth.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="band.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="credits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="localize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="menus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="play.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SampleMaster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="aivars.cpp" />
+    <ClCompile Include="band.cpp" />
+    <ClCompile Include="credits.cpp" />
+    <ClCompile Include="game.cpp" />
+    <ClCompile Include="input.cpp" />
+    <ClCompile Include="localize.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="menus.cpp" />
+    <ClCompile Include="play.cpp" />
+    <ClCompile Include="SampleMaster.cpp" />
+    <ClCompile Include="title.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Postal Plus.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="res\Postal.rc" />
+  </ItemGroup>
+</Project>
