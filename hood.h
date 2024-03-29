@@ -152,13 +152,13 @@ class CHood : public CThing
 		RImage*			m_pimNumGone;							// Ammo Gone
 
 
-		short				m_sScaleAttribHeights;				// TRUE, to enable scaling of attribute
+		int16_t				m_sScaleAttribHeights;				// TRUE, to enable scaling of attribute
 																		// map heights via the realm view angle.
 																		// FALSE, to use naked values.
 		double			m_dScale3d;								// defaults to 1.0.  smash is affected
-		short				m_sShadowAngle;						// 0-259
+		int16_t				m_sShadowAngle;						// 0-259
 		double			m_dShadowLength;						// if 0, no shadows
-		short				m_sShadowIntensity;					// if 0, no shadows
+		int16_t				m_sShadowIntensity;					// if 0, no shadows
 
 
 	protected:
@@ -170,10 +170,10 @@ class CHood : public CThing
 
 		char m_acBaseName[RSP_MAX_PATH];						// Base name for all resources.
 
-		short	m_sRealmRotX;										// Realm X rotation.
-		short	m_sSceneRotX;										// Scene transform X rotation.
+		int16_t	m_sRealmRotX;										// Realm X rotation.
+		int16_t	m_sSceneRotX;										// Scene transform X rotation.
 
-		short	m_sNumInits;										// Number of times Init() has
+		int16_t	m_sNumInits;										// Number of times Init() has
 																		// been called (some things
 																		// are only done on the first
 																		// call).
@@ -194,11 +194,11 @@ class CHood : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CHood(pRealm);
 			if (*ppNew == 0)
 				{
@@ -213,22 +213,22 @@ class CHood : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -243,19 +243,19 @@ class CHood : public CThing
 		void Render(void);
 
 		// Called by editor to init new object at specified position
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
-		short EditMove(											// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditMove(											// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to update object
 		void EditUpdate(void);
@@ -280,15 +280,15 @@ class CHood : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Get width
-		short GetWidth(void)
+		int16_t GetWidth(void)
 			{ return m_pimBackground->m_sWidth; }
 
 		// Get height
-		short GetHeight(void)
+		int16_t GetHeight(void)
 			{ return m_pimBackground->m_sHeight; }
 
 		// Get realm X rotation.
-		short GetRealmRotX(void)
+		int16_t GetRealmRotX(void)
 			{ return m_sRealmRotX; }
 
 		// Set the hood's palette.
@@ -302,20 +302,20 @@ class CHood : public CThing
 	//---------------------------------------------------------------------------
 	protected:
 		// Init the hood
-		short Init(void);											// Returns 0 if successfull, non-zero otherwise
+		int16_t Init(void);											// Returns 0 if successfull, non-zero otherwise
 
 		// Kill the hood
-		short Kill(void);											// Returns 0 if successfull, non-zero otherwise
+		int16_t Kill(void);											// Returns 0 if successfull, non-zero otherwise
 
 		// Load object
-		short LoadThis(											// Returns 0 if successfull, non-zero otherwise
+		int16_t LoadThis(											// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile);											// In:  File to load from
 
 		// Get all required resources
-		short GetResources(void);								// Returns 0 if successfull, non-zero otherwise
+		int16_t GetResources(void);								// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		short FreeResources(void);								// Returns 0 if successfull, non-zero otherwise
+		int16_t FreeResources(void);								// Returns 0 if successfull, non-zero otherwise
 	};
 
 

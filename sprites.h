@@ -143,12 +143,12 @@ class CSprite
 			} Type;
 
 	public:
-		short m_sX2;												// Sprite's 2d x coord
-		short m_sY2;												// Sprite's 2d y coord
-		short m_sPriority;										// Sprite's priority
-		short m_sLayer;											// Sprite's layer
-		short m_sInFlags;											// Sprite's input flags
-		short m_sOutFlags;										// Sprite's output flags
+		int16_t m_sX2;												// Sprite's 2d x coord
+		int16_t m_sY2;												// Sprite's 2d y coord
+		int16_t m_sPriority;										// Sprite's priority
+		int16_t m_sLayer;											// Sprite's layer
+		int16_t m_sInFlags;											// Sprite's input flags
+		int16_t m_sOutFlags;										// Sprite's output flags
 		CThing*	m_pthing;										// Owner of this sprite (for debugging).
 
 		char*	m_pszText;											// Point this at your text.
@@ -161,9 +161,9 @@ class CSprite
 
 	protected:
 		Type m_type;												// Sprite's type
-		short m_sPrivFlags;										// Sprite's private flags
-		short m_sSavedLayer;										// Sprite's saved layer (used to detect changes)
-		short m_sSavedPriority;									// Sprite's saved priority (used to detect changes)
+		int16_t m_sPrivFlags;										// Sprite's private flags
+		int16_t m_sSavedLayer;										// Sprite's saved layer (used to detect changes)
+		int16_t m_sSavedPriority;									// Sprite's saved priority (used to detect changes)
 		msetSprites::iterator m_iter;							// Sprite's iterator into layer's container
 
 	public:
@@ -287,7 +287,7 @@ class CSprite2 : public CSprite
 	public:
 		RImage*	m_pImage;									// Pointer to image
 		RImage*	m_pimAlpha;									// Alpha image pointer.
-		short		m_sAlphaLevel;								// Constant alpha level to
+		int16_t		m_sAlphaLevel;								// Constant alpha level to
 																	// use if no m_pimAlpha.
 
 	CSprite2()
@@ -304,8 +304,8 @@ class CSprite2 : public CSprite
 class CSpriteLine2d : public CSprite
 	{
 	public:
-		short		m_sX2End;	// 2D end point for line.
-		short		m_sY2End;	// 2D end point for line.
+		int16_t		m_sX2End;	// 2D end point for line.
+		int16_t		m_sY2End;	// 2D end point for line.
 		U8			m_u8Color;	// Color for line segment.
 
 	CSpriteLine2d()
@@ -319,8 +319,8 @@ class CSpriteLine2d : public CSprite
 class CSpriteCylinder3d : public CSprite
 	{
 	public:
-		short		m_sRadius;	// Radius of cylinder
-		short		m_sHeight;	// Height of cylinder.
+		int16_t		m_sRadius;	// Radius of cylinder
+		int16_t		m_sHeight;	// Height of cylinder.
 		U8			m_u8Color;	// Color for line segment.
 
 	CSpriteCylinder3d()
@@ -373,24 +373,24 @@ class CSprite3 : public CSprite
 		RTexture*	m_ptex;		// Texture.
 		RP3d*			m_psphere;	// Bounding sphere def.
 
-		short			m_sRadius;	// Radius for collision (with buildings for 
+		int16_t			m_sRadius;	// Radius for collision (with buildings for 
 										// X Ray).  Autoset by Render3D().
-		short			m_sCenX;		// Position of center of collision circle.
+		int16_t			m_sCenX;		// Position of center of collision circle.
 										// Autoset by Render3D().
-		short			m_sCenY;		// Position of center of collision circle.
+		int16_t			m_sCenY;		// Position of center of collision circle.
 										// Autoset by Render3D().
 
-		short			m_sBrightness;	// Indicates the brightness with which the
+		int16_t			m_sBrightness;	// Indicates the brightness with which the
 											// object will be fogged (0 .. 255).
 
-		short			m_sDirectRenderX;		// Location to Render() directly to composite buffer.
-		short			m_sDirectRenderY;		// Location to Render() directly to composite buffer.
-		short			m_sDirectRenderZ;		// Location to render in either case
-		short			m_sIndirectRenderX;	// Location to Render() indirectly to clip buffer.
-		short			m_sIndirectRenderY;	// Location to Render() indirectly to clip buffer.
-		short			m_sRenderOffX;	// Offset to Render() to account for bounding
+		int16_t			m_sDirectRenderX;		// Location to Render() directly to composite buffer.
+		int16_t			m_sDirectRenderY;		// Location to Render() directly to composite buffer.
+		int16_t			m_sDirectRenderZ;		// Location to render in either case
+		int16_t			m_sIndirectRenderX;	// Location to Render() indirectly to clip buffer.
+		int16_t			m_sIndirectRenderY;	// Location to Render() indirectly to clip buffer.
+		int16_t			m_sRenderOffX;	// Offset to Render() to account for bounding
 											// sphere.
-		short			m_sRenderOffY;	// Offset to Render() to account for bounding
+		int16_t			m_sRenderOffY;	// Offset to Render() to account for bounding
 											// sphere.
 		bool			m_bIndirect;	// Indicates an indirect Render() (into the
 											// clip buffer).

@@ -94,10 +94,10 @@ void CCamera::SetHood(
 // Set camera's view of the scene
 ////////////////////////////////////////////////////////////////////////////////
 void CCamera::SetView(
-	short sSceneViewX,									// In:  View's upper left x (in scene coords)
-	short sSceneViewY,									// In:  View's upper left y (in scene coords)
-	short sViewW,											// In:  View's width
-	short sViewH)											// In:  View's height
+	int16_t sSceneViewX,									// In:  View's upper left x (in scene coords)
+	int16_t sSceneViewY,									// In:  View's upper left y (in scene coords)
+	int16_t sViewW,											// In:  View's width
+	int16_t sViewH)											// In:  View's height
 	{
 	// Save specified values
 	m_sSceneViewX = sSceneViewX;
@@ -114,8 +114,8 @@ void CCamera::SetView(
 // Set camera's view position (assumes the view's size will be or was set separately)
 ////////////////////////////////////////////////////////////////////////////////
 void CCamera::SetViewPos(
-	short sSceneViewX,									// In:  View's upper left x (in scene coords)
-	short sSceneViewY)									// In:  View's upper left y (in scene coords)
+	int16_t sSceneViewX,									// In:  View's upper left x (in scene coords)
+	int16_t sSceneViewY)									// In:  View's upper left y (in scene coords)
 	{
 	// Save specified values
 	m_sSceneViewX = sSceneViewX;
@@ -130,8 +130,8 @@ void CCamera::SetViewPos(
 // Set camera's view size (assumes the view's position will be or was set separately)
 ////////////////////////////////////////////////////////////////////////////////
 void CCamera::SetViewSize(
-	short sViewW,											// In:  View's width
-	short sViewH)											// In:  View's height
+	int16_t sViewW,											// In:  View's width
+	int16_t sViewH)											// In:  View's height
 	{
 	// Save specified values
 	m_sViewW = sViewW;
@@ -148,8 +148,8 @@ void CCamera::SetViewSize(
 ////////////////////////////////////////////////////////////////////////////////
 void CCamera::SetFilm(
 	RImage* pimFilm,										// In:  Film (where the picture ends up)
-	short sFilmViewX,										// In:  View's upper left x (in film coords)
-	short sFilmViewY)										// In:  View's upper left y (in film coords)
+	int16_t sFilmViewX,										// In:  View's upper left x (in film coords)
+	int16_t sFilmViewY)										// In:  View's upper left y (in film coords)
 	{
 	// Save specified values
 	m_pimFilm = pimFilm;
@@ -202,15 +202,15 @@ void CCamera::Snap(void)
 // temporary -- they do not affect any of the preset parameters!
 ////////////////////////////////////////////////////////////////////////////////
 void CCamera::Snap(
-	short sViewW,											// In:  View's width
-	short sViewH,											// In:  View's height
+	int16_t sViewW,											// In:  View's width
+	int16_t sViewH,											// In:  View's height
 	CScene* pScene,										// In:  Scene to take picture of
 	CHood* phood,											// In:  Hood for this scene.
-	short sSceneViewX,									// In:  View's upper left x (in scene coords)
-	short sSceneViewY,									// In:  View's upper left y (in scene coords)
+	int16_t sSceneViewX,									// In:  View's upper left x (in scene coords)
+	int16_t sSceneViewY,									// In:  View's upper left y (in scene coords)
 	RImage* pimFilm,										// In:  Film (where the picture ends up)
-	short sFilmViewX,										// In:  View's upper left x (in film coords)
-	short sFilmViewY)										// In:  View's upper left y (in film coords)
+	int16_t sFilmViewX,										// In:  View's upper left x (in film coords)
+	int16_t sFilmViewY)										// In:  View's upper left y (in film coords)
 	{
 /*
 	// Init film clipping rect to view's location on the film
@@ -251,12 +251,12 @@ void CCamera::Update(void)
 		// Limit to right edge of scene
 		if (m_pHood != 0)
 			{
-			short sClipX = (m_sSceneViewX + m_sViewW) - m_pHood->GetWidth();
+			int16_t sClipX = (m_sSceneViewX + m_sViewW) - m_pHood->GetWidth();
 			if (sClipX > 0)
 				m_sSceneViewX -= sClipX;
 
 			// Limit to bottom edge of scene
-			short sClipY = (m_sSceneViewY + m_sViewH) - m_pHood->GetHeight();
+			int16_t sClipY = (m_sSceneViewY + m_sViewH) - m_pHood->GetHeight();
 			if (sClipY > 0)
 				m_sSceneViewY -= sClipY;
 			}

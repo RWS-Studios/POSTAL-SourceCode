@@ -90,14 +90,14 @@ CAnim3D::CAnim3D()
 // specified in the provided array of pointers to strings.
 // (virtual)
 ////////////////////////////////////////////////////////////////////////////////
-short CAnim3D::Get(				// Returns 0 on success.
+int16_t CAnim3D::Get(				// Returns 0 on success.
 	char**	ppszFileNames)		// Pointer to array of pointers to filenames.
 										// These filenames should be in the order
 										// the members are listed in this class's
 										// definition.
 	{
-	short	sRes;
-	short	sComplainIndex;	// If sRes is non-zero, this is the index of the
+	int16_t	sRes;
+	int16_t	sComplainIndex;	// If sRes is non-zero, this is the index of the
 									// resname that could not load.
 
 	// NOTE:  If you add any new channel loads here, please make sure
@@ -152,14 +152,14 @@ short CAnim3D::Get(				// Returns 0 on success.
 // specified in the provided array of pointers to strings.
 // (virtual)
 ////////////////////////////////////////////////////////////////////////////////
-short CAnim3D::Get(				// Returns 0 on success.
+int16_t CAnim3D::Get(				// Returns 0 on success.
 	char**	ppszFileNames,		// Pointer to array of pointers to filenames.
 										// These filenames should be in the order
 										// the members are listed in this class's
 										// definition.
-	short		sLoopFlags)			// Looping flags to apply to all channels in this anim
+	int16_t		sLoopFlags)			// Looping flags to apply to all channels in this anim
 	{
-	short	sRes	= Get(ppszFileNames);
+	int16_t	sRes	= Get(ppszFileNames);
 	// If successful . . .
 	if (sRes == 0)
 		{
@@ -174,7 +174,7 @@ short CAnim3D::Get(				// Returns 0 on success.
 // specified by base name, optionally, with a rigid name.
 // (virtual)
 ////////////////////////////////////////////////////////////////////////////////
-short CAnim3D::Get(					// Returns 0 on success.
+int16_t CAnim3D::Get(					// Returns 0 on success.
 	char*		pszBaseFileName,		// In:  Base string for resource filenames.
 	char*		pszRigidName,			// In:  String to add for rigid transform channel,
 											// "", or NULL for none.
@@ -182,10 +182,10 @@ short CAnim3D::Get(					// Returns 0 on success.
 											// "", or NULL for none.
 	char*		pszWeaponTransName,	// In:  String to add for weapon transforms channel,
 											// "", or NULL for none.
-	short		sLoopFlags)				// In:  Looping flags to apply to all channels
+	int16_t		sLoopFlags)				// In:  Looping flags to apply to all channels
 											// in this anim.
 	{
-	short	sRes;
+	int16_t	sRes;
 	char	szResName[RSP_MAX_PATH];
 	sprintf(szResName, "%s.sop", pszBaseFileName);
 	sRes	=  rspGetResource(&g_resmgrGame, szResName, &m_psops);
@@ -262,7 +262,7 @@ short CAnim3D::Get(					// Returns 0 on success.
 // specified by base name, optionally, with a rigid name.
 // (virtual)
 ////////////////////////////////////////////////////////////////////////////////
-short CAnim3D::Get(					// Returns 0 on success.
+int16_t CAnim3D::Get(					// Returns 0 on success.
 	char*		pszBaseFileName,		// In:  Base string for resource filenames.
 	char*		pszVerb,					// In:  Action name to be appended to the base
 	char*		pszRigidName,			// In:  String to add for rigid transform channel,
@@ -271,7 +271,7 @@ short CAnim3D::Get(					// Returns 0 on success.
 											// "", or NULL for none.
 	char*		pszWeaponTransName,	// In:  String to add for weapon transforms channel,
 											// "", or NULL for none.
-	short		sLoopFlags)				// In:  Looping flags to apply to all channels
+	int16_t		sLoopFlags)				// In:  Looping flags to apply to all channels
 											// in this anim.
 	{
 	char	szVerbedBaseName[RSP_MAX_PATH];
@@ -284,9 +284,9 @@ short CAnim3D::Get(					// Returns 0 on success.
 // Get the various components of the animation using the given resource names,
 // but load only 1 .tex file based on the color scheme number passed in.
 ////////////////////////////////////////////////////////////////////////////////
-short CAnim3D::Get(					// Returns 0 on success.
+int16_t CAnim3D::Get(					// Returns 0 on success.
 	char*		pszBaseFileName,		// In:  Base string for resource filenames.
-	short		sTextureScheme,		// In:  Number to append after name for texture file
+	int16_t		sTextureScheme,		// In:  Number to append after name for texture file
 	char*		pszVerb,					// In:  Action name to be appended to the base
 	char*		pszRigidName,			// In:  String to add for rigid transform channel,
 											// "", or NULL for none.
@@ -294,13 +294,13 @@ short CAnim3D::Get(					// Returns 0 on success.
 											// "", or NULL for none.
 	char*		pszWeaponTransName,	// In:  String to add for weapon transforms channel,
 											// "", or NULL for none.
-	short		sLoopFlags)				// In:  Looping flags to apply to all channels
+	int16_t		sLoopFlags)				// In:  Looping flags to apply to all channels
 											// in this anim.
 {
 	char	szVerbedBaseName[RSP_MAX_PATH];
 	sprintf(szVerbedBaseName, "%s_%s", pszBaseFileName, pszVerb);
 
-	short	sRes;
+	int16_t	sRes;
 	char	szResName[RSP_MAX_PATH];
 	sprintf(szResName, "%s.sop", szVerbedBaseName);
 	sRes	=  rspGetResource(&g_resmgrGame, szResName, &m_psops);
@@ -415,7 +415,7 @@ void CAnim3D::Release(void)	// Returns nothing.
 // (virtual)
 ////////////////////////////////////////////////////////////////////////////////
 void CAnim3D::SetLooping(		// Returns nothing.
-	short		sLoopFlags)			// In:  Looping flags to apply to all channels
+	int16_t		sLoopFlags)			// In:  Looping flags to apply to all channels
 										// in this anim.
 	{
 	m_psops->SetLooping(sLoopFlags);

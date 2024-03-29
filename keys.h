@@ -48,19 +48,19 @@ extern char* g_apszMouseButtonDescriptions[8];
 extern char* g_apszJoyButtonDescriptions[18];
 
 // Given a string, returns the appropriate key code.
-extern short KeyDescriptionToValue(	// Returns 0 on success.  Returns non-zero, if
+extern int16_t KeyDescriptionToValue(	// Returns 0 on success.  Returns non-zero, if
 												// key not found.
 	char*		pszKeyDescriptor,			// In:  Description of key.
 	U32*	psScanKey);					// Out: Key value.
 
 // Given a string, returns the appropriate button mask.
-extern short MouseButtonDescriptionToMask(	// Returns 0 on success.  Returns
+extern int16_t MouseButtonDescriptionToMask(	// Returns 0 on success.  Returns
 															// non-zero, if description not 
 															// found.
 	char*		pszButtonDescriptor,					// In:  Description of button.
 	U32*	psButtonMask);							// Out: Button mask.
 
-extern short JoyButtonDescriptionToMask(	// Returns 0 on success.  Returns 
+extern int16_t JoyButtonDescriptionToMask(	// Returns 0 on success.  Returns 
 														// non-zero, if description not found.
 	char*		pszButtonDescriptor,				// In:  Description of button.
 	U32*	psButtonMask);						// Out: Button mask.

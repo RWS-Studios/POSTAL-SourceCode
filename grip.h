@@ -51,19 +51,19 @@ class CGrip
 	// Variables
 	//---------------------------------------------------------------------------
 	public:
-		short m_sGripX;									// Grip's current x coord
-		short m_sGripY;									// Grip's current y coord
+		int16_t m_sGripX;									// Grip's current x coord
+		int16_t m_sGripY;									// Grip's current y coord
 
-		short m_sMinMoveX;								// Minimum move in x direction
-		short m_sMinMoveY;								// Minimum move in y direction
-		short m_sMaxMoveX;								// Maximum move in x direction
-		short m_sMaxMoveY;								// Maximum move in y direction
-		short m_sAlignX;									// Required x alignment (1 allows any alignment)
-		short m_sAlignY;									// Required y alignment (1 allows any alignment)
+		int16_t m_sMinMoveX;								// Minimum move in x direction
+		int16_t m_sMinMoveY;								// Minimum move in y direction
+		int16_t m_sMaxMoveX;								// Maximum move in x direction
+		int16_t m_sMaxMoveY;								// Maximum move in y direction
+		int16_t m_sAlignX;									// Required x alignment (1 allows any alignment)
+		int16_t m_sAlignY;									// Required y alignment (1 allows any alignment)
 
-		short m_sZoneX;
-		short m_sZoneY;
-		short m_sZoneR;
+		int16_t m_sZoneX;
+		int16_t m_sZoneY;
+		int16_t m_sZoneR;
 //		short m_sZoneW;
 //		short m_sZoneH;
 
@@ -91,13 +91,13 @@ class CGrip
 
 		// Set tracking parameters
 		void SetParms(
-			short sZoneR,									// In:  Zone radius
-			short sMinMoveX,								// In:  Minimum move in x direction
-			short sMinMoveY,								// In:  Minimum move in y direction
-			short sMaxMoveX,								// In:  Maximum move in x direction
-			short sMaxMoveY,								// In:  Maximum move in y direction
-			short sAlignX,									// In:  Required x alignment (1 allows any alignment)
-			short sAlignY,									// In:  Required y alignment (1 allows any alignment)
+			int16_t sZoneR,									// In:  Zone radius
+			int16_t sMinMoveX,								// In:  Minimum move in x direction
+			int16_t sMinMoveY,								// In:  Minimum move in y direction
+			int16_t sMaxMoveX,								// In:  Maximum move in x direction
+			int16_t sMaxMoveY,								// In:  Maximum move in y direction
+			int16_t sAlignX,									// In:  Required x alignment (1 allows any alignment)
+			int16_t sAlignY,									// In:  Required y alignment (1 allows any alignment)
 			bool bKeepInsideZone)						// In:  True to keep inside zone, false otherwise
 			{
 			m_sZoneR = sZoneR;
@@ -112,24 +112,24 @@ class CGrip
 
 		// Reset target, which foces camera to be moved so the target is centered
 		void ResetTarget(
-			short sTargetX,								// In:  Target's x coord
-			short sTargetY,								// In:  Target's y coord
-			short sTargetR)								// In:  Target's radius
+			int16_t sTargetX,								// In:  Target's x coord
+			int16_t sTargetY,								// In:  Target's y coord
+			int16_t sTargetR)								// In:  Target's radius
 			{
 			m_sZoneX = sTargetX;
 			m_sZoneY = sTargetY;
 
-			short sUpperLeftX = m_sZoneX - (m_pCamera->m_sViewW / 2);
-			short sUpperLeftY = m_sZoneY - (m_pCamera->m_sViewH / 2);
+			int16_t sUpperLeftX = m_sZoneX - (m_pCamera->m_sViewW / 2);
+			int16_t sUpperLeftY = m_sZoneY - (m_pCamera->m_sViewH / 2);
 
 			m_pCamera->SetViewPos(sUpperLeftX, sUpperLeftY);
 			}
 
 		// Track specified target coordinates
 		void TrackTarget(
-			short sTargetX,								// In:  Target's x coord
-			short sTargetY,								// In:  Target's y coord
-			short sTargetR)								// In:  Target's radius
+			int16_t sTargetX,								// In:  Target's x coord
+			int16_t sTargetY,								// In:  Target's y coord
+			int16_t sTargetR)								// In:  Target's radius
 			{
 			if (m_bKeepInsideZone)
 				KeepInside(sTargetX, sTargetY, sTargetR);
@@ -138,9 +138,9 @@ class CGrip
 			}
 
 		void KeepInside(
-			short sTargetX,								// In:  Target's center x coord
-			short sTargetY,								// In:  Target's center y coord
-			short sTargetR)								// In:  Target's radius
+			int16_t sTargetX,								// In:  Target's center x coord
+			int16_t sTargetY,								// In:  Target's center y coord
+			int16_t sTargetR)								// In:  Target's radius
 			{
 			// Calculate distance from center of zone to furthest edge of target
 			double dx = sTargetX - m_sZoneX;
@@ -154,11 +154,11 @@ class CGrip
 				double dMoveBy = dDistance - (double)m_sZoneR;
 
 				// Calculate angle of movement
-				short sDeg = rspATan(dy, dx);
+				int16_t sDeg = rspATan(dy, dx);
 
 				// Calculate camera x and y movement
-				short sMoveX = (short)(rspCos(sDeg) * dMoveBy);
-				short sMoveY = (short)(rspSin(sDeg) * dMoveBy);
+				int16_t sMoveX = (int16_t)(rspCos(sDeg) * dMoveBy);
+				int16_t sMoveY = (int16_t)(rspSin(sDeg) * dMoveBy);
 
 //				if ((sMoveX >= m_sMinMoveX) && (sMoveY >= m_sMinMoveY))
 //					{
@@ -167,7 +167,7 @@ class CGrip
 //					if (sMoveY > m_sMaxMoveY)
 //						sMoveY = m_sMaxMoveY;
 
-					short sModX;
+					int16_t sModX;
 					if (sMoveX >= 0)
 						sModX = sMoveX % m_sAlignX;
 					else
@@ -175,7 +175,7 @@ class CGrip
 					if (sModX)
 						sMoveX -= sModX;
 
-					short sModY;
+					int16_t sModY;
 					if (sMoveY >= 0)
 						sModY = sMoveY % m_sAlignY;
 					else
@@ -186,11 +186,11 @@ class CGrip
 					m_sZoneX += sMoveX;
 					m_sZoneY += sMoveY;
 
-					short sUpperLeftX = m_sZoneX - (m_pCamera->m_sViewW / 2);
+					int16_t sUpperLeftX = m_sZoneX - (m_pCamera->m_sViewW / 2);
 					if (sUpperLeftX < 0)
 						sUpperLeftX = 0;
 
-					short sUpperLeftY = m_sZoneY - (m_pCamera->m_sViewH / 2);
+					int16_t sUpperLeftY = m_sZoneY - (m_pCamera->m_sViewH / 2);
 					if (sUpperLeftY < 0)
 						sUpperLeftY = 0;
 

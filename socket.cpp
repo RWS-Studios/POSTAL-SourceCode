@@ -100,7 +100,7 @@
 bool							RSocket::ms_bDidStartup = false;
 bool							RSocket::ms_bAutoShutdown = false;
 RSocket::ProtoType		RSocket::ms_prototype   = RSocket::NO_PROTOCOL;
-short							RSocket::ms_sNumSockets = 0;
+int16_t							RSocket::ms_sNumSockets = 0;
 char*							RSocket::ms_apszProtoNames[] = 
 									{
 									"",
@@ -166,16 +166,16 @@ void RSocket::Reset(void)
 // If the current protocol is not supported, this function returns the value
 // RSocket::errNotSupported.
 ////////////////////////////////////////////////////////////////////////////////
-short RSocket::Open(										// Returns 0 on success, non-zero otherwise
-	unsigned short usPort,								// In:  Port number or 0 for any port
-	short sType,											// In:  Any one RSocket::typ* enum
-	short sOptionFlags,									// In:  Any combo of RSocket::opt* enums
+int16_t RSocket::Open(										// Returns 0 on success, non-zero otherwise
+	uint16_t usPort,								// In:  Port number or 0 for any port
+	int16_t sType,											// In:  Any one RSocket::typ* enum
+	int16_t sOptionFlags,									// In:  Any combo of RSocket::opt* enums
 	RSocket::BLOCK_CALLBACK callback)				// In:  Blocking callback (or NULL to keep current)
 	{
 	// Make sure startup was called.  Only this function needs to do this
 	// because all the others check for a valid protocol, which can only be
 	// created via this function.
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	if (ms_bDidStartup)
 		{
@@ -226,10 +226,10 @@ short RSocket::Open(										// Returns 0 on success, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Close socket
 ////////////////////////////////////////////////////////////////////////////////
-short RSocket::Close(									// Returns 0 if successfull, non-zero otherwise
+int16_t RSocket::Close(									// Returns 0 if successfull, non-zero otherwise
 	bool bForceNow /*= true */)						// In:  'true' means do it now, false follows normal rules
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	if (m_pProtocol != NULL)
 		{
@@ -254,11 +254,11 @@ short RSocket::Close(									// Returns 0 if successfull, non-zero otherwise
 // been modified, but any such changes must not be relied upon!!!  What can be
 // relied upon is that the client socket will be in a "closed" state.
 ////////////////////////////////////////////////////////////////////////////////
-short RSocket::Accept(									// Return 0 if successfull, non-zero otherwise
+int16_t RSocket::Accept(									// Return 0 if successfull, non-zero otherwise
 	RSocket* psocketClient,								// Out: Client socket returned here
 	RSocket::Address* paddressClient) const		// Out: Client's address returned here 
 	{
-	short sResult = FAILURE;
+	int16_t sResult = FAILURE;
 	
 	if (m_pProtocol != NULL)
 		{
@@ -306,9 +306,9 @@ short RSocket::Accept(									// Return 0 if successfull, non-zero otherwise
 //
 // Most protocols only allow broadcasting on a datagram-style socket.
 ////////////////////////////////////////////////////////////////////////////////
-short RSocket::Broadcast(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t RSocket::Broadcast(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = FAILURE;
+	int16_t sResult = FAILURE;
 	
 	if (m_pProtocol != NULL)
 		sResult = m_pProtocol->Broadcast();	
@@ -325,9 +325,9 @@ short RSocket::Broadcast(void)						// Returns 0 if successfull, non-zero otherw
 ////////////////////////////////////////////////////////////////////////////////
 // Set socket to listen for connection requests
 ////////////////////////////////////////////////////////////////////////////////
-short RSocket::Listen(short sMaxQueued)
+int16_t RSocket::Listen(int16_t sMaxQueued)
 	{
-	short sResult = FAILURE;
+	int16_t sResult = FAILURE;
 	
 	if (m_pProtocol != NULL)
 		sResult = m_pProtocol->Listen(sMaxQueued);	
@@ -344,10 +344,10 @@ short RSocket::Listen(short sMaxQueued)
 ////////////////////////////////////////////////////////////////////////////////
 // Connect to address
 ////////////////////////////////////////////////////////////////////////////////
-short RSocket::Connect(
+int16_t RSocket::Connect(
 	RSocket::Address* paddress)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	if (m_pProtocol != NULL)
 		sResult = m_pProtocol->Connect(paddress);
@@ -364,12 +364,12 @@ short RSocket::Connect(
 ////////////////////////////////////////////////////////////////////////////////
 // Use Send for connected sockets - use SendTo for connectionless
 ////////////////////////////////////////////////////////////////////////////////
-short RSocket::Send(										// Return 0 on success, non-zero otherwise
+int16_t RSocket::Send(										// Return 0 on success, non-zero otherwise
 	void* pBuf,												// In:  Pointer to data buffer
-	long lNumBytes,										// In:  Number of bytes to send
-	long* plActualBytes)									// Out: Actual number of bytes sent
+	int32_t lNumBytes,										// In:  Number of bytes to send
+	int32_t* plActualBytes)									// Out: Actual number of bytes sent
 	{
-	short sResult = FAILURE;
+	int16_t sResult = FAILURE;
 	
 	if (m_pProtocol != NULL)
 		sResult = m_pProtocol->Send(pBuf, lNumBytes, plActualBytes);
@@ -387,13 +387,13 @@ short RSocket::Send(										// Return 0 on success, non-zero otherwise
 // Send data to specified address.  For connected sockets, address is ignored
 // See Send() for more information.
 ////////////////////////////////////////////////////////////////////////////////
-short RSocket::SendTo(									// Return 0 on success, non-zero otherwise
+int16_t RSocket::SendTo(									// Return 0 on success, non-zero otherwise
 	void* pBuf,												// In:  Pointer to data buffer
-	long lNumBytes,										// In:  Number of bytes to send
-	long* plActualBytes,									// Out: Actual number of bytes sent
+	int32_t lNumBytes,										// In:  Number of bytes to send
+	int32_t* plActualBytes,									// Out: Actual number of bytes sent
 	RSocket::Address* paddress)						//In:  Address to send to
 	{
-	short sResult = FAILURE;
+	int16_t sResult = FAILURE;
 	
 	if (m_pProtocol != NULL)
 		sResult = m_pProtocol->SendTo(pBuf, lNumBytes, plActualBytes, paddress);
@@ -426,12 +426,12 @@ short RSocket::SendTo(									// Return 0 on success, non-zero otherwise
 // In all cases, if the connection was abortively disconnected, an error will
 // be returned.
 ////////////////////////////////////////////////////////////////////////////////
-short RSocket::Receive(									// Returns 0 on success, non-zero otherwise
+int16_t RSocket::Receive(									// Returns 0 on success, non-zero otherwise
 	void* pBuf,												// In:  Pointer to data buffer
-	long lMaxBytes,										// In:  Maximum bytes that can fit in buffer
-	long* plActualBytes)									// Out: Actual number of bytes received
+	int32_t lMaxBytes,										// In:  Maximum bytes that can fit in buffer
+	int32_t* plActualBytes)									// Out: Actual number of bytes received
 	{
-	short sResult = FAILURE;
+	int16_t sResult = FAILURE;
 	
 	if (m_pProtocol != NULL)
 		sResult = m_pProtocol->Receive(pBuf, lMaxBytes, plActualBytes);
@@ -448,13 +448,13 @@ short RSocket::Receive(									// Returns 0 on success, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Receive data and get source address
 ////////////////////////////////////////////////////////////////////////////////
-short RSocket::ReceiveFrom(							// Returns 0 on success, non-zero otherwise
+int16_t RSocket::ReceiveFrom(							// Returns 0 on success, non-zero otherwise
 	void* pBuf,												// In:  Pointer to data buffer
-	long lMaxBytes,										// In:  Maxiumm bytes that fit in buffer
-	long* plActualBytes,									// Out: Actual number of bytes received into buffer
+	int32_t lMaxBytes,										// In:  Maxiumm bytes that fit in buffer
+	int32_t* plActualBytes,									// Out: Actual number of bytes received into buffer
 	RSocket::Address* paddress)						// Out: Source address returned here
 	{
-	short sResult = FAILURE;
+	int16_t sResult = FAILURE;
 	
 	if (m_pProtocol != NULL)
 		sResult = m_pProtocol->ReceiveFrom(pBuf, lMaxBytes, plActualBytes, paddress);
@@ -474,9 +474,9 @@ short RSocket::ReceiveFrom(							// Returns 0 on success, non-zero otherwise
 // streams, this returns the total amount of data that can be read with a
 // single receive which is normally equal to the total amount of queued data.
 ////////////////////////////////////////////////////////////////////////////////
-long RSocket::CheckReceivableBytes(void)
+int32_t RSocket::CheckReceivableBytes(void)
 	{
-	long lResult = 0;
+	int32_t lResult = 0;
 	
 	if (m_pProtocol != NULL)
 		lResult = m_pProtocol->CheckReceivableBytes();
@@ -554,11 +554,11 @@ bool RSocket::IsError(void)
 //
 ////////////////////////////////////////////////////////////////////////////////
 // static
-short RSocket::Startup(						// Returns 0 if successfull, non-zero otherwise
+int16_t RSocket::Startup(						// Returns 0 if successfull, non-zero otherwise
 	RSocket::ProtoType prototype,			// In:  Protocol type
 	bool bAutoShutdown)						// In:  Whether to perform auto Shutdown()
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Only do this once
 	if (!ms_bDidStartup)
@@ -587,7 +587,7 @@ short RSocket::Startup(						// Returns 0 if successfull, non-zero otherwise
 		else
 			{
 			sResult = -1;
-			TRACE("RSocket::Startup(): Can't change protocol -- %hd RSockets still exist!\n", (short)ms_sNumSockets);
+			TRACE("RSocket::Startup(): Can't change protocol -- %hd RSockets still exist!\n", (int16_t)ms_sNumSockets);
 			}
 
 		if (sResult == 0)
@@ -629,10 +629,10 @@ void RSocket::Shutdown(void)
 // function is called before any protocol has been selected, it fails.
 ////////////////////////////////////////////////////////////////////////////////
 // static
-short RSocket::GetMaxDatagramSize(					// Returns 0 on success, non-zero otherwise
-	long* plSize)											// Out: Maximum datagram size (in bytes)
+int16_t RSocket::GetMaxDatagramSize(					// Returns 0 on success, non-zero otherwise
+	int32_t* plSize)											// Out: Maximum datagram size (in bytes)
 	{
-	short sResult = FAILURE;
+	int16_t sResult = FAILURE;
 	
 	switch (ms_prototype)
 		{
@@ -659,10 +659,10 @@ short RSocket::GetMaxDatagramSize(					// Returns 0 on success, non-zero otherwi
 // function is called before any protocol has been selected, it fails.
 ////////////////////////////////////////////////////////////////////////////////
 // static
-short RSocket::GetMaxSockets(							// Returns 0 on success, non-zero otherwise
-	long* plNum)											// Out: Maximum number of sockets
+int16_t RSocket::GetMaxSockets(							// Returns 0 on success, non-zero otherwise
+	int32_t* plNum)											// Out: Maximum number of sockets
 	{
-	short sResult = FAILURE;
+	int16_t sResult = FAILURE;
 	
 	switch (ms_prototype)
 		{
@@ -687,12 +687,12 @@ short RSocket::GetMaxSockets(							// Returns 0 on success, non-zero otherwise
 // function is called before any protocol has been selected, it fails.
 ////////////////////////////////////////////////////////////////////////////////
 // static
-short RSocket::GetAddress(								// Returns 0 on success, non-zero otherwise
+int16_t RSocket::GetAddress(								// Returns 0 on success, non-zero otherwise
 	char* pszName,											// In:  Host's name or dotted addres (x.x.x.x)
-	USHORT usPort,											// In:  Host's port number
+	uint16_t usPort,											// In:  Host's port number
 	RSocket::Address* paddress)						// Out: Address
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Get rid of leading and trailing whitespace
 	char azName[RSP_MAX_PATH];
@@ -706,7 +706,7 @@ short RSocket::GetAddress(								// Returns 0 on success, non-zero otherwise
 		strcpy(azName, pszName);
 
 		// Convert trailing whitespace to 0's
-		long index;
+		int32_t index;
 		for (index = strlen(azName) - 1; index >= 0; index--)
 			{
 			if (isspace(azName[index]))
@@ -754,7 +754,7 @@ short RSocket::GetAddress(								// Returns 0 on success, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // static
 void RSocket::CreateBroadcastAddress(
-	unsigned short usPort,								// In:  Port to broadcast to
+	uint16_t usPort,								// In:  Port to broadcast to
 	RSocket::Address* paddress)						// Out: Broadcast address returned here
 	{
 	switch (ms_prototype)
@@ -777,10 +777,10 @@ void RSocket::CreateBroadcastAddress(
 // function is called before any protocol has been selected, it fails.
 ////////////////////////////////////////////////////////////////////////////////
 // static
-unsigned short RSocket::GetAddressPort(			// Returns the port number
+uint16_t RSocket::GetAddressPort(			// Returns the port number
 	RSocket::Address* paddress)						// In:  Address to get port from
 	{
-	unsigned short usPort = 0;
+	uint16_t usPort = 0;
 	
 	switch (ms_prototype)
 		{
@@ -805,7 +805,7 @@ unsigned short RSocket::GetAddressPort(			// Returns the port number
 ////////////////////////////////////////////////////////////////////////////////
 // static
 void RSocket::SetAddressPort(
-	USHORT usPort,											// In:  New port number
+	uint16_t usPort,											// In:  New port number
 	RSocket::Address* paddress)						// I/O: Address whose port is to be set
 	{
 	switch (ms_prototype)

@@ -27,7 +27,7 @@
 
 // These are the types reserved for each stream type.
 // Currently only the first 256 [0..255] are utilized by dispatch.  But up to
-// 64K can be used.  It should be a USHORT defined as 0x????.
+// 64K can be used.  It should be a uint16_t defined as 0x????.
 // Add your type here.  Do not use one someone else did.  Update this file
 // immediately after you add yours.  Don't be a bunghole. :)
 

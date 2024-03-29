@@ -111,7 +111,7 @@ char* Debug_FileName(char* pszPath)
 ///////////////////////////////////////////////////////////////////////////////
 void rspTrace(char *frmt, ... )
 	{
-	static short	sSem	= 0;
+	static int16_t	sSem	= 0;
 
 	// If something called by TRACE calls TRACE, we'd be likely to continue
 	// forever until stack overflow occurred.  So don't allow re-entrance.

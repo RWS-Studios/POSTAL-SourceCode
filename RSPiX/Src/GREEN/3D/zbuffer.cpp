@@ -38,13 +38,13 @@ RZBuffer::RZBuffer()
 	Init();
 	}
 
-RZBuffer::RZBuffer(short sW,short sH)
+RZBuffer::RZBuffer(int16_t sW,int16_t sH)
 	{
 	Init();
 	Create(sW,sH);
 	}
 
-short RZBuffer::Create(short sW,short sH)
+int16_t RZBuffer::Create(int16_t sW,int16_t sH)
 	{
 	if (m_pBuf)
 		{
@@ -54,10 +54,10 @@ short RZBuffer::Create(short sW,short sH)
 
 	m_sW = sW;
 	m_sH = sH;
-	m_lP = long((sW+3)&~3); // keep for emergencies!
+	m_lP = int32_t((sW+3)&~3); // keep for emergencies!
 
-	long lSize = m_lP * m_sH * sizeof(short);
-	m_pBuf = (short*) malloc(lSize);
+	int32_t lSize = m_lP * m_sH * sizeof(int16_t);
+	m_pBuf = (int16_t*) malloc(lSize);
 	// you then may clear it, buddy!
 
 	return 0;
@@ -68,7 +68,7 @@ RZBuffer::~RZBuffer()
 	Destroy();
 	}
 
-short RZBuffer::Destroy()
+int16_t RZBuffer::Destroy()
 	{
 	if (!m_pBuf)
 		{
@@ -83,7 +83,7 @@ short RZBuffer::Destroy()
 	}
 
 //----------------------------------------------
-void RZBuffer::Clear(short sVal)
+void RZBuffer::Clear(int16_t sVal)
 	{
 	// Do by 64-bit longs
 	// 1) Create the 64-bit long
@@ -102,24 +102,24 @@ void RZBuffer::Clear(short sVal)
 	BigWord.p1 = BigWord.p2 = BigWord.p3 = BigWord.p4 = sVal;
 
 	//2) Do the copy
-	long lWordP = m_lP >> 2; // 4 * 16 = 64
+	int32_t lWordP = m_lP >> 2; // 4 * 16 = 64
 	U64* pWord = (U64*) m_pBuf;
 
-	long lWordLen = lWordP * m_sH;
-	for (long i=0;i < lWordLen; i++) *pWord++ = BigWord.word;
+	int32_t lWordLen = lWordP * m_sH;
+	for (int32_t i=0;i < lWordLen; i++) *pWord++ = BigWord.word;
 
 	}
 
 //----------------------------------------------
 // debugging stuff
-void RZBuffer::TestHeight(RImage* pimDst,short sDepth,
-				short sX,short sY,short sW,short sH)
+void RZBuffer::TestHeight(RImage* pimDst,int16_t sDepth,
+				int16_t sX,int16_t sY,int16_t sW,int16_t sH)
 	{
-	short i,j;
-	long lP = pimDst->m_lPitch;
+	int16_t i,j;
+	int32_t lP = pimDst->m_lPitch;
 
-	UCHAR *pDst,*pDstLine = pimDst->m_pData + lP * sY + sX;
-	short *pZB,*pZLine = m_pBuf + m_lP * sY + sX;
+	uint8_t *pDst,*pDstLine = pimDst->m_pData + lP * sY + sX;
+	int16_t *pZB,*pZLine = m_pBuf + m_lP * sY + sX;
 
 	for (j=0;j<sH;j++,pDstLine += lP,pZLine += m_lP )
 		{
@@ -133,13 +133,13 @@ void RZBuffer::TestHeight(RImage* pimDst,short sDepth,
 		}
 	}
 
-void RZBuffer::Dump(RImage* pimDst,short sX,short sY,short sW,short sH,UCHAR* pZCol)
+void RZBuffer::Dump(RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_t sH,uint8_t* pZCol)
 	{
-	short i,j;
-	long lP = pimDst->m_lPitch;
+	int16_t i,j;
+	int32_t lP = pimDst->m_lPitch;
 
-	UCHAR *pDst,*pDstLine = pimDst->m_pData + lP * sY + sX;
-	short *pZLine = m_pBuf + m_lP * sY + sX;
+	uint8_t *pDst,*pDstLine = pimDst->m_pData + lP * sY + sX;
+	int16_t *pZLine = m_pBuf + m_lP * sY + sX;
 	RFixedS16 *pZB;
 
 

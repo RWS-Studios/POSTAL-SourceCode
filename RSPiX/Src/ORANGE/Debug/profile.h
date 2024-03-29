@@ -285,7 +285,7 @@ public:
 #define PF_START_ERR	1
 #define PF_END_ERR	2
 
-	short	m_sInError;	// parenthesis mismatch!
+	int16_t	m_sInError;	// parenthesis mismatch!
 	};
 
 class	RProfile
@@ -374,13 +374,13 @@ public:
 	S64	m_lFastTimeOut;
 	//----------------------------
 	
-	short	m_sLastUnaccounted;// Used for one frame lag timing of unknown overhead...
-	short m_sNumTracked;		// how many in count?
-	short m_sCommandError;	// mismatched parenthesis
-	short m_sMaxDepth;		// Used for third order error estimation
-	short	m_sCurDepth;		// Used for third order error estimation
-	short	m_sActive;			// suspend / resume profiling...
-	short	m_sInternalError;	// Usually memory limits...
+	int16_t	m_sLastUnaccounted;// Used for one frame lag timing of unknown overhead...
+	int16_t m_sNumTracked;		// how many in count?
+	int16_t m_sCommandError;	// mismatched parenthesis
+	int16_t m_sMaxDepth;		// Used for third order error estimation
+	int16_t	m_sCurDepth;		// Used for third order error estimation
+	int16_t	m_sActive;			// suspend / resume profiling...
+	int16_t	m_sInternalError;	// Usually memory limits...
 
 	char	m_szOutputFile[256];
 	RProfileNode m_aList[PF_MAX_FIELDS];

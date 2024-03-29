@@ -141,11 +141,11 @@ class CPowerUp : public CItem3d
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CPowerUp(pRealm);
 			if (*ppNew == 0)
 				{
@@ -161,7 +161,7 @@ class CPowerUp : public CItem3d
 	//---------------------------------------------------------------------------
 
 		// Preload assets needed during the game
-		static short Preload(CRealm* prealm);
+		static int16_t Preload(CRealm* prealm);
 
 	//---------------------------------------------------------------------------
 	// Required virtual functions (implementing them as inlines doesn't pay!)
@@ -169,16 +169,16 @@ class CPowerUp : public CItem3d
 	public:
 		
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Update object
 		void Update(void);
@@ -187,33 +187,33 @@ class CPowerUp : public CItem3d
 		void Render(void);
 
 		// Called by editor to init new object at specified position
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 	//---------------------------------------------------------------------------
 	// Handy external functions
 	//---------------------------------------------------------------------------
 	public:
 
-		short Setup(												// Returns 0 on success.
-			short sX,												// In: New x coord
-			short sY,												// In: New y coord
-			short sZ);												// In: New z coord
+		int16_t Setup(												// Returns 0 on success.
+			int16_t sX,												// In: New x coord
+			int16_t sY,												// In: New y coord
+			int16_t sZ);												// In: New z coord
 
 		// Call to grab this item.
-		short Grab(						// Returns 0 on success.
+		int16_t Grab(						// Returns 0 on success.
 			CSprite* psprParent);	// In:  Parent's sprite.
 
 		// Call to release this item.
 		void Drop(						// Returns nothing.
-			short sX,					// In:  Position from which to release.
-			short sY,					// In:  Position from which to release.
-			short sZ);					// In:  Position from which to release.
+			int16_t sX,					// In:  Position from which to release.
+			int16_t sY,					// In:  Position from which to release.
+			int16_t sZ);					// In:  Position from which to release.
 
 		// Determine if this powerup's stockpile is empty.
 		bool IsEmpty(void)					// Returns true, if the stockpile is
@@ -257,13 +257,13 @@ class CPowerUp : public CItem3d
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 
 		// Initialize object.
-		short Init(void);									// Returns 0 on success.
+		int16_t Init(void);									// Returns 0 on success.
 
 		// Get resource name for this item.
 		void GetResName(			// Returns nothing.

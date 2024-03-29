@@ -42,8 +42,8 @@ class RMixBuf
 		RMixBuf();
 		// Constructor Especial.
 		RMixBuf(				// Returns whatever it is a constructor returns.
-			UCHAR* pu8Dst,	// In:  Destination buffer.
-			ULONG ulSize);	// In:  Size of destination buffer in bytes.
+			uint8_t* pu8Dst,	// In:  Destination buffer.
+			uint32_t ulSize);	// In:  Size of destination buffer in bytes.
 		// Destructor.
 		~RMixBuf();
 
@@ -53,23 +53,23 @@ class RMixBuf
 		
 		// Set size of mix buffer in bytes. (Allocates buffer).
 		// Returns 0 on success.
-		short SetSize(ULONG ulSize);
+		int16_t SetSize(uint32_t ulSize);
 
 		// Set the destination buffer.
 		void SetDest(
-			UCHAR* pu8Dst,	// In:  Destination buffer.
-			ULONG ulSize);	// In:  Size of destination buffer in bytes.
+			uint8_t* pu8Dst,	// In:  Destination buffer.
+			uint32_t ulSize);	// In:  Size of destination buffer in bytes.
 
 		// Mix data in.
 		// Returns 0 on success.
-		short Mix(	ULONG		ulStartPos,
+		int16_t Mix(	uint32_t		ulStartPos,
 						U8*		pu8Data, 
-						ULONG		ulSize, 
-						long		lSampleRate,
-						long		lBitsPerSample,
-						long		lNumChannels,
-						UCHAR		ucVolume = UCHAR(255),
-						UCHAR		ucVol2 = UCHAR(255) );
+						uint32_t		ulSize, 
+						int32_t		lSampleRate,
+						int32_t		lBitsPerSample,
+						int32_t		lNumChannels,
+						uint8_t		ucVolume = uint8_t(255),
+						uint8_t		ucVol2 = uint8_t(255) );
 
 		// Prepare for destination.  If necessary, converts to destination format.
 		void PrepareForDest(void);
@@ -83,31 +83,31 @@ class RMixBuf
 		void*	GetMixData(void)	{ return m_pu8Mix; }
 
 		// Get size of destination buffer in bytes.
-		ULONG GetDstSize(void)	{ return m_ulDstSize; }
+		uint32_t GetDstSize(void)	{ return m_ulDstSize; }
 
 		// Get size of mix buffer in bytes.
-		ULONG GetMixSize(void)	{ return m_ulMixSize; }
+		uint32_t GetMixSize(void)	{ return m_ulMixSize; }
 
 		// Returns number of RMixBufs allocated.
-		static short Num(void)		{ return ms_sNumBufs; }
+		static int16_t Num(void)		{ return ms_sNumBufs; }
 
 
 	public:	// Statics.
 
 		// Sets the global volume for mixed sounds:
-		static void	SetVolume(UCHAR ucVolume)
+		static void	SetVolume(uint8_t ucVolume)
 			{
 			ms_ucGlobalVolume = ucVolume;
 			}
 
 		// Reads the current global volume for mixed sounds:
-		static UCHAR GetVolume()
+		static uint8_t GetVolume()
 			{
 			return ms_ucGlobalVolume;
 			}
 
 		// Allows user to set the cut off volume for mixing sound:
-		static void SetCutOff(short sVolume)
+		static void SetCutOff(int16_t sVolume)
 			{
 			if ( (sVolume >= 0) && (sVolume < 256) )
 				{
@@ -124,27 +124,27 @@ class RMixBuf
 	protected:	// Members.
 		U8*			m_pu8Mix;				// Mix buffer.
 		U8*			m_pu8Dst;				// Destination buffer.
-		short			m_sOwnMixBuf;			// TRUE if RMixBuf allocated the mix buffer.
-		ULONG			m_ulMixSize;			// Size of mix buffer in bytes.
-		ULONG			m_ulDstSize;			// Size of dst buffer in bytes.
+		int16_t			m_sOwnMixBuf;			// TRUE if RMixBuf allocated the mix buffer.
+		uint32_t			m_ulMixSize;			// Size of mix buffer in bytes.
+		uint32_t			m_ulDstSize;			// Size of dst buffer in bytes.
 
-		static short	ms_sNumBufs;		// Number of RMixBufs allocated.
-		static UCHAR	ms_ucGlobalVolume;// Scale all mixes relative to this
+		static int16_t	ms_sNumBufs;		// Number of RMixBufs allocated.
+		static uint8_t	ms_ucGlobalVolume;// Scale all mixes relative to this
 	
 	public:	// It is safe to change these.
-		short			m_sInUse;				// TRUE if in use, FALSE otherwise.
+		int16_t			m_sInUse;				// TRUE if in use, FALSE otherwise.
 
-		static long	ms_lSampleRate;		// Sample rate for audio 
+		static int32_t	ms_lSampleRate;		// Sample rate for audio 
 													// playback/mix.
 		
-		static long	ms_lSrcBitsPerSample;	// Sample size in bits for sample data.
+		static int32_t	ms_lSrcBitsPerSample;	// Sample size in bits for sample data.
 														// 0 for no preference.
-		static long	ms_lMixBitsPerSample;	// Sample size in bits for mixing.
-		static long	ms_lDstBitsPerSample;	// Sample size in bits for Blue data.
+		static int32_t	ms_lMixBitsPerSample;	// Sample size in bits for mixing.
+		static int32_t	ms_lDstBitsPerSample;	// Sample size in bits for Blue data.
 
-		static long	ms_lNumChannels;		// Number of channels (mono
+		static int32_t	ms_lNumChannels;		// Number of channels (mono
 													//  or stereo).
-		static short ms_sCutOffVolume;	// when to not mix samples...
+		static int16_t ms_sCutOffVolume;	// when to not mix samples...
 	};
 
 //////////////////////////////////////////////////////////////////////////////
@@ -167,15 +167,15 @@ public:
 	//  Allow use of mixing volume for other applications:
 	//  A level of 255 is identity.
 	//////////////////////////////////////////////////////////////////////////////
-	inline	UCHAR	ScaleByte(UCHAR ucByte,UCHAR	ucLevel)
+	inline	uint8_t	ScaleByte(uint8_t ucByte,uint8_t	ucLevel)
 		{
-		return UCHAR(CDVA::ms_asHighByte[DVA_SIZE + 
+		return uint8_t(CDVA::ms_asHighByte[DVA_SIZE + 
 			(ucLevel>>DVA_SHIFT)][ucByte]);
 		}
 
 	// More efficient for a block of data scaled the same:
-	inline	void	ScaleBytes(short sNumBytes,UCHAR* pucBytesIn,
-		UCHAR* pucBytesOut,UCHAR ucLevel)
+	inline	void	ScaleBytes(int16_t sNumBytes,uint8_t* pucBytesIn,
+		uint8_t* pucBytesOut,uint8_t ucLevel)
 		{
 		ASSERT(pucBytesIn);
 		ASSERT(pucBytesOut);
@@ -183,12 +183,12 @@ public:
         // Unsigned, always true. --ryan.
 		//ASSERT(ucLevel < 256);
 
-		short* psTable = CDVA::ms_asHighByte[DVA_SIZE + (ucLevel>>DVA_SHIFT)];	
+		int16_t* psTable = CDVA::ms_asHighByte[DVA_SIZE + (ucLevel>>DVA_SHIFT)];	
 
-		short i;
+		int16_t i;
 		for (i=0;i < sNumBytes;i++) 
 			{
-			pucBytesOut[i] = UCHAR(psTable[pucBytesIn[i]]);
+			pucBytesOut[i] = uint8_t(psTable[pucBytesIn[i]]);
 			}
 		}
 
@@ -199,7 +199,7 @@ public:
 	~CDVA(){};	// nothing to do....
 	//----------------------------------------------------------------------
 	// To save on registers, make this the same array:
-	static short	ms_asHighByte[DVA_SIZE * 2][256];	// for 16-bit sound
+	static int16_t	ms_asHighByte[DVA_SIZE * 2][256];	// for 16-bit sound
 
 	};
 

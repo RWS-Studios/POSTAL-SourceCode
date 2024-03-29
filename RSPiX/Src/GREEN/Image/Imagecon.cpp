@@ -124,7 +124,7 @@
 //						=========		=========
 //						RImage			RImage
 //						RPal				RPal
-//						ULONG ulType	RImage::Type ulType
+//						uint32_t ulType	RImage::Type ulType
 //						
 //						Removed #include of "imagetyp.h" b/c it has been obsoleted.
 //						Removed #include of "imagecon.h" b/c all it does is include
@@ -178,17 +178,17 @@
 //////////////////////////////////////////////////////////////////////
 // Prototypes.
 //////////////////////////////////////////////////////////////////////
-short	ConvertNoSupport(RImage* pImage);
-short	ConvertToBMP8(RImage* pImage);
-short	ConvertToBMP24(RImage* pImage);
-short	ConvertToSystem(RImage* pImage);	
-short	ConvertToSCREEN8_555(RImage* pImage);
-short ConvertToSCREEN8_565(RImage* pImage);
-short ConvertToSCREEN8_888(RImage* pImage);
-short ConvertToSCREEN16_555(RImage* pImage);
-short ConvertToSCREEN16_565(RImage* pImage);
-short ConvertToSCREEN24_RGB(RImage* pImage);
-short ConvertToSCREEN32_ARGB(RImage* pImage);
+int16_t	ConvertNoSupport(RImage* pImage);
+int16_t	ConvertToBMP8(RImage* pImage);
+int16_t	ConvertToBMP24(RImage* pImage);
+int16_t	ConvertToSystem(RImage* pImage);	
+int16_t	ConvertToSCREEN8_555(RImage* pImage);
+int16_t ConvertToSCREEN8_565(RImage* pImage);
+int16_t ConvertToSCREEN8_888(RImage* pImage);
+int16_t ConvertToSCREEN16_555(RImage* pImage);
+int16_t ConvertToSCREEN16_565(RImage* pImage);
+int16_t ConvertToSCREEN24_RGB(RImage* pImage);
+int16_t ConvertToSCREEN32_ARGB(RImage* pImage);
 
 IMAGELINKLATE(BMP8, ConvertToBMP8, NULL, NULL, NULL, NULL, NULL);
 IMAGELINKLATE(SYSTEM8, ConvertToSystem, NULL, NULL, NULL, NULL, NULL);
@@ -206,14 +206,14 @@ IMAGELINKLATE(SCREEN32_ARGB, ConvertToSCREEN32_ARGB, NULL, NULL, NULL, NULL, NUL
 //////////////////////////////////////////////////////////////////////
 
 // BMP compression format (BMP8RLE).
-short ConvertToBMP8RLE(RImage* pImage);
-short ConvertFromBMP8RLE(RImage* pImage);
+int16_t ConvertToBMP8RLE(RImage* pImage);
+int16_t ConvertFromBMP8RLE(RImage* pImage);
 // Link in conversion functions.
 IMAGELINKLATE(BMP8RLE, ConvertToBMP8RLE, ConvertFromBMP8RLE, NULL, NULL, NULL, NULL);
 
 // Monochrome BMP (BMP1).
-short ConvertToBMP1(RImage* pImage);
-short ConvertFromBMP1(RImage* pImage);
+int16_t ConvertToBMP1(RImage* pImage);
+int16_t ConvertFromBMP1(RImage* pImage);
 // Link in conversion functions.
 IMAGELINKLATE(BMP1, ConvertToBMP1, ConvertFromBMP1, NULL, NULL, NULL, NULL);
 
@@ -226,7 +226,7 @@ IMAGELINKLATE(BMP1, ConvertToBMP1, ConvertFromBMP1, NULL, NULL, NULL, NULL);
 //
 //////////////////////////////////////////////////////////////////////
 
-short ConvertNoSupport(RImage* /*pImage*/)
+int16_t ConvertNoSupport(RImage* /*pImage*/)
 {
 	TRACE("RImage::Convert - Conversion not supported - Invalid image type\n");
 	return RImage::NOT_SUPPORTED;
@@ -244,9 +244,9 @@ short ConvertNoSupport(RImage* /*pImage*/)
 //
 //////////////////////////////////////////////////////////////////////
 
-short	ConvertToBMP8(RImage* pImage)
+int16_t	ConvertToBMP8(RImage* pImage)
 {
-	short sReturn;
+	int16_t sReturn;
 
 	switch (pImage->m_type)
 	{
@@ -280,18 +280,18 @@ short	ConvertToBMP8(RImage* pImage)
 			pImage->m_pPalette->m_type = RPal::PDIB;
 			pImage->m_pPalette->m_sPalEntrySize = RPal::GetPalEntrySize(RPal::PDIB);
 
-			USHORT* usp555 = (USHORT*) p555Pal->m_pData;
-			ULONG* ulpDib = (ULONG*) pImage->m_pPalette->m_pData;
+			uint16_t* usp555 = (uint16_t*) p555Pal->m_pData;
+			uint32_t* ulpDib = (uint32_t*) pImage->m_pPalette->m_pData;
 
-			short i;
+			int16_t i;
 		
-			// The 555 viewed as USHORT as xR5|G5|B5
+			// The 555 viewed as uint16_t as xR5|G5|B5
 			//         viewed as 2 BYTES   G3|B5|x|R5|G2
-			// The DIB viewed as ULONG is Reserved|R|G|B
+			// The DIB viewed as uint32_t is Reserved|R|G|B
 			//         viewed as 4 BYTES  B|G|R|Reserved
 
 			for (i = p555Pal->m_sStartIndex; i < p555Pal->m_sStartIndex + p555Pal->m_sNumEntries; i++)
-				ulpDib[i] = (ULONG) (((usp555[i] & 0x7c00) << 9) + // Red
+				ulpDib[i] = (uint32_t) (((usp555[i] & 0x7c00) << 9) + // Red
 				                     ((usp555[i] & 0x03e0) << 6) + // Green
 											((usp555[i] & 0x001f) << 3)); // Blue
 
@@ -316,18 +316,18 @@ short	ConvertToBMP8(RImage* pImage)
 			pImage->m_pPalette->m_type = RPal::PDIB;
 			pImage->m_pPalette->m_sPalEntrySize = RPal::GetPalEntrySize(RPal::PDIB);
 
-			USHORT* usp565 = (USHORT*) p565Pal->m_pData;
-			ULONG* ulpDib = (ULONG*) pImage->m_pPalette->m_pData;
+			uint16_t* usp565 = (uint16_t*) p565Pal->m_pData;
+			uint32_t* ulpDib = (uint32_t*) pImage->m_pPalette->m_pData;
 
-			short i;
+			int16_t i;
 		
-			// The 565 when viewed as USHORT  R5|G6|B5
+			// The 565 when viewed as uint16_t  R5|G6|B5
 			//              viewed as 2 BYTES G3|B5|R5|G3
-			// The DIB when viewed as ULONG   Reserved|R|G|B
+			// The DIB when viewed as uint32_t   Reserved|R|G|B
 			//              viewed as 4 BYTES B|G|R|Reserved
 
 			for (i = p565Pal->m_sStartIndex; i < p565Pal->m_sStartIndex + p565Pal->m_sNumEntries; i++)
-				ulpDib[i] = (ULONG) (((usp565[i] & 0xf800) << 8) + // Red
+				ulpDib[i] = (uint32_t) (((usp565[i] & 0xf800) << 8) + // Red
 				                     ((usp565[i] & 0x07e0) << 5) + // Green
 											((usp565[i] & 0x001f) << 3)); // Blue
 
@@ -355,7 +355,7 @@ short	ConvertToBMP8(RImage* pImage)
 			IM_RGBTRIPLE* tp888 = (IM_RGBTRIPLE*) p888Pal->m_pData;
 			IM_RGBQUAD* qpDib = (IM_RGBQUAD*) pImage->m_pPalette->m_pData;
 		
-			short i;
+			int16_t i;
 
 			// The DIB format when viewed as a IM_RGBQUAD = B|G|R|Reserved
 			// The 888 palette     viewed as IM_RGBTRIPLE   B|G|R
@@ -395,9 +395,9 @@ short	ConvertToBMP8(RImage* pImage)
 //
 //////////////////////////////////////////////////////////////////////
 
-short	ConvertToBMP24(RImage* pImage)
+int16_t	ConvertToBMP24(RImage* pImage)
 {
-	short sReturn;
+	int16_t sReturn;
 
 	switch (pImage->m_type)
 	{
@@ -440,16 +440,16 @@ short	ConvertToBMP24(RImage* pImage)
 
 		case RImage::SCREEN32_ARGB:
 		{
-			long r, c, height, width, sPitch;
+			int32_t r, c, height, width, sPitch;
 
 			// Make sure that we copy the whole thing even if the
 			// height and width are negative values
-			height = labs((long)pImage->m_sHeight);
-			width = labs((long)pImage->m_sWidth);
+			height = labs((int32_t)pImage->m_sHeight);
+			width = labs((int32_t)pImage->m_sWidth);
 			sPitch = pImage->m_lPitch;
 
 			// Set a pointer to the 32-bit buffer before detaching
-			ULONG* ulp32 = (ULONG*) pImage->m_pData;
+			uint32_t* ulp32 = (uint32_t*) pImage->m_pData;
 
 			// Detach the 32-bit buffer from the Image
 			void* pDetachedMem = pImage->DetachData();
@@ -457,18 +457,18 @@ short	ConvertToBMP24(RImage* pImage)
 			// Create a new 24-bit buffer and set a pointer to the data
 			pImage->m_sDepth = 24;
 			pImage->m_lPitch = RImage::GetPitch(pImage->m_sWidth, pImage->m_sDepth);
-			if (pImage->CreateData(pImage->m_lPitch * (long)pImage->m_sHeight) == 0)
+			if (pImage->CreateData(pImage->m_lPitch * (int32_t)pImage->m_sHeight) == 0)
 				{
-				UCHAR* ucp24 = (UCHAR*) pImage->m_pData;
+				uint8_t* ucp24 = (uint8_t*) pImage->m_pData;
 
-				long sPitchWidth = sPitch / 4;
+				int32_t sPitchWidth = sPitch / 4;
 				for (r = 0; r < height; r++)
 					for (c = 0; c < width; c++)
 					{
-						ULONG ulPixel = ulp32[r*sPitchWidth + c];
-						ucp24[r*pImage->m_lPitch + 3*c+0]	= (UCHAR)  (ulPixel & 0x000000ff);       // Red
-						ucp24[r*pImage->m_lPitch + 3*c+1]	= (UCHAR) ((ulPixel & 0x0000ff00) >> 8); // Green
-				 		ucp24[r*pImage->m_lPitch + 3*c+2]	= (UCHAR) ((ulPixel & 0x00ff0000) >> 16);// Blue
+						uint32_t ulPixel = ulp32[r*sPitchWidth + c];
+						ucp24[r*pImage->m_lPitch + 3*c+0]	= (uint8_t)  (ulPixel & 0x000000ff);       // Red
+						ucp24[r*pImage->m_lPitch + 3*c+1]	= (uint8_t) ((ulPixel & 0x0000ff00) >> 8); // Green
+				 		ucp24[r*pImage->m_lPitch + 3*c+2]	= (uint8_t) ((ulPixel & 0x00ff0000) >> 16);// Blue
 					}
   		
 				RImage::DestroyDetachedData(&pDetachedMem);
@@ -479,27 +479,27 @@ short	ConvertToBMP24(RImage* pImage)
 			else
 				{
 				// Restore memory.
-				pImage->m_pMem		= (UCHAR*)pDetachedMem;
-				pImage->m_pData	= (UCHAR*)ulp32;
+				pImage->m_pMem		= (uint8_t*)pDetachedMem;
+				pImage->m_pData	= (uint8_t*)ulp32;
 				TRACE("ConvertToBMP24(): CreateData() failed.\n");
 				// Return old type.
-				sReturn = (short)pImage->m_type;
+				sReturn = (int16_t)pImage->m_type;
 				}
 			break;
 		}
 
 		case RImage::SCREEN16_555:
 		{
-			long r, c, height, width, sPitch;
+			int32_t r, c, height, width, sPitch;
 
 			// Make sure that we copy the whole thing even if the
 			// height and width are negative values
-			height = labs((long)pImage->m_sHeight);
-			width = labs((long)pImage->m_sWidth);
+			height = labs((int32_t)pImage->m_sHeight);
+			width = labs((int32_t)pImage->m_sWidth);
 			sPitch = pImage->m_lPitch;
 
 	  		// Set up a pointer to the 16-bit buffer before detaching
-			USHORT* usp16 = (USHORT*) pImage->m_pData;
+			uint16_t* usp16 = (uint16_t*) pImage->m_pData;
 
 			// Detach old 16-bit buffer from the Image
 			void* pDetachedMem = pImage->DetachData();
@@ -507,17 +507,17 @@ short	ConvertToBMP24(RImage* pImage)
 			// Create a new 24-bit buffer and set a pointer to the data
 			pImage->m_sDepth = 24;
 			pImage->m_lPitch = RImage::GetPitch(pImage->m_sWidth, pImage->m_sDepth);
-			pImage->CreateData(pImage->m_lPitch * (long)pImage->m_sHeight);
-			UCHAR* ucp24 = (UCHAR*) pImage->m_pData;
+			pImage->CreateData(pImage->m_lPitch * (int32_t)pImage->m_sHeight);
+			uint8_t* ucp24 = (uint8_t*) pImage->m_pData;
 
-			long sPitchWidth = sPitch/2;
+			int32_t sPitchWidth = sPitch/2;
 			for (r = 0; r < height; r++)
 				for (c = 0; c < width; c++)
 				{
-				 	USHORT usPixel = usp16[r*sPitchWidth + c];
-					ucp24[r*pImage->m_lPitch + 3*c+2] = (UCHAR) ((usPixel & 0x7c00) >> 7); // Red
-					ucp24[r*pImage->m_lPitch + 3*c+1] = (UCHAR) ((usPixel & 0x03e0) >> 2); // Green
-					ucp24[r*pImage->m_lPitch + 3*c+0] = (UCHAR) ((usPixel & 0x001f) << 3); // Blue
+				 	uint16_t usPixel = usp16[r*sPitchWidth + c];
+					ucp24[r*pImage->m_lPitch + 3*c+2] = (uint8_t) ((usPixel & 0x7c00) >> 7); // Red
+					ucp24[r*pImage->m_lPitch + 3*c+1] = (uint8_t) ((usPixel & 0x03e0) >> 2); // Green
+					ucp24[r*pImage->m_lPitch + 3*c+0] = (uint8_t) ((usPixel & 0x001f) << 3); // Blue
 				}
 			 	
 			RImage::DestroyDetachedData(&pDetachedMem);
@@ -529,16 +529,16 @@ short	ConvertToBMP24(RImage* pImage)
 
 		case RImage::SCREEN16_565:
 		{
-			long r, c, height, width, sPitch;
+			int32_t r, c, height, width, sPitch;
 
 			// Make sure that we copy the whole thing even if the
 			// height and width are negative values
-			height = labs((long)pImage->m_sHeight);
-			width = labs((long)pImage->m_sWidth);
+			height = labs((int32_t)pImage->m_sHeight);
+			width = labs((int32_t)pImage->m_sWidth);
 			sPitch = pImage->m_lPitch;
 
 			// Set a pointer to the 16-bit buffer before detaching
-			USHORT* usp16 = (USHORT*) pImage->m_pData;
+			uint16_t* usp16 = (uint16_t*) pImage->m_pData;
 
 			// Detach the 16-bit buffer from the Image
 			void* pDetachedMem = pImage->DetachData();
@@ -546,17 +546,17 @@ short	ConvertToBMP24(RImage* pImage)
 			// Create a new 24-bit buffer and set a pointer to the data
 			pImage->m_sDepth = 24;
 			pImage->m_lPitch = RImage::GetPitch(pImage->m_sWidth, pImage->m_sDepth);
-			pImage->CreateData(pImage->m_lPitch * (long)pImage->m_sHeight);
-			UCHAR* ucp24 = (UCHAR*) pImage->m_pData;
-			long sPitchWidth = sPitch/2;
+			pImage->CreateData(pImage->m_lPitch * (int32_t)pImage->m_sHeight);
+			uint8_t* ucp24 = (uint8_t*) pImage->m_pData;
+			int32_t sPitchWidth = sPitch/2;
 
 			for (r = 0; r < height; r++)
 				for (c = 0; c < width; c++)
 				{
-				 	USHORT usPixel = usp16[r*sPitchWidth + c];
-					ucp24[r*pImage->m_lPitch + 3*c+2] = (UCHAR) ((usPixel & 0xf800) >> 8); // Red
-					ucp24[r*pImage->m_lPitch + 3*c+1] = (UCHAR) ((usPixel & 0x07e0) >> 3); // Green
-					ucp24[r*pImage->m_lPitch + 3*c+0] = (UCHAR) ((usPixel & 0x001f) << 3); // Blue
+				 	uint16_t usPixel = usp16[r*sPitchWidth + c];
+					ucp24[r*pImage->m_lPitch + 3*c+2] = (uint8_t) ((usPixel & 0xf800) >> 8); // Red
+					ucp24[r*pImage->m_lPitch + 3*c+1] = (uint8_t) ((usPixel & 0x07e0) >> 3); // Green
+					ucp24[r*pImage->m_lPitch + 3*c+0] = (uint8_t) ((usPixel & 0x001f) << 3); // Blue
 				}
 
 			RImage::DestroyDetachedData(&pDetachedMem);
@@ -588,9 +588,9 @@ short	ConvertToBMP24(RImage* pImage)
 //
 //////////////////////////////////////////////////////////////////////
 
-short ConvertToSystem(RImage* pImage)
+int16_t ConvertToSystem(RImage* pImage)
 {
-	short sReturn = RImage::NOT_SUPPORTED;
+	int16_t sReturn = RImage::NOT_SUPPORTED;
 
 #ifdef WIN32
 	switch (pImage->m_type)
@@ -643,9 +643,9 @@ short ConvertToSystem(RImage* pImage)
 //
 //////////////////////////////////////////////////////////////////////
 
-short	ConvertToSCREEN8_555(RImage* pImage)
+int16_t	ConvertToSCREEN8_555(RImage* pImage)
 {
-	short sReturn;
+	int16_t sReturn;
 
 	switch (pImage->m_type)
 	{
@@ -669,18 +669,18 @@ short	ConvertToSCREEN8_555(RImage* pImage)
 			pImage->m_pPalette->m_type = RPal::P555;
 			pImage->m_pPalette->m_sPalEntrySize = RPal::GetPalEntrySize(RPal::P555);
 
-			ULONG* ulpDib = (ULONG*) pDibPal->m_pData;
-			USHORT* usp555 = (USHORT*) pImage->m_pPalette->m_pData;
+			uint32_t* ulpDib = (uint32_t*) pDibPal->m_pData;
+			uint16_t* usp555 = (uint16_t*) pImage->m_pPalette->m_pData;
 
-			short i;
+			int16_t i;
 		
-			// The DIB format when viewed as a ULONG is Reserved|R|G|B 
+			// The DIB format when viewed as a uint32_t is Reserved|R|G|B 
 			//                when viewed as 4 BYTES is B|G|R|Reserved
-			// Converting to 555 viewed as USHORT as xR5|G5|B5
+			// Converting to 555 viewed as uint16_t as xR5|G5|B5
 			//                   viewed as 2 BYTES   G3|B5|x|R5|G2
 
 			for (i = pDibPal->m_sStartIndex; i < pDibPal->m_sStartIndex + pDibPal->m_sNumEntries; i++)
-				usp555[i] = (USHORT) (((ulpDib[i] & 0x00f80000) >> 9) +	// Red
+				usp555[i] = (uint16_t) (((ulpDib[i] & 0x00f80000) >> 9) +	// Red
 							   			 ((ulpDib[i] & 0x0000f800) >> 6) +	// Green
 											 ((ulpDib[i] & 0x000000f8) >> 3));	// Blue
 
@@ -723,9 +723,9 @@ short	ConvertToSCREEN8_555(RImage* pImage)
 //
 //////////////////////////////////////////////////////////////////////
 
-short ConvertToSCREEN8_565(RImage* pImage)
+int16_t ConvertToSCREEN8_565(RImage* pImage)
 {
-	short sReturn;
+	int16_t sReturn;
 
 	switch (pImage->m_type)
 	{
@@ -749,18 +749,18 @@ short ConvertToSCREEN8_565(RImage* pImage)
 			pImage->m_pPalette->m_type = RPal::P565;
 			pImage->m_pPalette->m_sPalEntrySize = RPal::GetPalEntrySize(RPal::P565);
 
-			ULONG* ulpDib = (ULONG*) pDibPal->m_pData;
-			USHORT* usp565 = (USHORT*) pImage->m_pPalette->m_pData;
+			uint32_t* ulpDib = (uint32_t*) pDibPal->m_pData;
+			uint16_t* usp565 = (uint16_t*) pImage->m_pPalette->m_pData;
 
-			short i;
+			int16_t i;
 		
-			// The DIB format when viewed as a ULONG is Reserved|R|G|B 
+			// The DIB format when viewed as a uint32_t is Reserved|R|G|B 
 			//                when viewed as 4 BYTES is B|G|R|Reserved
-			// Converting to 565 viewed as USHORT as R5|G6|B5
+			// Converting to 565 viewed as uint16_t as R5|G6|B5
 			//                   viewed as 2 BYTES   G3|B5|R5|G3
 
 			for (i = pDibPal->m_sStartIndex; i < pDibPal->m_sStartIndex + pDibPal->m_sNumEntries; i++)
-				usp565[i] = (USHORT) (((ulpDib[i] & 0x00f80000) >> 8) +	// Red
+				usp565[i] = (uint16_t) (((ulpDib[i] & 0x00f80000) >> 8) +	// Red
 							   			 ((ulpDib[i] & 0x0000fc00) >> 5) +	// Green
 											 ((ulpDib[i] & 0x000000f8) >> 3));	// Blue
 
@@ -803,15 +803,15 @@ short ConvertToSCREEN8_565(RImage* pImage)
 // the palette entries from IM_RGBQUAD to the 888 "Screen Format" palette
 //
 // The normal RImage::BMP8 DIB palette
-//		when viewed as ULONG is Reserved|R|G|B
+//		when viewed as uint32_t is Reserved|R|G|B
 //
 // And the screen format is the same, so just change the image type
 //
 //////////////////////////////////////////////////////////////////////
 
-short ConvertToSCREEN8_888(RImage* pImage)
+int16_t ConvertToSCREEN8_888(RImage* pImage)
 {
-	short sReturn;
+	int16_t sReturn;
 
 	switch(pImage->m_type)
 	{
@@ -837,7 +837,7 @@ short ConvertToSCREEN8_888(RImage* pImage)
 			IM_RGBQUAD* qpDib = (IM_RGBQUAD*) pDibPal->m_pData;
 			IM_RGBTRIPLE* tp888 = (IM_RGBTRIPLE*) pImage->m_pPalette->m_pData;
 
-			short i;
+			int16_t i;
 
 			// The DIB format when viewed as a IM_RGBQUAD = B|G|R|Reserved
 			// Converting to 888 viewed as IM_RGBTRIPLE as  B|G|R
@@ -890,9 +890,9 @@ short ConvertToSCREEN8_888(RImage* pImage)
 //
 //////////////////////////////////////////////////////////////////////
 
-short ConvertToSCREEN16_555(RImage* pImage)
+int16_t ConvertToSCREEN16_555(RImage* pImage)
 {
-	short sReturn = RImage::NOT_SUPPORTED;
+	int16_t sReturn = RImage::NOT_SUPPORTED;
 
 	switch (pImage->m_type)
 	{
@@ -904,18 +904,18 @@ short ConvertToSCREEN16_555(RImage* pImage)
 
 		case RImage::BMP8:
 		{
-			long r, c, height, width, pitch;
+			int32_t r, c, height, width, pitch;
 
 			// Make sure that we copy the whole thing even if the
 			// height and width are negative values
 
-			height = labs((long)pImage->m_sHeight);
-			width = labs((long)pImage->m_sWidth);
+			height = labs((int32_t)pImage->m_sHeight);
+			width = labs((int32_t)pImage->m_sWidth);
 			pitch = pImage->m_lPitch;
 
 			// Set up pointers to the 8-bit buffer before detaching
-			UCHAR* ucp8 = pImage->m_pData;
-			ULONG* ulpPal = (ULONG*) pImage->m_pPalette->m_pData;
+			uint8_t* ucp8 = pImage->m_pData;
+			uint32_t* ulpPal = (uint32_t*) pImage->m_pPalette->m_pData;
 
 			// Detach the 8-bit buffer from the Image
 			void* pDetachedMemory = pImage->DetachData();
@@ -923,16 +923,16 @@ short ConvertToSCREEN16_555(RImage* pImage)
 			// Create a new 16-bit buffer
 			pImage->m_sDepth = 16;
 			pImage->m_lPitch = RImage::GetPitch(pImage->m_sWidth, pImage->m_sDepth);
-			pImage->CreateData(pImage->m_lPitch * (short)pImage->m_sHeight);
-			USHORT* usp16 = (USHORT*) pImage->m_pData;
-			UCHAR  ucIndex;
-			long dPitch = pImage->m_lPitch / (pImage->m_sDepth / 8);
+			pImage->CreateData(pImage->m_lPitch * (int16_t)pImage->m_sHeight);
+			uint16_t* usp16 = (uint16_t*) pImage->m_pData;
+			uint8_t  ucIndex;
+			int32_t dPitch = pImage->m_lPitch / (pImage->m_sDepth / 8);
 
 			for (r = 0; r < height; r++)
 				for (c = 0; c < width; c++)
 				{
 					ucIndex = ucp8[r*pitch + c];
-					usp16[r*dPitch + c] = (USHORT) (((ulpPal[ucIndex] & 0x00f80000) >> 9) + // Red
+					usp16[r*dPitch + c] = (uint16_t) (((ulpPal[ucIndex] & 0x00f80000) >> 9) + // Red
 					                                ((ulpPal[ucIndex] & 0x0000f800) >> 6) + // Green
 															  ((ulpPal[ucIndex] & 0x000000f8) >> 3)); // Blue
 				}
@@ -947,16 +947,16 @@ short ConvertToSCREEN16_555(RImage* pImage)
 
 		case RImage::BMP24:
 		{
-			long r, c, height, width, sPitch;
+			int32_t r, c, height, width, sPitch;
 
 			// Make sure that we copy the whole thing even if the
 			// height and width are negative values
-			height = labs((long)pImage->m_sHeight);
-			width = labs((long)pImage->m_sWidth);
+			height = labs((int32_t)pImage->m_sHeight);
+			width = labs((int32_t)pImage->m_sWidth);
 			sPitch = pImage->m_lPitch;
 
 	  		// Set up a pointer to the 24-bit buffer before detaching
-			UCHAR* ucp24 = (UCHAR*) pImage->m_pData;
+			uint8_t* ucp24 = (uint8_t*) pImage->m_pData;
 
 			// Detach old 24-bit buffer from the Image
 			void* pDetachedMem = pImage->DetachData();
@@ -964,16 +964,16 @@ short ConvertToSCREEN16_555(RImage* pImage)
 			// Create a new 16-bit buffer and set a pointer to the data
 			pImage->m_sDepth = 16;
 			pImage->m_lPitch = RImage::GetPitch(pImage->m_sWidth, pImage->m_sDepth);
-			pImage->CreateData(pImage->m_lPitch * (long)pImage->m_sHeight);
-			USHORT* usp16 = (USHORT*) pImage->m_pData;
-			long dPitch = pImage->m_lPitch / (pImage->m_sDepth / 8);
+			pImage->CreateData(pImage->m_lPitch * (int32_t)pImage->m_sHeight);
+			uint16_t* usp16 = (uint16_t*) pImage->m_pData;
+			int32_t dPitch = pImage->m_lPitch / (pImage->m_sDepth / 8);
 
 			for (r = 0 ; r < height; r++)
 				for (c = 0; c < width; c++)
-				 	usp16[r*dPitch + c] = (USHORT) (
-				 								 ((((USHORT) ucp24[r*sPitch + 3*c+2]) & 0x00f8) << 7) + // Red
-												 ((((USHORT) ucp24[r*sPitch + 3*c+1]) & 0x00f8) << 2) + // Green
-												 ((((USHORT) ucp24[r*sPitch + 3*c+0]) & 0x00f8) >> 3)); // Blue
+				 	usp16[r*dPitch + c] = (uint16_t) (
+				 								 ((((uint16_t) ucp24[r*sPitch + 3*c+2]) & 0x00f8) << 7) + // Red
+												 ((((uint16_t) ucp24[r*sPitch + 3*c+1]) & 0x00f8) << 2) + // Green
+												 ((((uint16_t) ucp24[r*sPitch + 3*c+0]) & 0x00f8) >> 3)); // Blue
 			 	
 			RImage::DestroyDetachedData(&pDetachedMem);
 
@@ -1031,9 +1031,9 @@ short ConvertToSCREEN16_555(RImage* pImage)
 //
 //////////////////////////////////////////////////////////////////////
 
-short ConvertToSCREEN16_565(RImage* pImage)
+int16_t ConvertToSCREEN16_565(RImage* pImage)
 {
- 	short sReturn = RImage::NOT_SUPPORTED;
+ 	int16_t sReturn = RImage::NOT_SUPPORTED;
 
 	switch (pImage->m_type)
 	{
@@ -1045,18 +1045,18 @@ short ConvertToSCREEN16_565(RImage* pImage)
 
 		case RImage::BMP8:
 		{
-			long r, c, height, width, pitch;
+			int32_t r, c, height, width, pitch;
 
 			// Make sure that we copy the whole thing even if the
 			// height and width are negative values
 
-			height = labs((long)pImage->m_sHeight);
-			width = labs((long)pImage->m_sWidth);
+			height = labs((int32_t)pImage->m_sHeight);
+			width = labs((int32_t)pImage->m_sWidth);
 			pitch = pImage->m_lPitch;
 
 			// Set up a pointer to the old 8-bit buffer before detaching
-			UCHAR* ucp8 = pImage->m_pData;
-			ULONG* ulpPal = (ULONG*) pImage->m_pPalette->m_pData;
+			uint8_t* ucp8 = pImage->m_pData;
+			uint32_t* ulpPal = (uint32_t*) pImage->m_pPalette->m_pData;
 
 			// Detach the 8-bit buffer from the Image
 			void* pDetachedMem = pImage->DetachData();
@@ -1064,16 +1064,16 @@ short ConvertToSCREEN16_565(RImage* pImage)
 			// Create a new 16-bit buffer and set pointers to the data
 			pImage->m_sDepth = 16;
 			pImage->m_lPitch = RImage::GetPitch(pImage->m_sWidth, pImage->m_sDepth);
-			pImage->CreateData(pImage->m_lPitch * (long)pImage->m_sHeight);
-			USHORT* usp16 = (USHORT*) pImage->m_pData;
-			UCHAR  ucIndex;
-			long dPitch = pImage->m_lPitch / (pImage->m_sDepth/8);
+			pImage->CreateData(pImage->m_lPitch * (int32_t)pImage->m_sHeight);
+			uint16_t* usp16 = (uint16_t*) pImage->m_pData;
+			uint8_t  ucIndex;
+			int32_t dPitch = pImage->m_lPitch / (pImage->m_sDepth/8);
 
 			for (r = 0; r < height; r++)
 				for (c = 0; c < width; c++)
 				{
 					ucIndex = ucp8[r*pitch + c];
-					usp16[r*dPitch + c] = (USHORT) (((ulpPal[ucIndex] & 0x00f80000) >> 8) + // Red
+					usp16[r*dPitch + c] = (uint16_t) (((ulpPal[ucIndex] & 0x00f80000) >> 8) + // Red
 					                                ((ulpPal[ucIndex] & 0x0000fc00) >> 5) + // Green
 											   			  ((ulpPal[ucIndex] & 0x000000f8) >> 3)); // Blue
 				}
@@ -1088,16 +1088,16 @@ short ConvertToSCREEN16_565(RImage* pImage)
 
 		case RImage::BMP24:
 		{
-			long r, c, height, width, sPitch;
+			int32_t r, c, height, width, sPitch;
 
 			// Make sure that we copy the whole thing even if the
 			// height and width are negative values
-			height = labs((long)pImage->m_sHeight);
-			width = labs((long)pImage->m_sWidth);
+			height = labs((int32_t)pImage->m_sHeight);
+			width = labs((int32_t)pImage->m_sWidth);
 			sPitch = pImage->m_lPitch;
 
 			// Set a pointer to the 24-bit buffer before detaching
-			UCHAR* ucp24 = (UCHAR*) pImage->m_pData;
+			uint8_t* ucp24 = (uint8_t*) pImage->m_pData;
 
 			// Detach the 24-bit buffer from the Image
 			void* pDetachedMem = pImage->DetachData();
@@ -1105,16 +1105,16 @@ short ConvertToSCREEN16_565(RImage* pImage)
 			// Create a new 16-bit buffer and set a pointer to the data
 			pImage->m_sDepth = 16;
 			pImage->m_lPitch = RImage::GetPitch(pImage->m_sWidth, pImage->m_sDepth);
-			pImage->CreateData(pImage->m_lPitch * (long)pImage->m_sHeight);
-			USHORT* usp16 = (USHORT*) pImage->m_pData;
-			long dPitch = pImage->m_lPitch / (pImage->m_sDepth / 8);
+			pImage->CreateData(pImage->m_lPitch * (int32_t)pImage->m_sHeight);
+			uint16_t* usp16 = (uint16_t*) pImage->m_pData;
+			int32_t dPitch = pImage->m_lPitch / (pImage->m_sDepth / 8);
 
 			for (r = 0 ; r < height; r++)
 				for (c = 0; c < width; c++)  
-					usp16[r*dPitch + c] = (USHORT) (
-													((((USHORT) ucp24[r*sPitch + 3*c+2]) & 0x00f8) << 8) + // Red
-													((((USHORT) ucp24[r*sPitch + 3*c+1]) & 0x00fc) << 3) + // Green
-													((((USHORT) ucp24[r*sPitch + 3*c+0]) & 0x00f8) >> 3)); // Blue
+					usp16[r*dPitch + c] = (uint16_t) (
+													((((uint16_t) ucp24[r*sPitch + 3*c+2]) & 0x00f8) << 8) + // Red
+													((((uint16_t) ucp24[r*sPitch + 3*c+1]) & 0x00fc) << 3) + // Green
+													((((uint16_t) ucp24[r*sPitch + 3*c+0]) & 0x00f8) >> 3)); // Blue
   	
 			RImage::DestroyDetachedData(&pDetachedMem);
 
@@ -1173,9 +1173,9 @@ short ConvertToSCREEN16_565(RImage* pImage)
 //
 //////////////////////////////////////////////////////////////////////
 
-short ConvertToSCREEN24_RGB(RImage* pImage)
+int16_t ConvertToSCREEN24_RGB(RImage* pImage)
 {
-	short sReturn = RImage::NOT_SUPPORTED;
+	int16_t sReturn = RImage::NOT_SUPPORTED;
 
 	switch (pImage->m_type)
 	{
@@ -1187,18 +1187,18 @@ short ConvertToSCREEN24_RGB(RImage* pImage)
 
 		case RImage::BMP8:
 		{
-			long r, c, height, width, sPitch, dPitch;
+			int32_t r, c, height, width, sPitch, dPitch;
 
 			// Make sure that we copy the whole thing even if the
 			// height and width are negative values
 
-			height = labs((long)pImage->m_sHeight);
-			width = labs((long)pImage->m_sWidth);
+			height = labs((int32_t)pImage->m_sHeight);
+			width = labs((int32_t)pImage->m_sWidth);
 			sPitch = pImage->m_lPitch;
 
 			// Set up a pointer to the 8-bit buffer before detaching
-			UCHAR* ucp8 = pImage->m_pData;
-			ULONG* ulPal = (ULONG*) pImage->m_pPalette->m_pData;
+			uint8_t* ucp8 = pImage->m_pData;
+			uint32_t* ulPal = (uint32_t*) pImage->m_pPalette->m_pData;
 
 			// Detach the 8-bit buffer from the Image
 			void* pDetachedMem = pImage->DetachData();
@@ -1206,18 +1206,18 @@ short ConvertToSCREEN24_RGB(RImage* pImage)
 			// Create a new 24-bit buffer and set a pointer to the data
 			pImage->m_sDepth = 24;
 			dPitch = pImage->m_lPitch = RImage::GetPitch(pImage->m_sWidth, pImage->m_sDepth);
-			pImage->CreateData(pImage->m_lPitch * (long)pImage->m_sHeight);
-			UCHAR* ucp24 = (UCHAR*) pImage->m_pData;
+			pImage->CreateData(pImage->m_lPitch * (int32_t)pImage->m_sHeight);
+			uint8_t* ucp24 = (uint8_t*) pImage->m_pData;
 
-			ULONG ulColor;
+			uint32_t ulColor;
 
 			for (r = 0; r < height; r++)
 				for (c = 0; c < width; c++)
 				{
 					ulColor = ulPal[ucp8[r*sPitch + c]];
-					ucp24[r*dPitch + 3*c+0] = (UCHAR) (ulColor & 0x000000ff);
-					ucp24[r*dPitch + 3*c+1] = (UCHAR) ((ulColor & 0x0000ff00) / 0x100);
-					ucp24[r*dPitch + 3*c+2] = (UCHAR) ((ulColor & 0x00ff0000) / 0x10000);
+					ucp24[r*dPitch + 3*c+0] = (uint8_t) (ulColor & 0x000000ff);
+					ucp24[r*dPitch + 3*c+1] = (uint8_t) ((ulColor & 0x0000ff00) / 0x100);
+					ucp24[r*dPitch + 3*c+2] = (uint8_t) ((ulColor & 0x00ff0000) / 0x10000);
 				}
 		
 			RImage::DestroyDetachedData(&pDetachedMem);
@@ -1285,9 +1285,9 @@ short ConvertToSCREEN24_RGB(RImage* pImage)
 //
 //////////////////////////////////////////////////////////////////////
 
-short ConvertToSCREEN32_ARGB(RImage* pImage)
+int16_t ConvertToSCREEN32_ARGB(RImage* pImage)
 {
-	short sReturn = RImage::NOT_SUPPORTED;
+	int16_t sReturn = RImage::NOT_SUPPORTED;
 
 	switch (pImage->m_type)
 	{
@@ -1299,18 +1299,18 @@ short ConvertToSCREEN32_ARGB(RImage* pImage)
 
 		case RImage::BMP8:
 		{
-			long r, c, height, width, pitch;
+			int32_t r, c, height, width, pitch;
 
 			// Make sure that we copy the whole thing even if the
 			// height and width are negative values
 
-			height = labs((long)pImage->m_sHeight);
-			width = labs((long)pImage->m_sWidth);
+			height = labs((int32_t)pImage->m_sHeight);
+			width = labs((int32_t)pImage->m_sWidth);
 			pitch = pImage->m_lPitch;
 
 			// Set up a pointer to the 8-bit buffer before detaching
-			UCHAR* ucp8 = pImage->m_pData;
-			ULONG* ulPal = (ULONG*) pImage->m_pPalette->m_pData;
+			uint8_t* ucp8 = pImage->m_pData;
+			uint32_t* ulPal = (uint32_t*) pImage->m_pPalette->m_pData;
 
 			// Detach the 8-bit buffer from the Image
 			void* pDetachedMem = pImage->DetachData();
@@ -1318,9 +1318,9 @@ short ConvertToSCREEN32_ARGB(RImage* pImage)
 			// Create a new 32-bit buffer and set a pointer to the data
 			pImage->m_sDepth = 32;
 			pImage->m_lPitch = RImage::GetPitch(pImage->m_sWidth, pImage->m_sDepth);
-			pImage->CreateData(pImage->m_lPitch * (long)pImage->m_sHeight);
-			ULONG* ulp32 = (ULONG*) pImage->m_pData;
-			long dLongPitch = pImage->m_lPitch/4;
+			pImage->CreateData(pImage->m_lPitch * (int32_t)pImage->m_sHeight);
+			uint32_t* ulp32 = (uint32_t*) pImage->m_pData;
+			int32_t dLongPitch = pImage->m_lPitch/4;
 
 			for (r = 0; r < height; r++)
 				for (c = 0; c < width; c++)
@@ -1336,16 +1336,16 @@ short ConvertToSCREEN32_ARGB(RImage* pImage)
 
 		case RImage::BMP24:
 		{
-			long r, c, height, width, sPitch;
+			int32_t r, c, height, width, sPitch;
 
 			// Make sure that we copy the whole thing even if the
 			// height and width are negative values
-			height = labs((long)pImage->m_sHeight);
-			width = labs((long)pImage->m_sWidth);
+			height = labs((int32_t)pImage->m_sHeight);
+			width = labs((int32_t)pImage->m_sWidth);
 			sPitch = pImage->m_lPitch;
 
 			// Set a pointer to the 24-bit buffer before detaching
-			UCHAR* ucp24 = (UCHAR*) pImage->m_pData;
+			uint8_t* ucp24 = (uint8_t*) pImage->m_pData;
 
 			// Detach the 24-bit buffer from the Image
 			void* pDetachedMem = pImage->DetachData();
@@ -1353,16 +1353,16 @@ short ConvertToSCREEN32_ARGB(RImage* pImage)
 			// Create a new 32-bit buffer and set a pointer to the data
 			pImage->m_sDepth = 32;
 			pImage->m_lPitch = RImage::GetPitch(pImage->m_sWidth, pImage->m_sDepth);
-			pImage->CreateData(pImage->m_lPitch * (long)pImage->m_sHeight);
-			ULONG* ulp32 = (ULONG*) pImage->m_pData;
-			long dLongPitch = pImage->m_lPitch/4;
+			pImage->CreateData(pImage->m_lPitch * (int32_t)pImage->m_sHeight);
+			uint32_t* ulp32 = (uint32_t*) pImage->m_pData;
+			int32_t dLongPitch = pImage->m_lPitch/4;
 
 			for (r = 0 ; r < height; r++)
 				for (c = 0; c < width; c++)  
-					ulp32[r*dLongPitch + c] = (ULONG) (
-														((ULONG) ucp24[r*sPitch + 3*c+2] * 0x10000) +
-														((ULONG) ucp24[r*sPitch + 3*c+1] * 0x100) +
-														((ULONG) ucp24[r*sPitch + 3*c+0])) ;
+					ulp32[r*dLongPitch + c] = (uint32_t) (
+														((uint32_t) ucp24[r*sPitch + 3*c+2] * 0x10000) +
+														((uint32_t) ucp24[r*sPitch + 3*c+1] * 0x100) +
+														((uint32_t) ucp24[r*sPitch + 3*c+0])) ;
   	
 			RImage::DestroyDetachedData(&pDetachedMem);
 
@@ -1417,7 +1417,7 @@ short ConvertToSCREEN32_ARGB(RImage* pImage)
 // Description of this process from Win32 documentation:
 // This format can be compressed in encoded or absolute modes. Both 
 // modes can occur anywhere in the same bitmap. 
-// ·	Encoded mode consists of two bytes: the first byte specifies the
+// ï¿½	Encoded mode consists of two bytes: the first byte specifies the
 // number of consecutive pixels to be drawn using the color index 
 // contained in the second byte. In addition, the first byte of the pair 
 // can be set to zero to indicate an escape that denotes an end of line, 
@@ -1433,7 +1433,7 @@ short ConvertToSCREEN32_ARGB(RImage* pImage)
 // indicating the horizontal and vertical offsets of the next pixel from 
 // the current position.
 //
-// ·	In absolute mode, the first byte is zero and the second byte is a 
+// ï¿½	In absolute mode, the first byte is zero and the second byte is a 
 // value in the range 03H through FFH. The second byte represents the 
 // number of bytes that follow, each of which contains the color index 
 // of a single pixel. When the second byte is 2 or less, the escape has 
@@ -1442,9 +1442,9 @@ short ConvertToSCREEN32_ARGB(RImage* pImage)
 //   
 //
 //////////////////////////////////////////////////////////////////////
-short ConvertFromBMP8RLE(RImage* pImage)
+int16_t ConvertFromBMP8RLE(RImage* pImage)
 	{
-	short	sRes	= RImage::NOT_SUPPORTED;	// Assume failure.
+	int16_t	sRes	= RImage::NOT_SUPPORTED;	// Assume failure.
 
 	ASSERT(pImage->m_type == RImage::BMP8RLE);
 
@@ -1457,21 +1457,21 @@ short ConvertFromBMP8RLE(RImage* pImage)
 
 	// Create a new 8-bit uncompressed buffer and set a pointer to the 
 	// data.  Leave the current pitch.
-	if (pImage->CreateData(pImage->m_lPitch * (long)pImage->m_sHeight) == 0)
+	if (pImage->CreateData(pImage->m_lPitch * (int32_t)pImage->m_sHeight) == 0)
 		{
 		U8*	pu8Uncomp	= pImage->m_pData;
 
 		// We must flip the image during decompression.
 		// This should work for both negative and positive
 		// pitch buffers (i.e., upside down and right side up).
-		long	lPitch	= -pImage->m_lPitch;
-		pu8Uncomp		= pu8Uncomp + pImage->m_lPitch * ((long)pImage->m_sHeight - 1);
+		int32_t	lPitch	= -pImage->m_lPitch;
+		pu8Uncomp		= pu8Uncomp + pImage->m_lPitch * ((int32_t)pImage->m_sHeight - 1);
 		U8*	pu8Row	= pu8Uncomp;
 
 		// Actual decompression.  See function header for details.
 		U8	u8Num;	// Num pixels to run.
 		U8	u8Pixel;	// Pixel to run.
-		short	sDone	= FALSE;
+		int16_t	sDone	= FALSE;
 		while (sDone == FALSE && pu8Comp < pu8End)
 			{
 			// First byte is number of pixels to run, if not 0.
@@ -1539,13 +1539,13 @@ short ConvertFromBMP8RLE(RImage* pImage)
 
 		pImage->m_type = RImage::BMP8;
 
-		sRes = (short)pImage->m_type;
+		sRes = (int16_t)pImage->m_type;
 		}
 	else
 		{
 		TRACE("ConvertFromBMP8RLE(): CreateData() failed.\n");
 		// Re-attach old buffer.
-		pImage->m_pMem	= (UCHAR*)pvDetachedMem;
+		pImage->m_pMem	= (uint8_t*)pvDetachedMem;
 		}
 
 	return sRes;
@@ -1559,9 +1559,9 @@ short ConvertFromBMP8RLE(RImage* pImage)
 // ConvertFromBMP8RLE.
 //
 //////////////////////////////////////////////////////////////////////
-short ConvertToBMP8RLE(RImage* pImage)
+int16_t ConvertToBMP8RLE(RImage* pImage)
 	{
-	short	sRes	= RImage::NOT_SUPPORTED;	// Assume failure.
+	int16_t	sRes	= RImage::NOT_SUPPORTED;	// Assume failure.
 
 	// Only certain types can be converted from.
 	switch (pImage->m_type)
@@ -1574,8 +1574,8 @@ short ConvertToBMP8RLE(RImage* pImage)
 			// We must flip the image during compression.
 			// This should work for both negative and positive
 			// pitch buffers (i.e., upside down and right side up).
-			long	lPitch	= -pImage->m_lPitch;
-			pu8Uncomp		= pu8Uncomp + pImage->m_lPitch * ((long)pImage->m_sHeight - 1);
+			int32_t	lPitch	= -pImage->m_lPitch;
+			pu8Uncomp		= pu8Uncomp + pImage->m_lPitch * ((int32_t)pImage->m_sHeight - 1);
 
 			// Detach the 8-bit uncompressed buffer from the Image
 			void* pvDetachedMem = pImage->DetachData();
@@ -1591,23 +1591,23 @@ short ConvertToBMP8RLE(RImage* pImage)
 			// assuming 2 times the pixels plus the height times 2 (2 bytes for each end
 			// of line) plus 2 bytes for the end of bitmap is good enough.  
 			// 2 * ulSize + lHeight * 2 + 2.
-			if (pImage->CreateData(2 * pImage->m_ulSize + (long)pImage->m_sHeight * 2 + 2) == 0)
+			if (pImage->CreateData(2 * pImage->m_ulSize + (int32_t)pImage->m_sHeight * 2 + 2) == 0)
 				{
 				U8*	pu8Comp		= pImage->m_pData;
 
 				// Actual compression.  See function header for details.
 				U8*	pu8Row	= pu8Uncomp;
-				long	lRowRemain;
-				long	lRun;
+				int32_t	lRowRemain;
+				int32_t	lRun;
 
 				// Compress until we exceed buffer.  Nothing has explicitly
 				// said we should, but we will try to be row based.  This works
 				// well for flipping the image while we're compressing.
 				// Note that we never use the escape for moving the current position.
 				// It seems to me this would only be useful in animation.
-				for (long lNumLines = (long)pImage->m_sHeight; lNumLines > 0; lNumLines--)
+				for (int32_t lNumLines = (int32_t)pImage->m_sHeight; lNumLines > 0; lNumLines--)
 					{
-					lRowRemain	= (long)pImage->m_sWidth;
+					lRowRemain	= (int32_t)pImage->m_sWidth;
 
 					while (lRowRemain > 0)
 						{
@@ -1686,7 +1686,7 @@ short ConvertToBMP8RLE(RImage* pImage)
 
 
 				// Get size of compressed buffer.
-				ULONG	ulSize	= (pu8Comp - pImage->m_pData);
+				uint32_t	ulSize	= (pu8Comp - pImage->m_pData);
 
 				// Deallocate old buffer.
 				RImage::DestroyDetachedData(&pvDetachedMem);
@@ -1708,18 +1708,18 @@ short ConvertToBMP8RLE(RImage* pImage)
 					{
 					TRACE("ConvertToBMP8RLE(): CreateData() failed for second compressed buffer.\n");
 					// Re-attach old buffer.
-					pImage->m_pMem	= (UCHAR*)pvDetachedMem;
+					pImage->m_pMem	= (uint8_t*)pvDetachedMem;
 					}
 
 				pImage->m_type = RImage::BMP8RLE;
 
-				sRes = (short)pImage->m_type;
+				sRes = (int16_t)pImage->m_type;
 				}
 			else
 				{
 				TRACE("ConvertToBMP8RLE(): CreateData() failed.\n");
 				// Re-attach old buffer.
-				pImage->m_pMem	= (UCHAR*)pvDetachedMem;
+				pImage->m_pMem	= (uint8_t*)pvDetachedMem;
 				}
 
 			break;
@@ -1739,9 +1739,9 @@ short ConvertToBMP8RLE(RImage* pImage)
 // is NOT significant to BMP1 format (1 == Black, 0 == White).
 //
 //////////////////////////////////////////////////////////////////////
-short ConvertFromBMP1(RImage* pImage)
+int16_t ConvertFromBMP1(RImage* pImage)
 	{
-	short	sRes	= RImage::NOT_SUPPORTED;	// Assume failure.
+	int16_t	sRes	= RImage::NOT_SUPPORTED;	// Assume failure.
 
 	// Set up a pointer to the 1-bit packed buffer before detaching.
 	U8*	pu8Src	= pImage->m_pData;
@@ -1756,7 +1756,7 @@ short ConvertFromBMP1(RImage* pImage)
 	pImage->m_sDepth	= 8;
 
 	// Remember old pitch.
-	long	lSrcPitch	= pImage->m_lPitch;
+	int32_t	lSrcPitch	= pImage->m_lPitch;
 
 	// Compute the new pitch.  Preserve sign.
 	if (pImage->m_lPitch > 0)
@@ -1777,11 +1777,11 @@ short ConvertFromBMP1(RImage* pImage)
 		U8*	pu8SrcRow	= pu8Src;
 		U8*	pu8DstRow	= pu8Dst;
 
-		long	lRows	= (long)pImage->m_sHeight;
-		long	lCols;
+		int32_t	lRows	= (int32_t)pImage->m_sHeight;
+		int32_t	lCols;
 		while (lRows-- > 0)
 			{
-			lCols	= (long)pImage->m_sWidth / 8;
+			lCols	= (int32_t)pImage->m_sWidth / 8;
 			while (lCols-- > 0)
 				{
 				// Pack a byte.
@@ -1810,13 +1810,13 @@ short ConvertFromBMP1(RImage* pImage)
 		pImage->m_type = RImage::BMP8;
 
 		// Set return value.
-		sRes = (short)pImage->m_type;
+		sRes = (int16_t)pImage->m_type;
 		}
 	else
 		{
 		TRACE("ConvertToBMP1(): CreateData() failed.\n");
 		// Re-attach old buffer.
-		pImage->m_pMem	= (UCHAR*)pvDetachedMem;
+		pImage->m_pMem	= (uint8_t*)pvDetachedMem;
 		}
 
 	return sRes;
@@ -1828,9 +1828,9 @@ short ConvertFromBMP1(RImage* pImage)
 // is NOT significant to this format (1 == Black, 0 == White).
 //
 //////////////////////////////////////////////////////////////////////
-short ConvertToBMP1(RImage* pImage)
+int16_t ConvertToBMP1(RImage* pImage)
 	{
-	short	sRes	= RImage::NOT_SUPPORTED;	// Assume failure.
+	int16_t	sRes	= RImage::NOT_SUPPORTED;	// Assume failure.
 
 	// Only certain types can be converted from.
 	switch (pImage->m_type)
@@ -1850,7 +1850,7 @@ short ConvertToBMP1(RImage* pImage)
 			pImage->m_sDepth	= 1;
 
 			// Remember old pitch.
-			long	lSrcPitch	= pImage->m_lPitch;
+			int32_t	lSrcPitch	= pImage->m_lPitch;
 
 			// If there is a partial byte . . .
 			if ((pImage->m_lPitch % 8) != 0)
@@ -1873,7 +1873,7 @@ short ConvertToBMP1(RImage* pImage)
 				}
 
 			// Allocate new data.  This call sets ulSize.  Preserve lWidth, lHeight.
-			if (pImage->CreateData((long)pImage->m_sHeight * ABS(pImage->m_lPitch)) == 0)
+			if (pImage->CreateData((int32_t)pImage->m_sHeight * ABS(pImage->m_lPitch)) == 0)
 				{
 				// Bit packed destination.
 				U8*	pu8Dst	= pImage->m_pData;
@@ -1884,11 +1884,11 @@ short ConvertToBMP1(RImage* pImage)
 				// Converts non-zero values to a 1 and increments ptr.
 				#define CHECK_NONZERO_INC(p)	((*(p)++ == 0) ? 0 : 1)
 
-				long	lRows	= (long)pImage->m_sHeight;
-				long	lCols;
+				int32_t	lRows	= (int32_t)pImage->m_sHeight;
+				int32_t	lCols;
 				while (lRows-- > 0)
 					{
-					lCols	= (long)pImage->m_sWidth / 8;
+					lCols	= (int32_t)pImage->m_sWidth / 8;
 					while (lCols-- > 0)
 						{
 						// Pack a byte.
@@ -1917,13 +1917,13 @@ short ConvertToBMP1(RImage* pImage)
 				pImage->m_type = RImage::BMP1;
 
 				// Set return value.
-				sRes = (short)pImage->m_type;
+				sRes = (int16_t)pImage->m_type;
 				}
 			else
 				{
 				TRACE("ConvertToBMP1(): CreateData() failed.\n");
 				// Re-attach old buffer.
-				pImage->m_pMem	= (UCHAR*)pvDetachedMem;
+				pImage->m_pMem	= (uint8_t*)pvDetachedMem;
 				}
 
 			break;

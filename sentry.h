@@ -63,15 +63,15 @@ class CSentry : public CDoofus
 		CAnim3D		m_animBaseDie;						// animation for the base of the gun
 
 		CBulletFest	m_bullets;							// Generic bullet interface.
-		long			m_lLastBulletTime;				// Last time a bullet was fired.
-		short			m_sNumRounds;						// Number of rounds remaining in the gun
-		short			m_sRoundsPerShot;					// How many bullets does it fire at once
-		long			m_lSqDistRange;					// Range in pixels squared.
-		long			m_lShootDelay;						// Time to wait between shots
+		int32_t			m_lLastBulletTime;				// Last time a bullet was fired.
+		int16_t			m_sNumRounds;						// Number of rounds remaining in the gun
+		int16_t			m_sRoundsPerShot;					// How many bullets does it fire at once
+		int32_t			m_lSqDistRange;					// Range in pixels squared.
+		int32_t			m_lShootDelay;						// Time to wait between shots
 		double		m_dAngularVelocity;				// Amount it can turn in degrees/second
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
+		static int16_t ms_sFileCount;
 
 		// "Constant" values that we want to be able to tune using the editor
 		static double ms_dTooCloseDistance;	// Close enough to hit CDude
@@ -80,16 +80,16 @@ class CSentry : public CDoofus
 		static double ms_dInRangeHigh;		// within weapon range
 		static double ms_dGravity;				// Gravity for falling
 		static double ms_dBlowupVelocity;	// Initial blast velocity
-		static long ms_lRandomAvoidTime;		// Time to wander before looking again
-		static long ms_lReseekTime;			// Time to wait before doing the next 'find'
-		static long ms_lWatchWaitTime;		// Watch your shot go
-		static long ms_lPatrolTime;			// Wait this long before shooting
-		static long ms_lDeathTimeout;			// Wait around after dying
-		static long ms_lBurningRunTime;		// Run this time before turning
-		static short ms_sHitLimit;				// Number of starting hit points
-		static short ms_sBurntBrightness;	// Brightness level when burnt
-		static long ms_lMaxShootTime;			// Maximum in ms of continuous shooting.
-		static long ms_lReselectDudeTime;	// Time before looking for a closer dude.
+		static int32_t ms_lRandomAvoidTime;		// Time to wander before looking again
+		static int32_t ms_lReseekTime;			// Time to wait before doing the next 'find'
+		static int32_t ms_lWatchWaitTime;		// Watch your shot go
+		static int32_t ms_lPatrolTime;			// Wait this long before shooting
+		static int32_t ms_lDeathTimeout;			// Wait around after dying
+		static int32_t ms_lBurningRunTime;		// Run this time before turning
+		static int16_t ms_sHitLimit;				// Number of starting hit points
+		static int16_t ms_sBurntBrightness;	// Brightness level when burnt
+		static int32_t ms_lMaxShootTime;			// Maximum in ms of continuous shooting.
+		static int32_t ms_lReselectDudeTime;	// Time before looking for a closer dude.
 		static U32 ms_u32WeaponIncludeBits;	// Weapons shot from sentry can hit this
 		static U32 ms_u32WeaponDontcareBits;// Weapons shot from sentry ignore these bits
 		static U32 ms_u32WeaponExcludeBits;	// Weapons shot from sentry do not hit this
@@ -133,11 +133,11 @@ class CSentry : public CDoofus
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CSentry(pRealm);
 			if (*ppNew == 0)
 				{
@@ -152,22 +152,22 @@ class CSentry : public CDoofus
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -182,25 +182,25 @@ class CSentry : public CDoofus
 		void Update(void);
 
 		// Find angle to a CDude
-		short FindDirection(void);
+		int16_t FindDirection(void);
 
 		// Find the squared distance to the CDude (to avoid sqrt)
 		double SQDistanceToDude(void);
 
 		// Called by editor to init new object at specified position
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
-		short EditMove(											// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditMove(											// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Give Edit a rectangle around this object
 		void EditRect(RRect* pRect);
@@ -208,9 +208,9 @@ class CSentry : public CDoofus
 		// Called by editor to get the hotspot of an object in 2D.
 		// (virtual (Overridden here)).
 		void EditHotSpot(			// Returns nothiing.
-			short*	psX,			// Out: X coord of 2D hotspot relative to
+			int16_t*	psX,			// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-			short*	psY);			// Out: Y coord of 2D hotspot relative to
+			int16_t*	psY);			// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 
 	//---------------------------------------------------------------------------
@@ -218,13 +218,13 @@ class CSentry : public CDoofus
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 
 		// Initialize states, positions etc.
-		short Init(void);
+		int16_t Init(void);
 
 		// Update the animation radius based on the current frame
 		void UpdateRadius(void);

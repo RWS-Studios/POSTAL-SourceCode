@@ -116,7 +116,7 @@
 //  Somewhat general macros
 //////////////////////////////////////////////////////////////////////
 // interpret a flag as 1 or zero
-inline	short	GetFlag(short sMaskedValue)
+inline	int16_t	GetFlag(int16_t sMaskedValue)
 	{
 	// faster than : ? assembly.
 	if (sMaskedValue) return 1;
@@ -124,7 +124,7 @@ inline	short	GetFlag(short sMaskedValue)
 	}
 
 // interpret a field as a signed range:
-inline	short	GetField(short sMaskedValue,short sLowValue)
+inline	int16_t	GetField(int16_t sMaskedValue,int16_t sLowValue)
 	{
 	return sMaskedValue + sLowValue;
 	}
@@ -133,7 +133,7 @@ inline	short	GetField(short sMaskedValue,short sLowValue)
 // FIRST scale it, THEN offset it!
 // DO NOT shift left more than 2 bits!
 //
-inline	short	GetFieldMul(short sMaskedValue,short sLowValue,short sMulBits)
+inline	int16_t	GetFieldMul(int16_t sMaskedValue,int16_t sLowValue,int16_t sMulBits)
 	{
 	return (sMaskedValue<<sMulBits) + sLowValue;
 	}
@@ -142,7 +142,7 @@ inline	short	GetFieldMul(short sMaskedValue,short sLowValue,short sMulBits)
 // FIRST scale it, THEN offset it!
 // DO NOT shift right more than 8 bits!
 //
-inline	short	GetFieldDiv(short sMaskedValue,short sLowValue,short sDivBits)
+inline	int16_t	GetFieldDiv(int16_t sMaskedValue,int16_t sLowValue,int16_t sDivBits)
 	{
 	return (sMaskedValue>>sDivBits) + sLowValue;
 	}
@@ -154,14 +154,14 @@ inline	short	GetFieldDiv(short sMaskedValue,short sLowValue,short sDivBits)
 
 // range is -512 to +511 from 8 bits
 //
-inline	short	GetHeight(short sMaskedValue)
+inline	int16_t	GetHeight(int16_t sMaskedValue)
 	{
 	return	GetFieldMul(sMaskedValue,-512,2);
 	}
 
 // range is 0 to 15
 //
-inline	short	GetLayer(short sMaskedValue))
+inline	int16_t	GetLayer(int16_t sMaskedValue))
 	{
 	return (sMaskedValue >> 8);
 	}

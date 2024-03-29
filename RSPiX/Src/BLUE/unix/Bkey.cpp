@@ -52,8 +52,8 @@ static U8 ms_au8KeyStatus[128];
 
 typedef struct
 	{
-	long	lKey;
-	long	lTime;
+	int32_t	lKey;
+	int32_t	lTime;
 	} RSP_SK_EVENT, *PRSP_SK_EVENT;
 
 // Non-dynamic memory for RSP_SK_EVENTs in queue.
@@ -68,7 +68,7 @@ extern bool mouse_grabbed;
 // Extern functions.
 //////////////////////////////////////////////////////////////////////////////
 
-extern void rspSetQuitStatus(short sQuitStatus);
+extern void rspSetQuitStatus(int16_t sQuitStatus);
 
 extern void Key_Event(SDL_Event *event)
 {
@@ -115,7 +115,7 @@ extern void Key_Event(SDL_Event *event)
         if (ms_qkeEvents.IsFull() == FALSE)
 	    {
         	// Create event.
-            static short sEventIndex = 0;
+            static int16_t sEventIndex = 0;
 	        PRSP_SK_EVENT	pkeEvent	= ms_akeEvents + INC_N_WRAP(sEventIndex, MAX_EVENTS);
     	    // Fill event.
     	    pkeEvent->lTime	= SDL_GetTicks();
@@ -179,7 +179,7 @@ extern void rspClearKeyEvents(void)
 //
 //////////////////////////////////////////////////////////////////////////////
 extern void rspScanKeys(
-	UCHAR* pucKeys)	// Array of 128 unsigned chars is returned here.
+	uint8_t* pucKeys)	// Array of 128 unsigned chars is returned here.
 	{
         memcpy(pucKeys, keystates, sizeof (keystates));
 	}
@@ -189,11 +189,11 @@ extern void rspScanKeys(
 // Read next key from keyboard queue.
 //
 //////////////////////////////////////////////////////////////////////////////
-extern short rspGetKey(			// Returns 1 if a key was available; 0 if not.
-	long* plKey,					// Key info returned here (or 0 if no key available)
-	long* plTime /*= NULL*/)	// Key's time stamp returned here (unless NULL)
+extern int16_t rspGetKey(			// Returns 1 if a key was available; 0 if not.
+	int32_t* plKey,					// Key info returned here (or 0 if no key available)
+	int32_t* plTime /*= NULL*/)	// Key's time stamp returned here (unless NULL)
 	{
-	short	sRes	= 0;	// Assume no key.
+	int16_t	sRes	= 0;	// Assume no key.
 
 	PRSP_SK_EVENT	pkeEvent	= ms_qkeEvents.DeQ();
 	if (pkeEvent != NULL)
@@ -217,7 +217,7 @@ extern short rspGetKey(			// Returns 1 if a key was available; 0 if not.
 // Check if a key is available in the keyboard queue via rspGetKey.
 //
 //////////////////////////////////////////////////////////////////////////////
-extern short rspIsKey(void)		// Returns 1 if a key is available; 0 if not.
+extern int16_t rspIsKey(void)		// Returns 1 if a key is available; 0 if not.
 	{
 	return (ms_qkeEvents.IsEmpty() == FALSE) ? 1 : 0;
 	}
@@ -433,7 +433,7 @@ U8* rspGetKeyStatusArray(void)	// Returns a ptr to the key status array.
 // Set keys that must be pressed in combination with the system 'quit' key.
 //////////////////////////////////////////////////////////////////////////////
 extern void rspSetQuitStatusFlags(	// Returns nothing.
-	long	lKeyFlags)						// In:  New keyflags (RSP_GKF_*).
+	int32_t	lKeyFlags)						// In:  New keyflags (RSP_GKF_*).
 												// 0 to clear.
 	{
     //fprintf(stderr, "STUBBED: %s:%d\n", __FILE__, __LINE__);
@@ -452,15 +452,22 @@ extern void rspSetQuitStatusFlags(	// Returns nothing.
 #define RSP_NUM_LOCK_ON			0x00000002
 #define RSP_SCROLL_LOCK_ON		0x00000004
 
-extern long rspGetToggleKeyStates(void)	// Returns toggle key state flags.
+extern int32_t rspGetToggleKeyStates(void)	// Returns toggle key state flags.
 	{
-	long	lKeyStates	= 0;
-#if 0  // !!! FIXME
-    Uint8 *states = SDL_GetKeyState(NULL);
-    if (states[SDLK_CAPSLOCK]) lKeyStates |= RSP_CAPS_LOCK_ON;
-    if (states[SDLK_NUMLOCKCLEAR]) lKeyStates |= RSP_NUM_LOCK_ON;
-    if (states[SDLK_SCROLLLOCK]) lKeyStates |= RSP_SCROLL_LOCK_ON;
-#endif
+	int32_t	lKeyStates	= 0;
+
+    const Uint8 *states = SDL_GetKeyboardState(NULL);
+    //if (states[SDL_SCANCODE_CAPSLOCK]) lKeyStates |= RSP_CAPS_LOCK_ON;
+    if (states[SDL_SCANCODE_NUMLOCKCLEAR]) lKeyStates |= RSP_NUM_LOCK_ON;
+    if (states[SDL_SCANCODE_SCROLLLOCK]) lKeyStates |= RSP_SCROLL_LOCK_ON;
+
+	//Check if the key is actually toggled
+	//In this case works only for capslock
+	SDL_Keymod mod_state = SDL_GetModState();
+
+	if (mod_state & KMOD_CAPS)
+		lKeyStates |= RSP_CAPS_LOCK_ON;
+
 	return lKeyStates;
 	}
 
@@ -474,4 +481,3 @@ extern void rspKeyRepeat(int bEnable)
 //////////////////////////////////////////////////////////////////////////////
 // EOF
 //////////////////////////////////////////////////////////////////////////////
-

@@ -66,16 +66,16 @@
 //		The program will blacken the screen when done.  (g_pimScreenBuf)
 //
 ////////////////////////////////////////////////////////////////////////////////
-short	MartiniDo(	RImage*	pimBackground,	// actually, this is the ONLY graphic
-						short	sStartX,				// logical start position of image
-						short	sStartY,				// NOTE: it will be clipped so won't actually hit this point!
+int16_t	MartiniDo(	RImage*	pimBackground,	// actually, this is the ONLY graphic
+						int16_t	sStartX,				// logical start position of image
+						int16_t	sStartY,				// NOTE: it will be clipped so won't actually hit this point!
 						RMultiAlpha*	pAlpha,	// only need 50% - see cut scenes
-						long	lMilliLen,			// how long to do the effect
-						short	sRadius = 24,		// Your tuning pleasure
-						long	lSpinTime = 3600,	// in milliseconds
-						long	lSwayTime = 4000,	// in milliseconds
+						int32_t	lMilliLen,			// how long to do the effect
+						int16_t	sRadius = 24,		// Your tuning pleasure
+						int32_t	lSpinTime = 3600,	// in milliseconds
+						int32_t	lSwayTime = 4000,	// in milliseconds
 						RRect*  prCenter = NULL,// if not NULL, use this portion of the image only!
-						long	lFadeTime = 0,		// fade to black, in milliseconds. (INCL in total time!)
+						int32_t	lFadeTime = 0,		// fade to black, in milliseconds. (INCL in total time!)
 						SampleMaster::SoundInstance siFade=0// to make sound fade out
 					);
 
@@ -99,8 +99,8 @@ extern void CutSceneStart(
 	bool bSimple,											// In:  Set to 'true' for simple mode
 	const RString* pstrSection,						// In:  Section to use for this realm
 	const RString* pstrEntry,							// In:  Entry to use for this realm
-	short sBorderX,
-	short sBorderY);
+	int16_t sBorderX,
+	int16_t sBorderY);
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -108,12 +108,12 @@ extern void CutSceneStart(
 // Configure cutscene effect
 //
 ////////////////////////////////////////////////////////////////////////////
-extern short CutSceneConfig(
-	long lTimeSpin,
-	short sMinX,short sMaxX,long lTimeX,
-	short sMinY,short sMaxY,long lTimeY,
-	double dMinA,double dMaxA,long lTimeA,
-	short sX,short sY,short sW,short sH);
+extern int16_t CutSceneConfig(
+	int32_t lTimeSpin,
+	int16_t sMinX,int16_t sMaxX,int32_t lTimeX,
+	int16_t sMinY,int16_t sMaxY,int32_t lTimeY,
+	double dMinA,double dMaxA,int32_t lTimeA,
+	int16_t sX,int16_t sY,int16_t sW,int16_t sH);
 
 
 ////////////////////////////////////////////////////////////////////////////

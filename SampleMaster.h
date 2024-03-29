@@ -268,7 +268,7 @@
 // Sample identifier type.  See Data section for details.
 typedef struct
 	{
-	USHORT	usDescFlags;	// Use | to combine SMDF_* flags.
+	uint16_t	usDescFlags;	// Use | to combine SMDF_* flags.
 	char*		pszId;
 	} SampleMasterID;
 
@@ -306,10 +306,10 @@ public:
 			}
 		}
 
-	static short NumSounds() { return ms_sCurPos; }
+	static int16_t NumSounds() { return ms_sCurPos; }
 
-	static short	ms_sCurPos;
-	static short	ms_sRefCount;
+	static int16_t	ms_sCurPos;
+	static int16_t	ms_sRefCount;
 	static SampleMasterID**	ms_ppsmNameList;
 	};
 
@@ -388,7 +388,7 @@ class SampleMaster
 		//////////////////////////////////////////////////////////////
 		// These are the default volumes for each category in each
 		// quality.
-		static short ms_asQualityCategoryAdjustors[NumSoundQualities][MAX_NUM_SOUND_CATEGORIES];
+		static int16_t ms_asQualityCategoryAdjustors[NumSoundQualities][MAX_NUM_SOUND_CATEGORIES];
 	};
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1101,7 +1101,7 @@ DEFINE_SAMPLE_ID(SMDF_FEMALE_PAIN, g_smidWVictimThatsIllegal,	"stephanie#11- 10.
 DEFINE_SAMPLE_ID(SMDF_FEMALE_PAIN, g_smidWVictimAlreadyDead,	"stephanie#11- 80.wav");
 DEFINE_SAMPLE_ID(SMDF_FEMALE_PAIN, g_smidWVictimRunForLives,	"stephanie#11- 85.wav");
 
-#if (TARGET == SUPER_POSTAL) || (TARGET == JAPAN_ADDON)
+#if (TARGET == SUPER_POSTAL) || (TARGET == JAPAN_ADDON) || (TARGET == POSTAL_2015)
 // New Japanese sounds
 DEFINE_SAMPLE_ID(SMDF_NO_DESCRIPT, g_smidAsami_b1,					"asami-b1.wav");
 DEFINE_SAMPLE_ID(SMDF_NO_DESCRIPT, g_smidAsami_b2,					"asami-b2.wav");
@@ -1450,15 +1450,15 @@ extern void PlayWithMyOrgan(); // actually in organ.cpp
 
 // Set the volume for a category of sounds (0-SampleMaster::UserMaxVolume)
 // returns SUCCESS if input is valid
-short	SetCategoryVolume(
+int16_t	SetCategoryVolume(
 	SampleMaster::SoundCategory eType,
-	short sVolume = SampleMaster::UserMaxVolume);
+	int16_t sVolume = SampleMaster::UserMaxVolume);
 
 //////////////////////////////////////////////////////////////////////////////
 // Get the volume for a category of sounds (0-SampleMaster::UserMaxVolume)
 // returns volume, or -1 if category is invalid.
 //////////////////////////////////////////////////////////////////////////////
-short	GetCategoryVolume(
+int16_t	GetCategoryVolume(
 	SampleMaster::SoundCategory eType = SampleMaster::Unspecified);
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1468,9 +1468,9 @@ short	GetCategoryVolume(
 // (It is assumed your sound has merely finished.)
 // Returns SUCCESS or FAILURE
 //////////////////////////////////////////////////////////////////////////////
-short	SetInstanceVolume(
+int16_t	SetInstanceVolume(
 	SampleMaster::SoundInstance si,			// make sure it is YOUR sound
-	short sVolume = 255);						// 0 - 255
+	int16_t sVolume = 255);						// 0 - 255
 
 //////////////////////////////////////////////////////////////////////////////
 //	
@@ -1484,7 +1484,7 @@ short	SetInstanceVolume(
 //		Returns 0-255 for volume (255 = epicenter), or -1 on error
 //
 //////////////////////////////////////////////////////////////////////////////
-short	DistanceToVolume(float	fX,	// in Postal 3d coordinates
+int16_t	DistanceToVolume(float	fX,	// in Postal 3d coordinates
 							  float	fY,
 							  float	fZ,
 							  float	fR		// Sound half life
@@ -1505,13 +1505,13 @@ void PlaySample(										// Returns nothing.
 															// Does not fail.
 	SampleMasterID	id,								// In:  Identifier of sample you want played.
 	SampleMaster::SoundCategory eType,			// In:  Sound Volume Category for user adjustment
-	short	sInitialVolume	= 255,					// In:  Initial Sound Volume (0 - 255)
+	int16_t	sInitialVolume	= 255,					// In:  Initial Sound Volume (0 - 255)
 	SampleMaster::SoundInstance*	psi = NULL,	// Out: Handle for adjusting sound volume
-	long* plSampleDuration = NULL,				// Out: Sample duration in ms, if not NULL.
-	long lLoopStartTime = -1,						// In:  Where to loop back to in milliseconds.
+	int32_t* plSampleDuration = NULL,				// Out: Sample duration in ms, if not NULL.
+	int32_t lLoopStartTime = -1,						// In:  Where to loop back to in milliseconds.
 															//	-1 indicates no looping (unless m_sLoop is
 															// explicitly set).
-	long lLoopEndTime = 0,							// In:  Where to loop back from in milliseconds.
+	int32_t lLoopEndTime = 0,							// In:  Where to loop back from in milliseconds.
 															// In:  If less than 1, the end + lLoopEndTime is used.
 	bool bPurgeSample = false);					// In:  Call ReleaseAndPurge rather than Release after playing
 
@@ -1565,7 +1565,7 @@ bool IsSamplePlaying(void);	// Returns true, if a sample is playing,
 										// false otherwise.
 
 // Aborts the specified play instance if it is still going.
-short AbortSample(		// Returns 0 if sample aborted, 1 if not.
+int16_t AbortSample(		// Returns 0 if sample aborted, 1 if not.
 	SampleMaster::SoundInstance	si);	// In:  Identifies play instance.
 
 // Purges all samples that are not in use.

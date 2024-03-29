@@ -111,12 +111,12 @@ class RFrame : public RGuiItem
 		// Creates a displayable Gui.  Call SetFont and SetText before calling
 		// this as it calls Compose.
 		virtual					// If you override this, call this base if possible.
-		short Create(			// Returns 0 on success.
-			short sX,			// X position relative to "parent" item.
-			short sY,			// Y position relative to "parent" item.
-			short sW,			// Width.
-			short sH,			// Height.
-			short sDepth)		// Color depth.
+		int16_t Create(			// Returns 0 on success.
+			int16_t sX,			// X position relative to "parent" item.
+			int16_t sY,			// Y position relative to "parent" item.
+			int16_t sW,			// Width.
+			int16_t sH,			// Height.
+			int16_t sDepth)		// Color depth.
 			{
 			m_sX				= sX;
 			m_sY				= sY;
@@ -131,17 +131,17 @@ class RFrame : public RGuiItem
 
 		// Draw this item and all its subitems into the provided RImage.
 		virtual						// If you override this, call this base if possible.
-		short Draw(					// Returns 0 on success.
+		int16_t Draw(					// Returns 0 on success.
 			RImage* pimDst,		// Destination image.
-			short sDstX	= 0,		// X position in destination.
-			short sDstY	= 0,		// Y position in destination.
-			short sSrcX = 0,		// X position in source.
-			short sSrcY = 0,		// Y position in source.
-			short sW = 0,			// Amount to draw.
-			short sH = 0,			// Amount to draw.
+			int16_t sDstX	= 0,		// X position in destination.
+			int16_t sDstY	= 0,		// Y position in destination.
+			int16_t sSrcX = 0,		// X position in source.
+			int16_t sSrcY = 0,		// Y position in source.
+			int16_t sW = 0,			// Amount to draw.
+			int16_t sH = 0,			// Amount to draw.
 			RRect* prc = NULL)	// Clip to.
 			{
-			short	sRes	= 0;	// Assume success.
+			int16_t	sRes	= 0;	// Assume success.
 
 			// If visible . . .
 			if (m_sVisible != FALSE)

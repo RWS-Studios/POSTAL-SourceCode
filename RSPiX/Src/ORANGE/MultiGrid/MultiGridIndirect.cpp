@@ -87,7 +87,7 @@
 
 // Produce a valid OR mask to se a plane number
 // (ZERO IS A VALID PLANE NUMBER)
-short	RMultiGridIndirect::ms_asColorToPlane[MGI_MAX_PLANES] = 
+int16_t	RMultiGridIndirect::ms_asColorToPlane[MGI_MAX_PLANES] = 
 	{1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384};
 //  0 1 2 3  4  5  6   7   8   9   10   11   12   13    14
 // PLANE NUMBER ^ ^ ^ ^ ^
@@ -102,8 +102,8 @@ short	RMultiGridIndirect::ms_asColorToPlane[MGI_MAX_PLANES] =
 //////////////////////////////////////////////////////////////////////
 
 // For Debugging
-void	RMultiGridIndirect::DumpPalette(RImage* pimDst,short sSrcX,short sSrcY,short sDstX,short sDstY,
-					short sW,short sH)
+void	RMultiGridIndirect::DumpPalette(RImage* pimDst,int16_t sSrcX,int16_t sSrcY,int16_t sDstX,int16_t sDstY,
+					int16_t sW,int16_t sH)
 	{
 	//short i,j;
 
@@ -112,8 +112,8 @@ void	RMultiGridIndirect::DumpPalette(RImage* pimDst,short sSrcX,short sSrcY,shor
 
 // Low level alloc, JUST of the palette grid.
 // Width and height should match that of the RMultiGrid
-short	RMultiGridIndirect::Alloc(short sW, short sH, short sMaxPlanes, 
-										  short sTileW, short sTileH)
+int16_t	RMultiGridIndirect::Alloc(int16_t sW, int16_t sH, int16_t sMaxPlanes, 
+										  int16_t sTileW, int16_t sTileH)
 	{
 	ASSERT(!m_pucPalette);
 	ASSERT(!m_ppucAccessY);
@@ -122,33 +122,33 @@ short	RMultiGridIndirect::Alloc(short sW, short sH, short sMaxPlanes,
 	ASSERT(sH > 1);
 	ASSERT((sMaxPlanes > 0) && (sMaxPlanes <= MGI_MAX_PLANES));
 
-	short sGridW = (sW / sTileW) + 1;
-	short sGridH = (sH / sTileH) + 1;
+	int16_t sGridW = (sW / sTileW) + 1;
+	int16_t sGridH = (sH / sTileH) + 1;
 
-	m_pucPalette = (UCHAR*) calloc(sMaxPlanes,long(sGridW) * sGridH);
+	m_pucPalette = (uint8_t*) calloc(sMaxPlanes,int32_t(sGridW) * sGridH);
 	ASSERT(m_pucPalette);
-	m_plAccessX = (ULONG*) calloc(sizeof(long),sGridW * sTileW);
+	m_plAccessX = (uint32_t*) calloc(sizeof(int32_t),sGridW * sTileW);
 	ASSERT(m_plAccessX);
-	m_ppucAccessY = (UCHAR**) calloc( sizeof(UCHAR*),long(sGridH)*sTileH );
+	m_ppucAccessY = (uint8_t**) calloc( sizeof(uint8_t*),int32_t(sGridH)*sTileH );
 	ASSERT(m_ppucAccessY);
 
 	// Populate the pointer list:
-	UCHAR*	pY = m_pucPalette;
-	long	lOffset = long(sGridW)*sMaxPlanes;
-	short i,j;
+	uint8_t*	pY = m_pucPalette;
+	int32_t	lOffset = int32_t(sGridW)*sMaxPlanes;
+	int16_t i,j;
 
 	for (i=0,j=0;i<sGridH;pY += lOffset,i++)
 		{
-		for (short k=0;k < sTileH;k++)
+		for (int16_t k=0;k < sTileH;k++)
 			{
 			m_ppucAccessY[j++] = pY;
 			}
 		}
 
-	long lX = 0;
+	int32_t lX = 0;
 	for (i=0,j=0;i<sGridW;lX += sMaxPlanes,i++) 
 		{
-		for (short k=0;k < sTileW;k++)
+		for (int16_t k=0;k < sTileW;k++)
 			{
 			m_plAccessX[j++] = lX;
 			}
@@ -165,7 +165,7 @@ short	RMultiGridIndirect::Alloc(short sW, short sH, short sMaxPlanes,
 	m_pimTempTile = new RImage;
 	// Keep pitch equal to width:
 	m_pimTempTile->CreateImage(m_sTileW,m_sTileH,RImage::BMP8,m_sTileW);
-	m_lTileLen = long(m_sTileW) * m_sTileH;
+	m_lTileLen = int32_t(m_sTileW) * m_sTileH;
 
 	return SUCCESS;
 	}
@@ -179,12 +179,12 @@ short	RMultiGridIndirect::Alloc(short sW, short sH, short sMaxPlanes,
 // an orange function is unclear:
 //
 
-short RMultiGridIndirect::AddFSPR1(RImage* pimSrc,short sLogX,short sLogY,
-					UCHAR ucVal,short sMaxW,short sMaxH)
+int16_t RMultiGridIndirect::AddFSPR1(RImage* pimSrc,int16_t sLogX,int16_t sLogY,
+					uint8_t ucVal,int16_t sMaxW,int16_t sMaxH)
 	{
 	ASSERT(pimSrc);
 	ASSERT(pimSrc->m_type == RImage::FSPR1);
-	short sRet = SUCCESS;
+	int16_t sRet = SUCCESS;
 
 	// Note that the FSPR1 can't clip, so if the buffer size is wrong
 	// it won't copy over.
@@ -206,20 +206,20 @@ short RMultiGridIndirect::AddFSPR1(RImage* pimSrc,short sLogX,short sLogY,
 		}
 	//--------------------------------------------
 	// 1) clear the buffer
-	rspRect(UCHAR(0),m_pimBuffer,0,0,m_pimBuffer->m_sWidth,
+	rspRect(uint8_t(0),m_pimBuffer,0,0,m_pimBuffer->m_sWidth,
 		m_pimBuffer->m_sHeight);
 
 	// 2) copy in the region to be tiled
-	rspBlit(UCHAR(1),pimSrc,m_pimBuffer,0,0);
+	rspBlit(uint8_t(1),pimSrc,m_pimBuffer,0,0);
 
-	short sX,sY,sX2,sY2;
+	int16_t sX,sY,sX2,sY2;
 
 	// IMPORTANT STEP 2.5!  I cannot guarantee that the chosen
 	// region lies within my overall world, so I must clip it!
 	// 2.5) Clip the requested region to the real region:
-	short sClipW = m_pimBuffer->m_sWidth;
-	short sClipH = m_pimBuffer->m_sHeight;
-	short sClip;
+	int16_t sClipW = m_pimBuffer->m_sWidth;
+	int16_t sClipH = m_pimBuffer->m_sHeight;
+	int16_t sClip;
 
 	sClip = -sLogX;
 	if (sClip > 0) { sLogX += sClip; sClipW -= sClip; }
@@ -245,15 +245,15 @@ short RMultiGridIndirect::AddFSPR1(RImage* pimSrc,short sLogX,short sLogY,
 	sX2 = (sLogX + sClipW + m_sTileW - 2) & ~(m_sTileW-1);
 	sY2 = (sLogY + sClipH + m_sTileH - 2) & ~(m_sTileH-1);
 
-	short sTileX,sTileY,sTileW,sTileH;
+	int16_t sTileX,sTileY,sTileW,sTileH;
 	sTileX = sX / m_sTileW;
 	sTileY = sY / m_sTileH;
 	sTileW = (sX2 - sX + 1) / m_sTileW;
 	sTileH = (sY2 - sY + 1) / m_sTileH;
 
 	// Now process each tile individually!
-	short i,j;
-	short sCurX,sCurY = sY;
+	int16_t i,j;
+	int16_t sCurX,sCurY = sY;
 
 	for (j = 0; j < sTileH; j++,sCurY += m_sTileH)
 		{
@@ -270,7 +270,7 @@ short RMultiGridIndirect::AddFSPR1(RImage* pimSrc,short sLogX,short sLogY,
 			// 2) if nontrivial, determine the index color
 			if (Contains(1))
 				{
-				short sIndex = NumPalEntries(sCurX,sCurY);
+				int16_t sIndex = NumPalEntries(sCurX,sCurY);
 				ASSERT(sIndex < m_sMaxPlanes); // overflow
 				if (sIndex >= m_sMaxPlanes)
 					{
@@ -284,10 +284,10 @@ short RMultiGridIndirect::AddFSPR1(RImage* pimSrc,short sLogX,short sLogY,
 					{
 					// 3) Insert the palette entry and choose a plane:
 					SetPalette(sCurX,sCurY,sIndex,ucVal);
-					short sPlaneVal = ms_asColorToPlane[sIndex];
+					int16_t sPlaneVal = ms_asColorToPlane[sIndex];
 
 					// 4) Draw the tile into the attribute map:
-					TileOR(UCHAR(1),USHORT(sPlaneVal),sCurX,sCurY,1);
+					TileOR(uint8_t(1),uint16_t(sPlaneVal),sCurX,sCurY,1);
 					}
 				}
 			//===================================================
@@ -299,20 +299,20 @@ short RMultiGridIndirect::AddFSPR1(RImage* pimSrc,short sLogX,short sLogY,
 	}
 
 
-	void	RMultiGridIndirect::TileOR(UCHAR ucKey,USHORT usValueOR,short sDstX,short sDstY,
-		short sClip) // you can turn off the half clipping:
+	void	RMultiGridIndirect::TileOR(uint8_t ucKey,uint16_t usValueOR,int16_t sDstX,int16_t sDstY,
+		int16_t sClip) // you can turn off the half clipping:
 		{
 		ASSERT(m_pmg);
 		ASSERT(m_pmg->m_psGrid);
 		ASSERT(!m_pmg->m_sIsCompressed);
 		ASSERT(usValueOR < 32768);
 		//-------------- half clipping ------------
-		USHORT* pusAttrib = (USHORT*) m_pmg->m_psGrid;
-		short sW = m_sTileW,sH = m_sTileH;
+		uint16_t* pusAttrib = (uint16_t*) m_pmg->m_psGrid;
+		int16_t sW = m_sTileW,sH = m_sTileH;
 
 		if (sClip)
 			{
-			short sClip;
+			int16_t sClip;
 			sClip = m_pmg->m_sWidth - sDstX - m_sTileW;
 			if (sClip < 0) sW += sClip;
 			sClip = m_pmg->m_sHeight - sDstY - m_sTileH;
@@ -321,14 +321,14 @@ short RMultiGridIndirect::AddFSPR1(RImage* pimSrc,short sLogX,short sLogY,
 			if ( (sW < 1) || (sH < 1) ) return; // clipped out
 			}
 
-		long	lDstP = m_pmg->m_sWidth; // (in shorts)
-		long	lSrcP = m_sTileW;
-		UCHAR*	pSrc,*pSrcLine = m_pimTempTile->m_pData;
-		USHORT*  pDst,*pDstLine = (USHORT*)m_pmg->m_psGrid;
+		int32_t	lDstP = m_pmg->m_sWidth; // (in shorts)
+		int32_t	lSrcP = m_sTileW;
+		uint8_t*	pSrc,*pSrcLine = m_pimTempTile->m_pData;
+		uint16_t*  pDst,*pDstLine = (uint16_t*)m_pmg->m_psGrid;
 
 		// Adjust for actual coordinates!!!!
-		pDstLine += long(m_pmg->m_sWidth) * sDstY + sDstX;
-		short	i,j;
+		pDstLine += int32_t(m_pmg->m_sWidth) * sDstY + sDstX;
+		int16_t	i,j;
 
 		for (j=0;j < sH;j++,pSrcLine += lSrcP,pDstLine += lDstP)
 			{
@@ -344,12 +344,12 @@ short RMultiGridIndirect::AddFSPR1(RImage* pimSrc,short sLogX,short sLogY,
 
 // Load a compressed data set from disk
 //
-short RMultiGridIndirect::Load(RFile* fp)
+int16_t RMultiGridIndirect::Load(RFile* fp)
 	{
 	ASSERT(!m_pmg);
 	ASSERT(!m_pucPalette);
 
-	short sVer;
+	int16_t sVer;
 	char type[256];
 	fp->Read(type);
 
@@ -378,15 +378,15 @@ short RMultiGridIndirect::Load(RFile* fp)
 
 	fp->Read(&m_sMaxPlanes);
 
-	long lRes = 0;
+	int32_t lRes = 0;
 	fp->Read(&lRes);
 	fp->Read(&lRes);
 	fp->Read(&lRes);
 	fp->Read(&lRes);
 
 	// just the palette data:
-	long lLen = long(m_sGridW) * m_sGridH * m_sMaxPlanes;
-	m_pucPalette = (UCHAR*) calloc(1,lLen);
+	int32_t lLen = int32_t(m_sGridW) * m_sGridH * m_sMaxPlanes;
+	m_pucPalette = (uint8_t*) calloc(1,lLen);
 
 	fp->Read(m_pucPalette,lLen);
 
@@ -400,28 +400,28 @@ short RMultiGridIndirect::Load(RFile* fp)
 		}
 
 	// Need to hook up all the access variables!
-	m_plAccessX = (ULONG*) calloc(sizeof(long),m_sGridW * m_sTileW);
+	m_plAccessX = (uint32_t*) calloc(sizeof(int32_t),m_sGridW * m_sTileW);
 	ASSERT(m_plAccessX);
-	m_ppucAccessY = (UCHAR**) calloc( sizeof(UCHAR*),long(m_sGridH)*m_sTileH );
+	m_ppucAccessY = (uint8_t**) calloc( sizeof(uint8_t*),int32_t(m_sGridH)*m_sTileH );
 	ASSERT(m_ppucAccessY);
 
 	// Populate the pointer list:
-	UCHAR*	pY = m_pucPalette;
-	long	lOffset = long(m_sGridW)*m_sMaxPlanes;
+	uint8_t*	pY = m_pucPalette;
+	int32_t	lOffset = int32_t(m_sGridW)*m_sMaxPlanes;
 
-	short i,j;
+	int16_t i,j;
 	for (i=0,j=0;i<m_sGridH;pY += lOffset,i++)
 		{
-		for (short k=0;k < m_sTileH;k++)
+		for (int16_t k=0;k < m_sTileH;k++)
 			{
 			m_ppucAccessY[j++] = pY;
 			}
 		}
 
-	long lX = 0;
+	int32_t lX = 0;
 	for (i=0,j=0;i<m_sGridW;lX += m_sMaxPlanes,i++) 
 		{
-		for (short k=0;k < m_sTileW;k++)
+		for (int16_t k=0;k < m_sTileW;k++)
 			{
 			m_plAccessX[j++] = lX;
 			}
@@ -430,7 +430,7 @@ short RMultiGridIndirect::Load(RFile* fp)
 	m_pimTempTile = new RImage;
 	// Keep pitch equal to width:
 	m_pimTempTile->CreateImage(m_sTileW,m_sTileH,RImage::BMP8,m_sTileW);
-	m_lTileLen = long(m_sTileW) * m_sTileH;
+	m_lTileLen = int32_t(m_sTileW) * m_sTileH;
 
 	return SUCCESS;
 	}
@@ -439,13 +439,13 @@ short RMultiGridIndirect::Load(RFile* fp)
 
 // Save a compressed data set to disk
 //
-short RMultiGridIndirect::Save(RFile* fp)
+int16_t RMultiGridIndirect::Save(RFile* fp)
 	{
 	ASSERT(m_pmg);
 	ASSERT(m_pmg->m_sIsCompressed);
 	ASSERT(m_pucPalette);
 
-	short sVer = 1;
+	int16_t sVer = 1;
 	fp->Write("__MultiGridIndirect__");
 	fp->Write(sVer);
 
@@ -458,14 +458,14 @@ short RMultiGridIndirect::Save(RFile* fp)
 
 	fp->Write(m_sMaxPlanes);
 
-	long lRes = 0;
+	int32_t lRes = 0;
 	fp->Write(lRes);
 	fp->Write(lRes);
 	fp->Write(lRes);
 	fp->Write(lRes);
 
 	// just the palette data:
-	long lLen = long(m_sGridW) * m_sGridH * m_sMaxPlanes;
+	int32_t lLen = int32_t(m_sGridW) * m_sGridH * m_sMaxPlanes;
 	fp->Write(m_pucPalette,lLen);
 
 	// And send out the sttribute map:
@@ -473,4 +473,3 @@ short RMultiGridIndirect::Save(RFile* fp)
 
 	return SUCCESS;
 	}
-

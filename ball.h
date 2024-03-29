@@ -68,10 +68,10 @@ class CBall : public CThing
 		double m_dDX;
 		double m_dDY;
 		double m_dDZ;
-		short m_sPrevHeight;
-		short m_sSuspend;
+		int16_t m_sPrevHeight;
+		int16_t m_sSuspend;
 
-		long	m_lPrevTime;
+		int32_t	m_lPrevTime;
 		
 		CSprite3		m_sprite;	// Container (contains ref's to below).
 
@@ -79,11 +79,11 @@ class CBall : public CThing
 
 		RTransform	m_trans;		// Current transformation.
 
-		short			m_sCurRadius;	// Objects radius (currently fudged).
+		int16_t			m_sCurRadius;	// Objects radius (currently fudged).
 		
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
+		static int16_t ms_sFileCount;
 
 	//---------------------------------------------------------------------------
 	// Constructor(s) / destructor
@@ -116,11 +116,11 @@ class CBall : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CBall(pRealm);
 			if (*ppNew == 0)
 				{
@@ -135,22 +135,22 @@ class CBall : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -165,19 +165,19 @@ class CBall : public CThing
 		void Render(void);
 
 		// Called by editor to init new object at specified position
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
-		short EditMove(											// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditMove(											// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to update object
 		void EditUpdate(void);
@@ -193,9 +193,9 @@ class CBall : public CThing
 		// Called by editor to get the hotspot of an object in 2D.
 		virtual	// Overridden here.
 		void EditHotSpot(			// Returns nothiing.
-			short*	psX,			// Out: X coord of 2D hotspot relative to
+			int16_t*	psX,			// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-			short*	psY);			// Out: Y coord of 2D hotspot relative to
+			int16_t*	psY);			// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 
 		// Get the coordinates of this thing.
@@ -213,10 +213,10 @@ class CBall : public CThing
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		short GetResources(void);								// Returns 0 if successfull, non-zero otherwise
+		int16_t GetResources(void);								// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		short FreeResources(void);								// Returns 0 if successfull, non-zero otherwise
+		int16_t FreeResources(void);								// Returns 0 if successfull, non-zero otherwise
 	};
 
 

@@ -129,7 +129,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // Let this auto-init to 0
-short CItem3d::ms_sFileCount;
+int16_t CItem3d::ms_sFileCount;
 
 // Array of known animation base names.
 char*	CItem3d::ms_apszKnownAnimBaseNames[CItem3d::NumTypes]	=
@@ -164,13 +164,13 @@ static char* ms_apszResExtensions[NUM_RES_NAMES]	=
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CItem3d::Load(										// Returns 0 if successfull, non-zero otherwise
+int16_t CItem3d::Load(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// In most cases, the base class Load() should be called.
 	sResult	= CThing3d::Load(pFile, bEditMode, sFileCount, ulFileVersion);
@@ -276,11 +276,11 @@ short CItem3d::Load(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CItem3d::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CItem3d::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// In most cases, the base class Save() should be called.
 	sResult	= CThing3d::Save(pFile, sFileCount);
@@ -325,10 +325,10 @@ void CItem3d::Update(void)
 	if (!m_sSuspend)
 		{
 		// Get new time
-		long lThisTime = m_pRealm->m_time.GetGameTime();
+		int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 
 		// Advance the animation timer.
-		long	lDifTime		= lThisTime - m_lAnimPrevUpdateTime;
+		int32_t	lDifTime		= lThisTime - m_lAnimPrevUpdateTime;
 		m_lAnimTime			+= lDifTime;
 
 		// Update prev time.
@@ -404,12 +404,12 @@ void CItem3d::Render(void)								// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CItem3d::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CItem3d::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
-	short sResult = CThing3d::EditNew(sX, sY, sZ);
+	int16_t sResult = CThing3d::EditNew(sX, sY, sZ);
 	if (sResult == 0)
 		{
 		sResult	= EditModify();
@@ -421,9 +421,9 @@ short CItem3d::EditNew(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-short CItem3d::EditModify(void)					// Returns 0 if successfull, non-zero otherwise
+int16_t CItem3d::EditModify(void)					// Returns 0 if successfull, non-zero otherwise
 	{
-	short	sResult	= CThing3d::EditModify();
+	int16_t	sResult	= CThing3d::EditModify();
 
 	RGuiItem*	pguiRoot	= RGuiItem::LoadInstantiate(FullPathVD(EDIT_GUI_FILE));
 	if (pguiRoot != NULL)
@@ -464,7 +464,7 @@ short CItem3d::EditModify(void)					// Returns 0 if successfull, non-zero otherw
 				m_type	= Custom;
 				}
 
-			short	i;
+			int16_t	i;
 			RGuiItem*	pguiItem;
 			for (i = Custom; i < NumTypes; i++)
 				{
@@ -545,9 +545,9 @@ short CItem3d::EditModify(void)					// Returns 0 if successfull, non-zero otherw
 ////////////////////////////////////////////////////////////////////////////////
 // Init item3d
 ////////////////////////////////////////////////////////////////////////////////
-short CItem3d::Init(void)									// Returns 0 if successfull, non-zero otherwise
+int16_t CItem3d::Init(void)									// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	m_lPrevTime			= m_pRealm->m_time.GetGameTime();
 
@@ -588,9 +588,9 @@ void CItem3d::Kill(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CItem3d::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CItem3d::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Free existing resources, if any.
 	FreeResources();
@@ -695,16 +695,16 @@ void CItem3d::OnDeleteMsg(					// Returns nothing.
 // Setup object after creating it
 // (virtual).
 ////////////////////////////////////////////////////////////////////////////////
-short CItem3d::Setup(			// Returns 0 on success.
-	short sX,						// In: Starting X position
-	short sY,						// In: Starting Y position
-	short sZ,						// In: Starting Z position
+int16_t CItem3d::Setup(			// Returns 0 on success.
+	int16_t sX,						// In: Starting X position
+	int16_t sY,						// In: Starting Y position
+	int16_t sZ,						// In: Starting Z position
 	ItemType type,					// In:  Known item type or Custom.
 	char*	pszCustomBaseName /*= NULL*/,	// In:  Required if type == Custom.
 													// Base name for custom type resources.
 	U16	u16IdParentInstance /*= CIdBank::IdNil*/)	// In:  Parent instance ID.
 	{
-	short	sResult	= 0;
+	int16_t	sResult	= 0;
 
 	m_dX	= sX;
 	m_dY	= sY;

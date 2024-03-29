@@ -80,7 +80,7 @@ class CDeathWad : public CWeapon
 		double		m_dUnthrustedDistance;	// Distance since last thrust feedback.
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
+		static int16_t ms_sFileCount;
 
 		// Constant values for tuning.
 		static const double	ms_dAccInternal;				// Internal acceleration.
@@ -88,11 +88,11 @@ class CDeathWad : public CWeapon
 		static const double	ms_dMaxVelBack;				// Maximum backward velocity
 		static const double	ms_dTraversalRate;			// Units moved each iteration while traversing the weapon path.
 		static const double	ms_dThrustDelta;				// Distance between thrust feedbacks.
-		static const short	ms_sOffScreenDist;			// Go off screen this far before blowing up		
-		static const long		ms_lSmokeTimeToLive;			// Time for smoke to stick around.
-		static const long		ms_lFireBallTimeToLive;		// Time for fireball to stick around.
-		static const short	ms_sFinalExplosionStagger;	// Amount to stagger final explosions.
-		static const short	ms_sCollisionRadius;			// Collision radius.
+		static const int16_t	ms_sOffScreenDist;			// Go off screen this far before blowing up		
+		static const int32_t		ms_lSmokeTimeToLive;			// Time for smoke to stick around.
+		static const int32_t		ms_lFireBallTimeToLive;		// Time for fireball to stick around.
+		static const int16_t	ms_sFinalExplosionStagger;	// Amount to stagger final explosions.
+		static const int16_t	ms_sCollisionRadius;			// Collision radius.
 		static const double	ms_dKickVelocity;				// Velocity for kick from launch.
 		static const CStockPile ms_stockpileMax;			// Max a WAD can hold.
 
@@ -136,11 +136,11 @@ class CDeathWad : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CDeathWad(pRealm);
 			if (*ppNew == 0)
 				{
@@ -155,7 +155,7 @@ class CDeathWad : public CWeapon
 	//---------------------------------------------------------------------------
 
 		// Called before play begins to cache resources for this object
-		static short Preload(
+		static int16_t Preload(
 			CRealm* prealm);				// In:  Calling realm.
 
 	public:
@@ -169,16 +169,16 @@ class CDeathWad : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Update object
 		void Update(void);
@@ -187,10 +187,10 @@ class CDeathWad : public CWeapon
 		void Render(void);
 
 		// Called by another object to set start a new deathwad
-		short Setup(
-			short sX,
-			short sY,
-			short sZ);
+		int16_t Setup(
+			int16_t sX,
+			int16_t sY,
+			int16_t sZ);
 
 		// Get this class's sprite.  Note that the type will vary.
 		// This is a pure virtual function in the base class.
@@ -210,10 +210,10 @@ class CDeathWad : public CWeapon
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 
 		// Process messages in the message queue.
 		void ProcessMessages(void);
@@ -222,13 +222,13 @@ class CDeathWad : public CWeapon
 		// the destination is reached.
 		bool TraversePath(			// Returns true, when destination reached; false, 
 											// if terrain change.
-			short		sSrcX,			// In:  Starting position.
-			short		sSrcY,			// In:  Starting position.
-			short		sSrcZ,			// In:  Starting position.
+			int16_t		sSrcX,			// In:  Starting position.
+			int16_t		sSrcY,			// In:  Starting position.
+			int16_t		sSrcZ,			// In:  Starting position.
 			bool*		pbInTerrain,	// In:  true, if starting in terrain.
 											// Out: true, if ending in terrain.
-			short		sDstX,			// In:  Destination position.
-			short		sDstZ,			// In:  Destination position.
+			int16_t		sDstX,			// In:  Destination position.
+			int16_t		sDstZ,			// In:  Destination position.
 			double*	pdCurX,			// Out: Position of inside terrain status change.
 			double*	pdCurZ);			// Out: Position of inside terrain status change.
 

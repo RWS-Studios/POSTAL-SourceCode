@@ -65,12 +65,12 @@ END_MESSAGE_MAP()
 // Set the buffer Blue uses to draw and redraw the display.
 //
 ///////////////////////////////////////////////////////////////////////////////
-void CRSPiXBlue::SetDisplayImage(CImage* pim, short sFlip /*= FALSE*/)
+void CRSPiXBlue::SetDisplayImage(CImage* pim, int16_t sFlip /*= FALSE*/)
 	{
 	ASSERT(pim != NULL);
 
 	// Calculate DIB type width.
-	long	lWinWidth	= pim->lPitch / ((long)pim->sDepth / 8L);
+	int32_t	lWinWidth	= pim->lPitch / ((int32_t)pim->sDepth / 8L);
 	
 	Blu_SetDisplayBuf(pim->pData,
 							lWinWidth, pim->lHeight, 
@@ -142,7 +142,7 @@ void CRSPiXBlue::SetDisplayPalette(CPal* ppal)
 ///////////////////////////////////////////////////////////////////////////////
 void CRSPiXBlue::PreSubclassWindow() 
 	{
-	short	sError	= 0;	// Assume success.
+	int16_t	sError	= 0;	// Assume success.
 
 	// Initialize Blue . . . 
 	if (Blu_Init(AfxGetApp()->m_hInstance, m_hWnd) == 0)
@@ -152,7 +152,7 @@ void CRSPiXBlue::PreSubclassWindow()
 
 		// Create a display that fills this window completely . . .
 		if (Blu_CreateDisplay(	rcClient.right, rcClient.bottom,
-										(short)Blu_GetDisplayInfo(DI_MONITOR_COLORDEPTH))
+										(int16_t)Blu_GetDisplayInfo(DI_MONITOR_COLORDEPTH))
 			== 0)
 			{
 			// Success.

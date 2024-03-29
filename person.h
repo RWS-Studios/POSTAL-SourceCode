@@ -126,17 +126,17 @@ class CPerson : public CDoofus
 		RString m_rstrLogicFile;
 		
 		// If TRUE, the guy's state is shown by his hotspot.
-		short	m_sShowState;
+		int16_t	m_sShowState;
 
 		// This is a high level state variable for logic tables.
-		short m_sUserState1;
+		int16_t m_sUserState1;
 
 		// This is set once the person has used their 1 shot comment, then
 		// it will only use the noises after that.
 		bool m_bHitComment;
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
+		static int16_t ms_sFileCount;
 
 		// This is the one CPerson that can log its AI table transitions or
 		// CIdBank::IdNil.
@@ -148,17 +148,17 @@ class CPerson : public CDoofus
 		static double ms_dInRangeHigh;	// Squared distance to be in range with weapon
 		static double ms_dThrowHorizVel;	// Horizontal throw velocity
 		static double ms_dMaxCrawlVel;	// Speed at which cop crawls when writhing
-		static long ms_lRandomAvoidTime;	// Time to wander before looking again
-		static long ms_lReseekTime;		// Do a 'find' again 
-		static long ms_lWatchWaitTime;	// Time to watch shot go
-		static long ms_lReselectDudeTime;// Time to go without finding a dude
+		static int32_t ms_lRandomAvoidTime;	// Time to wander before looking again
+		static int32_t ms_lReseekTime;		// Do a 'find' again 
+		static int32_t ms_lWatchWaitTime;	// Time to watch shot go
+		static int32_t ms_lReselectDudeTime;// Time to go without finding a dude
 													// before calling SelectDude() to find
 													// possibly a closer one.
-		static long ms_lMinCommentTime;	// Min time before making a random comment
-		static long ms_lCommentTimeVariance;// Random amount added on to comment timer.
+		static int32_t ms_lMinCommentTime;	// Min time before making a random comment
+		static int32_t ms_lCommentTimeVariance;// Random amount added on to comment timer.
 
 	public:
-		static short ms_sLogTabUserGlobal;// Global state set and read by logic tables
+		static int16_t ms_sLogTabUserGlobal;// Global state set and read by logic tables
 
 	//---------------------------------------------------------------------------
 	// Constructor(s) / destructor
@@ -198,11 +198,11 @@ class CPerson : public CDoofus
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CPerson(pRealm);
 			if (*ppNew == 0)
 				{
@@ -217,25 +217,25 @@ class CPerson : public CDoofus
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Init - set up object before running
-		short Init(void);
+		int16_t Init(void);
 
 		// Update object
 		void Update(void);
@@ -244,13 +244,13 @@ class CPerson : public CDoofus
 		void Render(void);
 
 		// Called by editor to init new object at specified position
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to update object
 		void EditUpdate(void);
@@ -260,7 +260,7 @@ class CPerson : public CDoofus
 
 		// Function to choose and play the writhing sound effect
 		virtual SampleMaster::SoundInstance PlaySoundWrithing(
-			long* plDuration);					// Out:  Duration of sample, if not NULL.
+			int32_t* plDuration);					// Out:  Duration of sample, if not NULL.
 
 		// Function to choose and play the Shot sound effect
 		virtual SampleMaster::SoundInstance PlaySoundShot(void);
@@ -296,10 +296,10 @@ class CPerson : public CDoofus
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 
 		// Special case logic for the cop writhing since he crawls on the ground.
 		virtual void Logic_Writhing(void);

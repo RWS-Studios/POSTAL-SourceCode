@@ -39,6 +39,7 @@
 // Includes.
 ////////////////////////////////////////////////////////////////////////////////
 #include "thing.h"
+#include "camera.h"
 #include "IdBank.h"
 
 extern void NavNetListPressedCall(RGuiItem* pgui);
@@ -64,8 +65,8 @@ class CGameEditThing : public CThing
 		// Settings //////////////////////////////////////////////////////////////
 		
 		U16	m_u16CameraTrackId;	// ID of object for grip to track.
-		short	m_sViewPosX;			// View position.
-		short	m_sViewPosY;			// View position.
+		int16_t	m_sViewPosX;			// View position.
+		int16_t	m_sViewPosY;			// View position.
 		RListBox* m_plbNavNetList; // Pointer to Nav Net List Box
 
 	//---------------------------------------------------------------------------
@@ -93,11 +94,11 @@ class CGameEditThing : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CGameEditThing(pRealm);
 			if (*ppNew == 0)
 				{
@@ -113,14 +114,14 @@ class CGameEditThing : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion)									// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion)									// In:  Version of file format to load.
 			{
 			// Call base class.
-			short	sResult	= CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+			int16_t	sResult	= CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 			if (sResult == 0)
 				{
 				// Read settings.
@@ -150,12 +151,12 @@ class CGameEditThing : public CThing
 			}
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount)										// In:  File count (unique per file, never 0)
+			int16_t sFileCount)										// In:  File count (unique per file, never 0)
 			{
 			// Call base class.
-			short	sResult	= CThing::Save(pFile, sFileCount);
+			int16_t	sResult	= CThing::Save(pFile, sFileCount);
 			if (sResult == 0)
 				{
 				// Write settings.
@@ -193,6 +194,60 @@ extern void Edit_Menu_Continue(void);
 // Called by the menu callback when it wants to tell the editor to quit the
 // editor.
 extern void Edit_Menu_ExitEditor(void);
+
+//Utilities needed elsewhere
+
+
+// Map a screen coordinate to a realm coordinate.
+// Note that this function's *psRealmY output is always
+// the height specified by the realm's attribute map
+// at the resulting *psRealmX, *psRealmZ.
+extern void MapScreen2Realm(	// Returns nothing.
+	CRealm*	prealm,				// In:  Realm.
+	CCamera*	pcamera,				// In:  View of prealm.
+	int16_t sScreenX,				// In:  Screen x coord.
+	int16_t sScreenY,				// In:  Screen y coord.
+	int16_t* psRealmX,				// Out: Realm x coord.
+	int16_t* psRealmY,				// Out: Realm y coord (always via realm's height map).
+	int16_t* psRealmZ);				// Out: Realm z coord.
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Map a screen coordinate to a realm coordinate.
+// Note that this function's *psRealmY output is always
+// the height specified by the realm's attribute map
+// at the resulting *psRealmX, *psRealmZ.
+////////////////////////////////////////////////////////////////////////////////
+extern void MapScreen2Realm(	// Returns nothing.
+	CRealm*	prealm,				// In:  Realm.
+	CCamera*	pcamera,				// In:  View of prealm.
+	double sScreenX,				// In:  Screen x coord.
+	double sScreenY,				// In:  Screen y coord.
+	double* psRealmX,				// Out: Realm x coord.
+	double* psRealmY,				// Out: Realm y coord (always via realm's height map).
+	double* psRealmZ);				// Out: Realm z coord.
+
+// Map a realm coordinate to a screen coordinate.
+extern void Maprealm2Screen(	// Returns nothing.
+	CRealm*	prealm,				// In:  Realm.
+	CCamera*	pcamera,				// In:  View of prealm.
+	int16_t		sRealmX,				// In:  Realm x coord.
+	int16_t		sRealmY,				// In:  Realm y coord.
+	int16_t		sRealmZ,				// In:  Realm z coord.
+	int16_t*	psScreenX,			// Out: Screen x coord.
+	int16_t*	psScreenY);			// Out: Screen y coord.
+
+////////////////////////////////////////////////////////////////////////////////
+// Map a realm coordinate to a screen coordinate.
+////////////////////////////////////////////////////////////////////////////////
+extern void Maprealm2Screen(	// Returns nothing.
+	CRealm*	prealm,				// In:  Realm.
+	CCamera*	pcamera,				// In:  View of prealm.
+	double		sRealmX,				// In:  Realm x coord.
+	double		sRealmY,				// In:  Realm y coord.
+	double		sRealmZ,				// In:  Realm z coord.
+	double*	psScreenX,			// Out: Screen x coord.
+	double*	psScreenY);			// Out: Screen y coord.
 
 #endif //GAMEEDIT_H
 ////////////////////////////////////////////////////////////////////////////////

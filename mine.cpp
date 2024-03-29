@@ -149,29 +149,29 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // These are default values -- actually values are set using the editor!
-short CMine::ms_sProximityRadius	= 10;
-short CMine::ms_sBettyRadius = 60;
-short CMine::ms_sBettyRange = 1000;
-long CMine::ms_lFuseTime = 6000;
-long CMine::ms_lArmingTime = 5000;
-long CMine::ms_lExplosionDelay = 150;
+int16_t CMine::ms_sProximityRadius	= 10;
+int16_t CMine::ms_sBettyRadius = 60;
+int16_t CMine::ms_sBettyRange = 1000;
+int32_t CMine::ms_lFuseTime = 6000;
+int32_t CMine::ms_lArmingTime = 5000;
+int32_t CMine::ms_lExplosionDelay = 150;
 double CMine::ms_dInitialBounceVelocity = 80.0;
 
 // Let this auto-init to 0
-short CMine::ms_sFileCount;
+int16_t CMine::ms_sFileCount;
 
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CMine::Load(				// Returns 0 if successfull, non-zero otherwise
+int16_t CMine::Load(				// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,						// In:  File to load from
 	bool bEditMode,					// In:  True for edit mode, false otherwise
-	short sFileCount,					// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)				// In:  Version of file format to load.
+	int16_t sFileCount,					// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)				// In:  Version of file format to load.
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	sResult = CWeapon::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	if (sResult == SUCCESS)
@@ -242,9 +242,9 @@ short CMine::Load(				// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CMine::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CMine::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 {
 	// In most cases, the base class Save() should be called.  In this case it
 	// isn't because the base class doesn't have a Save()!
@@ -275,7 +275,7 @@ short CMine::Save(										// Returns 0 if successfull, non-zero otherwise
 // Startup
 ////////////////////////////////////////////////////////////////////////////////
 
-short CMine::Startup(void)
+int16_t CMine::Startup(void)
 {
 	return Init();
 }
@@ -284,13 +284,13 @@ short CMine::Startup(void)
 // Init
 ////////////////////////////////////////////////////////////////////////////////
 
-short CMine::Init(void)
+int16_t CMine::Init(void)
 {
-	short sResult = SUCCESS;
+	int16_t sResult = SUCCESS;
 
 	m_eState = State_Idle;
 
-	long lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 
 	if (m_lFuseTime == 0)
 		m_lFuseTime = ms_lFuseTime;
@@ -402,17 +402,17 @@ void CMine::Update(void)
 {
 	CSmash* pSmashed = NULL;
 	double dDistance;
-	short sShootAngle;
-	short sShotX;
-	short sShotY;
-	short sShotZ;
+	int16_t sShootAngle;
+	int16_t sShotX;
+	int16_t sShotY;
+	int16_t sShotZ;
 	CThing* pShotThing = NULL;
 	GameMessage msg;
 
 	if (!m_sSuspend)
 	{
 		// Get new time
-		long lThisTime = m_pRealm->m_time.GetGameTime(); 
+		int32_t lThisTime = m_pRealm->m_time.GetGameTime(); 
 
 		ProcessMessages();
 		if (m_eState == State_Deleted)
@@ -462,9 +462,9 @@ void CMine::Update(void)
 				}
 				else
 				{
-					short	sX	= m_dX;
-					short	sY	= m_dY;
-					short	sZ	= m_dZ;
+					int16_t	sX	= m_dX;
+					int16_t	sY	= m_dY;
+					int16_t	sZ	= m_dZ;
 
 					// If we have a parent . . .
 					CThing*	pthing	= NULL;	// Initialized for safety.
@@ -562,9 +562,9 @@ void CMine::Update(void)
 						{
 							m_bulletfest.Fire(sShootAngle,
 													0,
-													(short) m_dX, 
-													(short) m_dY, 
-													(short) m_dZ,
+													(int16_t) m_dX, 
+													(int16_t) m_dY, 
+													(int16_t) m_dZ,
 													ms_sBettyRange,
 													m_pRealm,
 													CSmash::Character,
@@ -657,9 +657,9 @@ void CMine::Render(void)
 
 		// Map from 3d to 2d coords
 		Map3Dto2D(
-			(short) m_dX, 
-			(short) m_dY, 
-			(short) m_dZ, 
+			(int16_t) m_dX, 
+			(int16_t) m_dY, 
+			(int16_t) m_dZ, 
 			&m_sprite.m_sX2, 
 			&m_sprite.m_sY2);
 
@@ -671,7 +671,7 @@ void CMine::Render(void)
 		m_sprite.m_sPriority = m_dZ;
 
 		// Layer should be based on info we get from attribute map.
-		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 		// Update sprite in scene
 		m_pRealm->m_scene.UpdateSprite(&m_sprite);
@@ -684,11 +684,11 @@ void CMine::Render(void)
 //							 the fuse time can be set.
 ////////////////////////////////////////////////////////////////////////////////
 
-short CMine::Setup(									// Returns 0 if successful, non-zero otherwise
-	short sX,											// In:  X coord placement
-	short sY,											// In:  Y coord placement
-	short sZ,											// In:  Z coord placement
-	long lFuseTime)									// In:  ms before mine goes off (timed mine only)
+int16_t CMine::Setup(									// Returns 0 if successful, non-zero otherwise
+	int16_t sX,											// In:  X coord placement
+	int16_t sY,											// In:  Y coord placement
+	int16_t sZ,											// In:  Z coord placement
+	int32_t lFuseTime)									// In:  ms before mine goes off (timed mine only)
 {
 	m_lFuseTime = lFuseTime;
 	return Setup(sX, sY, sZ);
@@ -698,10 +698,10 @@ short CMine::Setup(									// Returns 0 if successful, non-zero otherwise
 // Setup new object - called by object that created this object
 ////////////////////////////////////////////////////////////////////////////////
 
-short CMine::Setup(									// Returns 0 if successfull, non-zero otherwise
-	short sX,											// In:  New x coord
-	short sY,											// In:  New y coord
-	short sZ)											// In:  New z coord
+int16_t CMine::Setup(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,											// In:  New x coord
+	int16_t sY,											// In:  New y coord
+	int16_t sZ)											// In:  New z coord
 	{
 	// Loop the Arming sound
 	PlaySample(
@@ -716,7 +716,7 @@ short CMine::Setup(									// Returns 0 if successfull, non-zero otherwise
 		false);											// In:  Call ReleaseAndPurge rather than Release at end
 
 	
-	short	sResult	=  CWeapon::Setup(sX, sY, sZ);
+	int16_t	sResult	=  CWeapon::Setup(sX, sY, sZ);
 	if (sResult == 0)
 		{
 		sResult	= Init();
@@ -728,9 +728,9 @@ short CMine::Setup(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CMine::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CMine::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	if (m_pImage == 0)
 	{
@@ -761,7 +761,7 @@ short CMine::GetResources(void)						// Returns 0 if successfull, non-zero other
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CMine::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CMine::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
 	rspReleaseResource(&g_resmgrGame, &m_pImage);
 
@@ -774,8 +774,8 @@ short CMine::FreeResources(void)						// Returns 0 if successfull, non-zero othe
 inline
 void SetText(					// Returns nothing.
 	RGuiItem*	pguiRoot,	// In:  Root GUI.
-	long			lId,			// In:  ID of GUI to set text.
-	long			lVal)			// In:  Value to set text to.
+	int32_t			lId,			// In:  ID of GUI to set text.
+	int32_t			lVal)			// In:  Value to set text to.
 	{
 	RGuiItem*	pgui	= pguiRoot->GetItemFromId(lId);
 	if (pgui != NULL)
@@ -789,9 +789,9 @@ void SetText(					// Returns nothing.
 // Edit Modify
 ////////////////////////////////////////////////////////////////////////////////
 
-short CMine::EditModify(void)
+int16_t CMine::EditModify(void)
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	RGuiItem* pGui = RGuiItem::LoadInstantiate(FullPathVD("res/editor/mine.gui"));
 	if (pGui)
 	{
@@ -811,12 +811,12 @@ short CMine::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CMine::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CMine::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	if (sResult == SUCCESS)
 	{
@@ -837,10 +837,10 @@ short CMine::EditNew(									// Returns 0 if successfull, non-zero otherwise
 //				 created.
 ////////////////////////////////////////////////////////////////////////////////
 
-short CMine::Preload(
+int16_t CMine::Preload(
 	CRealm* prealm)				// In:  Calling realm.
 {
-	short	sResult;
+	int16_t	sResult;
 	RImage*	pim;
 
 	sResult = rspGetResource(&g_resmgrGame, prealm->Make2dResPath(TIMEDMINE_FILE), &pim, RFile::LittleEndian);

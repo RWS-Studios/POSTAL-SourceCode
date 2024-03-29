@@ -57,19 +57,19 @@
 // These are default values -- actually values are set using the editor!
 
 // Let this auto-init to 0
-short CGoalTimer::ms_sFileCount;
+int16_t CGoalTimer::ms_sFileCount;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CGoalTimer::Load(							// Returns 0 if successfull, non-zero otherwise
+int16_t CGoalTimer::Load(							// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 {
 	// Call the base class load to get the instance ID
-	short sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	if (sResult == 0)
 	{
 		// Load common data just once per file (not with each object)
@@ -124,9 +124,9 @@ short CGoalTimer::Load(							// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CGoalTimer::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CGoalTimer::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 {
 	// Call the base class save to save the instance ID
 	CThing::Save(pFile, sFileCount);
@@ -154,11 +154,11 @@ short CGoalTimer::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CGoalTimer::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+int16_t CGoalTimer::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 {
-	short sReturn = 0;
+	int16_t sReturn = 0;
 	// At this point we can assume the CHood was loaded, so we init our height
-	m_dY = m_pRealm->GetHeight((short) m_dX, (short) m_dZ);
+	m_dY = m_pRealm->GetHeight((int16_t) m_dX, (int16_t) m_dZ);
 
 	return sReturn;
 }
@@ -167,7 +167,7 @@ short CGoalTimer::Startup(void)								// Returns 0 if successfull, non-zero oth
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-short CGoalTimer::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CGoalTimer::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 {
 	return 0;
 }
@@ -214,12 +214,12 @@ void CGoalTimer::Render(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CGoalTimer::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CGoalTimer::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -256,8 +256,8 @@ short CGoalTimer::EditNew(									// Returns 0 if successfull, non-zero otherwi
 inline
 void SetText(					// Returns nothing.
 	RGuiItem*	pguiRoot,	// In:  Root GUI.
-	long			lId,			// In:  ID of GUI to set text.
-	long			lVal)			// In:  Value to set text to.
+	int32_t			lId,			// In:  ID of GUI to set text.
+	int32_t			lVal)			// In:  Value to set text to.
 	{
 	RGuiItem*	pgui	= pguiRoot->GetItemFromId(lId);
 	if (pgui != NULL)
@@ -273,10 +273,10 @@ void SetText(					// Returns nothing.
 inline
 void CheckMultiBtn(			// Returns nothing.
 	RGuiItem*	pguiRoot,	// In:  Root GUI.
-	long			lId,			// In:  ID of GUI to set text.
-	short			sChecked)	// In:  1 to check, 0 to uncheck.
+	int32_t			lId,			// In:  ID of GUI to set text.
+	int16_t			sChecked)	// In:  1 to check, 0 to uncheck.
 	{
-	short	sRes	= 0;	// Assume nothing;
+	int16_t	sRes	= 0;	// Assume nothing;
 
 	RMultiBtn*	pmb	= (RMultiBtn*)pguiRoot->GetItemFromId(lId);
 	if (pmb != NULL)
@@ -293,11 +293,11 @@ void CheckMultiBtn(			// Returns nothing.
 // Helper inline to get a RMultiBtn GUI, and return its state.
 ////////////////////////////////////////////////////////////////////////////////
 inline
-short IsMultiBtnChecked(	// Returns multibtn's state.
+int16_t IsMultiBtnChecked(	// Returns multibtn's state.
 	RGuiItem*	pguiRoot,	// In:  Root GUI.
-	long			lId)			// In:  ID of GUI to set text.
+	int32_t			lId)			// In:  ID of GUI to set text.
 	{
-	short	sRes	= 0;	// Assume nothing;
+	int16_t	sRes	= 0;	// Assume nothing;
 
 	RMultiBtn*	pmb	= (RMultiBtn*)pguiRoot->GetItemFromId(lId);
 	if (pmb != NULL)
@@ -315,9 +315,9 @@ short IsMultiBtnChecked(	// Returns multibtn's state.
 // Edit Modify
 ////////////////////////////////////////////////////////////////////////////////
 
-short CGoalTimer::EditModify(void)
+int16_t CGoalTimer::EditModify(void)
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	RGuiItem* pgui = RGuiItem::LoadInstantiate(FullPathVD("res/editor/clock.gui"));
 	if (pgui)
 	{
@@ -341,10 +341,10 @@ short CGoalTimer::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CGoalTimer::EditMove(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CGoalTimer::EditMove(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
 	m_dX = (double)sX;
 	m_dY = (double)sY;
@@ -372,9 +372,9 @@ void CGoalTimer::EditRender(void)
 
 	// Map from 3d to 2d coords
 	Map3Dto2D(
-		(short) m_dX, 
-		(short) m_dY, 
-		(short) m_dZ, 
+		(int16_t) m_dX, 
+		(int16_t) m_dY, 
+		(int16_t) m_dZ, 
 		&m_sprite.m_sX2, 
 		&m_sprite.m_sY2);
 
@@ -386,7 +386,7 @@ void CGoalTimer::EditRender(void)
 	m_sprite.m_sY2	-= m_pImage->m_sHeight;
 
 	// Layer should be based on info we get from attribute map.
-	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 	// Image would normally animate, but doesn't for now
 	m_sprite.m_pImage = m_pImage;
@@ -424,9 +424,9 @@ void CGoalTimer::EditRect(RRect* pRect)
 // Called by editor to get the hotspot of an object in 2D.
 ////////////////////////////////////////////////////////////////////////////////
 void CGoalTimer::EditHotSpot(	// Returns nothiing.
-	short*	psX,							// Out: X coord of 2D hotspot relative to
+	int16_t*	psX,							// Out: X coord of 2D hotspot relative to
 												// EditRect() pos.
-	short*	psY)							// Out: Y coord of 2D hotspot relative to
+	int16_t*	psY)							// Out: Y coord of 2D hotspot relative to
 												// EditRect() pos.
 {
 	// Base of navnet is hotspot.
@@ -438,9 +438,9 @@ void CGoalTimer::EditHotSpot(	// Returns nothiing.
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CGoalTimer::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CGoalTimer::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	if (m_pImage == 0)
 	{
@@ -464,9 +464,9 @@ short CGoalTimer::GetResources(void)						// Returns 0 if successfull, non-zero 
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CGoalTimer::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CGoalTimer::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	if (m_pImage != 0)
 	{

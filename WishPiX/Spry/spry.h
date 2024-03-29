@@ -67,26 +67,26 @@ class RSpry
 		~RSpry();
 
 		// Clear
-		short Clear(void);
+		int16_t Clear(void);
 
 		// Load from specified file
-		short Load(
+		int16_t Load(
 			char* pszFile);
 
 		// Load from already-open file
-		short Load(
+		int16_t Load(
 			RFile* pFile);
 
 		// Save to specified file
-		short Save(
+		int16_t Save(
 			char* pszFile);
 
 		// Save to already-open file
-		short Save(
+		int16_t Save(
 			RFile* pFile);
 
 		// Convert to specified RImage type
-		short Convert(
+		int16_t Convert(
 			RImage::Type type);
 	};
 

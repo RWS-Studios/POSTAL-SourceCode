@@ -68,13 +68,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CLadder::Load(								// Returns 0 if successfull, non-zero otherwise
+int16_t CLadder::Load(								// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,										// In:  File to load from
 	bool bEditMode,									// In:  True for edit mode, false otherwise
-	short sFileCount,									// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)								// In:  Version of file format to load.
+	int16_t sFileCount,									// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)								// In:  Version of file format to load.
 	{
-	short sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	if (sResult == 0)
 		{
 		switch (ulFileVersion)
@@ -124,11 +124,11 @@ short CLadder::Load(								// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CLadder::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CLadder::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 	{
-	short	sResult	= CThing::Save(pFile, sFileCount);
+	int16_t	sResult	= CThing::Save(pFile, sFileCount);
 	if (sResult == 0)
 		{
 		pFile->Write(&m_dX);
@@ -149,7 +149,7 @@ short CLadder::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CLadder::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+int16_t CLadder::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 	{
 	return 0;
 	}
@@ -158,7 +158,7 @@ short CLadder::Startup(void)								// Returns 0 if successfull, non-zero otherw
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-short CLadder::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CLadder::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 	{
 	return 0;
 	}
@@ -202,12 +202,12 @@ void CLadder::Render(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CLadder::EditNew(								// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CLadder::EditNew(								// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -223,9 +223,9 @@ short CLadder::EditNew(								// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-short CLadder::EditModify(void)
+int16_t CLadder::EditModify(void)
 	{
-	short	sResult	= 0;
+	int16_t	sResult	= 0;
 
 	RGuiItem* pgui = RGuiItem::LoadInstantiate(FullPathVD(GUI_FILE_NAME));
 	if (pgui != NULL)
@@ -289,10 +289,10 @@ short CLadder::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CLadder::EditMove(								// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CLadder::EditMove(								// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
 	m_dX = (double)sX;
 	m_dY = (double)sY;
@@ -328,9 +328,9 @@ void CLadder::EditRect(	// Returns nothiing.
 // (virtual	(Overridden here)).
 ////////////////////////////////////////////////////////////////////////////////
 void CLadder::EditHotSpot(	// Returns nothiing.
-	short*	psX,					// Out: X coord of 2D hotspot relative to
+	int16_t*	psX,					// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-	short*	psY)					// Out: Y coord of 2D hotspot relative to
+	int16_t*	psY)					// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 	{
 	*psX	= 0;	// Safety.
@@ -358,9 +358,9 @@ void CLadder::EditRender(void)
 	{
 	// Map from 3d to 2d coords
 	Map3Dto2D(
-		(short) m_dX, 
-		(short) m_dY, 
-		(short) m_dZ, 
+		(int16_t) m_dX, 
+		(int16_t) m_dY, 
+		(int16_t) m_dZ, 
 		&m_sprite.m_sX2, 
 		&m_sprite.m_sY2);
 
@@ -372,7 +372,7 @@ void CLadder::EditRender(void)
 	m_sprite.m_sPriority = m_dZ + m_sprite.m_pImage->m_sHeight / 2;
 		
 	// Layer should be based on info we get from attribute map.
-	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 	// Update sprite in scene
 	m_pRealm->m_scene.UpdateSprite(&m_sprite);
@@ -382,9 +382,9 @@ void CLadder::EditRender(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Initialize object.
 ////////////////////////////////////////////////////////////////////////////////
-short CLadder::Init(void)	// Returns 0 on success.
+int16_t CLadder::Init(void)	// Returns 0 on success.
 	{
-	short	sRes	= GetResources();
+	int16_t	sRes	= GetResources();
 
 	// Set up collision object.
 	m_smashTop.m_bits								= CSmash::Ladder;
@@ -407,9 +407,9 @@ short CLadder::Init(void)	// Returns 0 on success.
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CLadder::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CLadder::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Safe to call even if no resource.
 	FreeResources();
@@ -426,9 +426,9 @@ short CLadder::GetResources(void)						// Returns 0 if successfull, non-zero oth
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CLadder::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CLadder::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	if (m_sprite.m_pImage != NULL)
 		{

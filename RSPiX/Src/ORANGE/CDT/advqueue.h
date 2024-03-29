@@ -39,7 +39,7 @@
 
 #include "queue.h"
 
-template <class T, short sSize> class RAdvQueue	: public RQueue<T, sSize>
+template <class T, int16_t sSize> class RAdvQueue	: public RQueue<T, sSize>
 	{
 	public:
 		// Default constructor.
@@ -49,14 +49,14 @@ template <class T, short sSize> class RAdvQueue	: public RQueue<T, sSize>
 
 	public:	// Querries.
 		// Gets the nth element in the queue from the head.
-		T*	Get(short n)
+		T*	Get(int16_t n)
 			{
 			n	= (n > m_sHead) ? (sSize + (m_sHead - n)) : (m_sHead - n);
 			return m_aptQ + n;
 			}
 
 		// Same as Get.  Just kind of silly.
-		T* operator [](short n)
+		T* operator [](int16_t n)
 			{
 			return Get(n);
 			}

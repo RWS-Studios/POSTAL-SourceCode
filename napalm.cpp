@@ -158,10 +158,10 @@ double CNapalm::ms_dAccDrag     = 300.0;				// Acceleration due to drag
 double CNapalm::ms_dThrowVertVel = 30.0;				// Throw up at this velocity
 double CNapalm::ms_dThrowHorizVel = 300;				// Throw out at this velocity
 double CNapalm::ms_dMinFireInterval = 5*5;
-long CNapalm::ms_lGrenadeFuseTime = 1500;			// Time from throw to blow
+int32_t CNapalm::ms_lGrenadeFuseTime = 1500;			// Time from throw to blow
 
 // Let this auto-init to 0
-short CNapalm::ms_sFileCount;
+int16_t CNapalm::ms_sFileCount;
 
 /// Napalm Canister Animation Files
 // An array of pointers to res names (one for each animation component)
@@ -181,13 +181,13 @@ static char* ms_apszResNames[] =
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CNapalm::Load(										// Returns 0 if successfull, non-zero otherwise
+int16_t CNapalm::Load(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 	{
-	short sResult = CWeapon::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CWeapon::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 
 	if (sResult == SUCCESS)
 	{
@@ -239,9 +239,9 @@ short CNapalm::Load(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CNapalm::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CNapalm::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 	{
 	CWeapon::Save(pFile, sFileCount);
 
@@ -269,7 +269,7 @@ short CNapalm::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 void CNapalm::Update(void)
 	{
-	short sHeight; 
+	int16_t sHeight; 
 	double dNewX;
 	double dNewY;
 	double dNewZ;
@@ -280,7 +280,7 @@ void CNapalm::Update(void)
 	if (!m_sSuspend)
 		{
 		// Get new time
-		long lThisTime = m_pRealm->m_time.GetGameTime(); 
+		int32_t lThisTime = m_pRealm->m_time.GetGameTime(); 
 
 		// If elapsed time is too short, skip this update.
 
@@ -306,7 +306,7 @@ void CNapalm::Update(void)
 			case CWeapon::State_Fire:
 				// Make sure it starts in a valid location.  If it is inside
 				// a wall, delete it now.
-				sHeight = m_pRealm->GetHeight((short) m_dX, (short) m_dZ);
+				sHeight = m_pRealm->GetHeight((int16_t) m_dX, (int16_t) m_dZ);
 				if (m_dY < sHeight)
 				{
 					delete this;
@@ -326,15 +326,15 @@ void CNapalm::Update(void)
 //-----------------------------------------------------------------------
 			case CWeapon::State_Go:
 				// Do horizontal velocity
-				dNewX = m_dX + COSQ[(short)m_dRot] * (m_dHorizVel * dSeconds);
-				dNewZ = m_dZ - SINQ[(short)m_dRot] * (m_dHorizVel * dSeconds);
+				dNewX = m_dX + COSQ[(int16_t)m_dRot] * (m_dHorizVel * dSeconds);
+				dNewZ = m_dZ - SINQ[(int16_t)m_dRot] * (m_dHorizVel * dSeconds);
 
 				// Do vertical velocity
 				dNewY = m_dY;
 				AdjustPosVel(&dNewY, &m_dVertVel, dSeconds);
 
 				// Check the height to see if it hit the ground
-				sHeight = m_pRealm->GetHeight((short) dNewX, (short) dNewZ);
+				sHeight = m_pRealm->GetHeight((int16_t) dNewX, (int16_t) dNewZ);
 
 				// If its lower than the last and current height, assume it
 				// hit the ground.
@@ -419,10 +419,10 @@ void CNapalm::Update(void)
 				if (m_dHorizVel == 0)
 					m_eState = CWeapon::State_Explode;
 
-				dNewX = m_dX + COSQ[(short)m_dRot] * (m_dHorizVel * dSeconds);
-				dNewZ = m_dZ - SINQ[(short)m_dRot] * (m_dHorizVel * dSeconds);
+				dNewX = m_dX + COSQ[(int16_t)m_dRot] * (m_dHorizVel * dSeconds);
+				dNewZ = m_dZ - SINQ[(int16_t)m_dRot] * (m_dHorizVel * dSeconds);
 				// Check for obstacles
-				sHeight = m_pRealm->GetHeight((short) dNewX, (short) dNewZ);
+				sHeight = m_pRealm->GetHeight((int16_t) dNewX, (int16_t) dNewZ);
 				// If it hit any obstacles, make it bounce off
 				if (sHeight > m_dY)
 				{
@@ -439,7 +439,7 @@ void CNapalm::Update(void)
 
 				// See if it fell off of something.  If so make it go back
 				// to the airborne state
-				if (sHeight < (short) m_dY)
+				if (sHeight < (int16_t) m_dY)
 				{
 					m_dVertVel = 0;
 					m_eState = State_Go;
@@ -473,7 +473,7 @@ void CNapalm::Update(void)
 ////////////////////////////////////////////////////////////////////////////////
 void CNapalm::Render(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 
 	m_sprite.m_pmesh = (RMesh*) m_anim.m_pmeshes->GetAtTime(lThisTime);
 	m_sprite.m_psop = (RSop*) m_anim.m_psops->GetAtTime(lThisTime);
@@ -504,14 +504,14 @@ void CNapalm::Render(void)
 	if (m_idParent == CIdBank::IdNil)
 	{
 		// Map from 3d to 2d coords
-		Map3Dto2D((short) m_dX, (short) m_dY, (short) m_dZ, &m_sprite.m_sX2, &m_sprite.m_sY2);
+		Map3Dto2D((int16_t) m_dX, (int16_t) m_dY, (int16_t) m_dZ, &m_sprite.m_sX2, &m_sprite.m_sY2);
 		
 
 		// Priority is based on bottom edge of sprite
 		m_sprite.m_sPriority = m_dZ;
 
 		// Layer should be based on info we get from attribute map
-		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 		m_sprite.m_ptrans		= &m_trans;
 
@@ -532,14 +532,14 @@ void CNapalm::Render(void)
 // Setup new object - called by object that created this object
 ////////////////////////////////////////////////////////////////////////////////
 
-short CNapalm::Setup(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ/*,												// In:  New z coord
+int16_t CNapalm::Setup(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ/*,												// In:  New z coord
 	double dHorizVel,										// In:  Starting Horizontal Velocity (has default)
 	double dVertVel*/)									// In:  Starting Vertical Velocity (has default)
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -569,9 +569,9 @@ short CNapalm::Setup(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CNapalm::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CNapalm::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	sResult = m_anim.Get(ms_apszResNames);
 	if (sResult == 0)
@@ -598,7 +598,7 @@ short CNapalm::GetResources(void)						// Returns 0 if successfull, non-zero oth
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CNapalm::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CNapalm::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
 	m_anim.Release();
 
@@ -611,12 +611,12 @@ short CNapalm::FreeResources(void)						// Returns 0 if successfull, non-zero ot
 //				 created.
 ////////////////////////////////////////////////////////////////////////////////
 
-short CNapalm::Preload(
+int16_t CNapalm::Preload(
 	CRealm* prealm)				// In:  Calling realm.
 	{
 	CAnim3D anim;
 	RImage* pimage;
-	short sResult = anim.Get(ms_apszResNames);
+	int16_t sResult = anim.Get(ms_apszResNames);
 	anim.Release();
 	rspGetResource(&g_resmgrGame, prealm->Make2dResPath(SMALL_SHADOW_FILE), &pimage, RFile::LittleEndian);
 	rspReleaseResource(&g_resmgrGame, &pimage);

@@ -75,14 +75,14 @@ class CFirebomb : public CWeapon
 	public:
 
 	protected:
-		short m_sPrevHeight;										// Previous height
+		int16_t m_sPrevHeight;										// Previous height
 
 		CAnim3D		m_anim;										// 3D animation
 		RTransform	m_trans;										// Transform
 		CSprite3		m_sprite;									// 3D sprite to render this thing.
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
+		static int16_t ms_sFileCount;
 
 		// "Constant" values that we want to be able to tune using the editor
 		static double ms_dCloseDistance;						// Close enough to hit CDude
@@ -117,11 +117,11 @@ class CFirebomb : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CFirebomb(pRealm);
 			if (*ppNew == 0)
 				{
@@ -136,7 +136,7 @@ class CFirebomb : public CWeapon
 	//---------------------------------------------------------------------------
 
 		// Called before play begins to cache the resource for this object
-		static short Preload(
+		static int16_t Preload(
 			CRealm* prealm);				// In:  Calling realm.
 
 	//---------------------------------------------------------------------------
@@ -144,16 +144,16 @@ class CFirebomb : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Update object
 		void Update(void);
@@ -162,10 +162,10 @@ class CFirebomb : public CWeapon
 		void Render(void);
 
 		// Called by the object that is creating this weapon
-		short Setup(
-			short sX,												// In: New x coord
-			short sY,												// In: New y coord
-			short sZ);												// In: New z coord
+		int16_t Setup(
+			int16_t sX,												// In: New x coord
+			int16_t sY,												// In: New y coord
+			int16_t sZ);												// In: New z coord
 
 		// Get this class's sprite.  Note that the type will vary.
 		// This is a pure virtual functionin the base class.
@@ -176,12 +176,12 @@ class CFirebomb : public CWeapon
 			}
 
 		// Function to modify the velocity for a requested range
-		virtual short SetRangeToTarget(short sRequestedRange)
+		virtual int16_t SetRangeToTarget(int16_t sRequestedRange)
 		{
-			short sSetRange;
+			int16_t sSetRange;
 			// Must go at least 60 or at most 400 pixels
-			sSetRange = MAX(sRequestedRange, (short) 60);
-			sSetRange = MIN(sSetRange, (short) 400);
+			sSetRange = MAX(sRequestedRange, (int16_t) 60);
+			sSetRange = MIN(sSetRange, (int16_t) 400);
 			m_dHorizVel = (double) sSetRange / 0.8986; //0.7366;
 			return sSetRange;
 		}
@@ -191,10 +191,10 @@ class CFirebomb : public CWeapon
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 
 		// Process message queue
 		void ProcessMessages(void);
@@ -214,15 +214,15 @@ class CFirefrag : public CWeapon
 	public:
 
 	protected:
-		short m_sPrevHeight;										// Previous height
+		int16_t m_sPrevHeight;										// Previous height
 		CFire*  m_pFire;											// Pointer to controlled fire object
 		U16	  m_u16FireID;										// ID for fire.
 		RImage* m_pImage;											// Pointer to only image (replace with 3d anim, soon)
 		CSprite2 m_sprite;										// 2D sprite to render this object.
-		short		m_sNumExplosions;								// Total Number of explosions.
+		int16_t		m_sNumExplosions;								// Total Number of explosions.
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
+		static int16_t ms_sFileCount;
 
 		// "Constant" values that we want to be able to tune using the editor
 		static double ms_dAccUser;								// Acceleration due to user
@@ -233,7 +233,7 @@ class CFirefrag : public CWeapon
 		static double ms_dThrowHorizVel;						// Throw out at this velocity
 		static double ms_dMinBounceVel;						// Minimum velocity needed to bounce up
 		static double ms_dVelTransferFract;					// Amount of velocity to bounce back up
-		static short ms_sMaxExplosions;						// Maximum explosions before death.
+		static int16_t ms_sMaxExplosions;						// Maximum explosions before death.
 
 	//---------------------------------------------------------------------------
 	// Constructor(s) / destructor
@@ -265,11 +265,11 @@ class CFirefrag : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CFirefrag(pRealm);
 			if (*ppNew == 0)
 				{
@@ -284,16 +284,16 @@ class CFirefrag : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Update object
 		void Update(void);
@@ -302,10 +302,10 @@ class CFirefrag : public CWeapon
 		void Render(void);
 
 		// Called by the object that is creating this weapon
-		short Setup(
-			short sX,												// In: New x coord
-			short sY,												// In: New y coord
-			short sZ);												// In: New z coord
+		int16_t Setup(
+			int16_t sX,												// In: New x coord
+			int16_t sY,												// In: New y coord
+			int16_t sZ);												// In: New z coord
 
 		// Get this class's sprite.  Note that the type will vary.
 		// This is a pure virtual functionin the base class.
@@ -320,10 +320,10 @@ class CFirefrag : public CWeapon
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 
 };
 

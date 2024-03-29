@@ -25,7 +25,7 @@
 	char* print(RImage* pimDst,short sX,short sY,char* pszFormat,...);
 	short SetEffectAbs(Effect eEffect,short sVal); // absolute:
 	short SetEffect(Effect eEffect,double dVal); // relative:
-	short SetColor(ULONG ulForeColor,ULONG ulBackColor=0,ULONG ulShadowColor=0);
+	short SetColor(uint32_t ulForeColor,uint32_t ulBackColor=0,uint32_t ulShadowColor=0);
 	short SetDestination(RImage* pimDst,RRect* prColumn = NULL);
 	void SetJustifyRight();
 	void SetJustifyCenter();
@@ -80,53 +80,53 @@ public:
 		}	Effect; // binary
 	//-------------------------- Higher Level
 	char* print(char* pszFormat,...);
-	char* print(short sX,short sY,char* pszFormat,...);
-	char* print(RImage* pimDst,short sX,short sY,char* pszFormat,...);
-	short SetEffectAbs(Effect eEffect,short sVal); // absolute:
-	short SetEffect(Effect eEffect,double dVal); // relative:
-	short SetColor(ULONG ulForeColor,ULONG ulBackColor=0,ULONG ulShadowColor=0);
-	short SetDestination(RImage* pimDst,RRect* prColumn = NULL);
-	short SetColumn(short sX,short sY,short sW,short sH);
+	char* print(int16_t sX,int16_t sY,char* pszFormat,...);
+	char* print(RImage* pimDst,int16_t sX,int16_t sY,char* pszFormat,...);
+	int16_t SetEffectAbs(Effect eEffect,int16_t sVal); // absolute:
+	int16_t SetEffect(Effect eEffect,double dVal); // relative:
+	int16_t SetColor(uint32_t ulForeColor,uint32_t ulBackColor=0,uint32_t ulShadowColor=0);
+	int16_t SetDestination(RImage* pimDst,RRect* prColumn = NULL);
+	int16_t SetColumn(int16_t sX,int16_t sY,int16_t sW,int16_t sH);
 	void SetJustifyRight();
 	void SetJustifyCenter();
 	void SetJustifyLeft();
 	void SetJustifyFull();
-	void SetWordWrap(short sOn = TRUE);
+	void SetWordWrap(int16_t sOn = TRUE);
 	void ResetEffects(); // includes tab and to relative
 	void ResetMode(); // all zero
-	void SetMode(Mode eMode,short sVal); // 0 = off
-	short SetFont(short sCellH,RFont* pFont = NULL);
-	void	GetPos(short *psX,short *psY = NULL,short *psW = NULL,short *psH = NULL);
-	short	GetWidth(char* pszString);
+	void SetMode(Mode eMode,int16_t sVal); // 0 = off
+	int16_t SetFont(int16_t sCellH,RFont* pFont = NULL);
+	void	GetPos(int16_t *psX,int16_t *psY = NULL,int16_t *psW = NULL,int16_t *psH = NULL);
+	int16_t	GetWidth(char* pszString);
 	RFont* GetFont() { return m_pfnCurFont; }
 	//-------------------------- Lower Level
 	//void OffsetShadow();
 	char* printInt(char* pszInput);
-	void GetPropEffX(short sX,short sE,short sNext,
-								  short *psEffX = NULL,short *psEffE = NULL,
-								  short *psEffNext = NULL);
-	short GetPropCellX(short sChar,short *psX = NULL,short *psE = NULL,
-			short *psNext = NULL,short sFirst = FALSE);
+	void GetPropEffX(int16_t sX,int16_t sE,int16_t sNext,
+								  int16_t *psEffX = NULL,int16_t *psEffE = NULL,
+								  int16_t *psEffNext = NULL);
+	int16_t GetPropCellX(int16_t sChar,int16_t *psX = NULL,int16_t *psE = NULL,
+			int16_t *psNext = NULL,int16_t sFirst = FALSE);
 	char* ScanLine(char* pszInput);
 	void  FormatText();
 	void	DrawText();
-	short GetBlitW(UCHAR c);
-	short FrameIt(); // 1= fresh line, -1 = off bottom
+	int16_t GetBlitW(uint8_t c);
+	int16_t FrameIt(); // 1= fresh line, -1 = off bottom
 	void	printLine();
 	void ClearTabs(); // both types
-	short IsClipped(short sX,short sY,short sW,short sH);
+	int16_t IsClipped(int16_t sX,int16_t sY,int16_t sW,int16_t sH);
 	char*	GetNextLine(); // characters from inputted text to be line formatted, NULL = done.
-	short IsWhiteSpace(short sChar)
+	int16_t IsWhiteSpace(int16_t sChar)
 		{ if ((sChar == ' ')||(sChar == '\t')) return 1; return 0;}
-	short SetCellW();
+	int16_t SetCellW();
 
 	//-------------------------- Construction
 	RPrint();
 	~RPrint();
 public:
 
-	short m_sCurX;	// lower left cursor position
-	short m_sCurY;
+	int16_t m_sCurX;	// lower left cursor position
+	int16_t m_sCurY;
 
 	Mode	m_eModes;	// Set different text modes
 	// a 0 signals using the Height relative value
@@ -137,29 +137,29 @@ public:
 	//----------------------------- More parameters
 	RFont*	m_pfnCurFont; // The high level font
 
-	short m_sNumTabStops;
-	short m_sNumDecStops;
-	short *m_psTabStops;
-	short *m_psDecStops;
+	int16_t m_sNumTabStops;
+	int16_t m_sNumDecStops;
+	int16_t *m_psTabStops;
+	int16_t *m_psDecStops;
 
 	//----------------------------- Working variables
 	RFont::RFontSet* m_pCurFontSet; // set to NULL initially.
 	float	m_fWidthScale;				// Compared to current font
 	float m_fHeightScale;			// Compared to current font
 
-	short	m_sCellH;	// Current Visual Letter Height:
-	short m_sCellW;	// Curent maximum width based on effects
+	int16_t	m_sCellH;	// Current Visual Letter Height:
+	int16_t m_sCellW;	// Curent maximum width based on effects
 
-	short m_sUP_W;		// Max width or fixed grid width
-	short m_sUP_H;		// Max width or fixed grid width
+	int16_t m_sUP_W;		// Max width or fixed grid width
+	int16_t m_sUP_H;		// Max width or fixed grid width
 
-	short m_sNumWhite;
+	int16_t m_sNumWhite;
 	//---------------
-	short m_sNumChar;
-	short m_sExtX;
+	int16_t m_sNumChar;
+	int16_t m_sExtX;
 	//----------------------------- Static variables
-	static	UCHAR	ms_szLineText[1024]; // Stores a line at a time
-	static	short	ms_sCharPosX[1024]; // positions of each character in the line...
+	static	uint8_t	ms_szLineText[1024]; // Stores a line at a time
+	static	int16_t	ms_sCharPosX[1024]; // positions of each character in the line...
 	static	char	ms_szInput[4096]; //
 	};
 

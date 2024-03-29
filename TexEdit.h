@@ -104,7 +104,7 @@ class CTexEdit
 
 		typedef struct
 			{
-			long	lTriIndex;		// Triangle affected.
+			int32_t	lTriIndex;		// Triangle affected.
 			U8		u8Color;			// Color applied.
 			U8		u8PrevColor;	// Prev color.
 			} Cmd;
@@ -121,15 +121,15 @@ class CTexEdit
 		CScene		m_scene;				// Scene for rendering.
 		Manip			m_manip;				// Current manipulation type.
 		bool			m_bDragging;		// true if in drag manipulation.
-		short			m_sCursorResetX;	// Used by ProcessManip() to process drags.
-		short			m_sCursorResetY;	// Used by ProcessManip() to process drags.
+		int16_t			m_sCursorResetX;	// Used by ProcessManip() to process drags.
+		int16_t			m_sCursorResetY;	// Used by ProcessManip() to process drags.
 		float			m_fScale;			// Scaling.
 		RTransform	m_transRot;			// Rotation.
 		float			m_fX;					// Translation.
 		float			m_fY;					// Translation.
 		bool			m_bQuit;				// true when done.
 		U8				m_u8Color;			// Current color.
-		long			m_lTriIndex;		// Index of tri selected or < 0, if none.
+		int32_t			m_lTriIndex;		// Index of tri selected or < 0, if none.
 		RTexture		m_texWork;			// Work texture.
 		RTexture*	m_ptexSrc;			// The real thing.
 		ChanTexture*	m_ptexchanSrc;	// Animation being edited.
@@ -137,7 +137,7 @@ class CTexEdit
 												// synch (revert or apply).
 		RString		m_strFileName;		// Filename to save textures as.
 		bool			m_bSpotLight;		// true for spotlight; false for ambient.
-		short			m_sBrightness;		// Brightness for sprite.
+		int16_t			m_sBrightness;		// Brightness for sprite.
 
 	//------------------------------------------------------------------------------
 	// Construction.
@@ -182,8 +182,8 @@ class CTexEdit
 			RTransform& trans,	// In:  Transformation.
 			RAlpha* palphaLight,	// In:  Light.
 			RImage* pimDst,		// In:  Destination for result.
-			short sOffsetX,		// In:  X offset.
-			short sOffsetY,		// In:  Y offset.
+			int16_t sOffsetX,		// In:  X offset.
+			int16_t sOffsetY,		// In:  Y offset.
 			RRect& rcClip)			// In:  Dst clip rect.
 			;
 
@@ -253,7 +253,7 @@ class CTexEdit
 		//////////////////////////////////////////////////////////////////////////////
 		void
 		SetToNotify(
-			long lBtnId,					// In:  ID of btn whose callback will be set.
+			int32_t lBtnId,					// In:  ID of btn whose callback will be set.
 			RGuiItem::BtnUpCall pfn)	// In:  Function to notify.
 			;
 
@@ -262,7 +262,7 @@ class CTexEdit
 		//////////////////////////////////////////////////////////////////////////////
 		void
 		SetToNotify(
-			long lId,							// In:  ID of gui whose callback will be set.
+			int32_t lId,							// In:  ID of gui whose callback will be set.
 			RGuiItem::InputEventCall pfn)	// In:  Function to notify.
 			;
 
@@ -271,7 +271,7 @@ class CTexEdit
 		//////////////////////////////////////////////////////////////////////////////
 		void
 		SetToNotify(
-			long lId,								// In:  ID of scrollbar whose callback will be set.
+			int32_t lId,								// In:  ID of scrollbar whose callback will be set.
 			RScrollBar::UpdatePosCall pfn)	// In:  Function to notify.
 			;
 

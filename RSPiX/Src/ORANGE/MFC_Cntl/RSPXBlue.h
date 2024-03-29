@@ -82,7 +82,7 @@ class EXE2DLL CRSPiXBlue : public CStatic
 		////////////////////////////////////////////////////////////////////////////
 
 		// Set the buffer Blue uses to draw and redraw the display.
-		void SetDisplayImage(CImage* pim, short sFlip = FALSE);
+		void SetDisplayImage(CImage* pim, int16_t sFlip = FALSE);
 
 		// Set the palette Blue uses to draw and redraw the display.
 		void SetDisplayPalette(CPal* ppal);
@@ -95,9 +95,9 @@ class EXE2DLL CRSPiXBlue : public CStatic
 		// details.
 		////////////////////////////////////////////////////////////////////////////
 		// BCRITIC.H
-		short Blu_RemoveCritical(CRITICALL cc)	
+		int16_t Blu_RemoveCritical(CRITICALL cc)	
 			{ return ::Blu_RemoveCritical(cc); }
-		short Blu_AddCritical(CRITICALL cc, ULONG ulUser)
+		int16_t Blu_AddCritical(CRITICALL cc, uint32_t ulUser)
 			{ return ::Blu_AddCritical(cc, ulUser); }
 		// BDEBUG.H
 		#undef TRACE	// We will use MFC's TRACE
@@ -105,7 +105,7 @@ class EXE2DLL CRSPiXBlue : public CStatic
 		#undef STRACE
 		#define STRACE	::AfxTrace
 		// BDIALOG.H
-		short Blu_MsgBox(USHORT usFlags, char *pszTitle, char *pszFrmt, ...)
+		int16_t Blu_MsgBox(uint16_t usFlags, char *pszTitle, char *pszFrmt, ...)
 			{
 			char	szOutput[16384];
 			va_list varp;
@@ -117,14 +117,14 @@ class EXE2DLL CRSPiXBlue : public CStatic
 			va_end(varp);
 			return ::Blu_MsgBox(usFlags, pszTitle, szOutput);
 			}
-		short Blu_OpenBox(char* pszBoxTitle, char *pszFileName, short sStrSize)
+		int16_t Blu_OpenBox(char* pszBoxTitle, char *pszFileName, int16_t sStrSize)
 			{ return ::Blu_OpenBox(pszBoxTitle, pszFileName, sStrSize); }
-		short Blu_MultiOpenBox(	char* pszBoxTitle, 		
+		int16_t Blu_MultiOpenBox(	char* pszBoxTitle, 		
 										char* pszFileNameMemory,
-										long	lNumBytes,			
+										int32_t	lNumBytes,			
 										char **ppszFileNames, 	
-										short sMaxPtrs,			
-										short* psNumFiles			
+										int16_t sMaxPtrs,			
+										int16_t* psNumFiles			
 										)
 			{
 			return ::Blu_MultiOpenBox(	pszBoxTitle, pszFileNameMemory,
@@ -132,125 +132,125 @@ class EXE2DLL CRSPiXBlue : public CStatic
 												sMaxPtrs, psNumFiles);
 			}
 		// BDISPLAY.H
-		short Blu_CreateDisplay(long lWidth, long lHeight, short sColorDepth)
+		int16_t Blu_CreateDisplay(int32_t lWidth, int32_t lHeight, int16_t sColorDepth)
 			{ return ::Blu_CreateDisplay(lWidth, lHeight, sColorDepth); }
 		void Blu_SetRedrawBuf(	void* pvBuf, 				
-										long lBufW, long lBufH,	
-										long sx, long sy,			
-										long dx, long dy, 		
-										long lBltW, long lBltH,	
-										short sColorDepth,		
-										short sVertFlip = FALSE)
+										int32_t lBufW, int32_t lBufH,	
+										int32_t sx, int32_t sy,			
+										int32_t dx, int32_t dy, 		
+										int32_t lBltW, int32_t lBltH,	
+										int16_t sColorDepth,		
+										int16_t sVertFlip = FALSE)
 			{
 			::Blu_SetRedrawBuf(	pvBuf, lBufW, lBufH, sx, sy, dx, dy,
 										lBltW, lBltH, sColorDepth, sVertFlip); 
 			}
-		void Blu_SetDisplayBuf(	void* pvBuf, long lWidth, long lHeight,
-										short sColorDepth, short sVertFlip = FALSE)
+		void Blu_SetDisplayBuf(	void* pvBuf, int32_t lWidth, int32_t lHeight,
+										int16_t sColorDepth, int16_t sVertFlip = FALSE)
 			{ ::Blu_SetDisplayBuf(pvBuf, lWidth, lHeight, sColorDepth, sVertFlip); }
 		U16*	Blu_GetPaletteTranslation(void)
 			{ return ::Blu_GetPaletteTranslation(); }
-		short Blu_UpdateDisplay(long sx, long sy, 
-										long dx, long dy, 
-										long w, long h)
+		int16_t Blu_UpdateDisplay(int32_t sx, int32_t sy, 
+										int32_t dx, int32_t dy, 
+										int32_t w, int32_t h)
 			{ return ::Blu_UpdateDisplay(sx, sy, dx, dy, w, h); }
-		short Blu_SetWindowControls(short sControls)
+		int16_t Blu_SetWindowControls(int16_t sControls)
 			{ return ::Blu_SetWindowControls(sControls); }
-		long Blu_GetDisplayInfo(USHORT usInfo)
+		int32_t Blu_GetDisplayInfo(uint16_t usInfo)
 			{ return ::Blu_GetDisplayInfo(usInfo); }
-		short Blu_SetWindowTitle(char *pszTitleNameText)
+		int16_t Blu_SetWindowTitle(char *pszTitleNameText)
 			{ return ::Blu_SetWindowTitle(pszTitleNameText); }
-		short Blu_ValidateRect(long lX, long lY, long lW, long lH)
+		int16_t Blu_ValidateRect(int32_t lX, int32_t lY, int32_t lW, int32_t lH)
 			{ return ::Blu_ValidateRect(lX, lY, lW, lH); }
 		// BJOY.H
-		short Blu_UpdateJoy(short sJoy)
+		int16_t Blu_UpdateJoy(int16_t sJoy)
 			{ return ::Blu_UpdateJoy(sJoy); }
-		void Blu_GetJoyPos(short sJoy, long *px, long *py, long *pz)
+		void Blu_GetJoyPos(int16_t sJoy, int32_t *px, int32_t *py, int32_t *pz)
 			{ ::Blu_GetJoyPos(sJoy, px, py, pz); }
-		void Blu_GetJoyPrevPos(short sJoy, long *px, long *py, long *pz)
+		void Blu_GetJoyPrevPos(int16_t sJoy, int32_t *px, int32_t *py, int32_t *pz)
 			{ ::Blu_GetJoyPrevPos(sJoy, px, py, pz); }
-		USHORT Blu_GetJoyState(short sJoy)
+		uint16_t Blu_GetJoyState(int16_t sJoy)
 			{ return ::Blu_GetJoyState(sJoy); }
-		void Blu_GetJoyState(short sJoy, PJOYSTATE pjs)
+		void Blu_GetJoyState(int16_t sJoy, PJOYSTATE pjs)
 			{ ::Blu_GetJoyState(sJoy, pjs); }
-		USHORT Blu_GetJoyPrevState(short sJoy)
+		uint16_t Blu_GetJoyPrevState(int16_t sJoy)
 			{ return ::Blu_GetJoyPrevState(sJoy); }
-		void Blu_GetJoyPrevState(short sJoy, PJOYSTATE pjs)
+		void Blu_GetJoyPrevState(int16_t sJoy, PJOYSTATE pjs)
 			{ ::Blu_GetJoyPrevState(sJoy, pjs); }
 		// BKEY.H
-		short Blu_GetKeyboard(PKEYBOARD pkb)
+		int16_t Blu_GetKeyboard(PKEYBOARD pkb)
 			{ return ::Blu_GetKeyboard(pkb); }
 		// BMAIN.H
 		void Blu_System(void)
 			{ ::Blu_System(); }
-		void Blu_DispatchEvents(short sDispatch)
+		void Blu_DispatchEvents(int16_t sDispatch)
 			{ ::Blu_DispatchEvents(sDispatch); }
 		// BMOUSE.H
-		short Blu_GetMousePos(long* px, long* py)
+		int16_t Blu_GetMousePos(int32_t* px, int32_t* py)
 			{ return ::Blu_GetMousePos(px, py); }
-		short Blu_SetMousePos(long x, long y)
+		int16_t Blu_SetMousePos(int32_t x, int32_t y)
 			{ return ::Blu_SetMousePos(x, y); }
-		short Blu_GetMouseButton(short sButton)
+		int16_t Blu_GetMouseButton(int16_t sButton)
 			{ return ::Blu_GetMouseButton(sButton); }
 		// BPALETTE.H
-		short Blu_SetPalette(PRGBT8 prgbt8, short sIndex, short sNumEntries)
+		int16_t Blu_SetPalette(PRGBT8 prgbt8, int16_t sIndex, int16_t sNumEntries)
 			{ return ::Blu_SetPalette(prgbt8, sIndex, sNumEntries); }
-		short Blu_SetPalette(PRGBQ8 prgbq8, short sIndex, short sNumEntries)
+		int16_t Blu_SetPalette(PRGBQ8 prgbq8, int16_t sIndex, int16_t sNumEntries)
 			{ return ::Blu_SetPalette(prgbq8, sIndex, sNumEntries); }
-		short Blu_SetPalette(PRGBT5 prgbt5, short sIndex, short sNumEntries)
+		int16_t Blu_SetPalette(PRGBT5 prgbt5, int16_t sIndex, int16_t sNumEntries)
 			{ return ::Blu_SetPalette(prgbt5, sIndex, sNumEntries); }
-		short Blu_SetPaletteUsage(short sFull)
+		int16_t Blu_SetPaletteUsage(int16_t sFull)
 			{ return ::Blu_SetPaletteUsage(sFull); }
-		void Blu_SetPaletteWindowVisibility(short sVisible)
+		void Blu_SetPaletteWindowVisibility(int16_t sVisible)
 			{ ::Blu_SetPaletteWindowVisibility(sVisible); }
 		// WPALETTE.H
-		short Blu_SetPalette(RGBQUAD* prgbq, short sIndex, short sNumEntries)
+		int16_t Blu_SetPalette(RGBQUAD* prgbq, int16_t sIndex, int16_t sNumEntries)
 			{ return ::Blu_SetPalette(prgbq, sIndex, sNumEntries); }
 		RGBQUAD* Blu_GetPalette(void)
 			{ return ::Blu_GetPalette(); }
 		HWND Blu_GetPaletteWindow(void)
 			{ return ::Blu_GetPaletteWindow(); }
 		// BPARMS.H
-		short Blu_GetNumParms(void)
+		int16_t Blu_GetNumParms(void)
 			{ return ::Blu_GetNumParms(); }
-		char* Blu_GetParm(short sNum)
+		char* Blu_GetParm(int16_t sNum)
 			{ return ::Blu_GetParm(sNum); }
 		// BSOUND.H
-		long Blu_GetSoundOutWindowSize(void)
+		int32_t Blu_GetSoundOutWindowSize(void)
 			{ return ::Blu_GetSoundOutWindowSize(); }
-		void Blu_SetSoundOutWindowSize(long lWindowSize)
+		void Blu_SetSoundOutWindowSize(int32_t lWindowSize)
 			{ ::Blu_SetSoundOutWindowSize(lWindowSize); }
-		long Blu_GetSoundOutPaneSize(void)
+		int32_t Blu_GetSoundOutPaneSize(void)
 			{ return ::Blu_GetSoundOutPaneSize(); }
-		void Blu_SetSoundOutPaneSize(long lPaneSize)
+		void Blu_SetSoundOutPaneSize(int32_t lPaneSize)
 			{ ::Blu_SetSoundOutPaneSize(lPaneSize); }
-		short Blu_OpenSoundOut(	ULONG		ulSampleRate,
-										USHORT	usBitsPerSample,
-										USHORT	usNumChannels)
+		int16_t Blu_OpenSoundOut(	uint32_t		ulSampleRate,
+										uint16_t	usBitsPerSample,
+										uint16_t	usNumChannels)
 			{
 			return ::Blu_OpenSoundOut(	ulSampleRate,
 												usBitsPerSample,
 												usNumChannels);
 			}
-		short Blu_CloseSoundOut(void)
+		int16_t Blu_CloseSoundOut(void)
 			{ return ::Blu_CloseSoundOut(); }
-		short Blu_StartSoundOut(BLU_SND_CALLBACK callback,
-										ULONG ulUser)
+		int16_t Blu_StartSoundOut(BLU_SND_CALLBACK callback,
+										uint32_t ulUser)
 			{ return ::Blu_StartSoundOut(callback, ulUser); }
-		short Blu_IsSoundOutOpen(void)
+		int16_t Blu_IsSoundOutOpen(void)
 			{ return ::Blu_IsSoundOutOpen(); }
-		short Blu_ResetSoundOut(void)
+		int16_t Blu_ResetSoundOut(void)
 			{ return ::Blu_ResetSoundOut(); }
-		short Blu_PauseSoundOut(void)
+		int16_t Blu_PauseSoundOut(void)
 			{ return ::Blu_PauseSoundOut(); }
-		short Blu_ResumeSoundOut(void)
+		int16_t Blu_ResumeSoundOut(void)
 			{ return ::Blu_ResumeSoundOut(); }
-		long Blu_GetSoundOutPos(void)
+		int32_t Blu_GetSoundOutPos(void)
 			{ return ::Blu_GetSoundOutPos(); }
-		long Blu_GetSoundOutTime(void)
+		int32_t Blu_GetSoundOutTime(void)
 			{ return ::Blu_GetSoundOutTime(); }
 		// BTIME.H
-		long Blu_GetTime(void)
+		int32_t Blu_GetTime(void)
 			{ return ::Blu_GetTime(); }
 		// SYSINFO
 		SYSINFO* GetSysInfo(void)

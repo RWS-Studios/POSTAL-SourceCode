@@ -114,16 +114,16 @@ class CLogTabVar
 
 		char* m_pszName;											// Variable name
 
-		short m_sMaxVal;											// Maximum value
+		int16_t m_sMaxVal;											// Maximum value
 
 		bool m_bSettable;											// Whether val is settable (true) or not (false)
 
-		short m_sNumStrings;										// Number of strings (0 if number based)
+		int16_t m_sNumStrings;										// Number of strings (0 if number based)
 		char** m_papszStrings;									// Pointer to array of pointers to strings
 
-		short m_sOutputWidth;									// Width of output in characters
+		int16_t m_sOutputWidth;									// Width of output in characters
 
-		short m_sRefCount;										// Reference count (how many logic tables)
+		int16_t m_sRefCount;										// Reference count (how many logic tables)
 
 		CLogTabVar* m_pNext;										// Pointer to next variable
 		CLogTabVar* m_pPrev;										// Pointer to prev variable
@@ -173,7 +173,7 @@ class CLogTabVar
 			// Check reference count and issue warning if necessary
 			if (m_sRefCount > 0)
 				{
-				TRACE("CLogTabVar::~CLogTabVar(): Destroying '%s', which is still being used by CLogTab(s) (refcount = %hd)!\n", m_pszName, (short)m_sRefCount);
+				TRACE("CLogTabVar::~CLogTabVar(): Destroying '%s', which is still being used by CLogTab(s) (refcount = %hd)!\n", m_pszName, (int16_t)m_sRefCount);
 				ASSERT("Destroying CLogTabVar that's being used by one or more CLogTab's (see trace for details)" == 0);
 				}
 
@@ -190,7 +190,7 @@ class CLogTabVar
 		// Find the variable with the specified name
 		////////////////////////////////////////////////////////////////////////////////
 		static
-		short FindVar(												// Returns 0 if successfull, non-zero otherwise
+		int16_t FindVar(												// Returns 0 if successfull, non-zero otherwise
 			char* pszName,											// In:  Variable name to find
 			CLogTabVar** ppVar);									//	Out: Pointer to variable (if found)
 
@@ -213,9 +213,9 @@ class CLogTabVar
 		////////////////////////////////////////////////////////////////////////////////
 		// Convert text into value
 		////////////////////////////////////////////////////////////////////////////////
-		short TextToVal(											// Returns 0 if successfull, non-zero otherwise
+		int16_t TextToVal(											// Returns 0 if successfull, non-zero otherwise
 			char* pszText,											// In:  Text to convert
-			short* psVal);											// Out: Value (only if successfull)
+			int16_t* psVal);											// Out: Value (only if successfull)
 
 		////////////////////////////////////////////////////////////////////////////////
 		// Convert value into text.  Resulting text will be truncated if necessary to
@@ -225,15 +225,15 @@ class CLogTabVar
 		// NOTE: Specified text length MUST BE AT LEAST 10!  This helps avoid all sorts
 		// of niggling little problems.
 		////////////////////////////////////////////////////////////////////////////////
-		short ValToText(											// Returns 0 if successfull, non-zero otherwise
-			short sVal,												// In:  Value to convert
+		int16_t ValToText(											// Returns 0 if successfull, non-zero otherwise
+			int16_t sVal,												// In:  Value to convert
 			char* pszText,											// Out: Text (only if successfull)
-			short sMaxText);										// In:  Maximum text length (must be >= 10)
+			int16_t sMaxText);										// In:  Maximum text length (must be >= 10)
 
 		////////////////////////////////////////////////////////////////////////////////
 		// Get maximum value (range is 0 to N, where this returns N)
 		////////////////////////////////////////////////////////////////////////////////
-		short GetMax(void)										// Returns maximum value
+		int16_t GetMax(void)										// Returns maximum value
 			{
 			return m_sMaxVal;
 			}
@@ -249,7 +249,7 @@ class CLogTabVar
 		////////////////////////////////////////////////////////////////////////////////
 		// Get current value (range is 0 to N, where N is returned by GetMax())
 		////////////////////////////////////////////////////////////////////////////////
-		virtual short GetVal(									// Returns current value
+		virtual int16_t GetVal(									// Returns current value
 			usertype user)											// In:  User type passed here
 			{
 			TRACE("CLogTabVar::GetVal(): '%s' is likely missing a derived-class GetVal()!\n", m_pszName);
@@ -261,7 +261,7 @@ class CLogTabVar
 		////////////////////////////////////////////////////////////////////////////////
 		virtual void SetVal(
 			usertype user,											// In:  User type passed here
-			short sVal)												// In:  Value to set
+			int16_t sVal)												// In:  Value to set
 			{
 			if (m_bSettable)
 				TRACE("CLogTabVar::SetVal(): '%s' is likely missing a derived-class SetVal()!\n", m_pszName);
@@ -283,14 +283,14 @@ CLogTabVar<usertype>* CLogTabVar<usertype>::ms_pHead = 0;
 ////////////////////////////////////////////////////////////////////////////////
 //static
 template <class usertype>
-short CLogTabVar<usertype>::FindVar(				// Returns 0 if successfull, non-zero otherwise
+int16_t CLogTabVar<usertype>::FindVar(				// Returns 0 if successfull, non-zero otherwise
 	char* pszName,											// In:  Variable name to find
 	CLogTabVar** ppVar)									//	Out: Pointer to variable (if found)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Scan through linked list looking for specified name
-	short sFound = 0;
+	int16_t sFound = 0;
 	CLogTabVar* p = ms_pHead;
 	while (p)
 		{
@@ -319,7 +319,7 @@ short CLogTabVar<usertype>::FindVar(				// Returns 0 if successfull, non-zero ot
 		if (sFound > 1)
 			{
 			sResult = LOGTAB_ERR_DUP_VAR;
-			TRACE("CLogTabVar::FindName(): Found %hd variables named '%s'!\n", (short)sFound, pszName);
+			TRACE("CLogTabVar::FindName(): Found %hd variables named '%s'!\n", (int16_t)sFound, pszName);
 			}
 	#endif
 
@@ -331,17 +331,17 @@ short CLogTabVar<usertype>::FindVar(				// Returns 0 if successfull, non-zero ot
 // Convert text into value
 ////////////////////////////////////////////////////////////////////////////////
 template <class usertype>
-short CLogTabVar<usertype>::TextToVal(				// Returns 0 if successfull, non-zero otherwise
+int16_t CLogTabVar<usertype>::TextToVal(				// Returns 0 if successfull, non-zero otherwise
 	char* pszText,											// In:  Text to convert
-	short* psVal)											// Out: Value (only if successfull)
+	int16_t* psVal)											// Out: Value (only if successfull)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Check if this var is string-based or number-based
 	if (m_sNumStrings > 0)
 		{
 		// Scan through array of strings looking for a match
-		short s;
+		int16_t s;
 		for (s = 0; s < m_sNumStrings; s++)
 			{
 			if (rspStricmp(pszText, m_papszStrings[s]) == 0)
@@ -360,8 +360,8 @@ short CLogTabVar<usertype>::TextToVal(				// Returns 0 if successfull, non-zero 
 	else
 		{
 		// Make sure text consists only of digits
-		short sLen = strlen(pszText);
-		for (short s = 0; s < sLen; s++)
+		int16_t sLen = strlen(pszText);
+		for (int16_t s = 0; s < sLen; s++)
 			{
 			if (!isdigit(pszText[s]))
 				{
@@ -373,13 +373,13 @@ short CLogTabVar<usertype>::TextToVal(				// Returns 0 if successfull, non-zero 
 		if (sResult == 0)
 			{
 			// Convert to value, then validate range
-			short sTmp = (short)atoi(pszText);
+			int16_t sTmp = (int16_t)atoi(pszText);
 			if ((sTmp >= 0) && (sTmp <= m_sMaxVal))
 				*psVal = sTmp;
 			else
 				{
 				sResult = LOGTAB_ERR_BAD_RANGE_VAR_TEXT;
-				TRACE("CLogTabVar::TextToVal(): '%hd' is out of range for '%s'!\n", (short)sTmp, m_pszName);
+				TRACE("CLogTabVar::TextToVal(): '%hd' is out of range for '%s'!\n", (int16_t)sTmp, m_pszName);
 				}
 			}
 		}
@@ -397,14 +397,14 @@ short CLogTabVar<usertype>::TextToVal(				// Returns 0 if successfull, non-zero 
 // of niggling little problems.
 ////////////////////////////////////////////////////////////////////////////////
 template <class usertype>
-short CLogTabVar<usertype>::ValToText(				// Returns 0 if successfull, non-zero otherwise
-	short sVal,												// In:  Value to convert
+int16_t CLogTabVar<usertype>::ValToText(				// Returns 0 if successfull, non-zero otherwise
+	int16_t sVal,												// In:  Value to convert
 	char* pszText,											// Out: Text (only if successfull)
-	short sMaxText)										// In:  Maximum text length (must be >= 10)
+	int16_t sMaxText)										// In:  Maximum text length (must be >= 10)
 	{
 	ASSERT(sMaxText >= 10);
 
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Check if this var is string-based or number-based
 	if (m_sNumStrings > 0)
@@ -424,14 +424,14 @@ short CLogTabVar<usertype>::ValToText(				// Returns 0 if successfull, non-zero 
 		else
 			{
 			sResult = LOGTAB_ERR_BAD_RANGE_VAR_TEXT;
-			TRACE("CLogTabVar::ValToText(): Value (%hd) is out of range for '%s'!\n", (short)sVal, m_pszName);
+			TRACE("CLogTabVar::ValToText(): Value (%hd) is out of range for '%s'!\n", (int16_t)sVal, m_pszName);
 			}
 		}
 	else
 		{
 		// Convert value to text equivalent (we know that a short can't take up
 		// any more than 6 characters, and that's with a negative sign in front).
-		sprintf(pszText, "%hd", (short)sVal);
+		sprintf(pszText, "%hd", (int16_t)sVal);
 		}
 	
 	return sResult;
@@ -467,17 +467,17 @@ class CLogTab
 		typedef struct
 			{
 			Operand operand;
-			short sEntry;
+			int16_t sEntry;
 			} Cell;
 
 	//------------------------------------------------------------------------------
 	// Variables
 	//------------------------------------------------------------------------------
 	protected:
-		short m_sRows;												// Number of rows in table
-		short m_sInVars;											// Number of input vars
-		short m_sOutVars;											// Number of output vars
-		short m_sTotalVars;										// Number of vars
+		int16_t m_sRows;												// Number of rows in table
+		int16_t m_sInVars;											// Number of input vars
+		int16_t m_sOutVars;											// Number of output vars
+		int16_t m_sTotalVars;										// Number of vars
 
 		CLogTabVar<usertype>* m_apVars[MaxVars];			// Array of pointers to vars
 
@@ -485,7 +485,7 @@ class CLogTab
 
 		bool m_bLogFileError;
 		FILE* m_fpLog;
-		short m_sLogLastRow;
+		int16_t m_sLogLastRow;
 
 	//------------------------------------------------------------------------------
 	// Functions
@@ -521,7 +521,7 @@ class CLogTab
 		////////////////////////////////////////////////////////////////////////////////
 		// Evaluate table
 		////////////////////////////////////////////////////////////////////////////////
-		short Evaluate(											// Returns 0 if successfull, non-zero otherwise
+		int16_t Evaluate(											// Returns 0 if successfull, non-zero otherwise
 			usertype user,											// In:  User type passed here
 			bool bLog);												// In:  Whether to log (true) or not (false)
 
@@ -533,13 +533,13 @@ class CLogTab
 		////////////////////////////////////////////////////////////////////////////////
 		// Load from current position of already-open file
 		////////////////////////////////////////////////////////////////////////////////
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile);											// In:  RFile to load from
 
 		////////////////////////////////////////////////////////////////////////////////
 		// Save to current position of already-open file
 		////////////////////////////////////////////////////////////////////////////////
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile);											// In:  RFile to save to
 
 	private:
@@ -549,17 +549,17 @@ class CLogTab
 		void FreeVars(void)
 			{
 			// Decrement vars' reference counts since we're no longer using them
-			for (short s = 0; s < m_sTotalVars; s++)
+			for (int16_t s = 0; s < m_sTotalVars; s++)
 				m_apVars[s]->DecRefCount();
 			}
 
 		////////////////////////////////////////////////////////////////////////////////
 		// (See .cpp for details)
 		////////////////////////////////////////////////////////////////////////////////
-		short ReadEntry(
+		int16_t ReadEntry(
 			RFile* pFile,											// In:  RFile to read from
 			char* pszEntry,										// Out: Entry is returned in here
-			short sMaxEntrySize,									// In:  Maximum size of entry
+			int16_t sMaxEntrySize,									// In:  Maximum size of entry
 			bool* pbEndOfTable,									// Out: true if this is last entry in table
 			bool* pbEndOfRow,										// Out: true if this is last entry in row
 			char* pcSave);											// I/O: Save char from last call (or 0 if none)
@@ -570,11 +570,11 @@ class CLogTab
 // Evaluate table
 ////////////////////////////////////////////////////////////////////////////////
 template <class usertype>
-short CLogTab<usertype>::Evaluate(
+int16_t CLogTab<usertype>::Evaluate(
 	usertype user,											// In:  User type passed here
 	bool bLog)												// In:  Whether to log (true) or not (false)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// If we're asked to log but a log error occurred previously, then don't log
 	if (bLog && m_bLogFileError)
@@ -592,22 +592,22 @@ short CLogTab<usertype>::Evaluate(
 
 	// Clear array of "cached" vals.  By caching these values, we avoid having
 	// to re-evaluate the vars each time we need them, thereby saving lots of time.
-	short sVals[MaxVars];
-	for (short s = 0; s < m_sInVars; s++)
+	int16_t sVals[MaxVars];
+	for (int16_t s = 0; s < m_sInVars; s++)
 		sVals[s] = -1;
 
 	// Scan table looking for a row that matches all the way across
 	char acBuf[256];
 	bool bRowMatched = false;
-	for (short sRow = 0; sRow < m_sRows; sRow++)
+	for (int16_t sRow = 0; sRow < m_sRows; sRow++)
 		{
 		// Optimistically default to matching cell (it's faster)
 		bool bCellMatched = true;
-		short sVar;
+		int16_t sVar;
 		for (sVar = 0; bCellMatched && (sVar < m_sInVars); sVar++)
 			{
 			// Get the entry from the table
-			short sEntry = m_cellTable[sRow][sVar].sEntry;
+			int16_t sEntry = m_cellTable[sRow][sVar].sEntry;
 
 			// Evaluate entry as per operand type
 			switch(m_cellTable[sRow][sVar].operand)
@@ -669,7 +669,7 @@ short CLogTab<usertype>::Evaluate(
 			bRowMatched = true;
 
 			// Set output vars as indicated by table entries
-			for (short sVar = 0; sVar < m_sOutVars; sVar++)
+			for (int16_t sVar = 0; sVar < m_sOutVars; sVar++)
 				{
 				// If operand is NOT don't care, then set var to specified entry
 				if (m_cellTable[sRow][m_sInVars + sVar].operand != DontCare)
@@ -683,13 +683,13 @@ short CLogTab<usertype>::Evaluate(
 				m_sLogLastRow = sRow;
 
 				// Write out the values of all vars
-				fprintf(m_fpLog, "Matched row #%hd: ", (short)sRow);
-				for (short sVar = 0; sVar < m_sTotalVars; sVar++)
+				fprintf(m_fpLog, "Matched row #%hd: ", (int16_t)sRow);
+				for (int16_t sVar = 0; sVar < m_sTotalVars; sVar++)
 					{
 					fprintf(m_fpLog, "%s=", m_apVars[sVar]->GetName());
 					if (sVar < m_sInVars)
 						{
-						short sEntry = sVals[sVar];
+						int16_t sEntry = sVals[sVar];
 						if (sEntry != -1)
 							{
 							m_apVars[sVar]->ValToText(sEntry, acBuf, sizeof(acBuf));
@@ -732,10 +732,10 @@ short CLogTab<usertype>::Evaluate(
 
 		// Show input vars
 		fprintf(m_fpLog, "No rows matched!  ");
-		for (short sVar = 0; sVar < m_sInVars; sVar++)
+		for (int16_t sVar = 0; sVar < m_sInVars; sVar++)
 			{
 			fprintf(m_fpLog, "%s=", m_apVars[sVar]->GetName());
-			short sEntry = sVals[sVar];
+			int16_t sEntry = sVals[sVar];
 			if (sEntry != -1)
 				{
 				m_apVars[sVar]->ValToText(sEntry, acBuf, sizeof(acBuf));
@@ -762,7 +762,7 @@ void CLogTab<usertype>::DumpToLog(void)
 	fprintf(m_fpLog, "Contents of the logic table:\n");
 
 	// Write out first row (names of vars)
-	for (short sVar = 0; sVar < m_sTotalVars; sVar++)
+	for (int16_t sVar = 0; sVar < m_sTotalVars; sVar++)
 		{
 		fprintf(m_fpLog, "%s   ", m_apVars[sVar]->GetName());
 
@@ -773,10 +773,10 @@ void CLogTab<usertype>::DumpToLog(void)
 	fprintf(m_fpLog, "\n");
 
 	// Write out rest of table
-	for (short sRow = 0; sRow < m_sRows; sRow++)
+	for (int16_t sRow = 0; sRow < m_sRows; sRow++)
 		{
-		fprintf(m_fpLog, "Row #%hd: ", (short)sRow);
-		for (short sVar = 0; sVar < m_sTotalVars; sVar++)
+		fprintf(m_fpLog, "Row #%hd: ", (int16_t)sRow);
+		for (int16_t sVar = 0; sVar < m_sTotalVars; sVar++)
 			{
 			// Get the entry from the table
 			Operand op = m_cellTable[sRow][sVar].operand;
@@ -824,10 +824,10 @@ void CLogTab<usertype>::DumpToLog(void)
 // Load from current position of already-open file
 ////////////////////////////////////////////////////////////////////////////////
 template <class usertype>
-short CLogTab<usertype>::Load(						// Returns 0 if successfull, non-zero otherwise
+int16_t CLogTab<usertype>::Load(						// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile)											// In:  RFile to load from
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Free any vars currently associated with this table
 	FreeVars();
@@ -903,8 +903,8 @@ short CLogTab<usertype>::Load(						// Returns 0 if successfull, non-zero otherw
 				else
 					{
 					sResult = LOGTAB_ERR_TOO_MANY_VARS;
-					TRACE("CLogTab::Load(): Table exceeds maximum number of vars, which is currently set to %hd!\n", (short)MaxVars);
-					rspMsgBox(LOGTAB_MSG, "Table exceeds maximum number of vars, which is currently limited to %hd.", (short)MaxVars);
+					TRACE("CLogTab::Load(): Table exceeds maximum number of vars, which is currently set to %hd!\n", (int16_t)MaxVars);
+					rspMsgBox(LOGTAB_MSG, "Table exceeds maximum number of vars, which is currently limited to %hd.", (int16_t)MaxVars);
 					}
 				}
 			}
@@ -950,7 +950,7 @@ short CLogTab<usertype>::Load(						// Returns 0 if successfull, non-zero otherw
 			// Read the remaining rows
 			do {
 				// Each row must contain the same number of columns as the total number of vars
-				short sColumn = 0;
+				int16_t sColumn = 0;
 				do	{
 					// Get next entry
 					sResult = ReadEntry(pFile, acText, sizeof(acText), &bEndOfTable, &bEndOfRow, &cSave);
@@ -970,7 +970,7 @@ short CLogTab<usertype>::Load(						// Returns 0 if successfull, non-zero otherw
 							if (sColumn < m_sTotalVars)
 								{
 								// Leading character determines type of operand
-								short sOffset = 0;
+								int16_t sOffset = 0;
 								switch(acText[0])
 									{
 									case '=':
@@ -1002,7 +1002,7 @@ short CLogTab<usertype>::Load(						// Returns 0 if successfull, non-zero otherw
 								if (m_cellTable[m_sRows][sColumn].operand != DontCare)
 									{
 									// Use this column's var to convert text into value
-									short sVal;
+									int16_t sVal;
 									CLogTabVar<usertype>* pVar = m_apVars[sColumn];
 									sResult = pVar->TextToVal(&(acText[sOffset]), &sVal);
 									if (sResult == 0)
@@ -1022,8 +1022,8 @@ short CLogTab<usertype>::Load(						// Returns 0 if successfull, non-zero otherw
 							else
 								{
 								sResult = LOGTAB_ERR_EXTRA_COLUMNS;
-								TRACE("CLogTab::Load(): Row #%hd contains extra columns!\n", (short)(m_sRows + 2));
-								rspMsgBox(LOGTAB_MSG, "Row #%hd has more columns than the first row.", (short)(m_sRows + 2));
+								TRACE("CLogTab::Load(): Row #%hd contains extra columns!\n", (int16_t)(m_sRows + 2));
+								rspMsgBox(LOGTAB_MSG, "Row #%hd has more columns than the first row.", (int16_t)(m_sRows + 2));
 								}
 							}
 						}
@@ -1033,8 +1033,8 @@ short CLogTab<usertype>::Load(						// Returns 0 if successfull, non-zero otherw
 				if ((sResult == 0) && (sColumn < m_sTotalVars))
 					{
 					sResult = LOGTAB_ERR_TOO_FEW_COLUMNS;
-					TRACE("CLogTab::Load(): Row #%hd does not contain enough columns!\n", (short)(m_sRows + 2));
-					rspMsgBox(LOGTAB_MSG, "Row #%hd contains less columns than the first row.\n", (short)(m_sRows + 2));
+					TRACE("CLogTab::Load(): Row #%hd does not contain enough columns!\n", (int16_t)(m_sRows + 2));
+					rspMsgBox(LOGTAB_MSG, "Row #%hd contains less columns than the first row.\n", (int16_t)(m_sRows + 2));
 					}
 
 				// Increment row count
@@ -1047,8 +1047,8 @@ short CLogTab<usertype>::Load(						// Returns 0 if successfull, non-zero otherw
 					if ((m_sRows == MaxRows) && !bEndOfTable)
 						{
 						sResult = LOGTAB_ERR_TOO_MANY_ROWS;
-						TRACE("CLogTab::Load(): Table exceeds maximum number of rows, which is currently set to %hd\n", (short)MaxRows);
-						rspMsgBox(LOGTAB_MSG, "Table exceeds maximum number of rows, which is currently limited to %hd.", (short)MaxRows);
+						TRACE("CLogTab::Load(): Table exceeds maximum number of rows, which is currently set to %hd\n", (int16_t)MaxRows);
+						rspMsgBox(LOGTAB_MSG, "Table exceeds maximum number of rows, which is currently limited to %hd.", (int16_t)MaxRows);
 						}
 					}
 
@@ -1103,15 +1103,15 @@ short CLogTab<usertype>::Load(						// Returns 0 if successfull, non-zero otherw
 // After that, just leave it alone and it will take care of itself.
 ////////////////////////////////////////////////////////////////////////////////
 template <class usertype>
-short CLogTab<usertype>::ReadEntry(					// Returns 0 if successfull, non-zero otherwise
+int16_t CLogTab<usertype>::ReadEntry(					// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  RFile to read from
 	char* pszEntry,										// Out: Entry is returned in here
-	short sMaxEntrySize,									// In:  Maximum size of entry
+	int16_t sMaxEntrySize,									// In:  Maximum size of entry
 	bool* pbEndOfTable,									// Out: true if this is last entry in table
 	bool* pbEndOfRow,										// Out: true if this is last entry in row
 	char* pcSave)											// I/O: Save char from last call (or 0 if none)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// If the saved char is non-zero, then we use it as the first character.
 	// Otherwise, we need to read a new character from the file.  We then
@@ -1132,7 +1132,7 @@ short CLogTab<usertype>::ReadEntry(					// Returns 0 if successfull, non-zero ot
 	// up to the next entry.
 	*pbEndOfTable = false;			// Not at end of table
 	*pbEndOfRow = false;				// Not at end of row
-	short sEntryIndex = 0;			// Start index at 0
+	int16_t sEntryIndex = 0;			// Start index at 0
 	bool bFillingEntry = false;	// Not filling entry yet
 	do	{
 		// Check for EOF

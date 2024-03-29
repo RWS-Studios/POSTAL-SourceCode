@@ -205,14 +205,14 @@ double CBand::ms_dMingleBouyDist = 15*15;
 double CBand::ms_dExplosionVelocity = 180.0;
 double CBand::ms_dMaxMarchVel = 30.0;
 double CBand::ms_dMaxRunVel = 80.0;
-long CBand::ms_lMingleTime = 400;
-short CBand::ms_sStartingHitPoints = 100;
+int32_t CBand::ms_lMingleTime = 400;
+int16_t CBand::ms_sStartingHitPoints = 100;
 SampleMaster::SoundInstance CBand::ms_siBandSongInstance = 0;
 U16	CBand::ms_idBandLeader	= CIdBank::IdNil;		// The person who adjusts the band sound
 																	// volume or IdNil.
 
 // Let this auto-init to 0
-short CBand::ms_sFileCount;
+int16_t CBand::ms_sFileCount;
 
 // This value indicates whether the marchers have stopped playing in this level.
 bool	CBand::ms_bDonePlaying	= false;
@@ -315,13 +315,13 @@ static RP3d ms_apt3dAttribCheck[] =
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CBand::Load(					// Returns 0 if successfull, non-zero otherwise
+int16_t CBand::Load(					// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,						// In:  File to load from
 	bool bEditMode,					// In:  True for edit mode, false otherwise
-	short sFileCount,					// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)				// In:  Version of file format to load.
+	int16_t sFileCount,					// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)				// In:  Version of file format to load.
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Call the base class load to get the instance ID, position, motion etc.
 	sResult	= CDoofus::Load(pFile, bEditMode, sFileCount, ulFileVersion);
@@ -426,11 +426,11 @@ short CBand::Load(					// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CBand::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CBand::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 {
-	short sResult = SUCCESS;
+	int16_t sResult = SUCCESS;
 
 	// Call the base class save to save the instance ID, position etc.
 	CDoofus::Save(pFile, sFileCount);
@@ -467,9 +467,9 @@ short CBand::Save(										// Returns 0 if successfull, non-zero otherwise
 // Init - Call this after the resources are in place
 ////////////////////////////////////////////////////////////////////////////////
 
-short CBand::Init(void)
+int16_t CBand::Init(void)
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Prepare shadow (get resources and setup sprite).
 	sResult	= PrepareShadow();
@@ -516,7 +516,7 @@ short CBand::Init(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CBand::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+int16_t CBand::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 {
 // If not a violent locale . . . 
 #if !VIOLENT_LOCALE
@@ -540,7 +540,7 @@ short CBand::Startup(void)								// Returns 0 if successfull, non-zero otherwis
 ////////////////////////////////////////////////////////////////////////////////
 void CBand::Update(void)
 {
-	short sHeight = m_sPrevHeight;
+	int16_t sHeight = m_sPrevHeight;
 	double dNewX;
 	double dNewY;
 	double dNewZ;
@@ -548,8 +548,8 @@ void CBand::Update(void)
 	double dZ;
 	double dStartX;
 	double dStartZ;
-	long lThisTime;
-	long lTimeDifference;
+	int32_t lThisTime;
+	int32_t lTimeDifference;
 	CThing* pDemon = NULL;
 
 	if (!m_sSuspend)
@@ -795,7 +795,7 @@ void CBand::Update(void)
 						}
 						else
 						{
-							short sRandom = GetRand() % 16;
+							int16_t sRandom = GetRand() % 16;
 							switch (sRandom)
 							{
 								case 0:
@@ -1064,12 +1064,12 @@ void CBand::Render(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CBand::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CBand::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Call the base class to place the item.
 	sResult = CDoofus::EditNew(sX, sY, sZ);
@@ -1091,9 +1091,9 @@ short CBand::EditNew(									// Returns 0 if successfull, non-zero otherwise
 // EditModify - Show dialog box for selecting starting bouy
 ////////////////////////////////////////////////////////////////////////////////
 
-short CBand::EditModify(void)
+int16_t CBand::EditModify(void)
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	RGuiItem* pGui = RGuiItem::LoadInstantiate(FullPathVD("res/editor/band.gui"));
 	if (pGui)
 	{
@@ -1125,7 +1125,7 @@ short CBand::EditModify(void)
 				ASSERT(plbChildTypes->m_type == RGuiItem::ListBox);
 				
 				// Add all built-in 3D Item types.
-				short	i;
+				int16_t	i;
 				RGuiItem*	pguiItem;
 				for (i = CItem3d::None; i < CItem3d::NumTypes; i++)
 					{
@@ -1219,9 +1219,9 @@ short CBand::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CBand::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CBand::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	sResult = m_animRun.Get(ms_apszRunResNames, RChannel_LoopAtStart | RChannel_LoopAtEnd);
 	if (sResult == 0)
@@ -1280,7 +1280,7 @@ short CBand::GetResources(void)						// Returns 0 if successfull, non-zero other
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CBand::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CBand::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
 	m_animRun.Release();
 	m_animStand.Release();
@@ -1540,7 +1540,7 @@ void CBand::OnPanicMsg(Panic_Message* pMessage)
 			m_sNextZ = m_pNextBouy->GetZ();
 			AlignToBouy();
 		}
-		short sRandom = GetRand() % 6;
+		int16_t sRandom = GetRand() % 6;
 		switch (sRandom)
 		{
 			case 0:
@@ -1577,9 +1577,9 @@ void CBand::AlertBand(void)
 
 	msg.msg_Panic.eType = typePanic;
 	msg.msg_Panic.sPriority = 0;
-	msg.msg_Panic.sX = (short) m_dX;
-	msg.msg_Panic.sY = (short) m_dY;
-	msg.msg_Panic.sZ = (short) m_dZ;
+	msg.msg_Panic.sX = (int16_t) m_dX;
+	msg.msg_Panic.sY = (int16_t) m_dY;
+	msg.msg_Panic.sZ = (int16_t) m_dZ;
 
 	CListNode<CThing>* pNext = m_pRealm->m_aclassHeads[CThing::CBandID].m_pnNext;
 	while (pNext->m_powner != NULL)

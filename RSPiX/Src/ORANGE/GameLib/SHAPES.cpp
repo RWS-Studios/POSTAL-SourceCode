@@ -53,7 +53,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-R2DRay::R2DRay(long lX1, long lY1, long lX2, long lY2)
+R2DRay::R2DRay(int32_t lX1, int32_t lY1, int32_t lX2, int32_t lY2)
 {
 	X = lX1;
 	Y = lY1;
@@ -73,7 +73,7 @@ R2DRay::R2DRay(long lX1, long lY1, long lX2, long lY2)
 	}
 }
 
-R3DRay::R3DRay(long lX1, long lY1, long lZ1, long lX2, long lY2, long lZ2)
+R3DRay::R3DRay(int32_t lX1, int32_t lY1, int32_t lZ1, int32_t lX2, int32_t lY2, int32_t lZ2)
 {
 	X = lX1;
 	Y = lY1;
@@ -107,4 +107,3 @@ R3DRay::R3DRay(long lX1, long lY1, long lZ1, long lX2, long lY2, long lZ2)
 //////////////////////////////////////////////////////////////////////////////
 // EOF
 //////////////////////////////////////////////////////////////////////////////
-

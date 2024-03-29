@@ -47,9 +47,9 @@
 typedef short (*RLassoNextEvalCall)(	// Returns TRUE if the specified pixel
 													// is part of a shape.  FALSE if it is
 													// the empty space between shapes.
-	short sX,									// X coordinate of pixel in question.
+	int16_t sX,									// X coordinate of pixel in question.
 													// Already clipped.
-	short	sY);									// Y coordinate of pixel in question.
+	int16_t	sY);									// Y coordinate of pixel in question.
 													// Already clipped.
 
 //////////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ template <class COLOR>		// Can be U8, U16, or U32.
 #ifdef WIN32	// Mac assumes extern.
 	extern 
 #endif // WIN32
-short rspLassoNext(	// Returns 0 if a polygon found,
+int16_t rspLassoNext(	// Returns 0 if a polygon found,
 									// 1 if no polygon found,
 									// negative if an error occurred (most likely
 									// allocation problems or image bit depth mis-
@@ -97,10 +97,10 @@ short rspLassoNext(	// Returns 0 if a polygon found,
 	RImage*	pimDst,			// In/Out: Destination image.  If too small, polygon 
 									// will be clipped.  If not yet allocated, will be
 									// allocated to the correct minimum size.
-	short	sSrcX,				// In:  X coordinate of sub region to search.
-	short	sSrcY,				// In:  Y coordinate of sub region to search.
-	short	sSrcW,				// In:  Width of sub region to search.
-	short	sSrcH,				// In:  Height of sub region to search.
+	int16_t	sSrcX,				// In:  X coordinate of sub region to search.
+	int16_t	sSrcY,				// In:  Y coordinate of sub region to search.
+	int16_t	sSrcW,				// In:  Width of sub region to search.
+	int16_t	sSrcH,				// In:  Height of sub region to search.
 	COLOR	clrDisjoin,			// In:  Color that separates shapes.  This is the
 									// color that, to this function.
 									// Cast or use U8 for 8 bit, U16 for 16 bit,
@@ -108,12 +108,12 @@ short rspLassoNext(	// Returns 0 if a polygon found,
 	COLOR	clrDstEmpty,		// In:  Color that will be used to initialize 
 									// pimDst, if pimDst is allocated by this function.
 									// Type must be same size as clrDisjoinColor/COLOR.
-	short* psShapeX,			// Out: X coordinate of poly relative to pimSrc 0,0;
+	int16_t* psShapeX,			// Out: X coordinate of poly relative to pimSrc 0,0;
 									// NOT relative to sSrcX.
-	short* psShapeY,			// Out: Y coordinate of poly relative to pimSrc 0,0;
+	int16_t* psShapeY,			// Out: Y coordinate of poly relative to pimSrc 0,0;
 									// NOT relative to sSrcY.
-	short* psShapeW,			// Out: Width of shape output to pimDst.
-	short* psShapeH,			// Out: Height of shape output to pimDst.
+	int16_t* psShapeW,			// Out: Width of shape output to pimDst.
+	int16_t* psShapeH,			// Out: Height of shape output to pimDst.
 	RLassoNextEvalCall	fnEval);	// In:  Specifies function to call to determine
 											// whether a pixel is part of a shape or not.
 											// Values will be clipped before calling this

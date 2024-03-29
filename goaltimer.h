@@ -51,14 +51,14 @@ class CGoalTimer : public CThing
 		double m_dZ;												// z coord
 		RImage* m_pImage;											// Pointer to only image (replace with 3d anim, soon)
 		CSprite2 m_sprite;										// Sprite (replace with CSprite3, soon)
-		long		m_lTimerMS;										// Timer value in Milliseconds
-		short		m_sKillGoal;									// Number of kills to achieve
-		short		m_sUpDown;										// Up or down timer
+		int32_t		m_lTimerMS;										// Timer value in Milliseconds
+		int16_t		m_sKillGoal;									// Number of kills to achieve
+		int16_t		m_sUpDown;										// Up or down timer
 
-		short m_sSuspend;											// Suspend flag
+		int16_t m_sSuspend;											// Suspend flag
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
+		static int16_t ms_sFileCount;
 
 		// "Constant" values that we want to be able to tune using the editor
 
@@ -93,11 +93,11 @@ class CGoalTimer : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 		{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CGoalTimer(pRealm);
 			if (*ppNew == 0)
 			{
@@ -112,22 +112,22 @@ class CGoalTimer : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -142,19 +142,19 @@ class CGoalTimer : public CThing
 		void Render(void);
 
 		// Called by editor to init new object at specified position
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
-		short EditMove(											// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditMove(											// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to update object
 		void EditUpdate(void);
@@ -167,9 +167,9 @@ class CGoalTimer : public CThing
 
 		// Called by editor to get the hotspot of an object in 2D.
 		void EditHotSpot(			// Returns nothiing.
-			short*	psX,			// Out: X coord of 2D hotspot relative to
+			int16_t*	psX,			// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-			short*	psY);			// Out: Y coord of 2D hotspot relative to
+			int16_t*	psY);			// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 
 	//---------------------------------------------------------------------------
@@ -177,10 +177,10 @@ class CGoalTimer : public CThing
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 	};
 
 

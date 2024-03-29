@@ -89,8 +89,8 @@ class REdit : public RTxt
 	public:	// Typedefs.
 		typedef struct
 			{
-			short sX;
-			short sY;
+			int16_t sX;
+			int16_t sY;
 			} Point;
 
 		typedef void (*EditNotifyCall)(	// Called when a user input notification
@@ -115,25 +115,25 @@ class REdit : public RTxt
 		// Draw this item and all its subitems into the provided RImage.
 		// This override adds in the caret.
 		virtual						// If you override this, call this base if possible.
-		short Draw(					// Returns 0 on success.
+		int16_t Draw(					// Returns 0 on success.
 			RImage* pimDst,		// Destination image.
-			short sDstX	= 0,		// X position in destination.
-			short sDstY	= 0,		// Y position in destination.
-			short sSrcX = 0,		// X position in source.
-			short sSrcY = 0,		// Y position in source.
-			short sW = 0,			// Amount to draw.
-			short sH = 0,			// Amount to draw.
+			int16_t sDstX	= 0,		// X position in destination.
+			int16_t sDstY	= 0,		// Y position in destination.
+			int16_t sSrcX = 0,		// X position in source.
+			int16_t sSrcY = 0,		// Y position in source.
+			int16_t sW = 0,			// Amount to draw.
+			int16_t sH = 0,			// Amount to draw.
 			RRect* prc = NULL);	// Clip to.
 
 		// Draw text in m_szText in m_u32TextColor with transparent
 		// background at sX, sY with sW and m_sJustification.
 		// Does nothing if m_szText is empty.
 		virtual						// If you override this, call this base if possible.
-		short DrawText(			// Returns 0 on success.
-			short sX,				// X position in image.
-			short sY,				// Y position in image.
-			short sW = 0,			// Width of text area.
-			short	sH = 0,			// Height of test area.
+		int16_t DrawText(			// Returns 0 on success.
+			int16_t sX,				// X position in image.
+			int16_t sY,				// Y position in image.
+			int16_t sW = 0,			// Width of text area.
+			int16_t	sH = 0,			// Height of test area.
 			RImage* pim = NULL);	// Destination image.  NULL == use m_im.
 
 		// Does REdit stuff like check for text, update caret, and draw new 
@@ -184,13 +184,13 @@ class REdit : public RTxt
 
 		// Read item's members from file.
 		virtual				// Overridden here.
-		short ReadMembers(			// Returns 0 on success.
+		int16_t ReadMembers(			// Returns 0 on success.
 			RFile*	pfile,			// File to read from.
 			U32		u32Version);	// File format version to use.
 
 		// Write item's members to file.
 		virtual				// Overridden here.
-		short WriteMembers(			// Returns 0 on success.
+		int16_t WriteMembers(			// Returns 0 on success.
 			RFile*	pfile);			// File to write to.
 
 		// Clips the caret to within the string length.
@@ -201,13 +201,13 @@ class REdit : public RTxt
 	public:	// Member variables.
 		char	m_cCaretChar;		// Character to use as caret.
 		U32	m_u32CaretColor;	// Color to use for caret.
-		short	m_sCaretPos;		// Text position of caret.
-		long	m_lCaretBlinkRate;// Rate at which character blinks in ms.  Can be
+		int16_t	m_sCaretPos;		// Text position of caret.
+		int32_t	m_lCaretBlinkRate;// Rate at which character blinks in ms.  Can be
 										// 0 indicating no blinkage.
 
-		short	m_sMaxText;			// Maximum text to allow.  Limited to GUI_MAX_STR.
+		int16_t	m_sMaxText;			// Maximum text to allow.  Limited to GUI_MAX_STR.
 
-		short m_sBehavior;		// Flags.  See enums above.
+		int16_t m_sBehavior;		// Flags.  See enums above.
 
 		EditNotifyCall	m_encCall;	// Callback when a user input notification 
 											// should occur such as too much input or 
@@ -215,12 +215,12 @@ class REdit : public RTxt
 											// in NUMBERS_ONLY mode).  A good place to 
 											// generate a beep or something.
 
-		long	m_lNextCaretUpdate;	// Time in ms of next caret update.
-		short	m_sCaretState;			// Current state the caret is in until
+		int32_t	m_lNextCaretUpdate;	// Time in ms of next caret update.
+		int16_t	m_sCaretState;			// Current state the caret is in until
 											// m_lNextCaretUpdate. (0 == hidden, 
 											// 1 == shown).
 
-		short	m_sFirstVisibleCharIndex;	// Index of the first visible character.
+		int16_t	m_sFirstVisibleCharIndex;	// Index of the first visible character.
 
 		Point	m_aptTextPos[GUI_MAX_STR];	// Positions for characters in m_szText.
 													// This is no longer dynamically allocated

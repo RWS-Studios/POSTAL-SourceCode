@@ -132,7 +132,7 @@ void CNetMsgr::Update(void)
 
 		case Connecting:
 			{
-			short serr = m_socket.Connect(&m_address);
+			int16_t serr = m_socket.Connect(&m_address);
 			if (serr == 0)
 				{
 				m_state = Connected;
@@ -182,11 +182,11 @@ bool CNetMsgr::GetMsg(									// True if message was available, false otherwise
 	if (m_error == NetMsg::NoError)
 		{
 		// See how much data (if any) is available
-		long lGetable = m_bufIn.CheckGetable();
+		int32_t lGetable = m_bufIn.CheckGetable();
 		if (lGetable >= 1)
 			{
 			// Peek at first byte of data, which ought to be the message type
-			unsigned char ucMsg;
+			uint8_t ucMsg;
 			if (m_bufIn.Get(&ucMsg) == 1)
 				{
 				// Make sure it's a valid message type
@@ -195,7 +195,7 @@ bool CNetMsgr::GetMsg(									// True if message was available, false otherwise
 					// Get the expected message length.  A value of -1 indicates a
 					// variable-sized message, in which case the next 2 bytes (if
 					// they are available) would indicate the message size.
-					long lMsgSize = ms_aInfoMsg[ucMsg].size;
+					int32_t lMsgSize = ms_aInfoMsg[ucMsg].size;
 					if (lMsgSize == -1)
 						{
 						// Check if at least enough is available (beyond the ucMsg byte we got)
@@ -206,7 +206,7 @@ bool CNetMsgr::GetMsg(									// True if message was available, false otherwise
 							m_bufIn.Get(&lMsgSize);
 
 							// Undo the get of lMsgSize.
-							short	sInc;
+							int16_t	sInc;
 							for (sInc = 0; sInc < sizeof(lMsgSize); sInc++)
 								{
 								m_bufIn.UnGet();
@@ -232,7 +232,7 @@ bool CNetMsgr::GetMsg(									// True if message was available, false otherwise
 						(ms_aInfoMsg[ucMsg].funcRead)(pmsg, &m_bufIn);
 
 						// Verify that the correct number of bytes were read
-						long lNewGetable = m_bufIn.CheckGetable();
+						int32_t lNewGetable = m_bufIn.CheckGetable();
 						if ((lGetable - lNewGetable) == lMsgSize)
 							{
 							// Update most-recent receive time
@@ -276,7 +276,7 @@ bool CNetMsgr::GetMsg(									// True if message was available, false otherwise
 					// An invalid message type means we're in deep shit.  There's no real way to 
 					// recover because we can't tell where messages start and end.
 					m_error = NetMsg::ReceiveError;
-					TRACE("CNetMsgr::GetMsg(): Invalid message type: %hd !\n", (short)ucMsg);
+					TRACE("CNetMsgr::GetMsg(): Invalid message type: %hd !\n", (int16_t)ucMsg);
 					}
 				}
 			}
@@ -359,12 +359,12 @@ void CNetMsgr::SendMsg(
 			{
 			// Determine message size.  A size of -1 indicates a variable-sized message,
 			// in which case the actual size is stored within the message itself.
-			long lMsgSize = ms_aInfoMsg[ucMsg].size;
+			int32_t lMsgSize = ms_aInfoMsg[ucMsg].size;
 			if (lMsgSize == -1)
 				lMsgSize = pmsg->msg.nothing.lSize;
 
 			// Check available space in the queue, and if it's enough for the message, go ahead
-			long lPutable = m_bufOut.CheckPutable();
+			int32_t lPutable = m_bufOut.CheckPutable();
 			if (lPutable >= lMsgSize)
 				{
 				// Make sure the write func is the right one . . .
@@ -374,7 +374,7 @@ void CNetMsgr::SendMsg(
 				(ms_aInfoMsg[ucMsg].funcWrite)(pmsg, &m_bufOut);
 
 				// Verify that the correct number of bytes were written
-				long lNewPutable = m_bufOut.CheckPutable();
+				int32_t lNewPutable = m_bufOut.CheckPutable();
 				if ((lPutable - lNewPutable) == lMsgSize)
 					{
 					// Update time last message was sent (hmmmm....not really!  This merely indicates
@@ -402,7 +402,7 @@ void CNetMsgr::SendMsg(
 			// This should obviously never occur as it would indicate a humongous internal problem,
 			// like the program has blown itself up or something.
 			m_error = NetMsg::SendError;
-			TRACE("CNetMsgr::SendMsg(): Attempting to write invalid message type: %hd !\n", (short)ucMsg);
+			TRACE("CNetMsgr::SendMsg(): Attempting to write invalid message type: %hd !\n", (int16_t)ucMsg);
 			ASSERT(0);
 			}
 		
@@ -451,7 +451,7 @@ void CNetMsgr::ReceiveData(void)
 	// position to the end of the buffer.  However, there might be additional
 	// space at the beginning of the buffer -- all we have to do is "wrap around"
 	// to the beginning.  Doing two gets does exactly that.
-	for (short sGet = 0; sGet < 2; sGet++)
+	for (int16_t sGet = 0; sGet < 2; sGet++)
 		{
 		if (m_socket.CheckReceivableBytes() && (m_error == NetMsg::NoError))
 			{
@@ -459,18 +459,18 @@ void CNetMsgr::ReceiveData(void)
 			NetBlockingWatchdog();
 
 			// No bytes received yet
-			long lReceivedBytes = 0;
+			int32_t lReceivedBytes = 0;
 
 			// Lock the buffer so we can write directly into it
 			U8* pu8Put;
-			long lMaxPuttableBytes;
+			int32_t lMaxPuttableBytes;
 			m_bufIn.LockPutPtr(&pu8Put, &lMaxPuttableBytes);
 
 			// Make sure there's room in the buffer
 			if (lMaxPuttableBytes > 0)
 				{
 				// Receive up to the specified number of bytes
-				short serr = m_socket.Receive(pu8Put, lMaxPuttableBytes, &lReceivedBytes);
+				int16_t serr = m_socket.Receive(pu8Put, lMaxPuttableBytes, &lReceivedBytes);
 				if ((serr != 0) && (serr != RSocket::errWouldBlock))
 					{
 					m_error = NetMsg::ReceiveError;
@@ -510,11 +510,11 @@ void CNetMsgr::SendData(void)
 			NetBlockingWatchdog();
 
 			// No bytes sent yet
-			long lSentBytes = 0;
+			int32_t lSentBytes = 0;
 
 			// Lock the buffer so we can read directly from it
 			U8* pu8Get;
-			long lMaxGettableBytes;
+			int32_t lMaxGettableBytes;
 			m_bufOut.LockGetPtr(&pu8Get, &lMaxGettableBytes);
 
 			// Make sure we can get something from buffer (this is not really
@@ -522,7 +522,7 @@ void CNetMsgr::SendData(void)
 			if (lMaxGettableBytes > 0)
 				{
 				// Receive up to the specified number of bytes
-				short serr = m_socket.Send(pu8Get, lMaxGettableBytes, &lSentBytes);
+				int16_t serr = m_socket.Send(pu8Get, lMaxGettableBytes, &lSentBytes);
 				if ((serr != 0) && (serr != RSocket::errWouldBlock))
 					{
 					m_error = NetMsg::SendError;

@@ -195,7 +195,7 @@ U8	CBulletFest::ms_u8TracerIndex	= 0;	// The color index to use for tracers.
 // the specified height.
 // Less than 2 bits set is considered not enough info.
 // 2 diagonally adjacent bits is considered not enough info.
-static short ms_asTerrainAngleMap[16]	=
+static int16_t ms_asTerrainAngleMap[16]	=
 	{
 	-1,	// 0000	==
 	-1,	// 0001	== LEFT_TOP
@@ -227,19 +227,19 @@ static short ms_asTerrainAngleMap[16]	=
 // Get max height in a rectangle.
 //////////////////////////////////////////////////////////////////////////////
 inline
-short GetMaxHeight(
+int16_t GetMaxHeight(
 	CRealm* pRealm,				// In:  Realm in question.
-	short sX,						// In:  X position on terrain.
-	short sZ,						// In:  Z position on terrain.
-	short	sW,						// In:  Amount in X direction.
-	short	sH)						// In:  Amount in Z direction.
+	int16_t sX,						// In:  X position on terrain.
+	int16_t sZ,						// In:  Z position on terrain.
+	int16_t	sW,						// In:  Amount in X direction.
+	int16_t	sH)						// In:  Amount in Z direction.
 	{
-	short	sX2	= sX + sW;
-	short	sZ2	= sZ + sH;
+	int16_t	sX2	= sX + sW;
+	int16_t	sZ2	= sZ + sH;
 
-	short sIterX;
-	short	sIterZ;
-	short	sMaxHeight	= -32767;
+	int16_t sIterX;
+	int16_t	sIterZ;
+	int16_t	sMaxHeight	= -32767;
 	for (sIterZ = sZ; sIterZ < sZ2; sIterZ++)
 		{
 		for (sIterX = sX; sIterX < sX2; sIterX++)
@@ -285,16 +285,16 @@ bool GetTerrainAngle(			// true, if terrain angle determined.
 										// false, if not enough iterations available to
 										// determine angle.
 	CRealm* pRealm,				// In:  Realm in question.
-	short sX,						// In:  X position on terrain.
-	short sY,						// In:  Y position on terrain.
-	short sZ,						// In:  Z position on terrain.
-	short sMaxOutIterations,	// In:  Max iterations to get out of terrain
+	int16_t sX,						// In:  X position on terrain.
+	int16_t sY,						// In:  Y position on terrain.
+	int16_t sZ,						// In:  Z position on terrain.
+	int16_t sMaxOutIterations,	// In:  Max iterations to get out of terrain
 										// (i.e., find terrain edge).
-	short sNumScanIterations,	// In:  Num iterations to scan edge of terrain
+	int16_t sNumScanIterations,	// In:  Num iterations to scan edge of terrain
 										// in EACH direction.
-	short	sInAngle,				// In:  Angle from which object entered terrain.
+	int16_t	sInAngle,				// In:  Angle from which object entered terrain.
 										// This angle + 180 is used to scan out.
-	short* psAngle)				// Out: Angle of terrain at specified location
+	int16_t* psAngle)				// Out: Angle of terrain at specified location
 										// on X/Z plane.
 	{
 	bool bFoundAngle	= false;	// Assume not found.
@@ -405,7 +405,7 @@ bool GetTerrainAngle(			// true, if terrain angle determined.
 
 #else
 	// Check 4 surrounding points.
-	short	sIndex	= 0;
+	int16_t	sIndex	= 0;
 	if (GetMaxHeight(pRealm, sX - TERRAIN_CHECK_DIST - TERRAIN_CHECK_GRANULARITY / 2, sZ - TERRAIN_CHECK_DIST - TERRAIN_CHECK_GRANULARITY / 2, TERRAIN_CHECK_GRANULARITY, TERRAIN_CHECK_GRANULARITY) > sY)
 		sIndex	= LEFT_TOP;
 	if (GetMaxHeight(pRealm, sX + TERRAIN_CHECK_DIST + TERRAIN_CHECK_GRANULARITY / 2, sZ - TERRAIN_CHECK_DIST - TERRAIN_CHECK_GRANULARITY / 2, TERRAIN_CHECK_GRANULARITY, TERRAIN_CHECK_GRANULARITY) > sY)
@@ -438,22 +438,22 @@ bool GetTerrainAngle(			// true, if terrain angle determined.
 //
 //////////////////////////////////////////////////////////////////////////////
 bool CBulletFest::FireDeluxe(	// Returns what and as Fire() would.
-	short sAngleY,					// In:  Angle of launch in degrees (on X/Z plane).
-	short	sAngleZ,					// In:  Angle of launch in degrees (on X/Y plane).
-	short	sX,						// In:  Launch position.
-	short	sY,						// In:  Launch position.
-	short	sZ,						// In:  Launch position.
-	short	sRange,					// In:  Maximum distance.
+	int16_t sAngleY,					// In:  Angle of launch in degrees (on X/Z plane).
+	int16_t	sAngleZ,					// In:  Angle of launch in degrees (on X/Y plane).
+	int16_t	sX,						// In:  Launch position.
+	int16_t	sY,						// In:  Launch position.
+	int16_t	sZ,						// In:  Launch position.
+	int16_t	sRange,					// In:  Maximum distance.
 	CRealm* pRealm,				// In:  Realm in which to fire.
 	CSmash::Bits bitsInclude,	// In:  Mask of CSmash masks that this bullet can hit.
 	CSmash::Bits bitsDontCare,	// In:  Mask of CSmash masks that this bullet does not care to hit.
 	CSmash::Bits bitsExclude,	// In:  Mask of CSmash masks that this bullet cannot hit.
-	short	sMaxRicochetAngle,	// In:  Maximum angle with terrain that can cause
+	int16_t	sMaxRicochetAngle,	// In:  Maximum angle with terrain that can cause
 										// a ricochet (on X/Z plane).
-	short	sMaxRicochets,			// In:  The maximum number of ricochets.
-	short* psX,						// Out: Hit position.
-	short* psY,						// Out: Hit position.
-	short* psZ,						// Out: Hit position.
+	int16_t	sMaxRicochets,			// In:  The maximum number of ricochets.
+	int16_t* psX,						// Out: Hit position.
+	int16_t* psY,						// Out: Hit position.
+	int16_t* psZ,						// Out: Hit position.
 	CThing** ppthing,				// Out: Ptr to thing hit or NULL.
 	bool	bTracer /*= true*/,	// In:  Draw a tracer at random point along path.
 	SampleMasterID	smid	/*= g_smidBulletFire*/)	// In:  Use ammo sample.
@@ -463,9 +463,9 @@ bool CBulletFest::FireDeluxe(	// Returns what and as Fire() would.
 	// Create a muzzle flare.
 	Flare(sAngleY, sX, sY, sZ, pRealm, smid);
 
-	short	sRicochets		= 0;
+	int16_t	sRicochets		= 0;
 	bool	bImpact			= false;
-	short	sTerrainAngle	= 0;
+	int16_t	sTerrainAngle	= 0;
 	// While no hits and not out of ricochets . . .
 	while (bHit == false && sRicochets <= sMaxRicochets && bImpact == false)
 		{
@@ -595,10 +595,10 @@ bool CBulletFest::FireDeluxe(	// Returns what and as Fire() would.
 //
 //////////////////////////////////////////////////////////////////////////////
 void CBulletFest::Flare(		// Returns nothing.
-	short sAngle,					// In:  Angle of launch in degrees (on X/Z plane).
-	short	sX,						// In:  Launch position.
-	short	sY,						// In:  Launch position.
-	short	sZ,						// In:  Launch position.
+	int16_t sAngle,					// In:  Angle of launch in degrees (on X/Z plane).
+	int16_t	sX,						// In:  Launch position.
+	int16_t	sY,						// In:  Launch position.
+	int16_t	sZ,						// In:  Launch position.
 	CRealm* pRealm,				// In:  Realm in which to fire.
 	SampleMasterID	smid	/*= g_smidBulletFire*/)	// In:  Use ammo sample.
 	{
@@ -628,10 +628,10 @@ void CBulletFest::Flare(		// Returns nothing.
 //
 //////////////////////////////////////////////////////////////////////////////
 void CBulletFest::Impact(	// Returns nothing.
-	short sAngle,				// In:  Angle of launch in degrees (on X/Z plane).
-	short	sX,					// In:  Launch position.
-	short	sY,					// In:  Launch position.
-	short	sZ,					// In:  Launch position.
+	int16_t sAngle,				// In:  Angle of launch in degrees (on X/Z plane).
+	int16_t	sX,					// In:  Launch position.
+	int16_t	sY,					// In:  Launch position.
+	int16_t	sZ,					// In:  Launch position.
 	CRealm* pRealm)			// In:  Realm in which to fire.
 	{
 	// Create the animator . . .
@@ -654,10 +654,10 @@ void CBulletFest::Impact(	// Returns nothing.
 //
 //////////////////////////////////////////////////////////////////////////////
 void CBulletFest::Ricochet(	// Returns nothing.
-	short sAngle,					// In:  Angle of launch in degrees (on X/Z plane).
-	short	sX,						// In:  Launch position.
-	short	sY,						// In:  Launch position.
-	short	sZ,						// In:  Launch position.
+	int16_t sAngle,					// In:  Angle of launch in degrees (on X/Z plane).
+	int16_t	sX,						// In:  Launch position.
+	int16_t	sY,						// In:  Launch position.
+	int16_t	sZ,						// In:  Launch position.
 	CRealm* pRealm)				// In:  Realm in which to fire.
 	{
 	// Create the animator . . .
@@ -686,19 +686,19 @@ void CBulletFest::Ricochet(	// Returns nothing.
 //
 //////////////////////////////////////////////////////////////////////////////
 bool CBulletFest::Fire(			// Returns true if a hit, false otherwise.
-	short sAngleY,					// In:  Angle of launch in degrees (on X/Z plane).
-	short	sAngleZ,					// In:  Angle of launch in degrees (on X/Y plane).
-	short	sX,						// In:  Launch position.
-	short	sY,						// In:  Launch position.
-	short	sZ,						// In:  Launch position.
-	short	sRange,					// In:  Maximum distance.
+	int16_t sAngleY,					// In:  Angle of launch in degrees (on X/Z plane).
+	int16_t	sAngleZ,					// In:  Angle of launch in degrees (on X/Y plane).
+	int16_t	sX,						// In:  Launch position.
+	int16_t	sY,						// In:  Launch position.
+	int16_t	sZ,						// In:  Launch position.
+	int16_t	sRange,					// In:  Maximum distance.
 	CRealm* pRealm,				// In:  Realm in which to fire.
 	CSmash::Bits bitsInclude,	// In:  Mask of CSmash masks that this bullet can hit.
 	CSmash::Bits bitsDontCare,	// In:  Mask of CSmash masks that this bullet does not care to hit.
 	CSmash::Bits bitsExclude,	// In:  Mask of CSmash masks that this bullet cannot hit.
-	short* psX,						// Out: Hit position.
-	short* psY,						// Out: Hit position.
-	short* psZ,						// Out: Hit position.
+	int16_t* psX,						// Out: Hit position.
+	int16_t* psY,						// Out: Hit position.
+	int16_t* psZ,						// Out: Hit position.
 	CThing** ppthing,				// Out: Ptr to thing hit or NULL.
 	bool	bTracer /*= true*/)	// In:  Draw a tracer at random point along path.
 	{
@@ -739,18 +739,18 @@ bool CBulletFest::Fire(			// Returns true if a hit, false otherwise.
 	// This makes them appear to be unhindered by the edge of the realm.
 	// (except the bottom edge which is greater so that, if the bullet 
 	// is exceptionally high, it will go, hopefully, entirely off screen).	
-	short	sMaxX			= pRealm->GetRealmWidth() + 10;
-	short	sMaxY			= 512;					// Robustness: Guard against infinite loop
+	int16_t	sMaxX			= pRealm->GetRealmWidth() + 10;
+	int16_t	sMaxY			= 512;					// Robustness: Guard against infinite loop
 														// in the remote possibility that we shoot
 														// straight up (currently one can only shoot
 														// horizontally).
-	short	sMaxZ			= pRealm->GetRealmHeight() + sY + 10;
+	int16_t	sMaxZ			= pRealm->GetRealmHeight() + sY + 10;
 
-	short	sMinX			= -10;
-	short	sMinY			= -512;
-	short	sMinZ			= -10;
+	int16_t	sMinX			= -10;
+	int16_t	sMinY			= -512;
+	int16_t	sMinZ			= -10;
 
-	short	sCurH;
+	int16_t	sCurH;
 
 	// Scan while in realm.
 	while (
@@ -761,7 +761,7 @@ bool CBulletFest::Fire(			// Returns true if a hit, false otherwise.
 		&& fPosY < sMaxY 
 		&& fPosZ < sMaxZ)
 		{
-		sCurH = pRealm->GetHeight((short) fPosX, (short) fPosZ);
+		sCurH = pRealm->GetHeight((int16_t) fPosX, (int16_t) fPosZ);
 		// If bullet below or at terrain . . .
 		if (fPosY <=  sCurH)
 			{
@@ -829,7 +829,7 @@ bool CBulletFest::Fire(			// Returns true if a hit, false otherwise.
 			// distance.
 			// We use one coordinate of the end point against one coordinate of the interception point
 			// to get a ratio and apply that to the total distance.
-			short	sDistance	= 0;
+			int16_t	sDistance	= 0;
 			if (fPosX - sX != 0.0)
 				{
 				sDistance	= fTotalDist * ((*psX - sX) / (fPosX - sX));
@@ -839,7 +839,7 @@ bool CBulletFest::Fire(			// Returns true if a hit, false otherwise.
 #define TRACER_ACCUMMULATION_STEP_MAX	80
 #define TRACER_ACCUMMULATION_STEP_MIN	10
 
-			short	sRand		= 0;
+			int16_t	sRand		= 0;
 #if METHOD == 1	// Method 1:  Random dist between here and there.
 			
 			if (sDistance != 0)
@@ -874,7 +874,7 @@ bool CBulletFest::Fire(			// Returns true if a hit, false otherwise.
 					{
 #endif
 
-			short	sRand2	= GetRand() % TRACER_MAX_LENGTH;
+			int16_t	sRand2	= GetRand() % TRACER_MAX_LENGTH;
 
 			float	fStartX	= sX + fRateX * sRand;
 			float	fStartY	= sY + fRateY * sRand;
@@ -893,7 +893,7 @@ bool CBulletFest::Fire(			// Returns true if a hit, false otherwise.
 				&(psl2d->m_sX2End), 
 				&(psl2d->m_sY2End) );
 			psl2d->m_sPriority	= fStartZ;
-			psl2d->m_sLayer		= CRealm::GetLayerViaAttrib(pRealm->GetLayer((short) fStartX, (short) fStartZ));
+			psl2d->m_sLayer		= CRealm::GetLayerViaAttrib(pRealm->GetLayer((int16_t) fStartX, (int16_t) fStartZ));
 			psl2d->m_u8Color		= ms_u8TracerIndex;
 			// Destroy when done.
 			psl2d->m_sInFlags	= CSprite::InDeleteOnRender;
@@ -951,10 +951,10 @@ bool CBulletFest::Fire(			// Returns true if a hit, false otherwise.
 // irratically(sp?) and more often are harder to hit.
 ///////////////////////////////////////////////////////////////////////////////
 void CBulletFest::UpdateTarget(	// Returns nothing.
-	short sAngle,						// In:  Angle of aim in degrees (on X/Z plane).
-	short	sX,							// In:  Aim position.
-	short	sY,							// In:  Aim position.
-	short	sZ,							// In:  Aim position.
+	int16_t sAngle,						// In:  Angle of aim in degrees (on X/Z plane).
+	int16_t	sX,							// In:  Aim position.
+	int16_t	sY,							// In:  Aim position.
+	int16_t	sZ,							// In:  Aim position.
 	CRealm* pRealm)					// In:  Realm in which to target.
 	{
 	// NYI!
@@ -992,11 +992,11 @@ void CBulletFest::UpdateTracerColor(
 // Preload any assets that may be used.
 // (static).
 ///////////////////////////////////////////////////////////////////////////////
-short CBulletFest::Preload(
+int16_t CBulletFest::Preload(
 	CRealm* prealm)				// In:  Calling realm.
 	{
 	CAnimThing::ChannelAA*	paaCache;
-	short	sResult	= 0;
+	int16_t	sResult	= 0;
 
 	if (rspGetResource(&g_resmgrGame, prealm->Make2dResPath(IMPACT_RES_NAME), &paaCache) == 0)
 		rspReleaseResource(&g_resmgrGame, &paaCache);

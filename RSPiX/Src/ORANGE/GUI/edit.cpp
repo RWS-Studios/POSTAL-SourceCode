@@ -270,17 +270,17 @@ REdit::~REdit()
 // This override adds in the caret.
 //
 ////////////////////////////////////////////////////////////////////////
-short REdit::Draw(			// Returns 0 on success.
+int16_t REdit::Draw(			// Returns 0 on success.
 	RImage* pimDst,			// Destination image.
-	short sDstX	/*= 0*/,		// X position in destination.
-	short sDstY	/*= 0*/,		// Y position in destination.
-	short sSrcX /*= 0*/,		// X position in source.
-	short sSrcY /*= 0*/,		// Y position in source.
-	short sW /*= 0*/,			// Amount to draw.
-	short sH /*= 0*/,			// Amount to draw.
+	int16_t sDstX	/*= 0*/,		// X position in destination.
+	int16_t sDstY	/*= 0*/,		// Y position in destination.
+	int16_t sSrcX /*= 0*/,		// X position in source.
+	int16_t sSrcY /*= 0*/,		// Y position in source.
+	int16_t sW /*= 0*/,			// Amount to draw.
+	int16_t sH /*= 0*/,			// Amount to draw.
 	RRect* prc /*= NULL*/)	// Clip to.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// If visible . . .
 	if (m_sVisible != FALSE)
@@ -306,11 +306,11 @@ short REdit::Draw(			// Returns 0 on success.
 			// Setup printer ////////////////////////////////
 
 			// Word wrap must be off.
-			short	sWordWrapWas	= (m_pprint->m_eModes & RPrint::WORD_WRAP) ? TRUE : FALSE;
+			int16_t	sWordWrapWas	= (m_pprint->m_eModes & RPrint::WORD_WRAP) ? TRUE : FALSE;
 			m_pprint->SetWordWrap(FALSE);
 
 			// Text support is currently 8 bit only.
-			m_pprint->SetColor((short)m_u32CaretColor, (short)0, (short)m_u32TextShadowColor);
+			m_pprint->SetColor((int16_t)m_u32CaretColor, (int16_t)0, (int16_t)m_u32TextShadowColor);
 
 			m_pprint->SetFont(m_sFontCellHeight);
 
@@ -320,10 +320,10 @@ short REdit::Draw(			// Returns 0 on success.
 	
 			// Done setting up printer //////////////////////
 
-			short	sClientX, sClientY, sClientW, sClientH;
+			int16_t	sClientX, sClientY, sClientW, sClientH;
 			GetClient(&sClientX, &sClientY, &sClientW, &sClientH);
 
-			short	sClipW, sClipH;
+			int16_t	sClipW, sClipH;
 
 			if (sW == 0)
 				{
@@ -382,14 +382,14 @@ short REdit::Draw(			// Returns 0 on success.
 // positions is set for the caret.
 //
 ////////////////////////////////////////////////////////////////////////
-short REdit::DrawText(		// Returns 0 on success.
-	short sX,					// X position in image.
-	short sY,					// Y position in image.
-	short sW /*= 0*/,			// Width of text area.
-	short	sH /*= 0*/,			// Height of test area.
+int16_t REdit::DrawText(		// Returns 0 on success.
+	int16_t sX,					// X position in image.
+	int16_t sY,					// Y position in image.
+	int16_t sW /*= 0*/,			// Width of text area.
+	int16_t	sH /*= 0*/,			// Height of test area.
 	RImage* pim /*= NULL*/)	// Destination image.  NULL == use m_im.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	if (pim == NULL)
 		{
@@ -446,20 +446,20 @@ short REdit::DrawText(		// Returns 0 on success.
 		SetTextEffects();
 
 		// Word wrap must be off.
-		short	sWordWrapWas	= (m_pprint->m_eModes & RPrint::WORD_WRAP) ? TRUE : FALSE;
+		int16_t	sWordWrapWas	= (m_pprint->m_eModes & RPrint::WORD_WRAP) ? TRUE : FALSE;
 		m_pprint->SetWordWrap(FALSE);
 
 		m_pprint->SetDestination(pim);
 		m_pprint->SetColumn(sX, sY, sW, sH);
 		m_pprint->GetWidth(pszText);
 
-		long	lLen				= strlen(pszText);
+		int32_t	lLen				= strlen(pszText);
 
 		// Whenever the caret hits or passes the left edge, jump the first visible
 		// character back.
 		if (m_sCaretPos < m_sFirstVisibleCharIndex)
 			{
-			short	sHalfWidth	= sW / 2;
+			int16_t	sHalfWidth	= sW / 2;
 			// Go backward until we hit the beginning
 			// or we get within half the field of the caret.
 
@@ -474,13 +474,13 @@ short REdit::DrawText(		// Returns 0 on success.
 				}
 			}
 
-		short	sCaretWidth	= m_pprint->GetBlitW(m_cCaretChar);
+		int16_t	sCaretWidth	= m_pprint->GetBlitW(m_cCaretChar);
 
 		// Whenever the caret hits or passes the right edge, jump the first 
 		// visible character forward.
 		if (m_pprint->ms_sCharPosX[m_sCaretPos] - m_pprint->ms_sCharPosX[m_sFirstVisibleCharIndex] + sCaretWidth >= sW - EXTRA_NONCLIENT_EDGE)
 			{
-			short	sHalfWidth	= sW / 2;
+			int16_t	sHalfWidth	= sW / 2;
 			// Go forward until we hit the end
 			// or we get within half the field of the caret.
 
@@ -502,7 +502,7 @@ short REdit::DrawText(		// Returns 0 on success.
 	
 
 		REdit::Point*	ppt	= m_aptTextPos;
-		long	lIndex;
+		int32_t	lIndex;
 		for (lIndex	= 0; lIndex < lLen; lIndex++, ppt++)
 			{
 			// Store its position in the pim.
@@ -542,8 +542,8 @@ void REdit::Do(		// Returns nothing.
 	// Only if currenly active . . .
 	if (IsActivated() != FALSE)
 		{
-		short sRedrawText	= FALSE;	// Redraw text if TRUE.
-		short	sRedrawItem	= FALSE;	// Redraw item if TRUE (for event driven 
+		int16_t sRedrawText	= FALSE;	// Redraw text if TRUE.
+		int16_t	sRedrawItem	= FALSE;	// Redraw item if TRUE (for event driven 
 											// user).
 		
 		// If unused key event . . .
@@ -553,13 +553,13 @@ void REdit::Do(		// Returns nothing.
 			m_sCaretState	= 1;
 
 			// Get length of current text.  Always handy.
-			long	lStrLen	= strlen(m_szText);
+			int32_t	lStrLen	= strlen(m_szText);
 
 			// Remember caret position.
-			short	sCaretPosIn	= m_sCaretPos;
+			int16_t	sCaretPosIn	= m_sCaretPos;
 
 			// Char to add or 0.
-			long	lNewChar	= 0;
+			int32_t	lNewChar	= 0;
 
 			// Make sure the caret is inside the string.
 			ClipCaret();
@@ -611,7 +611,11 @@ void REdit::Do(		// Returns nothing.
 							break;
 
 						default:
-
+							//If no caps lock write lower-case
+							if (rspGetToggleKeyStates() != RSP_CAPS_LOCK_ON) {
+								if (pie->lKey > 64 && pie->lKey < 91)
+									pie->lKey += 32;
+							}
 							lNewChar	= pie->lKey;
 
 							// Absorb key.
@@ -730,7 +734,7 @@ void REdit::Do(		// Returns nothing.
 					break;
 
 				case RSP_GK_END:
-					m_sCaretPos	= (short)lStrLen;
+					m_sCaretPos	= (int16_t)lStrLen;
 
 					// Absorb key.
 					pie->sUsed	= TRUE;
@@ -797,7 +801,7 @@ void REdit::Do(		// Returns nothing.
 		if (m_lCaretBlinkRate != 0)
 			{
 			// If the next blink time has expired . . .
-			long	lCurTime	= rspGetMilliseconds();
+			int32_t	lCurTime	= rspGetMilliseconds();
 			if (lCurTime >= m_lNextCaretUpdate)
 				{
 				// Set next blink time.
@@ -863,10 +867,10 @@ void REdit::CursorEvent(	// Returns nothing.
 			Point*	ppt		= m_aptTextPos;
 			m_sCaretPos			= m_sFirstVisibleCharIndex;
 
-			short	sCellH		= m_sFontCellHeight;
+			int16_t	sCellH		= m_sFontCellHeight;
 
 			// Adjust sPosY to bottom of line.
-			short sPosY	= pie->sPosY + sCellH;
+			int16_t sPosY	= pie->sPosY + sCellH;
 
 			while (*pszText++ != '\0')
 				{
@@ -903,11 +907,11 @@ void REdit::CursorEvent(	// Returns nothing.
 // (virtual/protected (overriden here)).
 //
 ////////////////////////////////////////////////////////////////////////
-short REdit::ReadMembers(			// Returns 0 on success.
+int16_t REdit::ReadMembers(			// Returns 0 on success.
 	RFile*	pfile,					// File to read from.
 	U32		u32Version)				// File format version to use.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// Invoke base class to read base members.
 	sRes	= RTxt::ReadMembers(pfile, u32Version);
@@ -959,10 +963,10 @@ short REdit::ReadMembers(			// Returns 0 on success.
 // (virtual/protected (overriden here)).
 //
 ////////////////////////////////////////////////////////////////////////
-short REdit::WriteMembers(			// Returns 0 on success.
+int16_t REdit::WriteMembers(			// Returns 0 on success.
 	RFile*	pfile)					// File to write to.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// Invoke base class to read base members.
 	sRes	= RTxt::WriteMembers(pfile);
@@ -1000,11 +1004,11 @@ short REdit::WriteMembers(			// Returns 0 on success.
 ////////////////////////////////////////////////////////////////////////
 void REdit::ClipCaret(void)		// Returns nothing.
 	{
-	long	lLen	= strlen(m_szText);
+	int32_t	lLen	= strlen(m_szText);
 	if (m_sCaretPos > lLen)
 		{
 		// After last char.
-		m_sCaretPos	= (short)lLen;
+		m_sCaretPos	= (int16_t)lLen;
 		}
 	}
 

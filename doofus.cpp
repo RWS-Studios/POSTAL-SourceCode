@@ -468,22 +468,22 @@ double CDoofus::ms_dMinFightDistanceSQ = 80.0*80.0;// Square distance for
 double CDoofus::ms_dMedFightDistanceSQ	= 200.0*200.0;
 double CDoofus::ms_dMaxFightDistanceSQ = 400.0*400.0;	
 double CDoofus::ms_dMarchVelocity = 20.0;				// Speed at which to march
-long CDoofus::ms_lDefaultAlignTime = 100; //2000;	// Time to realign to bouy position
-long CDoofus::ms_lGuardTimeoutMin = 4000;				// Time to check for CDudes again
-long CDoofus::ms_lGuardTimeoutInc = 500;				// Interval to add for each easier difficulty level
-long CDoofus::ms_lShootTimeoutMin = 1000;				// Min time between shots, adjused for difficulty
-long CDoofus::ms_lShootTimeoutInc = 200;				// Adjustment time for difficulty level between shots
-long CDoofus::ms_lDetectionRadius = 100;//80			// Radius of detection smash sphere
-long CDoofus::ms_lRunShootInterval = 2000;			// Time between shots while running
-long CDoofus::ms_lReseekTime = 15 * 1000;				// Seek the dude again after this time
-long CDoofus::ms_lShotTimeout = 3000;					// Time between full shot reaction animations
+int32_t CDoofus::ms_lDefaultAlignTime = 100; //2000;	// Time to realign to bouy position
+int32_t CDoofus::ms_lGuardTimeoutMin = 4000;				// Time to check for CDudes again
+int32_t CDoofus::ms_lGuardTimeoutInc = 500;				// Interval to add for each easier difficulty level
+int32_t CDoofus::ms_lShootTimeoutMin = 1000;				// Min time between shots, adjused for difficulty
+int32_t CDoofus::ms_lShootTimeoutInc = 200;				// Adjustment time for difficulty level between shots
+int32_t CDoofus::ms_lDetectionRadius = 100;//80			// Radius of detection smash sphere
+int32_t CDoofus::ms_lRunShootInterval = 2000;			// Time between shots while running
+int32_t CDoofus::ms_lReseekTime = 15 * 1000;				// Seek the dude again after this time
+int32_t CDoofus::ms_lShotTimeout = 3000;					// Time between full shot reaction animations
 																	// which gives him a chance to attack or run
-long CDoofus::ms_lStuckRecoveryTime = 5000;			// Time to stay in recoverys state
-long CDoofus::ms_lAvoidRadius = 40;						// Radius of fire detection smash
-long CDoofus::ms_lYellRadius = 150;						// Yell for help in this vicinity
-long CDoofus::ms_lHelpTimeout = 3000;					// Time to react to a call for help.
-long CDoofus::ms_lDelayShootTimeout = 0; //2000;			// Time before shooting
-long CDoofus::ms_lHelpingTimeout = 1000;				// Only shoot every this often
+int32_t CDoofus::ms_lStuckRecoveryTime = 5000;			// Time to stay in recoverys state
+int32_t CDoofus::ms_lAvoidRadius = 40;						// Radius of fire detection smash
+int32_t CDoofus::ms_lYellRadius = 150;						// Yell for help in this vicinity
+int32_t CDoofus::ms_lHelpTimeout = 3000;					// Time to react to a call for help.
+int32_t CDoofus::ms_lDelayShootTimeout = 0; //2000;			// Time before shooting
+int32_t CDoofus::ms_lHelpingTimeout = 1000;				// Only shoot every this often
 
 // Note that these seem to apply to all weapons except bullet weapons.  That is, these are
 // passed to WhileHoldingWeapon() which passes them on to ShootWeapon(), but WhileHoldingWeapon()
@@ -493,13 +493,13 @@ U32 CDoofus::ms_u32CollideBitsInclude = CSmash::Character | CSmash::Barrel;
 U32 CDoofus::ms_u32CollideBitsDontcare = CSmash::Good | CSmash::Bad;
 U32 CDoofus::ms_u32CollideBitsExclude = CSmash::SpecialBarrel | CSmash::Ducking | CSmash::Bad | CSmash::Civilian;
 
-short CDoofus::ms_sStuckLimit = 3;						// Number of times to retry before attempting to
+int16_t CDoofus::ms_sStuckLimit = 3;						// Number of times to retry before attempting to
 																	// get free of whatever you are stuck on.
 
 // Weapon animations.
 CAnim3D	CDoofus::ms_aanimWeapons[NumWeaponTypes];
 // Current ref count on ms_aanimWeapons[].
-long		CDoofus::ms_lWeaponResRefCount	= 0;
+int32_t		CDoofus::ms_lWeaponResRefCount	= 0;
 
 // Weapon details (descriptions, res names, etc.).
 CDoofus::WeaponDetails	CDoofus::ms_awdWeapons[NumWeaponTypes]	=
@@ -734,7 +734,7 @@ char* CDoofus::ms_apszActionNames[] =
 };
 
 // Let this auto-init to 0
-short CDoofus::ms_sFileCount;
+int16_t CDoofus::ms_sFileCount;
 
 
 //
@@ -807,13 +807,13 @@ CDoofus::~CDoofus()
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CDoofus::Load(										// Returns 0 if successfull, non-zero otherwise
+int16_t CDoofus::Load(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 	{
-	short sResult = CCharacter::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CCharacter::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 
 	if (sResult == SUCCESS)
 	{
@@ -891,7 +891,7 @@ short CDoofus::Load(										// Returns 0 if successfull, non-zero otherwise
 			case 1:
 				// Get the instance ID for the NavNet
 				U16 u16Data;
-				short sres = pFile->Read(&u16Data);
+				int16_t sres = pFile->Read(&u16Data);
 				m_u16NavNetID = u16Data;
 				break;
 		}
@@ -915,12 +915,12 @@ short CDoofus::Load(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CDoofus::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CDoofus::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 	{
 	// Call the base class save to save the u16InstanceID
-	short sResult = CCharacter::Save(pFile, sFileCount);
+	int16_t sResult = CCharacter::Save(pFile, sFileCount);
 	if (sResult == SUCCESS)
 	{
 		// Save common data just once per file (not with each object)
@@ -957,7 +957,7 @@ short CDoofus::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CDoofus::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+int16_t CDoofus::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 {
 	CCharacter::Startup();
 
@@ -1017,7 +1017,7 @@ short CDoofus::Startup(void)								// Returns 0 if successfull, non-zero otherw
 	m_dVel = 0.0;
 	m_dRot = 0.0;
 	m_dAnimRot = 0.0;
-	m_sPrevHeight = (short) m_dY;
+	m_sPrevHeight = (int16_t) m_dY;
 	m_sRotateDir = 0;
 
 	// Set up the detection smash
@@ -1058,12 +1058,12 @@ short CDoofus::Startup(void)								// Returns 0 if successfull, non-zero otherw
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CDoofus::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CDoofus::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	CCharacter::EditNew(sX, sY, sZ);	
 
@@ -1157,9 +1157,9 @@ void CDoofus::EditRender(void)
 // SelectDude
 ////////////////////////////////////////////////////////////////////////////////
 
-short CDoofus::SelectDudeBouy(void)
+int16_t CDoofus::SelectDudeBouy(void)
 {
-	short sReturn = SUCCESS;
+	int16_t sReturn = SUCCESS;
 //	CDude* pDude;
 //	CBouy* pBouytest;
 
@@ -1203,9 +1203,9 @@ short CDoofus::SelectDudeBouy(void)
 // SelectRandomBouy - make sure it exists before setting it
 ////////////////////////////////////////////////////////////////////////////////
 
-UCHAR CDoofus::SelectRandomBouy(void)
+uint8_t CDoofus::SelectRandomBouy(void)
 {
-	UCHAR ucSelect = 0;
+	uint8_t ucSelect = 0;
 	CBouy* pBouy = NULL;
 
 	if (m_pNavNet->GetNumNodes() <= 1)
@@ -1224,16 +1224,16 @@ UCHAR CDoofus::SelectRandomBouy(void)
 //					 this enemy's CDude pointer.
 ////////////////////////////////////////////////////////////////////////////////
 
-short CDoofus::SelectDude(void)
+int16_t CDoofus::SelectDude(void)
 {
 //	Things::iterator i;
 //	Things* pDudes;
 
 	m_idDude = CIdBank::IdNil;
-	ULONG	ulSqrDistance;
-	ULONG	ulCurSqrDistance	= 0xFFFFFFFF;
-	ULONG	ulDistX;
-	ULONG	ulDistZ;
+	uint32_t	ulSqrDistance;
+	uint32_t	ulCurSqrDistance	= 0xFFFFFFFF;
+	uint32_t	ulDistX;
+	uint32_t	ulDistZ;
 //	pDudes = m_pRealm->m_apthings[CThing::CDudeID];
 	CDude*	pdude;
 
@@ -1265,9 +1265,9 @@ short CDoofus::SelectDude(void)
 // FindDirection - gives the direction toward the cDude
 ////////////////////////////////////////////////////////////////////////////////
 
-short CDoofus::FindDirection()
+int16_t CDoofus::FindDirection()
 {
-	short sAngle;
+	int16_t sAngle;
 	double dDudeX;
 	double dDudeZ;
 	double dX;
@@ -1330,7 +1330,7 @@ double CDoofus::SQDistanceToDude()
 
 void CDoofus::AlignToBouy(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 	if (lThisTime > m_lAlignTimer || m_bRecentlyStuck)
 	{
 		// If he got stuck and is now free, pick a new bouy
@@ -1366,11 +1366,11 @@ void CDoofus::AlignToBouy(void)
 //	with a completely different angle and variance.
 ////////////////////////////////////////////////////////////////////////////////
 
-bool CDoofus::TryClearDirection(double* pdRot, short sVariance)
+bool CDoofus::TryClearDirection(double* pdRot, int16_t sVariance)
 {
 	bool bFoundPath = false;
-	short sTries = 0;
-	short sX, sY, sZ;
+	int16_t sTries = 0;
+	int16_t sX, sY, sZ;
 	double dRotAttempt = *pdRot;
 	CThing* pthing;
 
@@ -1431,15 +1431,15 @@ bool CDoofus::TryClearDirection(double* pdRot, short sVariance)
 //						from here.
 ////////////////////////////////////////////////////////////////////////////////
 
-bool CDoofus::TryClearShot(double dRot, short sVariance)
+bool CDoofus::TryClearShot(double dRot, int16_t sVariance)
 {
 	bool bFoundPath = false;
 
 	// If we have a weapon transform . . .
 	if (m_panimCur->m_ptransRigid)
 	{
-		short sTries = 0;
-		short sX, sY, sZ;
+		int16_t sTries = 0;
+		int16_t sX, sY, sZ;
 		CThing* pthing = NULL;
 		double dRotAttempt = dRot;
 
@@ -1482,7 +1482,7 @@ bool CDoofus::TryClearShot(double dRot, short sVariance)
 					 m_dX + dMuzzleX,
 					 m_dY + dMuzzleY,
 					 m_dZ + dMuzzleZ,
-					 (short) dRotAttempt,
+					 (int16_t) dRotAttempt,
 					 3,
 					 rspSqrt(CDoofus::SQDistanceToDude()),
 					 0,
@@ -1522,7 +1522,7 @@ void CDoofus::Update(void)
 {
 	if (!m_sSuspend)
 	{
-		long lThisTime = m_pRealm->m_time.GetGameTime();
+		int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 
 		// Check for new messages that may change the state
 		ProcessMessages();
@@ -1754,7 +1754,7 @@ void CDoofus::Logic_Die(void)
 			}
 			else
 			{
-				pweapon->m_dHorizVel = (GetRandom() % (short) CGrenade::ms_dThrowHorizVel);
+				pweapon->m_dHorizVel = (GetRandom() % (int16_t) CGrenade::ms_dThrowHorizVel);
 				m_dShootAngle = pweapon->m_dRot = GetRandom() % 360;
 				ShootWeapon();
 			}
@@ -1786,8 +1786,8 @@ void CDoofus::Logic_Die(void)
 
 void CDoofus::Logic_Writhing(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
-	long lTimeDifference = lThisTime - m_lPrevTime;
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lTimeDifference = lThisTime - m_lPrevTime;
 
 	// Send to back.
 	m_sLayerOverride	= CRealm::LayerSprite1; 
@@ -1815,7 +1815,7 @@ void CDoofus::Logic_Writhing(void)
 			if (lThisTime >= m_lTimer)
 			{
 				// Launch a sample and get the duration of the sample.
-				long	lSampleDuration;
+				int32_t	lSampleDuration;
 				PlaySoundWrithing(&lSampleDuration);
 
 				m_lTimer	= lThisTime	+ lSampleDuration + MS_BETWEEN_SAMPLES;
@@ -1838,7 +1838,7 @@ void CDoofus::Logic_Writhing(void)
 			}
 			else
 			{
-				pweapon->m_dHorizVel = (GetRandom() % (short) CGrenade::ms_dThrowHorizVel);
+				pweapon->m_dHorizVel = (GetRandom() % (int16_t) CGrenade::ms_dThrowHorizVel);
 				m_dShootAngle = pweapon->m_dRot = GetRandom() % 360;
 				ShootWeapon();
 			}
@@ -1853,8 +1853,8 @@ void CDoofus::Logic_Writhing(void)
 
 void CDoofus::Logic_Guard(void)
 {
-	long lThisTime;
-	long lTimeDifference;
+	int32_t lThisTime;
+	int32_t lTimeDifference;
 	double dSeconds;
 
 	// Get new time
@@ -1970,7 +1970,7 @@ void CDoofus::Logic_HuntHold(void)
 	if (!ReevaluateState())
 	{
 		// Check to see if the dude has moved and you should move	
-		long lThisTime = m_pRealm->m_time.GetGameTime();
+		int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 
 		if (lThisTime > m_lTimer)
 		{
@@ -2023,8 +2023,8 @@ void CDoofus::Logic_HuntHold(void)
 
 void CDoofus::Logic_MoveNext(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
-	long lElapsedTime = lThisTime - m_lPrevTime;
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lElapsedTime = lThisTime - m_lPrevTime;
 	double dSeconds = lElapsedTime / 1000.0;
 	double dStartX = m_dX;
 	double dStartZ = m_dZ;
@@ -2087,7 +2087,7 @@ void CDoofus::Logic_MoveNext(void)
 		double dsq = (dX * dX) + (dZ * dZ);
 		if (dsq < 5*5) // Was 10*10 for a long time, trying smaller to see if it keeps guys from getting stuck
 		{
-			UCHAR ucNext = m_pNextBouy->NextRouteNode(m_ucDestBouyID);
+			uint8_t ucNext = m_pNextBouy->NextRouteNode(m_ucDestBouyID);
 			if (ucNext == 0 || ucNext == 255) // you are here or you are lost
 			{
 				m_state = m_eDestinationState;
@@ -2143,8 +2143,8 @@ void CDoofus::Logic_PositionSet(void)
 {
 	if (!ReevaluateState())
 	{
-		long lThisTime = m_pRealm->m_time.GetGameTime();
-		short sVarRot = GetRandom() % 40;
+		int32_t lThisTime = m_pRealm->m_time.GetGameTime();
+		int16_t sVarRot = GetRandom() % 40;
 		double dTargetDist = SQDistanceToDude();
 		double dTestAngle;
 		double dAngleTurn;
@@ -2154,7 +2154,7 @@ void CDoofus::Logic_PositionSet(void)
 			dTargetDist = ms_dMedFightDistanceSQ;
 
 		bool bFoundDirection = false;
-		short sAttempts = 0;
+		int16_t sAttempts = 0;
 
 		while (!bFoundDirection && sAttempts < 8)
 		{
@@ -2266,7 +2266,7 @@ void CDoofus::Logic_PositionSet(void)
 
 void CDoofus::Logic_DelayShoot(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 
 	// See if its time to shoot yet
 	if (lThisTime > m_lTimer)
@@ -2297,8 +2297,8 @@ void CDoofus::Logic_DelayShoot(void)
 
 void CDoofus::Logic_PositionMove(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
-	long lTimeDifference = lThisTime - m_lPrevTime;
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lTimeDifference = lThisTime - m_lPrevTime;
 	double dSeconds = lTimeDifference / 1000.0;
 
 	if (lThisTime > m_lTimer)
@@ -2337,7 +2337,7 @@ void CDoofus::Logic_PositionMove(void)
 		// to try to avoid the obstacle
 		if (m_dVel != 0.0 && dLastPosX == m_dX && dLastPosZ == m_dZ)
 		{
-			if (((short) m_dRot) & 0x01)
+			if (((int16_t) m_dRot) & 0x01)
 				m_dAnimRot = m_dRot = rspMod360(m_dRot + 20);
 			else
 				m_dAnimRot = m_dRot = rspMod360(m_dRot - 20);
@@ -2420,9 +2420,9 @@ void CDoofus::Logic_PylonDetect(void)
 			if (m_pRealm->IsPathClear(	// Returns true, if the entire path is clear.                 
 													// Returns false, if only a portion of the path is clear.     
 													// (see *psX, *psY, *psZ).                                    
-					(short) m_dX, 				// In:  Starting X.                                           
-					(short) m_dY, 				// In:  Starting Y.                                           
-					(short) m_dZ, 				// In:  Starting Z.                                           
+					(int16_t) m_dX, 				// In:  Starting X.                                           
+					(int16_t) m_dY, 				// In:  Starting Y.                                           
+					(int16_t) m_dZ, 				// In:  Starting Z.                                           
 					3.0, 							// In:  Rate at which to scan ('crawl') path in pixels per    
 													// iteration.                                                 
 													// NOTE: Values less than 1.0 are inefficient.                
@@ -2430,8 +2430,8 @@ void CDoofus::Logic_PylonDetect(void)
 													// at only one pixel.                                         
 													// NOTE: We could change this to a speed in pixels per second 
 													// where we'd assume a certain frame rate.                    
-					(short) dSmashedX,		// In:  Destination X.                                        
-					(short) dSmashedZ,		// In:  Destination Z.                                        
+					(int16_t) dSmashedX,		// In:  Destination X.                                        
+					(int16_t) dSmashedZ,		// In:  Destination Z.                                        
 					0,								// In:  Max traverser can step up.                      
 					NULL,							// Out: If not NULL, last clear point on path.                
 					NULL,							// Out: If not NULL, last clear point on path.                
@@ -2490,7 +2490,7 @@ void CDoofus::Logic_PylonDetect(void)
 
 void CDoofus::Logic_HideBegin(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 	// If we'renot using the run animation yet then switch to it
 	if (m_panimCur != &m_animRun)
 	{
@@ -2504,7 +2504,7 @@ void CDoofus::Logic_HideBegin(void)
 	m_dAnimRot = m_dRot = FindAngleTo(m_sNextX, m_sNextZ);
 	m_dAcc = ms_dAccUser;
 
-	long lElapsedTime = m_pRealm->m_time.GetGameTime() - m_lPrevTime;
+	int32_t lElapsedTime = m_pRealm->m_time.GetGameTime() - m_lPrevTime;
 	double dSeconds = lElapsedTime / 1000.0;
 	DeluxeUpdatePosVel(dSeconds);
 
@@ -2538,7 +2538,7 @@ void CDoofus::Logic_Hide(void)
 
 void CDoofus::Logic_PopBegin(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 	double dStartX = m_dX;
 	double dStartZ = m_dZ;
 
@@ -2561,7 +2561,7 @@ void CDoofus::Logic_PopBegin(void)
 	}
 	m_dAcc = ms_dAccUser;
 
-	long lElapsedTime = m_pRealm->m_time.GetGameTime() - m_lPrevTime;
+	int32_t lElapsedTime = m_pRealm->m_time.GetGameTime() - m_lPrevTime;
 	double dSeconds = lElapsedTime / 1000.0;
 	DeluxeUpdatePosVel(dSeconds);
 
@@ -2633,8 +2633,8 @@ void CDoofus::Logic_PopWait(void)
 
 void CDoofus::Logic_Popout(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
-	long lElapsedTime = lThisTime - m_lPrevTime;
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lElapsedTime = lThisTime - m_lPrevTime;
 	double dSeconds = lElapsedTime / 1000.0;
 	m_lAnimTime += lElapsedTime;
 	m_eCurrentAction = Action_Popout;
@@ -2682,8 +2682,8 @@ void CDoofus::Logic_Popout(void)
 
 void CDoofus::Logic_Shoot(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
-	long lTimeDifference = lThisTime - m_lPrevTime;
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lTimeDifference = lThisTime - m_lPrevTime;
 
 	// Switch behavior on weapon type.
 	switch (m_eWeaponType)
@@ -2792,8 +2792,8 @@ void CDoofus::Logic_ShootRun(void)
 
 void CDoofus::Logic_RunShootBegin(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
-	long lElapsedTime = lThisTime - m_lPrevTime;
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lElapsedTime = lThisTime - m_lPrevTime;
 	double dStartX = m_dX;
 	double dStartZ = m_dZ;
 
@@ -2855,8 +2855,8 @@ void CDoofus::Logic_RunShootBegin(void)
 
 void CDoofus::Logic_RunShoot(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
-	long lElapsedTime = lThisTime - m_lPrevTime;
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lElapsedTime = lThisTime - m_lPrevTime;
 
 	// If its not using the run animation, then switch to it
 	if (m_panimCur != &m_animRun)
@@ -2885,11 +2885,11 @@ void CDoofus::Logic_RunShoot(void)
 			}
 			SelectDude();
 
-			short sTargetAngle = FindDirection();
+			int16_t sTargetAngle = FindDirection();
 			m_dShootAngle = sTargetAngle;
-			short sAngleCCL = rspMod360(sTargetAngle - m_dRot);
-			short sAngleCL  = rspMod360((360 - sTargetAngle) + m_dRot);
-			short sAngleDistance = MIN(sAngleCCL, sAngleCL);
+			int16_t sAngleCCL = rspMod360(sTargetAngle - m_dRot);
+			int16_t sAngleCL  = rspMod360((360 - sTargetAngle) + m_dRot);
+			int16_t sAngleDistance = MIN(sAngleCCL, sAngleCL);
 			if (sAngleCCL < sAngleCL)
 			// Rotate Counter Clockwise - Use left animations
 			{
@@ -2993,7 +2993,7 @@ void CDoofus::Logic_RunShoot(void)
 
 void CDoofus::Logic_RunShootWait(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 	
 	RunIdleAnimation();
 
@@ -3198,7 +3198,7 @@ void CDoofus::Logic_WalkContinue(void)
 
 void CDoofus::Logic_Helping(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 
 	if (lThisTime > m_lTimer)
 	{
@@ -3329,9 +3329,9 @@ void CDoofus::YellForHelp(void)
 			if (m_pRealm->IsPathClear(	// Returns true, if the entire path is clear.                 
 													// Returns false, if only a portion of the path is clear.     
 													// (see *psX, *psY, *psZ).                                    
-					(short) m_dX, 				// In:  Starting X.                                           
-					(short) m_dY, 				// In:  Starting Y.                                           
-					(short) m_dZ, 				// In:  Starting Z.                                           
+					(int16_t) m_dX, 				// In:  Starting X.                                           
+					(int16_t) m_dY, 				// In:  Starting Y.                                           
+					(int16_t) m_dZ, 				// In:  Starting Z.                                           
 					3.0, 							// In:  Rate at which to scan ('crawl') path in pixels per    
 													// iteration.                                                 
 													// NOTE: Values less than 1.0 are inefficient.                
@@ -3339,8 +3339,8 @@ void CDoofus::YellForHelp(void)
 													// at only one pixel.                                         
 													// NOTE: We could change this to a speed in pixels per second 
 													// where we'd assume a certain frame rate.                    
-					(short) dSmashedX,		// In:  Destination X.                                        
-					(short) dSmashedZ,		// In:  Destination Z.                                        
+					(int16_t) dSmashedX,		// In:  Destination X.                                        
+					(int16_t) dSmashedZ,		// In:  Destination Z.                                        
 					0,								// In:  Max traverser can step up.                      
 					NULL,							// Out: If not NULL, last clear point on path.                
 					NULL,							// Out: If not NULL, last clear point on path.                
@@ -3521,7 +3521,7 @@ void CDoofus::OnShotMsg(Shot_Message* pMessage)
 		}
 		else
 		{
-			long lThisTime = m_pRealm->m_time.GetGameTime();
+			int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 			if (lThisTime > m_lShotTimeout)
 			{
 				m_lShotTimeout = lThisTime + m_lShotReactionTimeout;
@@ -3594,7 +3594,7 @@ void CDoofus::OnExplosionMsg(Explosion_Message* pMessage)
 			}
 			else
 			{
-				pweapon->m_dHorizVel = (GetRandom() % (short) CGrenade::ms_dThrowHorizVel);
+				pweapon->m_dHorizVel = (GetRandom() % (int16_t) CGrenade::ms_dThrowHorizVel);
 				m_dShootAngle = pweapon->m_dRot = GetRandom() % 360;
 				ShootWeapon();
 			}
@@ -3660,7 +3660,7 @@ void CDoofus::OnBurnMsg(Burn_Message* pMessage)
 			}
 			else
 			{
-				pweapon->m_dHorizVel = (GetRandom() % (short) CGrenade::ms_dThrowHorizVel);
+				pweapon->m_dHorizVel = (GetRandom() % (int16_t) CGrenade::ms_dThrowHorizVel);
 				m_dShootAngle = pweapon->m_dRot = GetRandom() % 360;
 				ShootWeapon();
 			}
@@ -3822,7 +3822,7 @@ CWeapon* CDoofus::ShootWeapon(CSmash::Bits bitsInclude,
 
 void CDoofus::RunIdleAnimation(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 
 	if (m_panimCur == &m_animStand)
 	{
@@ -3978,10 +3978,10 @@ void CDoofus::PositionSmash(void)
 			// Let's go a radius up their torso.  Say... .
 			// This only looks decent if m_dRot is the direction they fell which is
 			// not always the case.
-			short	sPseudoCenter	= m_sprite.m_sRadius;
-			m_smash.m_sphere.sphere.X			= m_dX + COSQ[short(m_dRot)] * sPseudoCenter;
+			int16_t	sPseudoCenter	= m_sprite.m_sRadius;
+			m_smash.m_sphere.sphere.X			= m_dX + COSQ[int16_t(m_dRot)] * sPseudoCenter;
 			m_smash.m_sphere.sphere.Y			= m_dY + m_sprite.m_sRadius;              
-			m_smash.m_sphere.sphere.Z			= m_dZ - SINQ[short(m_dRot)] * sPseudoCenter;              
+			m_smash.m_sphere.sphere.Z			= m_dZ - SINQ[int16_t(m_dRot)] * sPseudoCenter;              
 			m_smash.m_sphere.sphere.lRadius	= m_sprite.m_sRadius;
 			}
 		}
@@ -4052,16 +4052,16 @@ bool CDoofus::WhileHoldingWeapon(	// Returns true when weapon is released.
 // any of this class's resources (e.g., ms_aanimWeapons[]), call this
 // when getting your resources.
 ////////////////////////////////////////////////////////////////////////////////
-short CDoofus::GetResources(void)
+int16_t CDoofus::GetResources(void)
 	{
-	short	sResult	= 0;
+	int16_t	sResult	= 0;
 
 	// If the ref count was 0 . . .
 	if (ms_lWeaponResRefCount++ == 0)
 		{
 		// Get the actual resources.
-		short	i;
-		short	sLoadResult;
+		int16_t	i;
+		int16_t	sLoadResult;
 		for (i = 0; i < NumWeaponTypes; i++)
 			{
 			// If this weapon has a visible resource . . .
@@ -4100,7 +4100,7 @@ void CDoofus::ReleaseResources(void)
 	if (--ms_lWeaponResRefCount == 0)
 		{
 		// Release the actual resources.
-		short	i;
+		int16_t	i;
 		for (i = 0; i < NumWeaponTypes; i++)
 			{
 			if (ms_aanimWeapons[i].m_pmeshes)

@@ -83,7 +83,7 @@
 // Note that this is never reseeded b/c this is just an 'effect'
 // that does not and SHOULD not affect game play as it can be
 // turned off.
-long		CChunk::ms_lGetRandomSeed	= 0;	// Seed for GetRand[om]().
+int32_t		CChunk::ms_lGetRandomSeed	= 0;	// Seed for GetRand[om]().
 
 // Chunk info for each type.
 CChunk::TypeInfo	CChunk::ms_atiChunks[CChunk::NumTypes]	=
@@ -116,15 +116,15 @@ void CChunk::Resume(void)
 ////////////////////////////////////////////////////////////////////////////////
 void CChunk::Update(void)
 	{
-	long	lCurTime		= m_pRealm->m_time.GetGameTime();
+	int32_t	lCurTime		= m_pRealm->m_time.GetGameTime();
 
 	double	dSeconds	= (lCurTime - m_lPrevTime) / 1000.0;
 	m_lPrevTime			= lCurTime;
 
 	double	dDist		= m_dVel	* dSeconds;
 
-	m_dX					+= COSQ[(short)m_dRot] * dDist;
-	m_dZ					-= SINQ[(short)m_dRot] * dDist;
+	m_dX					+= COSQ[(int16_t)m_dRot] * dDist;
+	m_dZ					-= SINQ[(int16_t)m_dRot] * dDist;
 
 	double dVertDeltaVel	= g_dAccelerationDueToGravity * dSeconds;
 	m_dVertVel			+= dVertDeltaVel;
@@ -134,7 +134,7 @@ void CChunk::Update(void)
 	// If we have hit terrain . . .
 	if (m_pRealm->GetHeight(m_dX, m_dZ) >= m_dY)
 		{
-		short	sX2d, sY2d;
+		int16_t	sX2d, sY2d;
 		// Map from 3d to 2d coords.
 		Map3Dto2D(m_dX, m_dY, m_dZ, &sX2d, &sY2d);
 
@@ -202,7 +202,7 @@ void CChunk::Render(void)
 	m_sprite.m_sPriority = m_dZ;
 	
 	// Layer should be based on info we get from attribute map.
-	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 	// Update sprite in scene
 	m_pRealm->m_scene.UpdateSprite(&m_sprite);
@@ -212,19 +212,19 @@ void CChunk::Render(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Setup object.
 ////////////////////////////////////////////////////////////////////////////////
-short CChunk::Setup(			// Returns 0 if successfull, non-zero otherwise
-	short sX,					// In: New x coord
-	short sY,					// In: New y coord
-	short sZ,					// In: New z coord
+int16_t CChunk::Setup(			// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,					// In: New x coord
+	int16_t sY,					// In: New y coord
+	int16_t sZ,					// In: New z coord
 	double dRot,				// In: Initial direction.
-	short	sRandRotSway,		// In:  Random sway on rotation or zero.
+	int16_t	sRandRotSway,		// In:  Random sway on rotation or zero.
 	double dVel,				// In:  Initial velocity.
-	short	sRandVelSway,		// In:  Random sway on velocity or zero.
+	int16_t	sRandVelSway,		// In:  Random sway on velocity or zero.
 	double dVertVel,			// In:  Initial vertical velocity.
-	short	sRandVertVelSway,	// In:  Random sway on velocity or zero.
+	int16_t	sRandVertVelSway,	// In:  Random sway on velocity or zero.
 	Type	type)					// In:  Type of chunk.
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;

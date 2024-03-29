@@ -188,8 +188,8 @@
 // NOTE: ONLY THE MENU MAY ADJUST THESE VALUES
 // 3d objects may need to use gsGlobalBrightnessPerLightAttribute for calculation
 //
-extern	short	gsGlobalBrightnessPerLightAttribute; 
-extern	short gsGlobalLightingAdjustment;
+extern	int16_t	gsGlobalBrightnessPerLightAttribute; 
+extern	int16_t gsGlobalLightingAdjustment;
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -234,7 +234,7 @@ class CScene
 
 		// Array of layers
 		Layer*		m_pLayers;
-		short			m_sNumLayers;
+		int16_t			m_sNumLayers;
 		
 		// The world pipeline.  All 3D objects are rendered via this pipeline.
 		// We might eventually have more than one.
@@ -276,11 +276,11 @@ class CScene
 
 		// Remove sprites from specified layer
 		void RemoveSprites(
-			short sLayer);											// In:  Layer number (0 to n-1)
+			int16_t sLayer);											// In:  Layer number (0 to n-1)
 
 		// Set number of layers (destroys any existing layers!)
 		void SetLayers(											// Returns 0 if successfull, non-zero otherwise
-			short sNumLayers);									// In:  Number of layers
+			int16_t sNumLayers);									// In:  Number of layers
 
 		// Update existing sprite or add new sprite
 		void UpdateSprite(
@@ -292,20 +292,20 @@ class CScene
 
 		// Render specified area of scene into specified image
 		void Render(
-			short sSrcX,											// In:  Source (scene) x coord
-			short sSrcY,											// In:  Source (scene) y coord
-			short sW,												// In:  Width
-			short sH,												// In:  Height
+			int16_t sSrcX,											// In:  Source (scene) x coord
+			int16_t sSrcY,											// In:  Source (scene) y coord
+			int16_t sW,												// In:  Width
+			int16_t sH,												// In:  Height
 			RImage* pimDst,										// In:  Destination image
-			short sDstX,											// In:  Destination (image) x coord
-			short sDstY,											// In:  Destination (image) y coord
+			int16_t sDstX,											// In:  Destination (image) x coord
+			int16_t sDstY,											// In:  Destination (image) y coord
 			CHood* phood);											// In:  The hood involved.
 
 		// Render a single sprite tree.
 		void Render(						// Returns nothing.
 			RImage*		pimDst,			// Destination image.
-			short			sDstX,			// Destination 2D x coord.
-			short			sDstY,			// Destination 2D y coord.
+			int16_t			sDstX,			// Destination 2D x coord.
+			int16_t			sDstY,			// Destination 2D y coord.
 			CSprite*		pSprite,			// Tree of sprites to render.
 			CHood*		phood,			// Da hood, homey.
 			RRect*		prcDstClip,		// Dst clip rect.
@@ -314,8 +314,8 @@ class CScene
 		// Render a 2D sprite.
 		void Render2D(					// Returns nothing.
 			RImage*		pimDst,		// Destination image.
-			short			sDstX,		// Destination 2D x coord.
-			short			sDstY,		// Destination 2D y coord.
+			int16_t			sDstX,		// Destination 2D x coord.
+			int16_t			sDstY,		// Destination 2D y coord.
 			CSprite2*	ps2Cur,		// Tree of sprites to render.
 			CHood*		phood,		// Da hood, homey.
 			RRect*		prcDstClip,	// Dst clip rect.
@@ -324,16 +324,16 @@ class CScene
 		// Draw a 2D line.
 		void Line2D(							// Returns nothing.
 			RImage*			pimDst,			// Destination image.
-			short				sDstX,			// Destination 2D x coord.
-			short				sDstY,			// Destination 2D y coord.
+			int16_t				sDstX,			// Destination 2D x coord.
+			int16_t				sDstY,			// Destination 2D y coord.
 			CSpriteLine2d*	psl2,				// Tree of sprites to render.
 			RRect*			prcDstClip);	// Dst clip rect.
 
 		// Draw a 3D (as if there were another kind) cylinder.
 		void RenderCylinder3D(						// Returns nothing.
 			RImage*					pimDst,			// Destination image.
-			short						sDstX,			// Destination 2D x coord.
-			short						sDstY,			// Destination 2D y coord.
+			int16_t						sDstX,			// Destination 2D x coord.
+			int16_t						sDstY,			// Destination 2D y coord.
 			CSpriteCylinder3d*	psc3,				// Cylinder sprite.
 			CHood*					phood,			// Da hood, homey.
 			RRect*					prcDstClip);	// Dst clip rect.
@@ -341,8 +341,8 @@ class CScene
 		void									// Returns nothing.
 		Render3D(
 			RImage*		pimDst,			// Destination image.
-			short			sDstX,			// Destination 2D x coord.
-			short			sDstY,			// Destination 2D y coord.
+			int16_t			sDstX,			// Destination 2D x coord.
+			int16_t			sDstY,			// Destination 2D y coord.
 			CSprite3*	ps3Cur,			// 3D sprite to render.
 			RAlpha*		plight,			// Light to render with.
 			RRect*		prcDstClip);	// Dst clip rect.
@@ -351,8 +351,8 @@ class CScene
 		void									// Returns nothing.
 		Render3D(
 			RImage*		pimDst,			// Destination image.
-			short			sDstX,			// Destination 2D x coord.
-			short			sDstY,			// Destination 2D y coord.
+			int16_t			sDstX,			// Destination 2D x coord.
+			int16_t			sDstY,			// Destination 2D y coord.
 			CSprite3*	ps3Cur,			// 3D sprite to render.
 			CHood*		phood,			// Da hood, homey.
 			RRect*		prcDstClip);	// Dst clip rect.
@@ -378,7 +378,7 @@ class CScene
 										// transforming pts.
 			RP3d*		p3dPtsSrc,	// In:  Ptr to group of pts to transform from.
 			RP3d*		p3dPtsDst,	// Out: Ptr to group of pts to transform into.
-			short		sNum);		// In:  The number of pts in p3dPtsSrc to transform.
+			int16_t		sNum);		// In:  The number of pts in p3dPtsSrc to transform.
 
 		// Transform the given points through the CScene's pipeline with the
 		// supplied transform and then map them to Realm 3D coordinates.
@@ -387,7 +387,7 @@ class CScene
 											// transforming pts.
 			RP3d*		p3dPtsSrc,		// In:  Ptr to group of pts to transform from.
 			RP3d*		p3dPtsDst,		// Out: Ptr to group of pts to transform into.
-			short		sNum);			// In:  The number of pts in p3dPtsSrc to transform.
+			int16_t		sNum);			// In:  The number of pts in p3dPtsSrc to transform.
 
 		// Render a 3D sprite tree into the specified image.
 		// Ignores non 3D sprites.
@@ -395,8 +395,8 @@ class CScene
 			RImage*		pimDst,					// Destination image.
 			CSprite3*	ps3Cur,					// Tree of 3D sprites to render.
 			CHood*		phood,					// Da hood, homey.
-			short			sDstX = 0,				// Destination 2D x coord.
-			short			sDstY = 0,				// Destination 2D y coord.
+			int16_t			sDstX = 0,				// Destination 2D x coord.
+			int16_t			sDstY = 0,				// Destination 2D y coord.
 			RRect*		prcDstClip = NULL);	// Dst clip rect.
 
 		// Set all 'alpha' _and_ 'opaque' layers to xray.

@@ -145,10 +145,10 @@ CSettings::~CSettings()
 // Load all settings from preference file
 //
 ////////////////////////////////////////////////////////////////////////////////
-short CSettings::LoadPrefs(					// Returns 0 if successfull, non-zero otherwise
+int16_t CSettings::LoadPrefs(					// Returns 0 if successfull, non-zero otherwise
 	char* pszFile)									// In:  Name of prefs file
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Make sure container exists
 	if (ms_pSettings != 0)
@@ -203,10 +203,10 @@ short CSettings::LoadPrefs(					// Returns 0 if successfull, non-zero otherwise
 //		<0 = some other error
 //
 ////////////////////////////////////////////////////////////////////////////////
-short CSettings::SavePrefs(					// Returns 0 if successfull, non-zero otherwise
+int16_t CSettings::SavePrefs(					// Returns 0 if successfull, non-zero otherwise
 	char* pszFile)									// In:  Name of prefs file
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Make sure container exists
 	if (ms_pSettings != 0)
@@ -270,10 +270,10 @@ short CSettings::SavePrefs(					// Returns 0 if successfull, non-zero otherwise
 // Load all settings from game file
 //
 ////////////////////////////////////////////////////////////////////////////////
-short CSettings::LoadGame(						// Returns 0 if successfull, non-zero otherwise
+int16_t CSettings::LoadGame(						// Returns 0 if successfull, non-zero otherwise
 	char* pszFile)									// In:  Name of prefs file
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Make sure container exists
 	if (ms_pSettings != 0)
@@ -323,10 +323,10 @@ short CSettings::LoadGame(						// Returns 0 if successfull, non-zero otherwise
 // Save all settings to game file
 //
 ////////////////////////////////////////////////////////////////////////////////
-short CSettings::SaveGame(						// Returns 0 if successfull, non-zero otherwise
+int16_t CSettings::SaveGame(						// Returns 0 if successfull, non-zero otherwise
 	char* pszFile)									// In:  Name of prefs file
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Make sure container exists
 	if (ms_pSettings != 0)
@@ -377,10 +377,10 @@ short CSettings::SaveGame(						// Returns 0 if successfull, non-zero otherwise
 // Temporarily set settings for demo mode
 //
 ////////////////////////////////////////////////////////////////////////////////
-short CSettings::PreDemo(						// Returns 0 if successfull, non-zero otherwise
+int16_t CSettings::PreDemo(						// Returns 0 if successfull, non-zero otherwise
 	void)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Make sure container exists
 	if (ms_pSettings != 0)
@@ -441,10 +441,10 @@ short CSettings::PreDemo(						// Returns 0 if successfull, non-zero otherwise
 // Restore settings to what they were prior to demo mode
 //
 ////////////////////////////////////////////////////////////////////////////////
-short CSettings::PostDemo(						// Returns 0 if successfull, non-zero otherwise
+int16_t CSettings::PostDemo(						// Returns 0 if successfull, non-zero otherwise
 	void)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Make sure container exists
 	if (ms_pSettings != 0)

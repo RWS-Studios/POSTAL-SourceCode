@@ -173,10 +173,10 @@ double CHeatseeker::ms_dMaxVelFore  = 250.0;				// Maximum forward velocity
 double CHeatseeker::ms_dMaxVelBack  = -250.0;			// Maximum backward velocity
 double CHeatseeker::ms_dCloseDistance = 30.0;			// Close enough to hit CDude
 double CHeatseeker::ms_dLineCheckRate = 15.0;			// Pixel distance for line checking
-long CHeatseeker::ms_lArmingTime = 500;					// Time before weapon arms.
-long CHeatseeker::ms_lSeekRadius = 150;						// Radius of heatseeking circle
-short CHeatseeker::ms_sOffScreenDist = 200;				// Go off screen this far before blowing up
-short CHeatseeker::ms_sAngularVelocity = 120;				// Degrees per second
+int32_t CHeatseeker::ms_lArmingTime = 500;					// Time before weapon arms.
+int32_t CHeatseeker::ms_lSeekRadius = 150;						// Radius of heatseeking circle
+int16_t CHeatseeker::ms_sOffScreenDist = 200;				// Go off screen this far before blowing up
+int16_t CHeatseeker::ms_sAngularVelocity = 120;				// Degrees per second
 
 // Set the collision bits
 U32 CHeatseeker::ms_u32SeekIncludeBits = CSmash::Character | CSmash::Fire;
@@ -185,11 +185,11 @@ U32 CHeatseeker::ms_u32SeekExcludeBits = CSmash::Ducking | CSmash::AlmostDead;
 U32 CHeatseeker::ms_u32CollideIncludeBits = CSmash::Character | CSmash::Misc | CSmash::Barrel | CSmash::Fire;
 U32 CHeatseeker::ms_u32CollideDontcareBits = CSmash::Good | CSmash::Bad;
 U32 CHeatseeker::ms_u32CollideExcludeBits = CSmash::Ducking; // Miss if they are ducking
-long CHeatseeker::ms_lSmokeTrailInterval = 10;			// MS between smoke releases
-long CHeatseeker::ms_lSmokeTimeToLive = 1000;			// MS for smoke to stay around.
+int32_t CHeatseeker::ms_lSmokeTrailInterval = 10;			// MS between smoke releases
+int32_t CHeatseeker::ms_lSmokeTimeToLive = 1000;			// MS for smoke to stay around.
 
 // Let this auto-init to 0
-short CHeatseeker::ms_sFileCount;
+int16_t CHeatseeker::ms_sFileCount;
 
 /// Rocket Animation Files
 static char* ms_apszResNames[] = 
@@ -207,13 +207,13 @@ static char* ms_apszResNames[] =
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CHeatseeker::Load(										// Returns 0 if successfull, non-zero otherwise
+int16_t CHeatseeker::Load(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 {
-	short sResult = CWeapon::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CWeapon::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 
 	if (sResult == SUCCESS)
 	{
@@ -263,9 +263,9 @@ short CHeatseeker::Load(										// Returns 0 if successfull, non-zero otherwis
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CHeatseeker::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CHeatseeker::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 {
 	// In most cases, the base class Save() should be called.  In this case it
 	// isn't because the base class doesn't have a Save()!
@@ -293,8 +293,8 @@ short CHeatseeker::Save(										// Returns 0 if successfull, non-zero otherwis
 ////////////////////////////////////////////////////////////////////////////////
 void CHeatseeker::Update(void)
 {
-	USHORT usAttrib;
-	short sHeight;
+	uint16_t usAttrib;
+	int16_t sHeight;
 	double dNewX;
 	double dNewZ;
 	double dPrevX;
@@ -303,7 +303,7 @@ void CHeatseeker::Update(void)
 	if (!m_sSuspend)
 		{
 		// Get new time
-		long lThisTime = m_pRealm->m_time.GetGameTime(); 
+		int32_t lThisTime = m_pRealm->m_time.GetGameTime(); 
 
 		// Calculate elapsed time in seconds
 		double dSeconds = (double)(lThisTime - m_lPrevTime) / 1000.0;
@@ -353,11 +353,11 @@ void CHeatseeker::Update(void)
 				dNewZ = m_dZ - rspSin(m_dRot) * (m_dHorizVel * dSeconds);
 
 				// Check for obstacles
-				sHeight = m_pRealm->GetHeight((short) dNewX, (short) dNewZ);
-				usAttrib = m_pRealm->GetFloorAttribute((short) dNewX, (short) dNewZ);
+				sHeight = m_pRealm->GetHeight((int16_t) dNewX, (int16_t) dNewZ);
+				usAttrib = m_pRealm->GetFloorAttribute((int16_t) dNewX, (int16_t) dNewZ);
 
-				short	sRealmH	= m_pRealm->GetRealmHeight();
-				short	sRealmW	= m_pRealm->GetRealmWidth();
+				int16_t	sRealmH	= m_pRealm->GetRealmHeight();
+				int16_t	sRealmW	= m_pRealm->GetRealmWidth();
 
 				// Once a bit off screen, it should start turning back towards
 				// the center of the hood.
@@ -366,11 +366,11 @@ void CHeatseeker::Update(void)
 					 m_dX > ms_sOffScreenDist + sRealmW ||
 					 m_dX < -ms_sOffScreenDist)
 				{
-					short sTargetAngle = FindAngleTo(sRealmW / 2, 
+					int16_t sTargetAngle = FindAngleTo(sRealmW / 2, 
 																sRealmH / 2);
-					short sAngleCCL = rspMod360(sTargetAngle - m_dRot);
-					short sAngleCL  = rspMod360((360 - sTargetAngle) + m_dRot);
-					short sAngleDistance = MIN(sAngleCCL, sAngleCL);
+					int16_t sAngleCCL = rspMod360(sTargetAngle - m_dRot);
+					int16_t sAngleCL  = rspMod360((360 - sTargetAngle) + m_dRot);
+					int16_t sAngleDistance = MIN(sAngleCCL, sAngleCL);
 					double dAngleChange = MIN((double) sAngleDistance, ms_sAngularVelocity * dSeconds);
 					if (sAngleCCL < sAngleCL)
 						m_dRot = rspMod360(m_dRot + dAngleChange);
@@ -382,9 +382,9 @@ void CHeatseeker::Update(void)
 					 !m_pRealm->IsPathClear(	// Returns true, if the entire path is clear.                 
 														// Returns false, if only a portion of the path is clear.     
 														// (see *psX, *psY, *psZ).                                    
-						(short) m_dX, 				// In:  Starting X.                                           
-						(short) m_dY, 				// In:  Starting Y.                                           
-						(short) m_dZ, 				// In:  Starting Z.                                           
+						(int16_t) m_dX, 				// In:  Starting X.                                           
+						(int16_t) m_dY, 				// In:  Starting Y.                                           
+						(int16_t) m_dZ, 				// In:  Starting Z.                                           
 						3.0, 							// In:  Rate at which to scan ('crawl') path in pixels per    
 														// iteration.                                                 
 														// NOTE: Values less than 1.0 are inefficient.                
@@ -392,8 +392,8 @@ void CHeatseeker::Update(void)
 														// at only one pixel.                                         
 														// NOTE: We could change this to a speed in pixels per second 
 														// where we'd assume a certain frame rate.                    
-						(short) dNewX, 			// In:  Destination X.                                        
-						(short) dNewZ,				// In:  Destination Z.                                        
+						(int16_t) dNewX, 			// In:  Destination X.                                        
+						(int16_t) dNewZ,				// In:  Destination Z.                                        
 						0,								// In:  Max traverser can step up.                      
 						NULL,							// Out: If not NULL, last clear point on path.                
 						NULL,							// Out: If not NULL, last clear point on path.                
@@ -432,13 +432,13 @@ void CHeatseeker::Update(void)
 																				  m_u32SeekBitsExclude, &pSmashed))
 					// Find the angle to the closest thing
 					{
-						if (m_pRealm->IsPathClear((short) m_dX, (short) m_dY, (short) m_dZ, ms_dLineCheckRate,
-						                (short) pSmashed->m_sphere.sphere.X, (short) pSmashed->m_sphere.sphere.Z) )
+						if (m_pRealm->IsPathClear((int16_t) m_dX, (int16_t) m_dY, (int16_t) m_dZ, ms_dLineCheckRate,
+						                (int16_t) pSmashed->m_sphere.sphere.X, (int16_t) pSmashed->m_sphere.sphere.Z) )
 						{
-							short sTargetAngle = FindAngleTo(pSmashed->m_sphere.sphere.X, pSmashed->m_sphere.sphere.Z);
-							short sAngleCCL = rspMod360(sTargetAngle - m_dRot);
-							short sAngleCL  = rspMod360((360 - sTargetAngle) + m_dRot);
-							short sAngleDistance = MIN(sAngleCCL, sAngleCL);
+							int16_t sTargetAngle = FindAngleTo(pSmashed->m_sphere.sphere.X, pSmashed->m_sphere.sphere.Z);
+							int16_t sAngleCCL = rspMod360(sTargetAngle - m_dRot);
+							int16_t sAngleCL  = rspMod360((360 - sTargetAngle) + m_dRot);
+							int16_t sAngleDistance = MIN(sAngleCCL, sAngleCL);
 							double dAngleChange = MIN((double) sAngleDistance, ms_sAngularVelocity * dSeconds);
 							if (sAngleCCL < sAngleCL)
 								m_dRot = rspMod360(m_dRot + dAngleChange);
@@ -563,7 +563,7 @@ void CHeatseeker::Update(void)
 						DistanceToVolume(m_dX, m_dY, m_dZ, ExplosionSndHalfLife) );	// In:  Initial Sound Volume (0 - 255)
 				}
 
-				short a;
+				int16_t a;
 				CFire* pSmoke;
 				for (a = 0; a < 8; a++)
 				{
@@ -609,7 +609,7 @@ void CHeatseeker::Update(void)
 ////////////////////////////////////////////////////////////////////////////////
 void CHeatseeker::Render(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 
 	m_sprite.m_pmesh = (RMesh*) m_anim.m_pmeshes->GetAtTime(lThisTime);
 	m_sprite.m_psop = (RSop*) m_anim.m_psops->GetAtTime(lThisTime);
@@ -634,13 +634,13 @@ void CHeatseeker::Render(void)
 	if (m_idParent == CIdBank::IdNil)
 	{
 		// Map from 3d to 2d coords
-		Map3Dto2D((short) m_dX, (short) m_dY, (short) m_dZ, &m_sprite.m_sX2, &m_sprite.m_sY2);
+		Map3Dto2D((int16_t) m_dX, (int16_t) m_dY, (int16_t) m_dZ, &m_sprite.m_sX2, &m_sprite.m_sY2);
 
 		// Priority is based on Z.
 		m_sprite.m_sPriority = m_dZ;
 
 		// Layer should be based on info we get from the attribute map
-		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 		m_sprite.m_ptrans		= &m_trans;
 
@@ -690,12 +690,12 @@ void CHeatseeker::Render(void)
 // Setup
 ////////////////////////////////////////////////////////////////////////////////
 
-short CHeatseeker::Setup(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CHeatseeker::Setup(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -739,9 +739,9 @@ short CHeatseeker::Setup(									// Returns 0 if successfull, non-zero otherwis
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CHeatseeker::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CHeatseeker::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	sResult = m_anim.Get(ms_apszResNames);
 	if (sResult == 0)
@@ -768,7 +768,7 @@ short CHeatseeker::GetResources(void)						// Returns 0 if successfull, non-zero
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CHeatseeker::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CHeatseeker::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
 	m_anim.Release();
 
@@ -781,12 +781,12 @@ short CHeatseeker::FreeResources(void)						// Returns 0 if successfull, non-zer
 //				 created.
 ////////////////////////////////////////////////////////////////////////////////
 
-short CHeatseeker::Preload(
+int16_t CHeatseeker::Preload(
 	CRealm* prealm)				// In:  Calling realm.
 {
 	CAnim3D anim;	
 	RImage* pimage;
-	short sResult = anim.Get(ms_apszResNames);
+	int16_t sResult = anim.Get(ms_apszResNames);
 	anim.Release();
 	rspGetResource(&g_resmgrGame, prealm->Make2dResPath(SMALL_SHADOW_FILE), &pimage, RFile::LittleEndian);
 	rspReleaseResource(&g_resmgrGame, &pimage);

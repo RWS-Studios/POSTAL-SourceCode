@@ -214,7 +214,7 @@ static Menu*		ms_pmenu	= NULL;			// Pointer to current menu.
 
 static RMsgBox		ms_msgbox;					// Menu container.
 
-static short		ms_sNumMenuItems	= 0;	// Current number of menu items.
+static int16_t		ms_sNumMenuItems	= 0;	// Current number of menu items.
 
 static RFont*		ms_pfontItems	= NULL;	// Font for menu items.
 static RFont*		ms_pfontHeader	= NULL;	// Font for menu header.
@@ -228,31 +228,31 @@ static RGuiItem	ms_guiIndicator;			// Current menu item indicator.
 
 static RTxt			ms_txtHeader;				// Header text item.
 
-static short		ms_sCurItem			= 0;	// Current menu item index.
-static short		ms_sNextMenuItem	= INVALID_MENU_ITEM;	// Item to select on next
+static int16_t		ms_sCurItem			= 0;	// Current menu item index.
+static int16_t		ms_sNextMenuItem	= INVALID_MENU_ITEM;	// Item to select on next
 																			// StartMenu().
 
-static short		ms_asMenuItemPosX[MAX_MENU_ITEMS];	// Array of item X positions.
-static short		ms_asMenuItemPosY[MAX_MENU_ITEMS];	// Array of item Y positions.
+static int16_t		ms_asMenuItemPosX[MAX_MENU_ITEMS];	// Array of item X positions.
+static int16_t		ms_asMenuItemPosY[MAX_MENU_ITEMS];	// Array of item Y positions.
 
 #ifdef MOBILE
-static short		ms_asMenuItemMouseHeight[MAX_MENU_ITEMS];	// Array of item heights which can be used for mouse
+static int16_t		ms_asMenuItemMouseHeight[MAX_MENU_ITEMS];	// Array of item heights which can be used for mouse
 #endif
 
-static short		ms_sItemsPerColumn;			// Number of items per column
+static int16_t		ms_sItemsPerColumn;			// Number of items per column
 
-static short		ms_sCancel			= FALSE;	// TRUE to cancel current menu.
+static int16_t		ms_sCancel			= FALSE;	// TRUE to cancel current menu.
 
-static short		ms_sItemsX			= 0;		// X position of menu items.
-static short		ms_sItemsY			= 0;		// Y position of menu items.
+static int16_t		ms_sItemsX			= 0;		// X position of menu items.
+static int16_t		ms_sItemsY			= 0;		// Y position of menu items.
 
 static RResMgr*	ms_presmgr			= NULL;
 
 static RImage		ms_imPreMenu;				// Contents of composite buffer
 														// before the menu was drawn.
 
-static short		ms_sPreMenuX;				// Location of ms_imPreMenu on screen.
-static short		ms_sPreMenuY;				// Location of ms_imPreMenu on screen.
+static int16_t		ms_sPreMenuX;				// Location of ms_imPreMenu on screen.
+static int16_t		ms_sPreMenuY;				// Location of ms_imPreMenu on screen.
 
 static RImage*		ms_pimComposite	= NULL;	// Composite buffer.
 
@@ -270,7 +270,7 @@ static RImage*		ms_pimComposite	= NULL;	// Composite buffer.
 // Critical callage for our msgbox.
 //
 //////////////////////////////////////////////////////////////////////////////
-static ULONG CriticalCall(	// Returns item to select or 0.
+static uint32_t CriticalCall(	// Returns item to select or 0.
 	RMsgBox*	/*pmsgbox*/)	// MsgBox.
 	{
 	// For now, we expect the caller of this Menu API to call rspDoSystem(),
@@ -307,12 +307,12 @@ static void BackCall(	// Returns nothing.
 		if (ms_pmenu->menuflags & MenuBackTiled)
 			{
 			// Determine amount to offset to center tiled area.
-			short	sOffsetX	= (prc->sW % ms_pimBackground->m_sWidth) / 2;
-			short	sOffsetY	= (prc->sH % ms_pimBackground->m_sHeight) / 2;
-			short	sMaxX		= prc->sW - (prc->sW % ms_pimBackground->m_sWidth);
-			short	sMaxY		= prc->sH - (prc->sH % ms_pimBackground->m_sHeight);
+			int16_t	sOffsetX	= (prc->sW % ms_pimBackground->m_sWidth) / 2;
+			int16_t	sOffsetY	= (prc->sH % ms_pimBackground->m_sHeight) / 2;
+			int16_t	sMaxX		= prc->sW - (prc->sW % ms_pimBackground->m_sWidth);
+			int16_t	sMaxY		= prc->sH - (prc->sH % ms_pimBackground->m_sHeight);
 			// Tile.
-			short	sX, sY;
+			int16_t	sX, sY;
 			for (	sY = prc->sY + sOffsetY; 
 					sY < sMaxY; 
 					sY += ms_pimBackground->m_sHeight)
@@ -381,11 +381,11 @@ inline void SetGuiAttributes(
 //
 //////////////////////////////////////////////////////////////////////////////
 inline bool NextItem(	// Returns true, if new item selected.
-	short sDirVert,		// Specifies direction (and amount) to move by being
+	int16_t sDirVert,		// Specifies direction (and amount) to move by being
 								// negative or positive.  If 0 when sDirHorz is 0, 
 								// the current item is checked and, if disabled, 
 								// sDirVert is set to 1.
-	short sDirHorz)		// Specifies direction (and amount) to move by being
+	int16_t sDirHorz)		// Specifies direction (and amount) to move by being
 								// negative or positive.  If 0 when sDirVert is 0, 
 								// the current item is checked and, if disabled, 
 								// sDirVert is set to 1.
@@ -394,8 +394,8 @@ inline bool NextItem(	// Returns true, if new item selected.
 
 	ASSERT(ms_pmenu != NULL);
 
-	short	sNumItemsTraversed	= 0;
-	short	sOldItem					= ms_sCurItem;
+	int16_t	sNumItemsTraversed	= 0;
+	int16_t	sOldItem					= ms_sCurItem;
 
 	do
 		{
@@ -446,7 +446,7 @@ inline bool NextItem(	// Returns true, if new item selected.
 					short(sMaxMenuItem / ms_sItemsPerColumn * ms_sItemsPerColumn + (ms_sItemsPerColumn + ms_sCurItem) ) );
 #else
 				// Determine location of item in next column.
-				short	sMaxMenuItem	= MAX(ms_sNumMenuItems - 1, 0);
+				int16_t	sMaxMenuItem	= MAX(ms_sNumMenuItems - 1, 0);
 				ms_sCurItem	= sMaxMenuItem / ms_sItemsPerColumn * ms_sItemsPerColumn + (ms_sItemsPerColumn + ms_sCurItem);
 				// If too large . . .
 				if (ms_sCurItem >= ms_sNumMenuItems)
@@ -537,14 +537,14 @@ bool MouseChooseItem(int x, int y)
 // Sets up the menu described to be run via DoMenu*() calls.
 //
 //////////////////////////////////////////////////////////////////////////////
-extern short StartMenu(				// Returns 0 on success.
+extern int16_t StartMenu(				// Returns 0 on success.
 	Menu*	pmenu,						// In:  Pointer to Menu describing menu.
 	RResMgr* presmgr,					// In:  Resource manager ptr.
 	RImage*	pimDst)					// In:  Src for erase data.  Erase data is
 											// updated back over the menu on StopMenu()
 											// calls.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// End any existing menu.
 	StopMenu();
@@ -556,8 +556,8 @@ extern short StartMenu(				// Returns 0 on success.
 
 		U32	u32TextColor;
 		U32	u32TextShadowColor;
-		short	sMapStartIndex;
-		short	sMapNumEntries;
+		int16_t	sMapStartIndex;
+		int16_t	sMapNumEntries;
 
 		// Get composite buffer.
 		ms_pimComposite	= pimDst;
@@ -715,10 +715,10 @@ extern short StartMenu(				// Returns 0 on success.
 		ms_msgbox.m_mbcUser				= CriticalCall;
 	
 		// Compute position of dialog.
-		short	sX;
-		short	sY;
-		short sW;
-		short	sH;
+		int16_t	sX;
+		int16_t	sY;
+		int16_t sW;
+		int16_t	sH;
 
 		if (ms_pmenu->menuflags & MenuPosCenter)
 			{
@@ -761,8 +761,8 @@ extern short StartMenu(				// Returns 0 on success.
 				// If paletted . . .
 				if (ms_pimBackground->m_pPalette != NULL)
 					{
-					short	sEntrySize	= ms_pimBackground->m_pPalette->m_sPalEntrySize;
-					short	sStartIndex	= ms_pmenu->menuback.sSetStartIndex;
+					int16_t	sEntrySize	= ms_pimBackground->m_pPalette->m_sPalEntrySize;
+					int16_t	sStartIndex	= ms_pmenu->menuback.sSetStartIndex;
 
 					// Set palette.
 					rspSetPaletteEntries(
@@ -896,8 +896,8 @@ extern short StartMenu(				// Returns 0 on success.
 		// If there is menu header text . . .
 		if (ms_pmenu->menuheader.pszHeaderText[0] != '\0')
 			{
-			short	sPosX	= ms_pmenu->menupos.sHeaderX;
-			short	sPosY	= ms_pmenu->menupos.sHeaderY;
+			int16_t	sPosX	= ms_pmenu->menupos.sHeaderX;
+			int16_t	sPosY	= ms_pmenu->menupos.sHeaderY;
 
 			if (sPosX < 0)
 				{
@@ -917,7 +917,7 @@ extern short StartMenu(				// Returns 0 on success.
 
 			// Determine width for header . . .
 			// Store text width.
-			short sTextWidth	= ms_txtHeader.m_pprint->GetWidth(ms_pmenu->menuheader.pszHeaderText);
+			int16_t sTextWidth	= ms_txtHeader.m_pprint->GetWidth(ms_pmenu->menuheader.pszHeaderText);
 			// Active when visible.
 			ms_txtHeader.m_sActive	= TRUE;
 			ms_txtHeader.SetVisible(TRUE);
@@ -934,7 +934,7 @@ extern short StartMenu(				// Returns 0 on success.
 			ms_txtHeader.m_sY						= sPosY;
 
 			// Reserve space for borders, if there are any.
-			short sTotalBorderThickness	= ms_txtHeader.GetTopLeftBorderThickness()
+			int16_t sTotalBorderThickness	= ms_txtHeader.GetTopLeftBorderThickness()
 													+ ms_txtHeader.GetBottomRightBorderThickness();
 
 			// Create item . . .
@@ -963,8 +963,8 @@ extern short StartMenu(				// Returns 0 on success.
 
 		if (ms_sNumMenuItems > 0)
 			{
-			short	sMaxItemX	= ms_pmenu->menupos.sMaxItemX;
-			short	sMaxItemY	= ms_pmenu->menupos.sMaxItemY;
+			int16_t	sMaxItemX	= ms_pmenu->menupos.sMaxItemX;
+			int16_t	sMaxItemY	= ms_pmenu->menupos.sMaxItemY;
 
 			// If less than 1 . . .
 			if (sMaxItemX < 1)
@@ -978,15 +978,15 @@ extern short StartMenu(				// Returns 0 on success.
 				sMaxItemY	+= ms_msgbox.m_im.m_sHeight;
 				}
 
-			short	sPosX				= ms_sItemsX;
-			short sIndex			= 0;
+			int16_t	sPosX				= ms_sItemsX;
+			int16_t sIndex			= 0;
 
 			while (sIndex < ms_sNumMenuItems && sPosX < sMaxItemX)
 				{
-				short	sPosY					= ms_sItemsY;
-				short	sMaxGuiPosX			= sPosX;
-				short	sMaxItemExtentX	= sPosX;
-				short	sStartIndex			= sIndex;	// First index this column.
+				int16_t	sPosY					= ms_sItemsY;
+				int16_t	sMaxGuiPosX			= sPosX;
+				int16_t	sMaxItemExtentX	= sPosX;
+				int16_t	sStartIndex			= sIndex;	// First index this column.
 
 				RTxt*	ptxt;
 				for ( ; sIndex < ms_sNumMenuItems; sIndex++)
@@ -1050,14 +1050,14 @@ extern short StartMenu(				// Returns 0 on success.
 							// Remember the extent of the furthest item.
 							sMaxItemExtentX	= MAX(
 								sMaxItemExtentX, 
-								short(ms_pmenu->ami[sIndex].pgui->m_sX + ms_pmenu->ami[sIndex].pgui->m_im.m_sWidth) );
+								int16_t(ms_pmenu->ami[sIndex].pgui->m_sX + ms_pmenu->ami[sIndex].pgui->m_im.m_sWidth) );
 							}
 						else
 							{
 							// Remember the extent of the furthest item.
 							sMaxItemExtentX	= MAX(
 								sMaxItemExtentX, 
-								short(ptxt->m_sX + ptxt->m_im.m_sWidth) );
+								int16_t(ptxt->m_sX + ptxt->m_im.m_sWidth) );
 							}
 
 						ptxt->m_sTransparent				= TRUE;
@@ -1093,7 +1093,7 @@ extern short StartMenu(				// Returns 0 on success.
 					{
 					// End index EXCLUSIVE is either an entire column
 					// or a partial (for the last column).
-					short	sEndIndex	= MIN(sIndex, short(sStartIndex + ms_sItemsPerColumn) );
+					int16_t	sEndIndex	= MIN(sIndex, int16_t(sStartIndex + ms_sItemsPerColumn) );
 
 					for (sIndex = sStartIndex; sIndex < sEndIndex; sIndex++)
 						{
@@ -1283,13 +1283,13 @@ Done:
 //////////////////////////////////////////////////////////////////////////////
 extern void DoMenuInput(		// Returns nothing.
 	RInputEvent* pie,				// In:  Most recent user input event.
-	short UseJoystick)
+	int16_t UseJoystick)
 										// Out: pie->sUsed = TRUE, if used.
 	{
 	// If there is a current menu . . .
 	if (ms_pmenu != NULL)
 		{
-		short	sChooseCurrent	= FALSE;
+		int16_t	sChooseCurrent	= FALSE;
 
 		// If there is an unused key event . . .
 		if (pie->sUsed == FALSE && pie->type == RInputEvent::Key)
@@ -1425,7 +1425,7 @@ extern void DoMenuInput(		// Returns nothing.
 		// If cancelled . . .
 		if (ms_sCancel != FALSE)
 			{
-			short	sCancelItem	= ITEMINDEX(ms_pmenu->menuautoitems.sCancelItem);
+			int16_t	sCancelItem	= ITEMINDEX(ms_pmenu->menuautoitems.sCancelItem);
 			// If enabled . . .
 //			if (ms_pmenu->ami[sCancelItem].sEnabled != FALSE)
 				{
@@ -1536,9 +1536,9 @@ extern Menu* GetCurrentMenu(void)	// Returns the a pointer to the current
 // both cases, it shouldn't do anything.                        
 //
 //////////////////////////////////////////////////////////////////////////////
-extern short StopMenu(void)		// Returns 0 on success.
+extern int16_t StopMenu(void)		// Returns 0 on success.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// If we have a current menu . . .
 	if (ms_pmenu != NULL)
@@ -1554,7 +1554,7 @@ extern short StopMenu(void)		// Returns 0 on success.
 		// Hide and deactivate msg box and remaining children.
 		ms_msgbox.SetVisible(FALSE);
 
-		short	sIndex;
+		int16_t	sIndex;
 		for (sIndex	= 0; sIndex < ms_sNumMenuItems; sIndex++)
 			{
 			// If there is a gui . . .

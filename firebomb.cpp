@@ -174,7 +174,7 @@ double CFirebomb::ms_dThrowVertVel = 40.0;				// Throw up at this velocity
 double CFirebomb::ms_dThrowHorizVel = 250;				// Throw out at this velocity
 
 // Let this auto-init to 0
-short CFirebomb::ms_sFileCount;
+int16_t CFirebomb::ms_sFileCount;
 
 /// Grenade Animation Files
 // An array of pointers to res names (one for each animatino component)
@@ -194,13 +194,13 @@ static char* ms_apszResNames[] =
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CFirebomb::Load(				// Returns 0 if successfull, non-zero otherwise
+int16_t CFirebomb::Load(				// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,						// In:  File to load from
 	bool bEditMode,					// In:  True for edit mode, false otherwise
-	short sFileCount,					// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)				// In:  Version of file format to load.
+	int16_t sFileCount,					// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)				// In:  Version of file format to load.
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	sResult = CWeapon::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	if (sResult == SUCCESS)
@@ -247,9 +247,9 @@ short CFirebomb::Load(				// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CFirebomb::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CFirebomb::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 {
 	CWeapon::Save(pFile, sFileCount);
 
@@ -273,8 +273,8 @@ short CFirebomb::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 void CFirebomb::Update(void)
 {
-	USHORT usAttrib;
-	short sHeight = m_sPrevHeight;
+	uint16_t usAttrib;
+	int16_t sHeight = m_sPrevHeight;
 	double dNewX;
 	double dNewY;
 	double dNewZ;
@@ -282,7 +282,7 @@ void CFirebomb::Update(void)
 	if (!m_sSuspend)
 	{
 		// Get new time
-		long lThisTime = m_pRealm->m_time.GetGameTime();
+		int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 
 		// Calculate elapsed time in seconds
 		double dSeconds = (double)(lThisTime - m_lPrevTime) / 1000.0;
@@ -305,8 +305,8 @@ void CFirebomb::Update(void)
 			case CFirebomb::State_Fire:
 				// Make sure we start in a valid position.  If we are staring
 				// inside a wall, just delete this object now.
-				usAttrib = m_pRealm->GetFloorAttribute((short) m_dX, (short) m_dZ);
-				sHeight = m_pRealm->GetHeight((short) m_dX, (short) m_dZ);
+				usAttrib = m_pRealm->GetFloorAttribute((int16_t) m_dX, (int16_t) m_dZ);
+				sHeight = m_pRealm->GetHeight((int16_t) m_dX, (int16_t) m_dZ);
 				if (m_dY < sHeight)
 				{
 					delete this;
@@ -322,14 +322,14 @@ void CFirebomb::Update(void)
 //-----------------------------------------------------------------------
 			case CFirebomb::State_Go:
 				// Do horizontal velocity
-				dNewX = m_dX + COSQ[(short)m_dRot] * (m_dHorizVel * dSeconds);
-				dNewZ = m_dZ - SINQ[(short)m_dRot] * (m_dHorizVel * dSeconds);
+				dNewX = m_dX + COSQ[(int16_t)m_dRot] * (m_dHorizVel * dSeconds);
+				dNewZ = m_dZ - SINQ[(int16_t)m_dRot] * (m_dHorizVel * dSeconds);
 
 				// Do vertical velocity
 				dNewY = m_dY;
 				AdjustPosVel(&dNewY, &m_dVertVel, dSeconds);
 				// Check the height to see if it hit the ground
-				sHeight = m_pRealm->GetHeight((short) dNewX, (short) dNewZ);
+				sHeight = m_pRealm->GetHeight((int16_t) dNewX, (int16_t) dNewZ);
 
 				// If its lower than the last and current height, assume it
 				// hit the ground.
@@ -381,7 +381,7 @@ void CFirebomb::Update(void)
 				}
 
 				// Loop to create 8 fragments in a circular pattern
-				short i;
+				int16_t i;
 				CFirefrag* pFrag;
 				for (i = 0; i < 8; i++)
 				{
@@ -419,7 +419,7 @@ void CFirebomb::Render(void)
 {
 	// Animate
 
-	long lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 
 	m_sprite.m_pmesh = (RMesh*) m_anim.m_pmeshes->GetAtTime(lThisTime);
 	m_sprite.m_psop = (RSop*) m_anim.m_psops->GetAtTime(lThisTime);
@@ -444,12 +444,12 @@ void CFirebomb::Render(void)
 	if (m_idParent == CIdBank::IdNil)
 	{
 		// Map from 3d to 2d coords
-		Map3Dto2D((short) m_dX, (short) m_dY, (short) m_dZ, &m_sprite.m_sX2, &m_sprite.m_sY2);
+		Map3Dto2D((int16_t) m_dX, (int16_t) m_dY, (int16_t) m_dZ, &m_sprite.m_sX2, &m_sprite.m_sY2);
 		// Priority is based on our Z position.
 		m_sprite.m_sPriority = m_dZ;
 
 		// Layer should be based on info we get from attribute map
-		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 		m_sprite.m_ptrans		= &m_trans;
 
@@ -470,12 +470,12 @@ void CFirebomb::Render(void)
 // Setup new object - called by object that created this object
 ////////////////////////////////////////////////////////////////////////////////
 
-short CFirebomb::Setup(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CFirebomb::Setup(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -500,9 +500,9 @@ short CFirebomb::Setup(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CFirebomb::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CFirebomb::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	sResult = m_anim.Get(ms_apszResNames);
 	if (sResult == 0)
@@ -528,7 +528,7 @@ short CFirebomb::GetResources(void)						// Returns 0 if successfull, non-zero o
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CFirebomb::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CFirebomb::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
 	m_anim.Release();
 
@@ -541,12 +541,12 @@ short CFirebomb::FreeResources(void)						// Returns 0 if successfull, non-zero 
 //				 created.
 ////////////////////////////////////////////////////////////////////////////////
 
-short CFirebomb::Preload(
+int16_t CFirebomb::Preload(
 	CRealm* prealm)				// In:  Calling realm.
 {
 	CAnim3D anim;	
 	RImage* pimage;
-	short sResult = anim.Get(ms_apszResNames);
+	int16_t sResult = anim.Get(ms_apszResNames);
 	anim.Release();
 	rspGetResource(&g_resmgrGame, prealm->Make2dResPath(SMALL_SHADOW_FILE), &pimage, RFile::LittleEndian);
 	rspReleaseResource(&g_resmgrGame, &pimage);
@@ -608,21 +608,21 @@ double CFirefrag::ms_dThrowVertVel = 10.0;				// Throw up at this velocity
 double CFirefrag::ms_dThrowHorizVel = 60;				// Throw out at this velocity
 double CFirefrag::ms_dMinBounceVel = 30.0;					// Min amount needed to bounce up
 double CFirefrag::ms_dVelTransferFract = -0.4;			// Amount of velocity to bounce back up
-short	CFirefrag::ms_sMaxExplosions	= 4;					// Maximum explosions before death.
+int16_t	CFirefrag::ms_sMaxExplosions	= 4;					// Maximum explosions before death.
 // Let this auto-init to 0
-short CFirefrag::ms_sFileCount;
+int16_t CFirefrag::ms_sFileCount;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CFirefrag::Load(				// Returns 0 if successfull, non-zero otherwise
+int16_t CFirefrag::Load(				// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,						// In:  File to load from
 	bool bEditMode,					// In:  True for edit mode, false otherwise
-	short sFileCount,					// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)				// In:  Version of file format to load.
+	int16_t sFileCount,					// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)				// In:  Version of file format to load.
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	sResult = CWeapon::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	if (sResult == SUCCESS)
@@ -672,9 +672,9 @@ short CFirefrag::Load(				// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CFirefrag::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CFirefrag::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 {
 	CWeapon::Save(pFile, sFileCount);
 
@@ -698,7 +698,7 @@ short CFirefrag::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 void CFirefrag::Update(void)
 {
-	short sHeight = m_sPrevHeight;
+	int16_t sHeight = m_sPrevHeight;
 	double dPrevVertVel;
 	double dNewX;
 	double dNewY;
@@ -707,7 +707,7 @@ void CFirefrag::Update(void)
 	if (!m_sSuspend)
 	{
 		// Get new time
-		long lThisTime = m_pRealm->m_time.GetGameTime(); 
+		int32_t lThisTime = m_pRealm->m_time.GetGameTime(); 
 
 		// Calculate elapsed time in seconds
 		double dSeconds = (double)(lThisTime - m_lPrevTime) / 1000.0;
@@ -729,8 +729,8 @@ void CFirefrag::Update(void)
 //-----------------------------------------------------------------------
 			case CWeapon::State_Go:
 				// Do horizontal velocity
-				dNewX = m_dX + COSQ[(short)m_dRot] * (m_dHorizVel * dSeconds);
-				dNewZ = m_dZ - SINQ[(short)m_dRot] * (m_dHorizVel * dSeconds);
+				dNewX = m_dX + COSQ[(int16_t)m_dRot] * (m_dHorizVel * dSeconds);
+				dNewZ = m_dZ - SINQ[(int16_t)m_dRot] * (m_dHorizVel * dSeconds);
 				// Do vertical velocity
 //				m_dVertVel += ms_dGravity;
 //				m_dY += m_dVertVel * dSeconds;
@@ -738,7 +738,7 @@ void CFirefrag::Update(void)
 				dNewY = m_dY;
 				AdjustPosVel(&dNewY, &m_dVertVel, dSeconds);
 				// Check the height to see if it hit the ground
-				sHeight = m_pRealm->GetHeight((short) dNewX, (short) dNewZ);
+				sHeight = m_pRealm->GetHeight((int16_t) dNewX, (int16_t) dNewZ);
 
 				// If its lower than the last and current height, assume it
 				// hit the ground.
@@ -865,12 +865,12 @@ void CFirefrag::Render(void)
 // Setup new object - called by object that created this object
 ////////////////////////////////////////////////////////////////////////////////
 
-short CFirefrag::Setup(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CFirefrag::Setup(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -897,9 +897,9 @@ short CFirefrag::Setup(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CFirefrag::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CFirefrag::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	if (m_pImage == 0)
 	{
@@ -930,9 +930,9 @@ short CFirefrag::GetResources(void)						// Returns 0 if successfull, non-zero o
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CFirefrag::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CFirefrag::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	if (m_pImage != 0)
 	{
@@ -946,4 +946,3 @@ short CFirefrag::FreeResources(void)						// Returns 0 if successfull, non-zero 
 ////////////////////////////////////////////////////////////////////////////////
 // EOF
 ////////////////////////////////////////////////////////////////////////////////
-

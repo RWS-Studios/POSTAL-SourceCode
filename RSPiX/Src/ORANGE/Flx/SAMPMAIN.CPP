@@ -117,7 +117,7 @@ void main(void)
 			cout << "Processing frames:\n";
 							
 			// Read each frame and write it out
-			for (short sFrame = 1; sFrame <= filehdrRead.sNumFrames; sFrame++)
+			for (int16_t sFrame = 1; sFrame <= filehdrRead.sNumFrames; sFrame++)
 				{
 				cout << sFrame << "\n";
 				
@@ -203,4 +203,3 @@ void DumpHeader(FLX_FILE_HDR* pfilehdr)
 ///////////////////////////////////////////////////////////////////////////////
 // EOF
 ///////////////////////////////////////////////////////////////////////////////
-

@@ -28,8 +28,8 @@
 #endif
 //==================================
 
-extern	UCHAR rspMatchColorRGB(long r,long g,long b,short sStart,short sNum,
-					 UCHAR* pr,UCHAR* pg,UCHAR* pb,long linc);
+extern	uint8_t rspMatchColorRGB(int32_t r,int32_t g,int32_t b,int16_t sStart,int16_t sNum,
+					 uint8_t* pr,uint8_t* pg,uint8_t* pb,int32_t linc);
 
 // designed for 2 dimenional input. For example, fog = source color +
 // eye distance = dst color.
@@ -44,8 +44,8 @@ public:
 	RAlpha();
 	~RAlpha();
 	//==========================================================
-	UCHAR* m_pAlphas[256]; // array of 256 ptrs to UCHAR lists
-	short m_sAlphaDepth; // number of 256's
+	uint8_t* m_pAlphas[256]; // array of 256 ptrs to uint8_t lists
+	int16_t m_sAlphaDepth; // number of 256's
 	//==========================================================
 	// a fog effect is actually a 256 x n light effect, currently a depth of 256
 	// you are sending a depth description of the fog to map to each
@@ -53,26 +53,26 @@ public:
 	// This can also be used to create a light map.
 	// This is the simplest colored lighting effect.
 	// It is really only of use for fog.
-	short CreateLightEffectRGB(UCHAR* pa,UCHAR* pr,UCHAR* pg,UCHAR* pb,long linc = 4,
-			short sPalStart=0, short sPalLen = 256, short sAlphaDepth = 256);
+	int16_t CreateLightEffectRGB(uint8_t* pa,uint8_t* pr,uint8_t* pg,uint8_t* pb,int32_t linc = 4,
+			int16_t sPalStart=0, int16_t sPalLen = 256, int16_t sAlphaDepth = 256);
 	// This uses the built in scratch space and assumes to be already alloc'ed
-	short CreateLightEffectRGB(short sPalStart=0, short sPalLen = 256);
+	int16_t CreateLightEffectRGB(int16_t sPalStart=0, int16_t sPalLen = 256);
 
 	// This is an optional interface for creation of lighting effects:
 	void StartEffect(); // do alloc first
-	short MarkEffect(short sLev,short sChannel,UCHAR ucLev);
-	void FinishEffect(short sPalStart=0, short sPalLen = 256); // will create it for you.
+	int16_t MarkEffect(int16_t sLev,int16_t sChannel,uint8_t ucLev);
+	void FinishEffect(int16_t sPalStart=0, int16_t sPalLen = 256); // will create it for you.
 
 	// This is always 256 x 256, as it maps source to destination
 	// You will want an array of these for multiple alpha levels.
-	short CreateAlphaRGB(double dOpacity,short sPalStart, short sPalLen);
-	void Dump(RImage* pimDst,short sX,short sY); // must be 256 lines high!
-	void DumpPalette(RImage* pimDst,short sX,short sY); // must be 256 lines high!
-	short Load(RFile* pFile);
-	short Save(RFile* pFile);
-	short Load(char* pszFile);
-	short Save(char* pszFile);
-	short Alloc(short sDepth);
+	int16_t CreateAlphaRGB(double dOpacity,int16_t sPalStart, int16_t sPalLen);
+	void Dump(RImage* pimDst,int16_t sX,int16_t sY); // must be 256 lines high!
+	void DumpPalette(RImage* pimDst,int16_t sX,int16_t sY); // must be 256 lines high!
+	int16_t Load(RFile* pFile);
+	int16_t Save(RFile* pFile);
+	int16_t Load(char* pszFile);
+	int16_t Save(char* pszFile);
+	int16_t Alloc(int16_t sDepth);
 	void Erase();
 	//==========================================================
 
@@ -88,9 +88,9 @@ public:
 	static U8 ms_a[256];
 	static U8 ms_f[256];
 
-	static short ms_SetPalette(RImage* pimImage);
-	static short ms_SetPalette(); // to system palette
-	static short ms_IsPaletteSet;
+	static int16_t ms_SetPalette(RImage* pimImage);
+	static int16_t ms_SetPalette(); // to system palette
+	static int16_t ms_IsPaletteSet;
 public:
 	// temporary storage for a master palette:
 	static U8 ms_red[256];
@@ -105,14 +105,14 @@ class RMultiAlpha
 public:
 	RMultiAlpha();
 	~RMultiAlpha();
-	short Alloc(short sDepth);
+	int16_t Alloc(int16_t sDepth);
 	void Erase();
 	//==========================================================
-	short m_sNumLevels; // 0 = 1st non transparent level
+	int16_t m_sNumLevels; // 0 = 1st non transparent level
 	RAlpha** m_pAlphaList; // store ACTUAL alpha tables...
-	UCHAR* m_pLevelOpacity; // for each layer
+	uint8_t* m_pLevelOpacity; // for each layer
 	// This goes from a 0-255 Alpha channel DIRECTLY to an alpha matrix
-	UCHAR** m_pGeneralAlpha[256];
+	uint8_t** m_pGeneralAlpha[256];
 
 	// For live dimming, this takes a source pixel alpha level and
 	// translates it to a dimmed alpha value, where 255 = source
@@ -120,15 +120,15 @@ public:
 	// It is selected at a higher level by the dimming parameter
 	// Sadly, this is a 64K hit, but I don't see a way around it.
 
-	static	UCHAR	ms_aucLiveDimming[65536];	// must be initialized!
-	static	short ms_sIsInitialized;
+	static	uint8_t	ms_aucLiveDimming[65536];	// must be initialized!
+	static	int16_t ms_sIsInitialized;
 
 	// This stores the alpha levels so m_pGeneralAlpha can be
 	// restored after load / save
 	// THIS contains TWO more levels than you: 
 	// 0 = transparent, and m_sNumLevels = OPAQUE
-	UCHAR	m_pSaveLevels[256];
-	short m_sGeneral; // a flag, TRUE = general type
+	uint8_t	m_pSaveLevels[256];
+	int16_t m_sGeneral; // a flag, TRUE = general type
 	//==========================================================
 	// Newest Format: FastMultiAlpha Support
 	//==========================================================
@@ -136,40 +136,40 @@ public:
 	// very flexible.
 
 	// Find optimum # of alpha level for your cache
-	static short QueryFastMultiAlpha(
-		short sNumSrcCol, short sNumDstCol,long lTotMem, 
-		long* plHeaderSize = NULL,long* plDataSize = NULL);
+	static int16_t QueryFastMultiAlpha(
+		int16_t sNumSrcCol, int16_t sNumDstCol,int32_t lTotMem, 
+		int32_t* plHeaderSize = NULL,int32_t* plDataSize = NULL);
 
 	// Create a FastMultiAlpha which MUST be freed BY the USER
 	// USING the DeleteFastMultiAlpha command ising THIS MALPHA:
-	UCHAR*** pppucCreateFastMultiAlpha(
-		short sStartSrc,short sNumSrc,	// color indices
-		short sStartDst,short sNumDst,
-		long*	plAlignedSize = NULL);
+	uint8_t*** pppucCreateFastMultiAlpha(
+		int16_t sStartSrc,int16_t sNumSrc,	// color indices
+		int16_t sStartDst,int16_t sNumDst,
+		int32_t*	plAlignedSize = NULL);
 
 	// USER MUST call this to free the fast multi alpha
-	static short DeleteFastMultiAlpha(UCHAR ****pfmaDel);
+	static int16_t DeleteFastMultiAlpha(uint8_t ****pfmaDel);
 
 	//==========================================================
 	// archaic - old format - will go away
-	short  AddAlpha(RAlpha* pAlpha,short sLev);
+	int16_t  AddAlpha(RAlpha* pAlpha,int16_t sLev);
 
 	//
-	short CreateLayer(short sLayerNumber,
+	int16_t CreateLayer(int16_t sLayerNumber,
 							double dOpacity,
-							short sPalStart = 0, 
-							short sPalLen = 256);
+							int16_t sPalStart = 0, 
+							int16_t sPalLen = 256);
 
 	// After all layers are in, this creates the logical mapping
 	// if general, logically map the layer as 0-255,
 	// Otherwise, just map layer to layer.
-	short Finish(short sGeneral = TRUE);
+	int16_t Finish(int16_t sGeneral = TRUE);
 	//==========================================================
 	// This 
-	short Load(RFile* pFile);
-	short Save(RFile* pFile);
-	short Load(char* pszFile);
-	short Save(char* pszFile);
+	int16_t Load(RFile* pFile);
+	int16_t Save(RFile* pFile);
+	int16_t Load(char* pszFile);
+	int16_t Save(char* pszFile);
 	//==========================================================
 private:
 
@@ -193,43 +193,43 @@ public:
 	~RFastMultiAlphaWrapper();
 	void	Erase();
 	//------------------------ Using the wrapper
-	short	Load(RFile* prfFile);
-	UCHAR ***pppucGetFMA(); // can only access ONCE!
-	short	IsSrcCompatible(RImage* pimSrc);
-	short	IsDstCompatible(RImage* pimDst);
+	int16_t	Load(RFile* prfFile);
+	uint8_t ***pppucGetFMA(); // can only access ONCE!
+	int16_t	IsSrcCompatible(RImage* pimSrc);
+	int16_t	IsDstCompatible(RImage* pimDst);
 	//------------------------ Creating the wrapper
-	short	Attach(UCHAR ***pppucFMA,short sStartSrc,
-		short sNumSrc,short sStartDst,short sNumDst,
-		short sNumLayers);
-	short	Save(RFile* prfFile);
+	int16_t	Attach(uint8_t ***pppucFMA,int16_t sStartSrc,
+		int16_t sNumSrc,int16_t sStartDst,int16_t sNumDst,
+		int16_t sNumLayers);
+	int16_t	Save(RFile* prfFile);
 	//------------------------ Validating use
-	void	GetSrcRange(short *sStartIndex,short *sFinalIndex)
+	void	GetSrcRange(int16_t *sStartIndex,int16_t *sFinalIndex)
 		{
 		*sStartIndex = m_sStartSrc;
 		*sFinalIndex = m_sStartSrc + m_sNumSrc - 1;
 		}
 
-	void	GetDstRange(short *sStartIndex,short *sFinalIndex)
+	void	GetDstRange(int16_t *sStartIndex,int16_t *sFinalIndex)
 		{
 		*sStartIndex = m_sStartDst;
 		*sFinalIndex = m_sStartDst + m_sNumDst - 1;
 		}
 
-	short	IsSrcValid(RImage* pimCheck);
+	int16_t	IsSrcValid(RImage* pimCheck);
 
 	//-----------------------------------------------
 private:
 	// You can't touch this directly!
-	UCHAR ***m_pppucFastMultiAlpha;
-	short	m_sStartSrc;
-	short m_sStartDst;
-	short m_sNumSrc;
-	short m_sNumDst;
-	short m_sNumLayers;
+	uint8_t ***m_pppucFastMultiAlpha;
+	int16_t	m_sStartSrc;
+	int16_t m_sStartDst;
+	int16_t m_sNumSrc;
+	int16_t m_sNumDst;
+	int16_t m_sNumLayers;
 
-	short m_sDelete; // should I delete the data?
+	int16_t m_sDelete; // should I delete the data?
 
-	short m_sAccess; // to guide the programmer
+	int16_t m_sAccess; // to guide the programmer
 	};
 
 //==================================

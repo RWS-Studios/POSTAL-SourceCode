@@ -58,7 +58,7 @@ class CRtTime
 
 		// Set the current time.  Sets the time offset to specified time minus
 		// the current GetTime() so that a subsequent call to GetTime() would.
-		void SetTime(long lTime)
+		void SetTime(int32_t lTime)
 			{
 			// Zero the offset so we get the actual reported time.
 			m_lOffset	= 0;
@@ -94,7 +94,7 @@ class CRtTime
 		// Returns the time from the override function if set or, if not set, 
 		// from Blu_GetTime().  If suspended, this function returns the time
 		// of the suspension.
-		long GetTime(void)
+		int32_t GetTime(void)
 			{
 			if (m_sSuspended == 0)
 				return (m_fnTime != NULL ? (*m_fnTime)() : Blu_GetTime()) + m_lOffset;
@@ -105,7 +105,7 @@ class CRtTime
 		// Static version of above for those that need to call via a ptr and
 		// don't know anything about this object.  Send this a long and it
 		// will use it to call the appropriate 'this'-based GetTime().
-		static long GetTime(long l_pRtTime)
+		static int32_t GetTime(int32_t l_pRtTime)
 			{
 			return ((CRtTime*)l_pRtTime)->GetTime();
 			}
@@ -117,9 +117,9 @@ class CRtTime
 	protected:	// Members.
 		
 		RTTIMEFUNC	m_fnTime;		// If set, used to get time.
-		long			m_lOffset;		// Added to the time to manipulate it.
-		long			m_lSuspended;	// Time at which the timer was suspended.
-		short			m_sSuspended;	// TRUE if the timer is currently suspended.
+		int32_t			m_lOffset;		// Added to the time to manipulate it.
+		int32_t			m_lSuspended;	// Time at which the timer was suspended.
+		int16_t			m_sSuspended;	// TRUE if the timer is currently suspended.
 	};
 
 

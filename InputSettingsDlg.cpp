@@ -148,14 +148,14 @@ static U32			ms_u32OrigTextColor;
 static bool			ms_bMenuDone			= false;	// true, when the current menu
 																// is done.
 
-static short		ms_sResetItem;						// Index of item that restores
+static int16_t		ms_sResetItem;						// Index of item that restores
 																// the default inputs.
-static short		ms_sResetItemOld;					// Index of item that restores the old default inputs.
+static int16_t		ms_sResetItemOld;					// Index of item that restores the old default inputs.
 
-static short		ms_sMouseButtons;
-static short		ms_sJoyButtons;
+static int16_t		ms_sMouseButtons;
+static int16_t		ms_sJoyButtons;
 
-static long			ms_lFlashTimer;
+static int32_t			ms_lFlashTimer;
 
 // This array contains RSP_SK_* macros for the keys that should be 
 // inaccessible to the user when it comes to mapping the input keys.
@@ -201,11 +201,11 @@ static U8			ms_au8UnmappableKeys[]	=
 //////////////////////////////////////////////////////////////////////////////
 // Called to setup an input settings menu.
 //////////////////////////////////////////////////////////////////////////////
-extern short InputSettingsDlg_InitMenu(	// Returns 0 on success.
+extern int16_t InputSettingsDlg_InitMenu(	// Returns 0 on success.
 	Menu* pmenu)									// In:  Menu to setup.
 	{
-	short		sRes				= 0;		// Assume success.
-	short		sInputIndex		= 0;		// Safety.
+	int16_t		sRes				= 0;		// Assume success.
+	int16_t		sInputIndex		= 0;		// Safety.
 	U32*	pasPlayInputs	= NULL;	// Input value array.
 	char**	papszInputDescriptions	= NULL;	// Descriptions of input values.
 	bool	bIsJoystick = false;
@@ -309,12 +309,12 @@ extern short InputSettingsDlg_InitMenu(	// Returns 0 on success.
 //////////////////////////////////////////////////////////////////////////////
 // Called to clean up an input settings menu.
 //////////////////////////////////////////////////////////////////////////////
-extern short InputSettingsDlg_KillMenu(	// Returns 0 on success.
+extern int16_t InputSettingsDlg_KillMenu(	// Returns 0 on success.
 	Menu* pmenu)									// In:  Menu to clean up.  
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
-	short	sInputIndex;
+	int16_t	sInputIndex;
 	// Delete the loaded GUIs.
 	for (sInputIndex = 0; sInputIndex < CInputSettings::NumInputFunctions && sRes == 0; sInputIndex++)
 		{
@@ -335,12 +335,12 @@ extern short InputSettingsDlg_KillMenu(	// Returns 0 on success.
 //////////////////////////////////////////////////////////////////////////////
 void InputSettingsDlg_Choice(	// Returns nothing.
 	Menu*	pmenu,					// In:  Current menu.
-	short sMenuItem)				// In:  Menu item chosen or -1 if selection 
+	int16_t sMenuItem)				// In:  Menu item chosen or -1 if selection 
 										// change.
 	{
 	static U8*	pau8KeyStatusArray	= rspGetKeyStatusArray();
 
-	short	sError	 = 0;
+	int16_t	sError	 = 0;
 
 	if (sMenuItem > -1)
 		{
@@ -408,7 +408,7 @@ void InputSettingsDlg_Choice(	// Returns nothing.
 						break;
 					}
 
-				short	sInputIndex;
+				int16_t	sInputIndex;
 				RGuiItem*	pgui;
 				for (sInputIndex = 0; sInputIndex < CInputSettings::NumInputFunctions && sError == 0; sInputIndex++)
 					{
@@ -419,10 +419,20 @@ void InputSettingsDlg_Choice(	// Returns nothing.
 						case KEYBOARD_MENU_ID:
 							// Use keys.
 							pasPlayInputs[sInputIndex]			= sMenuItem == ms_sResetItemOld ? CInputSettings::ms_ainputinfoOld[sInputIndex].u8DefaultKey : CInputSettings::ms_ainputinfo[sInputIndex].u8DefaultKey;
+							
+							//If old tanky controls are loaded -> disable new mouse.
+							//If standard defaults are loaded -> enable new mouse.
+							if (g_InputSettings.m_sUseMouse)
+								g_InputSettings.m_sUseNewMouse		= (sMenuItem == ms_sResetItemOld) ? FALSE : TRUE;
+
 							break;
 						case MOUSE_MENU_ID:
 							// Use mouse buttons.
 							pasPlayInputs[sInputIndex]			= sMenuItem == ms_sResetItemOld ? CInputSettings::ms_ainputinfoOld[sInputIndex].sDefMouseButtons : CInputSettings::ms_ainputinfo[sInputIndex].sDefMouseButtons;
+							//If old defaults are loaded -> activate mouse and select classic mouse.
+							//If standard defaults are loaded -> activate mouse and disable classic mouse.
+							g_InputSettings.m_sUseMouse			= TRUE;
+							g_InputSettings.m_sUseNewMouse		= (sMenuItem == ms_sResetItemOld) ? FALSE : TRUE;
 							break;
 						case JOYSTICK_MENU_ID:
 							// Use joy buttons.
@@ -452,7 +462,7 @@ static bool IsMappable(	// Returns true, if mappable, false otherwise.
 	{
 	bool	bMappable	= true;
 
-	short	sIndex;
+	int16_t	sIndex;
 	for (sIndex = 0; sIndex < NUM_ELEMENTS(ms_au8UnmappableKeys); sIndex++)
 		{
 		// If this is the specified key . . .
@@ -503,7 +513,7 @@ inline void ListenForInput(	// Returns nothing.
 			case KEYBOARD_MENU_ID:
 				{
 				U8*	pu8Key = pau8KeyStatusArray;
-				short	i;
+				int16_t	i;
 				for (i = 0; i < 128; i++, pu8Key++)
 					{
 					// If pressed . . .
@@ -713,9 +723,9 @@ inline void ListenForInput(	// Returns nothing.
 //////////////////////////////////////////////////////////////////////////////
 // Edit the input settings via menu.
 //////////////////////////////////////////////////////////////////////////////
-extern short EditInputSettings(void)	// Returns nothing.
+extern int16_t EditInputSettings(void)	// Returns nothing.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 	bool bDeleteKeybind = false;	// If true, we want to delete the keybind we're on.
 
 	// Menu is already started.

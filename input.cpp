@@ -275,12 +275,14 @@
 // Detweak a char from a string previously tweaked by STR_TWEAK().
 #define DETWEAK_CHAR(str, i)	(str[i] - (i + 1) )
 
+#define SET(ptr, val)		( ((ptr) != NULL) ? *(ptr) = (val) : 0)
+
 typedef struct
 	{
 	char	szCheat[21];
 	UINPUT	input;
-	long	lLastValidInputTime;
-	short	sCurrentIndex;
+	int32_t	lLastValidInputTime;
+	int16_t	sCurrentIndex;
 	} Cheat;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -301,8 +303,8 @@ INPUT_MODE m_mode;
 
 // Buffer-related stuff
 U32* m_pBuf = 0;				// Pointer to buffer. Must be a U32 to maintain demo compatibility!
-long m_lBufIndex;					// Current index into buffer
-long m_lBufEntries;				// Total entries in buffer
+int32_t m_lBufIndex;					// Current index into buffer
+int32_t m_lBufEntries;				// Total entries in buffer
 
 // Cheat structs.
 // Add one plus the index of each string item so it's not recognizable when 
@@ -430,9 +432,9 @@ extern INPUT_MODE GetInputMode(void)				// Returns current mode
 // Init demo mode.  Must be called before setting playback or record modes.
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern short InputDemoInit(void)
+extern int16_t InputDemoInit(void)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Reset index and number of entries
 	m_lBufIndex = 0;
@@ -472,10 +474,10 @@ void InputDemoKill(void)
 // Load previously saved input demo data
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern short InputDemoLoad(							// Returns 0 if successfull, non-zero otherwise
+extern int16_t InputDemoLoad(							// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile)											// In:  RFile to load from
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	ASSERT(m_pBuf);
 	if (m_pBuf)
@@ -487,7 +489,7 @@ extern short InputDemoLoad(							// Returns 0 if successfull, non-zero otherwis
 				{
 
 				// Load all entries
-				for (long l = 0; l < m_lBufEntries; l++)
+				for (int32_t l = 0; l < m_lBufEntries; l++)
 					pFile->Read(&m_pBuf[l]);
 				
 				// Check for errors
@@ -524,10 +526,10 @@ extern short InputDemoLoad(							// Returns 0 if successfull, non-zero otherwis
 // Save current input demo data
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern short InputDemoSave(							// Returns 0 if successfull, non-zero otherwise
+extern int16_t InputDemoSave(							// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile)											// In:  RFile to save to
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	ASSERT(m_pBuf);
 	if (m_pBuf)
@@ -536,7 +538,7 @@ extern short InputDemoSave(							// Returns 0 if successfull, non-zero otherwis
 		pFile->Write(m_lBufEntries);
 
 		// Save all entries
-		for (long l = 0; l < m_lBufEntries; l++)
+		for (int32_t l = 0; l < m_lBufEntries; l++)
 			pFile->Write(m_pBuf[l]);
 
 		// Check for errors
@@ -578,7 +580,7 @@ extern void ClearLocalInput(void)
 	memset(rspGetKeyStatusArray(), 0, 128);
 
 	// Clear cheats.
-	short	i;
+	int16_t	i;
 	for (i = 0; i < NUM_ELEMENTS(ms_acheats); i++)
 		{
 		ms_acheats[i].sCurrentIndex	= 0;
@@ -595,14 +597,14 @@ static void FindCheatCombos(	// Returns nothing.
 										// Out: Input with cheats.
 	RInputEvent* pie)				// In:  Latest input event or NULL.
 	{
-	long		lNow		= rspGetMilliseconds();
-	short	i;
+	int32_t		lNow		= rspGetMilliseconds();
+	int16_t	i;
 
 	if (pie)
 		{
 		if (pie->type == RInputEvent::Key)
 			{
-			long	lKey	= (pie->lKey & 0x00FF);
+			int32_t	lKey	= (pie->lKey & 0x00FF);
 			// Force alpha lower keys to upper keys
 			if (islower(lKey))
 				lKey	= toupper(lKey);
@@ -625,7 +627,7 @@ static void FindCheatCombos(	// Returns nothing.
 				// obvious when searching/viewing the exe.
 				char	c = DETWEAK_CHAR(pcheat->szCheat, pcheat->sCurrentIndex);
 				// If current key is hit . . .
-				if ( lKey == (long)c && c != 0)
+				if ( lKey == (int32_t)c && c != 0)
 					{
 					// Remember time of this key.
 					pcheat->lLastValidInputTime				= lNow;
@@ -673,9 +675,9 @@ bool CanCycleThroughWeapons()
 {
 #define WEAPON_SWITCH_HOLD_TIME 750
 #define WEAPON_SWITCH_CYCLE_TIME 350
-	static long lLastWeaponSwitchTime = 0;
+	static int32_t lLastWeaponSwitchTime = 0;
 	static bool bFastWeaponSwitching = false;
-	long lCurTime = rspGetMilliseconds();
+	int32_t lCurTime = rspGetMilliseconds();
 	bool bResult = false;
 
 	if (lLastWeaponSwitchTime == 0)
@@ -703,16 +705,59 @@ bool CanCycleThroughWeapons()
 	return bResult;
 }
 
+double m_ResModifierX = NULL;
+double m_ResModifierY = NULL;
+
+//Get the Modifier to Cram mouse pos in the resolution the game expects
+void GetResModifer(
+	double* modiferX,
+	double* modiferY)
+	{ 
+		//Do this only for initialisation
+		if (m_ResModifierX == NULL)
+		{
+			int screen_width = 640;
+			int screen_height = 480;
+			int16_t render_width = 640;
+			int16_t render_height = 480;
+			SDL_DisplayMode dm_Mode;
+
+			//Returns 0 on success...
+			int i_Result = SDL_GetCurrentDisplayMode(0, &dm_Mode);
+
+			if (i_Result == 0) {
+				screen_width = dm_Mode.w;
+				screen_height = dm_Mode.h;
+			}
+
+			//Get rendered resolution (not alway 640x480)
+			rspGetVideoMode(NULL, NULL, NULL, NULL, &render_width, &render_height, NULL, NULL);
+
+			m_ResModifierX = (double)render_width / (double)screen_width;
+			m_ResModifierY = (double)render_height / (double)screen_height;
+
+			printf("ScreenRes: %i %i\n", screen_width, screen_height);
+			printf("RenderRes: %i %i\n", render_width, render_height);
+			printf("Modifier: %f %f\n", m_ResModifierX, m_ResModifierY);		
+		}
+		SET(modiferX, m_ResModifierX);
+		SET(modiferY, m_ResModifierY);
+		
+	}
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Get local input
 //
 ////////////////////////////////////////////////////////////////////////////////
 extern UINPUT GetLocalInput(				// Returns local input.
-	CRealm* prealm,							// In:  Realm (used to access realm timer)
-	RInputEvent* pie	/*= NULL*/)			// In:  Latest input event.  NULL to 
-													//	disable cheats in a way that will be
+	CRealm* prealm,                         // In: Realm (used to access realm timer)
+	CCamera* pcamera,                       // In: Camera (used for mouse input)
+	U16 idLocalDude,						// In: Local dude id (used for mouse input)
+	RInputEvent* pie	/*= NULL*/,			// In:  Latest input event.  NULL to
+	bool isMP /*= false*/)						//	disable cheats in a way that will be
 													// harder to hack.
+													
 	{
 	// Default to nothing
 	UINPUT input = 0;
@@ -729,67 +774,195 @@ extern UINPUT GetLocalInput(				// Returns local input.
 		{
 // Set this to 0 to disable all possibility of any user input during the game
 #if 1
-		long				lCurTime			= prealm->m_time.GetGameTime();
-		static long		lPrevTime		= lCurTime;
+		int32_t				lCurTime			= prealm->m_time.GetGameTime();
+		static int32_t		lPrevTime		= lCurTime;
 		// Get ptr to Blue's key status array.  Only need to do this
 		// once.
 		static U8*		pu8KeyStatus	= rspGetKeyStatusArray();
 
-		short	sButtons	= 0;
-		short	sDeltaX	= 360;
+		int16_t	sButtons	= 0;
+		int16_t	sDeltaX	= 360;
 
+		//Overrides twinstick keyboard controls
 		// If utilizing mouse input . . .
-		if (g_InputSettings.m_sUseMouse != FALSE && rspIsBackground() == FALSE)
-			{
-			short	sPosX, sPosY;
-			short	sThreshY;
+		if (g_InputSettings.m_sUseNewMouse == FALSE && g_InputSettings.m_sUseMouse != FALSE && rspIsBackground() == FALSE)
+		{
+			int16_t	sPosX, sPosY;
+			int16_t	sThreshY;
 			rspGetMouse(&sPosX, &sPosY, &sButtons);
 			rspSetMouse(MOUSE_RESET_X, MOUSE_RESET_Y);
 
 			// Tweak input values.  We reduce the sensitivity by a factor of 3 to make
 			// up for increased frame rates.
-			double	dDeltaRot	= (MOUSE_RESET_X - sPosX) * (g_InputSettings.m_dMouseSensitivityX / 3.0);
+			double	dDeltaRot = (MOUSE_RESET_X - sPosX) * (g_InputSettings.m_dMouseSensitivityX / 3.0);
 #if 1
 			// If positive round up . . .
 			if (dDeltaRot >= 0.0)
-				{
-				dDeltaRot	+= 0.5;
-				}
+			{
+				dDeltaRot += 0.5;
+			}
 			else	// Negative round down.
-				{
-				dDeltaRot	-= 0.5;
-				}
+			{
+				dDeltaRot -= 0.5;
+			}
 #endif
-//			TRACE("sDif = %d, dDeltaRot = %g\n", (MOUSE_RESET_X - sPosX), dDeltaRot);
+			//TRACE("sDif = %d, dDeltaRot = %g\n", (MOUSE_RESET_X - sPosX), dDeltaRot);
 
 			// Must cast to short before subtracting b/c this statement is really:
 			// sDeltaX = sDeltaX + dDeltaRot which became promoted to float before
 			// it was added and then truncated causing a bias in degree toward
 			// negative or rightward rotations.
-			sDeltaX	+= (short)dDeltaRot;
+			sDeltaX += (int16_t)dDeltaRot;
 
-			sThreshY	= MOUSE_Y_THRESH;
+			sThreshY = MOUSE_Y_THRESH;
 			if (g_InputSettings.m_dMouseSensitivityY > 0.0)
-				{
-				sThreshY	= short( float(sThreshY) / g_InputSettings.m_dMouseSensitivityY);
-				}
+			{
+				sThreshY = int16_t(float(sThreshY) / g_InputSettings.m_dMouseSensitivityY);
+			}
 			else
-				{
+			{
 				// Infiniti.
-				sThreshY	*= 100;
-				}
+				sThreshY *= 100;
+			}
 
 			// If less than last time . . .
 			if (sDeltaX < 360)
-				input	|= INPUT_RIGHT;
+				input |= INPUT_RIGHT;
 			else if (sDeltaX > 360)
 				input |= INPUT_LEFT;
 
 			if (sPosY < MOUSE_RESET_Y - sThreshY)
-				input	|= INPUT_FORWARD;
+				input |= INPUT_FORWARD;
 			else if (sPosY > MOUSE_RESET_Y + sThreshY)
 				input |= INPUT_BACKWARD;
+		}
+
+		//New mouse input
+		if (g_InputSettings.m_sUseNewMouse == TRUE && rspIsBackground() == FALSE) {
+
+			CDude* pdude = NULL;
+
+			//Actually get a local dude
+			prealm->m_idbank.GetThingByID((CThing**)&pdude, idLocalDude);
+
+			/*     Mouse impl      */
+			double dudePosX = 0;
+			double dudePosY = 0;
+
+			int16_t mousePosX = 0;
+			int16_t mousePosY = 0;
+
+			rspGetMouse(&mousePosX, &mousePosY, &sButtons);
+
+			//printf("Mouse Pos: %i %i\n", mousePosX, mousePosY);
+			double modifierX = 0;
+			double modifierY = 0;
+
+			GetResModifer(&modifierX, &modifierY);
+
+			//Cram mouse pos in 640x480 resolution which game expects
+			double adjMousePosX = mousePosX * modifierX;
+			double adjMousePosY = mousePosY * modifierY;
+
+			//printf("Crammed Mouse Pos: %f %f\n", adjMousePosX, adjMousePosY);
+
+			/*     Trying to do calculation in 'global'  3d     */
+
+			double mouseX_3d = 0;
+			double mouseY_3d = 0;
+			double mouseZ_3d = 0;
+
+			MapScreen2Realm(prealm, pcamera, adjMousePosX, adjMousePosY, &mouseX_3d, &mouseY_3d, &mouseZ_3d);
+
+			dudePosX = pdude->m_dX;
+			dudePosY = pdude->m_dZ;
+
+			/*     Trying to do calculation in 'screen' 2d      */
+
+			// Map coordinate onto 2D screen coords
+
+			//Maprealm2Screen(m_pRealm, Camera(), m_dX, m_dY, m_dZ, &dudePosX, &dudePosY);
+
+
+			double deltaX = mouseX_3d - dudePosX;  //In either screen coords or in global 3d coords
+			double deltaY = dudePosY - mouseZ_3d;
+
+			//For crosshair to scale in mouse pointer direction
+			pdude->m_dMousePosX = mouseX_3d;
+			pdude->m_dMousePosY = mouseZ_3d;
+
+			//printf("Scale X: %.2f, Scale Y: %.2f\n", pdude->m_dCrossScaleX, pdude->m_dCrossScaleY);
+
+			int16_t rotateToAngle = 0;
+			int16_t rot = (int16_t)pdude->m_dRot; //Never a true double, because assigned from an int16_t in dude class
+
+			//Account for game actually going ahead and 
+			//collecting mutiple inputs without processing them
+			if (isMP) {
+
+				rot += pdude->m_sDeltaRot;  //Adjust local variable by previous delta 
+				rspMod360(&rot);			//if we haven't processed input it's not going to change
+				                            //Kinda psudo-process it
 			}
+
+			rotateToAngle = (int16_t)(atan2(deltaY, deltaX) * (180 / M_PI));
+			if (rotateToAngle < 0) rotateToAngle += 360;
+
+			/* Trying to make dude gradually rotate torwards the mouse pointer */
+			int16_t rotStep = (int16_t)(g_InputSettings.m_dMouseSensitivityX * 10.0 * ((lCurTime - lPrevTime)/20.0)); //The constant is arbitrary and can be experimented on 
+			int16_t deltaDiff = rotateToAngle - rot;
+
+			if (abs(deltaDiff) > 180) {
+				//Clockwise rotation should be negative
+				if (deltaDiff < 0) {
+					deltaDiff = (360 - rot) + rotateToAngle;
+				}
+				else if (deltaDiff > 0) {
+					deltaDiff = (rotateToAngle - 360) - rot;
+				}
+
+			}
+
+			//Direct rot assignment impl 
+			//It won't work for mutiplayer until appropriate value is assigned to sDeltaX
+
+			//if (abs(deltaDiff) < rotStep) {
+			//	rot = rotateToAngle;
+			//}
+			//else if (deltaDiff > 0) {
+			//	rot += rotStep;
+			//}
+			//else if (deltaDiff < 0) {
+			//	rot -= rotStep;
+			//}
+
+			////Keep rotation from going negative 
+			//if (rot < 0) 
+			//	rot += 360;
+
+			////Keep rotation from going over 360
+			//if (rot >= 360)
+			//	rot -= 360;
+
+			//pdude->m_dRotateToAngle = rotateToAngle;
+			//pdude->m_dRot = rot;
+
+			//Using sDeltaX for rotation
+
+			if (abs(deltaDiff) < rotStep) {
+				sDeltaX += deltaDiff;
+			}
+			else if (deltaDiff > 0) {
+				sDeltaX += rotStep;
+			}
+			else if (deltaDiff < 0) {
+				sDeltaX -= rotStep;
+			}
+			
+			pdude->m_sDeltaRot = sDeltaX - 360;
+
+		}
+
 
 #if defined(ALLOW_JOYSTICK)
 		U32	u32Buttons	= 0;
@@ -806,6 +979,11 @@ extern UINPUT GetLocalInput(				// Returns local input.
 #if defined(ALLOW_TWINSTICK)
 			//if ((u32Axes & RSP_JOY_Y_NEG) || (u32Axes & RSP_JOY_Y_POS) || (u32Axes & RSP_JOY_X_NEG) || (u32Axes & RSP_JOY_X_POS))
 				//input |= INPUT_FORWARD;
+
+				//All the new mouse stuff here
+			/*if (g_InputSettings.m_sUseNewMouse != FALSE && rspIsBackground() == FALSE) {
+
+			}*/
 #else
 			if (u32Axes & RSP_JOY_Y_NEG)
 				{
@@ -813,7 +991,7 @@ extern UINPUT GetLocalInput(				// Returns local input.
 				}
 			if (u32Axes & RSP_JOY_Y_POS)
 				{
-				input	|= INPUT_BACKWARD;
+				input	|= INPUT_MOVE_DOWN;
 				}
 			if (u32Axes & RSP_JOY_X_NEG)
 				{
@@ -875,12 +1053,12 @@ extern UINPUT GetLocalInput(				// Returns local input.
 			{
 			input	|= INPUT_RIGHT;
 			}
-
+		            
 		if (input & INPUT_LEFT)
 			{
 			input |= INPUT_LEFT;
 			// If last input had left rotation or this one has forward or reverse . . .
-			if (	(ms_inputLastLocal & INPUT_LEFT) 
+			if (	(ms_inputLastLocal & INPUT_LEFT)
 				||	(input & INPUT_FORWARD)
 				||	(input & INPUT_BACKWARD) )
 				{
@@ -911,7 +1089,7 @@ extern UINPUT GetLocalInput(				// Returns local input.
 					}
 
 				sDeltaX	+= ((lCurTime - lPrevTime) * dRate) / 1000UL;
-                sDeltaX++;  // !!! FIXME: Not sure why this is needed. --ryan.
+                //sDeltaX++;  // !!! FIXME: Not sure why this is needed. --ryan.
 				}
 			else
 				{
@@ -926,7 +1104,7 @@ extern UINPUT GetLocalInput(				// Returns local input.
 			{
 			input |= INPUT_RIGHT;
 			// If last input had right rotation or this one has forward or reverse . . .
-			if (	(ms_inputLastLocal & INPUT_RIGHT) 
+			if (	(ms_inputLastLocal & INPUT_RIGHT)
 				||	(input & INPUT_FORWARD)
 				||	(input & INPUT_BACKWARD) )
 				{

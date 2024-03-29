@@ -41,8 +41,8 @@
 //========================================================
 // Instantiate the static members:
 char	RPrint::ms_szInput[4096]; // temporary column buffer
-UCHAR	RPrint::ms_szLineText[1024]; // Stores a line at a time
-short	RPrint::ms_sCharPosX[1024]; // positions of each character in the line...
+uint8_t	RPrint::ms_szLineText[1024]; // Stores a line at a time
+int16_t	RPrint::ms_sCharPosX[1024]; // positions of each character in the line...
 
 // CURRENTLY we are going with the unconventional 
 // system of positioning text from the TOP OF THE CELL
@@ -62,7 +62,7 @@ void RPrint::OffsetShadow()
 // will NOT check the end of line condition!
 // return -1 if off the bottom!!!!
 //
-short	RPrint::FrameIt() // uses m_rClip, m_sCurX, m_sCurY, m_sCellH
+int16_t	RPrint::FrameIt() // uses m_rClip, m_sCurX, m_sCurY, m_sCellH
 	{
 	// check for above top:
 	if (m_sCurY < m_rClip.sY)
@@ -113,13 +113,13 @@ short	RPrint::FrameIt() // uses m_rClip, m_sCurX, m_sCurY, m_sCellH
 //
 char* RPrint::ScanLine(char* pszInput)
 	{
-	short sFirst = TRUE;
+	int16_t sFirst = TRUE;
 	if (m_eModes & FIELD) sFirst = FALSE;
 	char* pLast = pszInput;
-	short i=0,sWhiteSpace = 0;
-	short sX = m_sCurX;
-	short sLeft,sW,sRight;
-	short sBreakedLine = FALSE;
+	int16_t i=0,sWhiteSpace = 0;
+	int16_t sX = m_sCurX;
+	int16_t sLeft,sW,sRight;
+	int16_t sBreakedLine = FALSE;
 
 	// You'll have to augment this to catch the case of TAB stops!
 	// (But put that into the \t interpreter!)
@@ -133,7 +133,7 @@ char* RPrint::ScanLine(char* pszInput)
 			}
 	
 		// Not zero:
-		GetPropCellX((short)UCHAR(*pLast),&sLeft,&sW,&sRight,sFirst);
+		GetPropCellX((int16_t)uint8_t(*pLast),&sLeft,&sW,&sRight,sFirst);
 		sFirst = FALSE;
 
 		if ((sX + sW) > (m_rClip.sX + m_rClip.sW))
@@ -149,7 +149,7 @@ char* RPrint::ScanLine(char* pszInput)
 		ms_sCharPosX[i] = sX + sLeft; // store for prosperity
 		sX += sRight;
 		ms_sCharPosX[i+1] = sX + sLeft; // store for continuation
-		ms_szLineText[i] = UCHAR(*pLast);
+		ms_szLineText[i] = uint8_t(*pLast);
 		pLast++; i++;
 		}
 
@@ -200,7 +200,7 @@ char* RPrint::ScanLine(char* pszInput)
 	m_sNumChar = i;
 
 	// Store the final width based on the last characters full extent:
-	short sExt = 0;
+	int16_t sExt = 0;
 	GetPropCellX(ms_szLineText[i-1],NULL,&m_sExtX);
 	m_sExtX += ms_sCharPosX[i-1];
 
@@ -213,13 +213,13 @@ char* RPrint::ScanLine(char* pszInput)
 // (ScanLine, for example, eats whitespace characters
 // and partial words which GetWidth would include!)
 //
-short RPrint::GetWidth(char* pszInput)
+int16_t RPrint::GetWidth(char* pszInput)
 	{
-	short sFirst = TRUE;
+	int16_t sFirst = TRUE;
 	char* pLast = pszInput;
-	short i=0;
-	short sX = 0; // for this version
-	short sLeft,sW,sRight;
+	int16_t i=0;
+	int16_t sX = 0; // for this version
+	int16_t sLeft,sW,sRight;
 
 	// You'll have to augment this to catch the case of TAB stops!
 	// (But put that into the \t interpreter!)
@@ -231,14 +231,14 @@ short RPrint::GetWidth(char* pszInput)
 			}
 
 		// Not zero:
-		GetPropCellX((short)UCHAR(*pLast),&sLeft,&sW,&sRight,sFirst);
+		GetPropCellX((int16_t)uint8_t(*pLast),&sLeft,&sW,&sRight,sFirst);
 		sFirst = FALSE;
 
 		// fit another char on the line:
 		ms_sCharPosX[i] = sX; // store for prosperity
 		sX += sRight;
 		ms_sCharPosX[i+1] = sX; // store for continuation
-		ms_szLineText[i] = UCHAR(*pLast);
+		ms_szLineText[i] = uint8_t(*pLast);
 		pLast++; i++;
 		}
 
@@ -249,14 +249,14 @@ short RPrint::GetWidth(char* pszInput)
 
 // returns 0 if not a printable character
 //
-short RPrint::GetBlitW(UCHAR c)
+int16_t RPrint::GetBlitW(uint8_t c)
 	{
-	short sW;
+	int16_t sW;
 	if (!m_pCurFontSet->m_ppimCharacters[c]) return 0;
 	sW = m_pCurFontSet->m_ppimCharacters[c]->m_sWidth;
 	// Add in effects for BLiT needs only!
 	// For now, use stretch as a cheating bold!
-	sW = short(m_fWidthScale * sW * m_aARelEffect[STRETCH] * 
+	sW = int16_t(m_fWidthScale * sW * m_aARelEffect[STRETCH] * 
 		(m_aARelEffect[BOLD] + 1.0));
 
 	return sW;
@@ -268,9 +268,9 @@ short RPrint::GetBlitW(UCHAR c)
 //
 void  RPrint::FormatText()
 	{
-	short sTotW,sLineW;
-	short sJustOffset = 0;
-	short i;
+	int16_t sTotW,sLineW;
+	int16_t sJustOffset = 0;
+	int16_t i;
 
 	// Simple Justify: Left, Right, Center, but not full
 	if ((m_eModes & JUSTIFY_ON) && !(m_eModes & FIELD))
@@ -315,7 +315,7 @@ void  RPrint::FormatText()
 					if (IsWhiteSpace(ms_szLineText[i]))
 						dTotOffset += dAddWhite;
 
-					ms_sCharPosX[i] += short(dTotOffset);
+					ms_sCharPosX[i] += int16_t(dTotOffset);
 					}
 				}
 			}
@@ -336,13 +336,13 @@ void	RPrint::DrawText()
 	
 	// For this instant, DO NOT JUSTIFY
 	// test som first!
-	short i;
-	short sX,sY;
+	int16_t i;
+	int16_t sX,sY;
 
-	short sShadowX = m_aAbsEffect[SHADOW_X];
-	short sShadowY = m_aAbsEffect[SHADOW_Y];
-	short sDoShadow = sShadowX | sShadowY;
-	short sMainX = 0,sMainY = 0;
+	int16_t sShadowX = m_aAbsEffect[SHADOW_X];
+	int16_t sShadowY = m_aAbsEffect[SHADOW_Y];
+	int16_t sDoShadow = sShadowX | sShadowY;
+	int16_t sMainX = 0,sMainY = 0;
 
 	if (sShadowX < 0) {sMainX = -sShadowX; sShadowX = 0; }
 	if (sShadowY < 0) {sMainY = -sShadowY; sShadowY = 0; }
@@ -355,7 +355,7 @@ void	RPrint::DrawText()
 			{
 			sX = ms_sCharPosX[i];
 			// But DO SUPPORT SCALING:
-			short sW;
+			int16_t sW;
 			RImage* pim = m_pCurFontSet->m_ppimCharacters[ms_szLineText[i]];
 
 			sW = GetBlitW(ms_szLineText[i]);
@@ -372,7 +372,7 @@ void	RPrint::DrawText()
 	for (i=0;i<m_sNumChar;i++)
 		{
 		sX = ms_sCharPosX[i];
-		short sW;
+		int16_t sW;
 		RImage* pim = m_pCurFontSet->m_ppimCharacters[ms_szLineText[i]];
 
 		sW = GetBlitW(ms_szLineText[i]);
@@ -419,7 +419,7 @@ char* RPrint::print(char* pszFormat,...)
 	}
 
 // Attempting to pass on
-char* RPrint::print(short sX,short sY,char* pszFormat,...)
+char* RPrint::print(int16_t sX,int16_t sY,char* pszFormat,...)
 	{
 	//char szInput[4096];
 
@@ -435,7 +435,7 @@ char* RPrint::print(short sX,short sY,char* pszFormat,...)
 	}
 
 // Attempting to pass on
-char* RPrint::print(RImage* pimDst,short sX,short sY,char* pszFormat,...)
+char* RPrint::print(RImage* pimDst,int16_t sX,int16_t sY,char* pszFormat,...)
 	{
 	//char szInput[4096];
 
@@ -475,7 +475,7 @@ char* RPrint::printInt(char* pszInput)
 #endif
 
 	// Move back onto the screen, if possible.
-	short sRet = 0;
+	int16_t sRet = 0;
 	if ((sRet = FrameIt()) == -1)
 		{
 		return NULL; // of the bottom of the screen
@@ -490,7 +490,7 @@ char* RPrint::printInt(char* pszInput)
 	// BEGIN MULTILINE LOGIC!
 
 	char* pTest = pszInput;
-	short sStopped;
+	int16_t sStopped;
 	do	{
 		sStopped = FALSE;
 
@@ -550,12 +550,12 @@ char* RPrint::printInt(char* pszInput)
 // This is NOT for drawing, but for CELL estimation!!!
 // It should NOT be called if your are in UP MODE!
 //
-short RPrint::GetPropCellX(short sChar,short *psX,short *psE,short *psNext,
-									short sFirst)
+int16_t RPrint::GetPropCellX(int16_t sChar,int16_t *psX,int16_t *psE,int16_t *psNext,
+									int16_t sFirst)
 	{
 	RImage* pimLetter = NULL;
-	short a=0,b=0,c=0; // LKERN, true Width, RKERN
-	short sSpecial = FALSE;
+	int16_t a=0,b=0,c=0; // LKERN, true Width, RKERN
+	int16_t sSpecial = FALSE;
 
 	// In case of error:
 	if (psX) *psX = 0;
@@ -575,7 +575,7 @@ short RPrint::GetPropCellX(short sChar,short *psX,short *psE,short *psNext,
 
 	case ' ': // BEFORE effects are added!
 		a = c = 0;
-		b = short(m_sCellH / 3);
+		b = int16_t(m_sCellH / 3);
 		sSpecial = TRUE;
 	break;
 		}
@@ -602,7 +602,7 @@ short RPrint::GetPropCellX(short sChar,short *psX,short *psE,short *psNext,
 			{
 			RSpecialFSPR1 *pInfo = (RSpecialFSPR1*) pimLetter->m_pSpecial;
 			a = pInfo->m_s16KernL;
-			b = (short)pInfo->m_u16Width;
+			b = (int16_t)pInfo->m_u16Width;
 			c = pInfo->m_s16KernR;
 			}
 		}
@@ -624,17 +624,17 @@ short RPrint::GetPropCellX(short sChar,short *psX,short *psE,short *psNext,
 // You must pass the base values..
 // Includes effect of AddW but NOT UP_W
 //
-void RPrint::GetPropEffX(short sX,short sE,short sNext,
-								  short *psEffX,short *psEffE,short *psEffNext)
+void RPrint::GetPropEffX(int16_t sX,int16_t sE,int16_t sNext,
+								  int16_t *psEffX,int16_t *psEffE,int16_t *psEffNext)
 	{
 	// 1) SCALE THE BASE FONT INFO ACCORDINGLY:
-	short sEffX = sX;
-	short sEffE = sE;
-	short sEffNext = sNext;
+	int16_t sEffX = sX;
+	int16_t sEffE = sE;
+	int16_t sEffNext = sNext;
 
-	sEffX = short(m_fWidthScale * sX);
-	sEffE = short(m_fWidthScale * sE);
-	sEffNext = short(m_fWidthScale * sNext);
+	sEffX = int16_t(m_fWidthScale * sX);
+	sEffE = int16_t(m_fWidthScale * sE);
+	sEffNext = int16_t(m_fWidthScale * sNext);
 
 	// 2) Add in factors which effect horizontal parameters:
 	
@@ -652,9 +652,9 @@ void RPrint::GetPropEffX(short sX,short sE,short sNext,
 
 	// after other effects, do stretch, since it needs to be a
 	// relateive effect:
-	sEffX = short(m_aARelEffect[STRETCH] * sEffX);
-	sEffE = short(m_aARelEffect[STRETCH] * sEffE);
-	sEffNext = short(m_aARelEffect[STRETCH] * sEffNext);
+	sEffX = int16_t(m_aARelEffect[STRETCH] * sEffX);
+	sEffE = int16_t(m_aARelEffect[STRETCH] * sEffE);
+	sEffNext = int16_t(m_aARelEffect[STRETCH] * sEffNext);
 
 	sEffNext += m_aAbsEffect[ADD_W];
 
@@ -666,7 +666,7 @@ void RPrint::GetPropEffX(short sX,short sE,short sNext,
 //===================== SETTING UP VALUES ====================
 void	RPrint::ResetEffects()
 	{
-	for (short i=0;i<NUM_OF_EFFECTS;i++) 
+	for (int16_t i=0;i<NUM_OF_EFFECTS;i++) 
 		{
 		m_aAbsFlag[i] = 0;
 		m_aARelEffect[i] = 0.0;
@@ -685,17 +685,17 @@ void RPrint::ResetMode()
 	m_eModes = (Mode)0;
 	}
 
-void RPrint::SetMode(Mode eMode,short sVal)
+void RPrint::SetMode(Mode eMode,int16_t sVal)
 	{
 	if (sVal) m_eModes  = (Mode)(m_eModes | eMode);
 	else m_eModes = (Mode)(m_eModes & (~eMode));
 	}
 
-short RPrint::SetCellW()
+int16_t RPrint::SetCellW()
 	{
 	if (m_pCurFontSet == NULL) return -1;
 	// before effects:
-	m_sCellW = short(long(m_sCellH) * m_pCurFontSet->m_sMaxWidth /
+	m_sCellW = int16_t(int32_t(m_sCellH) * m_pCurFontSet->m_sMaxWidth /
 							m_pCurFontSet->m_sCellHeight);
 	// add effects:
 	// MAKE SURE THIS WORKS INSPITE OF NO LEADER!
@@ -703,7 +703,7 @@ short RPrint::SetCellW()
 	return 0;
 	}
 
-short RPrint::SetEffectAbs(Effect eEffect,short sVal) // absolute:
+int16_t RPrint::SetEffectAbs(Effect eEffect,int16_t sVal) // absolute:
 	{
 	if (m_sCellH == 0)
 		{
@@ -726,7 +726,7 @@ short RPrint::SetEffectAbs(Effect eEffect,short sVal) // absolute:
 	return 0;
 	}
 
-short RPrint::SetEffect(Effect eEffect,double dVal) // relative:
+int16_t RPrint::SetEffect(Effect eEffect,double dVal) // relative:
 	{
 	if (m_sCellH == 0)
 		{
@@ -735,7 +735,7 @@ short RPrint::SetEffect(Effect eEffect,double dVal) // relative:
 		}
 
 	m_aAbsFlag[eEffect] = 0;
-	m_aAbsEffect[eEffect] = short(dVal * m_sCellH);
+	m_aAbsEffect[eEffect] = int16_t(dVal * m_sCellH);
 	m_aARelEffect[eEffect] = float(dVal);
 	// hook specific effects:
 	switch (eEffect)
@@ -749,7 +749,7 @@ short RPrint::SetEffect(Effect eEffect,double dVal) // relative:
 	return 0;
 	}
 
-short RPrint::SetColumn(short sX,short sY,short sW,short sH)
+int16_t RPrint::SetColumn(int16_t sX,int16_t sY,int16_t sW,int16_t sH)
 	{
 	// Clip the column to the current pimDst:
 #ifdef _DEBUG
@@ -784,7 +784,7 @@ short RPrint::SetColumn(short sX,short sY,short sW,short sH)
 	}
 
 
-short RPrint::SetDestination(RImage* pimDst,RRect* prColumn)
+int16_t RPrint::SetDestination(RImage* pimDst,RRect* prColumn)
 	{
 	if (pimDst == NULL)
 		{
@@ -842,7 +842,7 @@ RPrint::~RPrint()
 	}
 
 // Must find a large enough size...
-short RPrint::SetFont(short sCellH,RFont* pFont)
+int16_t RPrint::SetFont(int16_t sCellH,RFont* pFont)
 	{
 	RFont::RFontSet* pFontSet = NULL;
 	double dScale = 0.0;
@@ -880,7 +880,7 @@ short RPrint::SetFont(short sCellH,RFont* pFont)
 	//***************** RESIZE ALL THE TEXT EFFECTS:
 	// (just re-adjust the relative values...)
 
-	for (short i=0;i<NUM_OF_EFFECTS;i++)
+	for (int16_t i=0;i<NUM_OF_EFFECTS;i++)
 		{
 		if (	m_aAbsFlag[i] == 0	// a relative value
 			&&	m_sCellH != 0)			// Don't allow divide by zero (JMI	05/09/97
@@ -888,7 +888,7 @@ short RPrint::SetFont(short sCellH,RFont* pFont)
 											// RPrint.cpp were overwritten with a previous
 											// version...ya bastid :) ).
 			{
-			m_aAbsEffect[i] = short(double(sCellH) / m_sCellH * m_aAbsEffect[i]);
+			m_aAbsEffect[i] = int16_t(double(sCellH) / m_sCellH * m_aAbsEffect[i]);
 			}
 		}
 
@@ -897,11 +897,11 @@ short RPrint::SetFont(short sCellH,RFont* pFont)
 	//**********************************************
 
 	m_sCellH = sCellH;
-	m_sCellW = short(m_fWidthScale * m_pCurFontSet->m_sMaxWidth + .99);
+	m_sCellW = int16_t(m_fWidthScale * m_pCurFontSet->m_sMaxWidth + .99);
 	return SUCCESS;
 	}
 
-short RPrint::SetColor(ULONG ulForeColor,ULONG ulBackColor,ULONG ulShadowColor)
+int16_t RPrint::SetColor(uint32_t ulForeColor,uint32_t ulBackColor,uint32_t ulShadowColor)
 	{
 	m_ForegroundColor = ulForeColor;
 	if (ulBackColor) m_BackgroundColor = ulBackColor;
@@ -910,7 +910,7 @@ short RPrint::SetColor(ULONG ulForeColor,ULONG ulBackColor,ULONG ulShadowColor)
 	return 0;
 	}
 
-void	RPrint::SetWordWrap(short sOn)
+void	RPrint::SetWordWrap(int16_t sOn)
 	{
 	if (sOn)	m_eModes = (Mode)(m_eModes | WORD_WRAP);
 	else m_eModes = (Mode)(m_eModes & (~WORD_WRAP));
@@ -944,11 +944,10 @@ void RPrint::SetJustifyFull()
 	m_eModes = (Mode)(m_eModes | JUSTIFY_FULL);
 	}
 
-void	RPrint::GetPos(short *psX,short *psY,short *psW,short *psH)
+void	RPrint::GetPos(int16_t *psX,int16_t *psY,int16_t *psW,int16_t *psH)
 	{
 	if (psX) *psX = m_sCurX;
 	if (psY) *psY = m_sCurY;
 	if (psW) *psW = m_sCellW;
 	if (psH) *psH = m_sCellH;
 	}
-

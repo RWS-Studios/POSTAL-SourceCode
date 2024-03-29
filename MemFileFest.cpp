@@ -85,21 +85,21 @@
 //////////////////////////////////////////////////////////////////////////////
 // Given a filename, open an RFile to the corresponding resource data.
 //////////////////////////////////////////////////////////////////////////////
-extern short GetMemFileResource(	// Returns 0 on successful open.
+extern int16_t GetMemFileResource(	// Returns 0 on successful open.
 	const char*		pszResName,		// In:  Res filename.
 	RFile::Endian	endian,			// In:  Endian nature for RFile.
 	RFile*			pfile)			// In:  File to open with.
 	{
-	short	sRes	= 1;	// Assume failure for simplicity.
+	int16_t	sRes	= 1;	// Assume failure for simplicity.
 	ASSERT(pfile);
 	ASSERT(pszResName);
 
-	short	sIndex;
+	int16_t	sIndex;
 	bool	bFound;
-	long	lReqResNameLen	= strlen(pszResName);
+	int32_t	lReqResNameLen	= strlen(pszResName);
 	for (sIndex = 0, bFound = false; sIndex < NUM_ELEMENTS(ms_memdisk) && bFound == false; sIndex++)
 		{
-		long lEmbeddedResNameLen	= strlen(ms_memdisk[sIndex].pszResName);
+		int32_t lEmbeddedResNameLen	= strlen(ms_memdisk[sIndex].pszResName);
 		// If the requested name is long enough . . .
 		if (lReqResNameLen >= lEmbeddedResNameLen)
 			{

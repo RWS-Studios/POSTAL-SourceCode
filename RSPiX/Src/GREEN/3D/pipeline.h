@@ -58,38 +58,38 @@ public:
 	//-------------------------------------
 	RPipeLine();
 	~RPipeLine();
-	short Create(long lScratchSpace=0,short sZBufWidth=0);
-	short CreateShadow(short sAngleY,double dTanDeclension,short sBufSize = -1);
+	int16_t Create(int32_t lScratchSpace=0,int16_t sZBufWidth=0);
+	int16_t CreateShadow(int16_t sAngleY,double dTanDeclension,int16_t sBufSize = -1);
 	void Destroy(); // will NOT kill transform scratch space
 	void Init();
 	//-------------------------------------
-	short NotCulled(RP3d *p1,RP3d *p2,RP3d *p3);
+	int16_t NotCulled(RP3d *p1,RP3d *p2,RP3d *p3);
 	void Transform(RSop* pPts,RTransform& tObj);
 	void TransformShadow(RSop* pPts,RTransform& tObj,
-		short sHeight = 0,short *psOffX = NULL,short *psOffY = NULL);
+		int16_t sHeight = 0,int16_t *psOffX = NULL,int16_t *psOffY = NULL);
 
 	// Do NOT use a z-buffer.  Return offset to current position to
 	// draw the image m_pimShadowBuf
-	void	RenderShadow(RImage* pimDst,RMesh* pMesh,UCHAR ucColor); // Unicolored!
+	void	RenderShadow(RImage* pimDst,RMesh* pMesh,uint8_t ucColor); // Unicolored!
 
-	void Render(RImage* pimDst,short sDstX,short sDstY,
-		RMesh* pMesh,UCHAR ucColor); // wire frame!
+	void Render(RImage* pimDst,int16_t sDstX,int16_t sDstY,
+		RMesh* pMesh,uint8_t ucColor); // wire frame!
 
 	// Flat shaded
-	void Render(RImage* pimDst,short sDstX,short sDstY,
+	void Render(RImage* pimDst,int16_t sDstX,int16_t sDstY,
 		RMesh* pMesh,RZBuffer* pZB,RTexture* pColors,
-		short sOffsetX = 0,		// In: 2D offset for pimDst and pZB.
-		short sOffsetY = 0); 	// In: 2D offset for pimDst and pZB.
+		int16_t sOffsetX = 0,		// In: 2D offset for pimDst and pZB.
+		int16_t sOffsetY = 0); 	// In: 2D offset for pimDst and pZB.
 
 	// Note that pFog must be 256 x # of colors.
 	// the offset value moves the fog towards 
 	// the front of the z-buffer
 	//
-	void Render(RImage* pimDst,short sDstX,short sDstY,
+	void Render(RImage* pimDst,int16_t sDstX,int16_t sDstY,
 		RMesh* pMesh,RZBuffer* pZB,RTexture* pColors,
-		short sFogOffset,RAlpha* pFog,
-		short sOffsetX = 0,		// In: 2D offset for pimDst and pZB.
-		short sOffsetY = 0); 	// In: 2D offset for pimDst and pZB.
+		int16_t sFogOffset,RAlpha* pFog,
+		int16_t sOffsetX = 0,		// In: 2D offset for pimDst and pZB.
+		int16_t sOffsetY = 0); 	// In: 2D offset for pimDst and pZB.
 
 	// WARNING: May be inhomogeneous!
 	void GetScreenXF(RTransform& tDst)
@@ -104,7 +104,7 @@ public:
 	void ClearShadowBuffer();
 
 	// Project a point onto a screen.
-	void PointToScreen(RTransform& tObj,RP3d& v3d,short &sDstX,short &sDstY)
+	void PointToScreen(RTransform& tObj,RP3d& v3d,int16_t &sDstX,int16_t &sDstY)
 		{
 		RTransform tFull;
 		RP3d ptDst;
@@ -114,8 +114,8 @@ public:
 		tFull.PreMulBy(m_tScreen.T);
 
 		tFull.TransformInto(v3d,ptDst);
-		sDstX = short(ptDst.x);
-		sDstY = short(ptDst.y);
+		sDstX = int16_t(ptDst.x);
+		sDstY = int16_t(ptDst.y);
 		}
 	
 	// THIS WILL CHANGE WITH TIME:
@@ -139,26 +139,26 @@ public:
 	// store a transformed bounding rect for object being rendered:
 	// These are screend coordinates relative to the center of
 	// the zbuf square / clipping square
-	short	m_sX; // far cube point
-	short m_sY;
-	short m_sZ;
-	short m_sW;
-	short m_sH;
-	short m_sD;
+	int16_t	m_sX; // far cube point
+	int16_t m_sY;
+	int16_t m_sZ;
+	int16_t m_sW;
+	int16_t m_sH;
+	int16_t m_sD;
 
-	short	m_sCenX; // for convenience - the cube center
-	short m_sCenY; // in 3d screen coordinates
-	short m_sCenZ;
+	int16_t	m_sCenX; // for convenience - the cube center
+	int16_t m_sCenY; // in 3d screen coordinates
+	int16_t m_sCenZ;
 	// TRUE of FALSE
-	short m_sUseBoundingRect;
+	int16_t m_sUseBoundingRect;
 
 	//-------------------------------------
 	// static storage:
 
 	// Transformation buffer:
-	static long ms_lNumPts;
+	static int32_t ms_lNumPts;
 	static RP3d* ms_pPts;
-	static long	ms_lNumPipes; // used to free ms_pPts
+	static int32_t	ms_lNumPipes; // used to free ms_pPts
 	};
 
 //================================================== 

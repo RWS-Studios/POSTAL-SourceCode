@@ -383,7 +383,7 @@
 // Variables/data
 ////////////////////////////////////////////////////////////////////////////////
 
-static short ms_asBulletDamageChart[16] = 
+static int16_t ms_asBulletDamageChart[16] = 
 {
 //	Damage			Shooter	Target	Weapon
 	10,	// 0000	NonDude	NonDude	Pistol
@@ -409,8 +409,8 @@ static short ms_asBulletDamageChart[16] =
 // scene scaling.
 ////////////////////////////////////////////////////////////////////////////////
 inline
-long GetRandSway(		// Returns sway value.
-	long		lRange,	// In:  Total range of output value.
+int32_t GetRandSway(		// Returns sway value.
+	int32_t		lRange,	// In:  Total range of output value.
 	double	dScale)	// In:  Scaling.
 	{
 	// There's two approaches possible here:
@@ -429,14 +429,14 @@ long GetRandSway(		// Returns sway value.
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CCharacter::Load(									// Returns 0 if successfull, non-zero otherwise
+int16_t CCharacter::Load(									// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 	{
 	// Call the CThing base class load to get the instance ID
-	short sResult = CThing3d::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CThing3d::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	if (sResult == 0)
 		{
 		switch (ulFileVersion)
@@ -473,12 +473,12 @@ short CCharacter::Load(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CCharacter::Save(									// Returns 0 if successfull, non-zero otherwise
+int16_t CCharacter::Save(									// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 	{
 	// Call the base class save to save the u16InstanceID
-	short	sResult	= CThing3d::Save(pFile, sFileCount);
+	int16_t	sResult	= CThing3d::Save(pFile, sFileCount);
 	if (sResult == 0)
 		{
 		// Save object data
@@ -581,7 +581,7 @@ bool CCharacter::WhileBurning(void)	// Returns true until state is complete.
 
 	// Get time from last call in seconds.  Should this be passed in so we don't
 	// update m_lPrevTime???
-	long		lCurTime	= m_pRealm->m_time.GetGameTime();
+	int32_t		lCurTime	= m_pRealm->m_time.GetGameTime();
 	double	dSeconds	= double(lCurTime - m_lPrevTime) / 1000.0;
 	m_lPrevTime			= lCurTime;
 
@@ -599,7 +599,7 @@ bool CCharacter::WhileBurning(void)	// Returns true until state is complete.
 			{
 			// Brightness is the ratio of the amount of time expired to the
 			// total time multiplied by the destination brightness.
-			long	lTimeExpired	= MIN(lCurTime + BURN_DURATION - m_lCharacterTimer, (long)BURN_DURATION);
+			int32_t	lTimeExpired	= MIN(lCurTime + BURN_DURATION - m_lCharacterTimer, (int32_t)BURN_DURATION);
 			m_sBrightness			= lTimeExpired * BURNT_BRIGHTNESS / BURN_DURATION;
 
 			// If time has expired . . .
@@ -898,17 +898,20 @@ void CCharacter::OnPutMeDownMsg(		// Returns nothing
 // Creates blood splat and pool animations.
 ////////////////////////////////////////////////////////////////////////////////
 void CCharacter::MakeBloody(
-	short sDamage,			// In:  Damage to base carnage on.
-	short	sDamageAngle,	// In:  Angle in which (NOT from which) damage was
+	int16_t sDamage,			// In:  Damage to base carnage on.
+	int16_t	sDamageAngle,	// In:  Angle in which (NOT from which) damage was
 								// applied.
-	short	sSwayRange)		// In:  Random amount chunks can sway from the
+	int16_t	sSwayRange)		// In:  Random amount chunks can sway from the
 								// sDamageAngle (If 360, there'll be no noticeable
 								// damage direction for the chunks).
 	{
+#ifdef KID_FRIENDLY_OPTION
+	if (g_GameSettings.m_sKidMode == FALSE)
+	{
+#endif
 	double	dHitY	= m_dY + GetRandSway(BLOOD_SPLAT_SWAY, m_pRealm->m_phood->m_dScale3d);
 	double	dHitX;
 	double	dHitZ;
-
 	// If writhing on the ground . . .
 	if (m_state == State_Writhing)
 		{
@@ -922,7 +925,7 @@ void CCharacter::MakeBloody(
 		// That is, the wound appears on a portion of the dude facing the damage
 		// source (where the bullet came from, the epicenter of the explosion, etc.)
 		// giving us a little more feedback and realism.
-		short	sDeflectionAngle	= rspMod360(sDamageAngle + 180);
+		int16_t	sDeflectionAngle	= rspMod360(sDamageAngle + 180);
 		dHitX	= m_dX + COSQ[sDeflectionAngle] * TORSO_RADIUS;
 		dHitZ	= m_dZ - SINQ[sDeflectionAngle] * TORSO_RADIUS;
 
@@ -945,8 +948,8 @@ void CCharacter::MakeBloody(
 		}
 
 	// Create some chunks.
-	short	sNumChunks	= MIN(sDamage / 2, MAX_CHUNKS);
-	short	i;
+	int16_t	sNumChunks	= MIN(sDamage / 2, MAX_CHUNKS);
+	int16_t	i;
 	for (i = 0; i < sNumChunks; i++)
 		{
 		// Create blood particles . . .
@@ -973,6 +976,9 @@ void CCharacter::MakeBloody(
 	// created the pool which, of course, is the desired
 	// effect.
 	MakeBloodPool();
+#ifdef KID_FRIENDLY_OPTION
+	}
+#endif
 	}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -980,6 +986,10 @@ void CCharacter::MakeBloody(
 ////////////////////////////////////////////////////////////////////////////////
 void CCharacter::MakeBloodPool(void)
 	{
+#ifdef KID_FRIENDLY_OPTION
+	if (g_GameSettings.m_sKidMode == FALSE)
+	{
+#endif
 	CAnimThing*	pat	= new CAnimThing(m_pRealm);
 	if (pat != NULL)
 		{
@@ -1006,15 +1016,22 @@ void CCharacter::MakeBloodPool(void)
 		// NOTE:  sAngle is currently not utilized.
 		pat->Setup(dHitX, dTerrainH, dHitZ);
 		}
+#ifdef KID_FRIENDLY_OPTION
+	}
+#endif
 	}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Draws last frame of blood pool into background.
 ////////////////////////////////////////////////////////////////////////////////
 void CCharacter::BloodToBackground(
-	short	sAnimX2d,			// Position of animation in 2d.
-	short	sAnimY2d)			// Position of animation in 2d.
+	int16_t	sAnimX2d,			// Position of animation in 2d.
+	int16_t	sAnimY2d)			// Position of animation in 2d.
 	{
+#ifdef KID_FRIENDLY_OPTION
+	if (g_GameSettings.m_sKidMode == FALSE)
+	{
+#endif
 	// Draw last frame of pool directly into background.
 	CAnimThing::ChannelAA*	paachannel;
 	if (rspGetResource(&g_resmgrGame, m_pRealm->Make2dResPath(BLOOD_POOL_RES_NAME), &paachannel) == 0)
@@ -1023,8 +1040,8 @@ void CCharacter::BloodToBackground(
 		CAlphaAnim*	paa = paachannel->GetItem(paachannel->NumItems() - 1);
 		ASSERT(paa != NULL);
 		
-		short	sX	= sAnimX2d + paa->m_sX;
-		short	sY	= sAnimY2d + paa->m_sY;
+		int16_t	sX	= sAnimX2d + paa->m_sX;
+		int16_t	sY	= sAnimY2d + paa->m_sY;
 		
 		// Note this does not handle alpha case yet.
 		if (paa->m_pimAlphaArray != NULL)
@@ -1056,6 +1073,9 @@ void CCharacter::BloodToBackground(
 		
 		rspReleaseResource(&g_resmgrGame, &paachannel);
 		}
+#ifdef KID_FRIENDLY_OPTION
+	}
+#endif
 	}
 
 
@@ -1275,7 +1295,7 @@ bool CCharacter::ValidateWeaponPosition(void)	// Returns true, if weapon is in a
 						GetLinkPoint(ptransWeapon, &dX, &dY, &dZ);
 
 						// Check position to make sure it's not inside terrain.
-						short	sTerrainH	= m_pRealm->GetHeight(m_dX + dX, m_dZ + dZ);
+						int16_t	sTerrainH	= m_pRealm->GetHeight(m_dX + dX, m_dZ + dZ);
 						if (sTerrainH > m_dY + dY)
 							{
 							// Send the object a delete message.
@@ -1314,8 +1334,8 @@ bool CCharacter::ValidateWeaponPosition(void)	// Returns true, if weapon is in a
 ////////////////////////////////////////////////////////////////////////////////
 bool CCharacter::FireBullets(				// Returns true, if we hit someone/thing.
 	RP3d*				ppt3d,					// In:  Launch pt in Postal units.
-	short				sNumShots,				// In:  Number of shots to fire.
-	short				sRange,					// In:  Bullet range.
+	int16_t				sNumShots,				// In:  Number of shots to fire.
+	int16_t				sRange,					// In:  Bullet range.
 	SampleMasterID	smidAmmo,				// In:  Ammo noise.
 	CSmash::Bits	bitsInclude,/*=0*/	// In:  Optional bits we can hit
 	CSmash::Bits	bitsDontcare,			// In:  Optional bits not involved in collision
@@ -1342,11 +1362,11 @@ bool CCharacter::FireBullets(				// Returns true, if we hit someone/thing.
 			}
 		}
 
-	short	i;
+	int16_t	i;
 	for (i = 0; i < sNumShots; i ++)
 		{
-		short	sX, sY, sZ;	
-		short	sFireAngle	= m_dRot + GetRandSway(FIRE_ANGLE_Y_SWAY, m_pRealm->m_phood->m_dScale3d);
+		int16_t	sX, sY, sZ;	
+		int16_t	sFireAngle	= m_dRot + GetRandSway(FIRE_ANGLE_Y_SWAY, m_pRealm->m_phood->m_dScale3d);
 		CThing*	pthingTarget;
 		bool bResult = m_bullets.FireDeluxe(
 			sFireAngle,				// In:  Angle of launch in degrees (on X/Z plane).
@@ -1389,7 +1409,7 @@ bool CCharacter::FireBullets(				// Returns true, if we hit someone/thing.
 			msg.msg_Shot.sAngle			= sFireAngle;
 			msg.msg_Shot.u16ShooterID	= m_u16InstanceId;
 
-			short sIndex = 0;
+			int16_t sIndex = 0;
 			// Figure out how much damage the bullet should give
 			switch (m_eWeaponType)
 			{
@@ -1434,10 +1454,10 @@ bool CCharacter::FireBullets(				// Returns true, if we hit someone/thing.
 				// Spread this out.
 				msg.msg_Explosion.sDamage = ms_asBulletDamageChart[sIndex] / sNumShots + 1;
 				// Just in front of where bullet hit.
-				short	sAngle	= rspMod360(m_dRot);
-				msg.msg_Explosion.sX = (short) pthingTarget->GetX() - COSQ[sAngle] * 10;
-				msg.msg_Explosion.sY = (short) pthingTarget->GetY();
-				msg.msg_Explosion.sZ = (short) pthingTarget->GetZ() + SINQ[sAngle] * 10;
+				int16_t	sAngle	= rspMod360(m_dRot);
+				msg.msg_Explosion.sX = (int16_t) pthingTarget->GetX() - COSQ[sAngle] * 10;
+				msg.msg_Explosion.sY = (int16_t) pthingTarget->GetY();
+				msg.msg_Explosion.sZ = (int16_t) pthingTarget->GetZ() + SINQ[sAngle] * 10;
 				msg.msg_Explosion.sVelocity = 100;
 				msg.msg_Explosion.u16ShooterID = GetInstanceID();
 
@@ -1487,25 +1507,25 @@ bool CCharacter::FireBullets(				// Returns true, if we hit someone/thing.
 bool CCharacter::IsPathClear(	// Returns true, if the entire path is clear.
 										// Returns false, if only a portion of the path is clear.
 										// (see *psX, *psY, *psZ, *ppthing).
-	short sX,						// In:  Starting X.
-	short	sY,						// In:  Starting Y.
-	short sZ,						// In:  Starting Z.
-	short sRotY,					// In:  Rotation around y axis (direction on X/Z plane).
-	short sCrawlRate,				// In:  Rate at which to scan ('crawl') path in pixels per
+	int16_t sX,						// In:  Starting X.
+	int16_t	sY,						// In:  Starting Y.
+	int16_t sZ,						// In:  Starting Z.
+	int16_t sRotY,					// In:  Rotation around y axis (direction on X/Z plane).
+	int16_t sCrawlRate,				// In:  Rate at which to scan ('crawl') path in pixels per
 										// iteration.
 										// NOTE: We scan terrain using GetFloorAttributes()
 										// so small values of sCrawl are not necessary.
 										// NOTE: We could change this to a speed in pixels per second
 										// where we'd assume a certain frame rate.
-	short	sRangeXZ,				// In:  Range on X/Z plane.
-	short sRadius,					// In:  Radius of path traverser.
-	short sVerticalTolerance,	// In:  Max traverser can step up.
+	int16_t	sRangeXZ,				// In:  Range on X/Z plane.
+	int16_t sRadius,					// In:  Radius of path traverser.
+	int16_t sVerticalTolerance,	// In:  Max traverser can step up.
 	CSmash::Bits bitsInclude,	// In:  Mask of CSmash bits that would terminate path.
 	CSmash::Bits bitsDontCare,	// In:  Mask of CSmash bits that would not affect path.
 	CSmash::Bits bitsExclude,	// In:  Mask of CSmash bits that cannot affect path.
-	short* psX,						// Out: Point of intercept, if any, on path.
-	short* psY,						// Out: Point of intercept, if any, on path.
-	short* psZ,						// Out: Point of intercept, if any, on path.
+	int16_t* psX,						// Out: Point of intercept, if any, on path.
+	int16_t* psY,						// Out: Point of intercept, if any, on path.
+	int16_t* psZ,						// Out: Point of intercept, if any, on path.
 	CThing** ppthing,				// Out: Thing that intercepted us or NULL, if none.
 	CSmash*	psmashExclude/*= NULL*/)	// In:  Optional CSmash to exclude or NULL, if none.
 	{
@@ -1536,18 +1556,18 @@ bool CCharacter::IsPathClear(	// Returns true, if the entire path is clear.
 	float	fTotalDistXZ	= 0.0F;
 
 	// Store extents.
-	short	sMaxX			= m_pRealm->GetRealmWidth();
-	short	sMaxY			= 512;					// Robustness: Guard against infinite loop
+	int16_t	sMaxX			= m_pRealm->GetRealmWidth();
+	int16_t	sMaxY			= 512;					// Robustness: Guard against infinite loop
 														// in the remote possibility that we shoot
 														// straight up (currently one can only shoot
 														// horizontally).
-	short	sMaxZ			= m_pRealm->GetRealmHeight();
+	int16_t	sMaxZ			= m_pRealm->GetRealmHeight();
 
-	short	sMinX			= 0;
-	short	sMinY			= -512;
-	short	sMinZ			= 0;
+	int16_t	sMinX			= 0;
+	int16_t	sMinY			= -512;
+	int16_t	sMinZ			= 0;
 
-	short	sCurH;
+	int16_t	sCurH;
 	U16	u16Attribute;
 
 	// Scan while in realm.
@@ -1560,7 +1580,7 @@ bool CCharacter::IsPathClear(	// Returns true, if the entire path is clear.
 		&& fPosZ < sMaxZ
 		&& fTotalDistXZ < sRangeXZ)
 		{
-		GetFloorAttributes((short)fPosX, (short)fPosZ, &u16Attribute, &sCurH);
+		GetFloorAttributes((int16_t)fPosX, (int16_t)fPosZ, &u16Attribute, &sCurH);
 		// If too big a height difference or completely not walkable . . .
 		if (	(u16Attribute & REALM_ATTR_NOT_WALKABLE)
 			|| (sCurH - fPosY > sVerticalTolerance) )
@@ -1738,12 +1758,12 @@ bool CCharacter::IsPathClear(	// Returns true, if the entire path is clear.
 // Light up target if there is one within a cone in the given aiming direction.
 ////////////////////////////////////////////////////////////////////////////////
 bool CCharacter::IlluminateTarget(			// Returns true if there is a target
-	short sX,							// In:  Starting x position
-	short sY,							// In:  Starting y position
-	short sZ,							// In:  Starting z position
-	short sRotY,						// In:  Aiming direction (rotation around y axis)
-	short sRangeXZ,					// In:  Range on X/Z plane
-	short sRadius,						// In:  Radius of path traverser.
+	int16_t sX,							// In:  Starting x position
+	int16_t sY,							// In:  Starting y position
+	int16_t sZ,							// In:  Starting z position
+	int16_t sRotY,						// In:  Aiming direction (rotation around y axis)
+	int16_t sRangeXZ,					// In:  Range on X/Z plane
+	int16_t sRadius,						// In:  Radius of path traverser.
 	CSmash::Bits bitsInclude,		// In:  Mask of CSmash bits that would count as a hit
 	CSmash::Bits bitsDontCare,		// In:  Mask of CSmash bits that would not affect path
 	CSmash::Bits bitsExclude,		// In:  Mask of CSmash bits that cannot affect path
@@ -1920,11 +1940,11 @@ bool CCharacter::IlluminateTarget(			// Returns true if there is a target
 // Preload - cache the anims that may be used.
 // (static).
 ////////////////////////////////////////////////////////////////////////////////
-short CCharacter::Preload(
+int16_t CCharacter::Preload(
 	CRealm* prealm)				// In:  Calling realm.
 	{
 	CAnimThing::ChannelAA*	paaCache;
-	short	sResult	= 0;
+	int16_t	sResult	= 0;
 
 	if (rspGetResource(&g_resmgrGame, prealm->Make2dResPath(BLOOD_SPLAT_RES_NAME), &paaCache) == 0)
 		rspReleaseResource(&g_resmgrGame, &paaCache);

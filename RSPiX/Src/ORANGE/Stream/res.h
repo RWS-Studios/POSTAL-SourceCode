@@ -55,7 +55,7 @@ class CRes
 
 		// If sFreeOnClose is TRUE, resources opened by the open hook
 		// will be freed by the close hook if they are not additionally locked.
-		void SetFreeOnClose(short sFreeOnClose)
+		void SetFreeOnClose(int16_t sFreeOnClose)
 			{ m_sFreeOnClose	= sFreeOnClose; }
 
 	public:		// Querries.
@@ -77,40 +77,40 @@ class CRes
 		PRESITEM	GetResItem(char* pszName);
 
 		// Handles data callbacks from dispatch.
-		short UseCall(	UCHAR* puc, long lSize, USHORT usType, UCHAR ucFlags,
-							long lTime);
+		int16_t UseCall(	uint8_t* puc, int32_t lSize, uint16_t usType, uint8_t ucFlags,
+							int32_t lTime);
 		// Callback dispatcher (calls the implied this version).
-		static short UseCallStatic(UCHAR* puc, long lSize, USHORT usType, 
-											UCHAR ucFlags,
-											long lTime, long l_pRes);
+		static int16_t UseCallStatic(uint8_t* puc, int32_t lSize, uint16_t usType, 
+											uint8_t ucFlags,
+											int32_t lTime, int32_t l_pRes);
 
 		// Handles alloc callbacks from dispatch.
-		UCHAR* AllocCall(long lSize, USHORT usType, UCHAR ucFlags);
+		uint8_t* AllocCall(int32_t lSize, uint16_t usType, uint8_t ucFlags);
 		// Callback dispatcher (calls the implied this version).
-		static UCHAR* AllocCallStatic(long lSize, 
-												USHORT usType, UCHAR ucFlags, 
-												long l_pRes);
+		static uint8_t* AllocCallStatic(int32_t lSize, 
+												uint16_t usType, uint8_t ucFlags, 
+												int32_t l_pRes);
 
 		// Handles free callbacks from filter.
-		void FreeCall(UCHAR* puc, USHORT usType, UCHAR ucFlags);
+		void FreeCall(uint8_t* puc, uint16_t usType, uint8_t ucFlags);
 		// Callback dispatcher (calls the implied this version).
-		static void FreeCallStatic(UCHAR* puc, USHORT usType, UCHAR ucFlags,
-											long l_pRes);
+		static void FreeCallStatic(uint8_t* puc, uint16_t usType, uint8_t ucFlags,
+											int32_t l_pRes);
 
 		// Hooks calls to CNFile's file Open (NOT memory opens).
 		// Returns 0 if file found.
-		static short FileOpenHook(	CNFile* pfile, char* pszFileName, 
-											char* pszFlags, short sEndian, long lUser);
+		static int16_t FileOpenHook(	CNFile* pfile, char* pszFileName, 
+											char* pszFlags, int16_t sEndian, int32_t lUser);
 		// Hooks calls to CNFile's Close.
 		// Returns 0 if close was taken care of by this hook.
-		static short FileCloseHook(CNFile* pfile, long lUser);
+		static int16_t FileCloseHook(CNFile* pfile, int32_t lUser);
 
 	public:		// Members.
 
 	protected:	// Members.
 		CDispatch*				m_pDispatch;				// CDispatch.
 		CList	<CResItem>		m_alistRes[HASH_SIZE];	// Uh..De ja vus.
-		short						m_sFreeOnClose;			// If TRUE, the close hook
+		int16_t						m_sFreeOnClose;			// If TRUE, the close hook
 																	// will free the resource
 																	// if it's not locked.
 

@@ -55,14 +55,14 @@
 // Handy inline to parse before and after an equals into two strings.
 // The whitespace directly preceding and postceding.
 ////////////////////////////////////////////////////////////////////////////////
-inline short GetVar(	// Returns 0 on success.
+inline int16_t GetVar(	// Returns 0 on success.
 	char*	pszLine,		// In:  Line to parse.
 	char*	pszVar,		// Out: Var name, if not NULL.
 	char* pszVal)		// Out: Val, if not NULL.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
-	short	j, i, k;
+	int16_t	j, i, k;
 	// Copy variable name to out string
 	for (j = 0, i = 0; pszLine[i] != '\0' && pszLine[i] != '='; i++, j++)
 		{
@@ -151,9 +151,9 @@ RPrefsLine::ePrefsLineType RPrefsLine::GetType()
 ////////////////////////////////////////////////////////////////////////////////
 // Get the section name. returns 0 on success
 ////////////////////////////////////////////////////////////////////////////////
-short RPrefsLine::GetSectionName(char *pszSection)
+int16_t RPrefsLine::GetSectionName(char *pszSection)
 	{
-	short sRes = 0;
+	int16_t sRes = 0;
 	if (m_Type != Section)
 		{
 		TRACE("RPrefsLine::GetSectionName(): Not a section line.\n");
@@ -161,7 +161,7 @@ short RPrefsLine::GetSectionName(char *pszSection)
 		}
 	else
 		{
-		short i, j;
+		int16_t i, j;
 		// Find index of first char is section name
 		for (i = 0; (m_pszLine[i] != '\0') &&
 				(isspace(m_pszLine[i]) || (m_pszLine[i] == '[')); i++)
@@ -192,9 +192,9 @@ short RPrefsLine::GetSectionName(char *pszSection)
 ////////////////////////////////////////////////////////////////////////////////
 // Get the variable name. returns 0 on success
 ////////////////////////////////////////////////////////////////////////////////
-short RPrefsLine::GetVariableName(char *pszVariable)
+int16_t RPrefsLine::GetVariableName(char *pszVariable)
 	{
-	short sRes = 0;
+	int16_t sRes = 0;
 	if (m_Type != Variable)
 		{
 		TRACE("RPrefsLine::GetVariableName(): Not a variable line.\n");
@@ -232,9 +232,9 @@ short RPrefsLine::GetVariableName(char *pszVariable)
 ////////////////////////////////////////////////////////////////////////////////
 // Get the value of the variable. returns 0 on success
 ////////////////////////////////////////////////////////////////////////////////
-short RPrefsLine::GetVariableValue(char *pszValue)
+int16_t RPrefsLine::GetVariableValue(char *pszValue)
 	{
-	short sRes = 0;
+	int16_t sRes = 0;
 
 	// Make sure the prefs line is a variable
 	if (m_Type != Variable)
@@ -282,9 +282,9 @@ short RPrefsLine::GetVariableValue(char *pszValue)
 ////////////////////////////////////////////////////////////////////////////////
 // Set the value of the variable
 ////////////////////////////////////////////////////////////////////////////////
-short RPrefsLine::SetVariableValue(const char *pszValue)
+int16_t RPrefsLine::SetVariableValue(const char *pszValue)
 	{
-	short	sRes = 0;
+	int16_t	sRes = 0;
 	char	pszLine[128], pszVariable[64];
 
 	ASSERT(pszValue);

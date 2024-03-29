@@ -51,12 +51,12 @@ class CLadder : public CThing
 		double m_dY;
 		double m_dZ;
 
-		short	m_sLen;								// Length of ladder.
-		short	m_sHeight;							// Height of ladder.
-		short m_sRotY;								// Rotation around Y axis (i.e., 
+		int16_t	m_sLen;								// Length of ladder.
+		int16_t	m_sHeight;							// Height of ladder.
+		int16_t m_sRotY;								// Rotation around Y axis (i.e., 
 														// direction on X/Z plane).
 
-		short m_sSuspend;							// Suspend flag
+		int16_t m_sSuspend;							// Suspend flag
 														
 		CSmash	m_smashTop;						// Collision smash for the top of the
 														// ladder.
@@ -117,11 +117,11 @@ class CLadder : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CLadder(pRealm);
 			if (*ppNew == 0)
 				{
@@ -136,22 +136,22 @@ class CLadder : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -166,19 +166,19 @@ class CLadder : public CThing
 		void Render(void);
 
 		// Called by editor to init new object at specified position
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
-		short EditMove(											// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditMove(											// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to get the clickable pos/area of an object in 2D.
 		virtual	// Overridden here.
@@ -188,9 +188,9 @@ class CLadder : public CThing
 		// Called by editor to get the hotspot of an object in 2D.
 		virtual	// Overridden here.
 		void EditHotSpot(			// Returns nothiing.
-			short*	psX,			// Out: X coord of 2D hotspot relative to
+			int16_t*	psX,			// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-			short*	psY);			// Out: Y coord of 2D hotspot relative to
+			int16_t*	psY);			// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 
 		// Called by editor to update object
@@ -233,13 +233,13 @@ class CLadder : public CThing
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		short GetResources(void);						// Returns 0, if successfull, non-zero otherwise
+		int16_t GetResources(void);						// Returns 0, if successfull, non-zero otherwise
 		
 		// Free all resources
-		short FreeResources(void);						// Returns 0, if successfull, non-zero otherwise
+		int16_t FreeResources(void);						// Returns 0, if successfull, non-zero otherwise
 
 		// Initialize object.
-		short Init(void);									// Returns 0, on success.
+		int16_t Init(void);									// Returns 0, on success.
 	};
 
 

@@ -26,7 +26,7 @@ main()
 		{
 		// Dump info:
 		TRACE("Line %ld has %hd tokens:\n",ftest.m_lCurrentLine,ftest.m_sNumTokens);
-		for (short i=0;i<ftest.m_sNumTokens;i++)
+		for (int16_t i=0;i<ftest.m_sNumTokens;i++)
 			{
 			TRACE("\tToken #%hd at char %hd = {%s}\n",i,
 				ftest.m_sLinePos[i],ftest.m_pszTokenList[i]);

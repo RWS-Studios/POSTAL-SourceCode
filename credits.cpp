@@ -151,15 +151,15 @@ class	CBackgroundChange
 public:
 	RImage*	m_pimPrevBackground;
 	RImage*	m_pimNewBackground;
-	short	m_sImageCacheIndex;
+	int16_t	m_sImageCacheIndex;
 	char	m_szNewName[64];			// resource name
 	bool	m_bActive;					
 	// All times in milliseconds...
-	long	m_lActivationTime;		// also delay time
-	long	m_lFadeOutTime;			//	also in delta time form
-	long	m_lBlackTime;				//	also in delta time form
-	long	m_lFadeInTime;				//	also in delta time form
-	UCHAR	m_TransitionPalette[1024];
+	int32_t	m_lActivationTime;		// also delay time
+	int32_t	m_lFadeOutTime;			//	also in delta time form
+	int32_t	m_lBlackTime;				//	also in delta time form
+	int32_t	m_lFadeInTime;				//	also in delta time form
+	uint8_t	m_TransitionPalette[1024];
 	typedef enum { Inactive,FadeOut,Black,FadeIn } BackState;
 	BackState	m_eState;
 	typedef enum { OnEnter,OnExit } ActivationType;
@@ -206,10 +206,10 @@ class	CTextPhrase
 	{
 public:
 
-	short	m_sColorIndex;
-	short	m_sFontSize;
-	short	m_sLocalX;
-	short m_sLocalY;
+	int16_t	m_sColorIndex;
+	int16_t	m_sFontSize;
+	int16_t	m_sLocalX;
+	int16_t m_sLocalY;
 	typedef	enum	{Left, Right, Center} Justify;
 	Justify	m_eJust;
 	char	m_szText[128];
@@ -233,11 +233,11 @@ public:
 class	CTextChunk
 	{
 public:
-	long	m_lNumPhrases;
+	int32_t	m_lNumPhrases;
 	CTextPhrase m_tHead; // bookends
 	CTextPhrase m_tTail;
-	short	m_sGlobalTopY;
-	short	m_sGlobalBottomY;
+	int16_t	m_sGlobalTopY;
+	int16_t	m_sGlobalBottomY;
 	RImage* m_pimCache;
 	CTextChunk*	m_pNext;
 	CTextChunk* m_pPrev;
@@ -290,7 +290,7 @@ public:
 		pGone->m_pNext = pGone->m_pPrev = NULL;
 		}
 	//------------------------------------
-	void	RenderChunk(short sW,RPrint* pPrint)
+	void	RenderChunk(int16_t sW,RPrint* pPrint)
 		{
 		if (m_pimCache)
 			{
@@ -315,7 +315,7 @@ public:
 			
 			if (pCur->m_sFontSize) pPrint->SetFont(pCur->m_sFontSize);
 
-			short sTabX = pCur->m_sLocalX;
+			int16_t sTabX = pCur->m_sLocalX;
 			if (sTabX < 0) sTabX += sW;	// from the right...
 
 			// each justification needed to select the RPrint cell to use:
@@ -324,7 +324,7 @@ public:
 			int wideScreenOffset = (wideScreenWidth - 640);
 			switch (pCur->m_eJust)
 				{	
-				short sRadius;
+				int16_t sRadius;
 
 				//--------------------------- Left Justify
 				case CTextPhrase::Left: 
@@ -342,7 +342,7 @@ public:
 				//--------------------------- Center Justify (about tab)
 				case CTextPhrase::Center: 
 					pPrint->SetJustifyCenter(); 
-					sRadius = MIN(sTabX,short(sW - sTabX));
+					sRadius = MIN(sTabX,int16_t(sW - sTabX));
 					pPrint->SetColumn(sTabX - sRadius + wideScreenOffset,0,
 						sRadius<<1, m_pimCache->m_sHeight);
 					// trick print into thinking it's a new line!
@@ -377,20 +377,20 @@ extern void SetAll();
 class CScrollMaster
 	{
 public:
-	long			m_lGlobalHeight;
-	long			m_lCurrentTopY;
-	long			m_lCurrentBottomY;
-	long			m_lTotalChunks;
+	int32_t			m_lGlobalHeight;
+	int32_t			m_lCurrentTopY;
+	int32_t			m_lCurrentBottomY;
+	int32_t			m_lTotalChunks;
 	CTextChunk*	m_pTopActiveChunk;
 	CTextChunk*	m_pBottomActiveChunk;
-	long			m_lActivationTime;
+	int32_t			m_lActivationTime;
 	RRect			m_rDisplay;
 	double		m_dScrollRate;	// screens/sec
 
 	CTextChunk	m_cHead;	// bookends:
 	CTextChunk	m_cTail;
 
-	short	m_sNumBackgrounds;
+	int16_t	m_sNumBackgrounds;
 	char	m_szBackgroundNames[MAX_BACKGROUNDS][64];
 	RImage*	m_pimBackgrounds[MAX_BACKGROUNDS];
 
@@ -423,7 +423,7 @@ public:
 			}
 
 		// release all of the backgrounds:
-		short i;
+		int16_t i;
 
 		for (i = 0; i < m_sNumBackgrounds;i++)
 			{
@@ -453,7 +453,7 @@ public:
 	void	Start(RPrint* pPrint)
 		{
 		// Try to load all the extra bmps from memory:
-		short i;
+		int16_t i;
 		for (i=0; i < m_sNumBackgrounds;i++)
 			{
 			if (rspGetResource(&g_resmgrShell,m_szBackgroundNames[i],&m_pimBackgrounds[i])
@@ -477,10 +477,10 @@ public:
 		}
 
 	// will return FAILURE if scroll is over!
-	short Update(RPrint* pPrint)
+	int16_t Update(RPrint* pPrint)
 		{
 		// calculate current global scroll location:
-		m_lCurrentBottomY = long(double(rspGetMilliseconds() - m_lActivationTime)
+		m_lCurrentBottomY = int32_t(double(rspGetMilliseconds() - m_lActivationTime)
 			* m_dScrollRate * m_rDisplay.sH / 1000.0);
 		m_lCurrentTopY = (m_lCurrentBottomY - m_rDisplay.sH);
 
@@ -538,7 +538,7 @@ public:
 		}
 	//-------------------------------------------------------------
 	// returns the index number for the resource bmp:
-	short	AddBackground(char* pszName)
+	int16_t	AddBackground(char* pszName)
 		{
 		ASSERT(pszName);
 		ASSERT(m_sNumBackgrounds < MAX_BACKGROUNDS);
@@ -550,7 +550,7 @@ public:
 		}
 	};
 
-extern short sLoaded;
+extern int16_t sLoaded;
 
 ////////////////////////////////////////////////////////////////////////////////
 // This is cheesy, but right now I'm using a global stream to load into.
@@ -575,9 +575,9 @@ public:
 		if (m_pStream) delete m_pStream;
 		};
 	//-----------------------
-	short	ParseTextInput(FILE* fp);
+	int16_t	ParseTextInput(FILE* fp);
 	//-----------------------
-	short	Load(RFile* pFile) // so res manager can hook it!
+	int16_t	Load(RFile* pFile) // so res manager can hook it!
 		{
 		FILE* fp = pFile->m_fs;
 		//--------------------- do my load:
@@ -587,7 +587,7 @@ public:
 		return SUCCESS;
 		}
 
-	short	Load(FILE* fp) // so res manager can hook it!
+	int16_t	Load(FILE* fp) // so res manager can hook it!
 		{
 		//--------------------- do my load:
 
@@ -610,7 +610,7 @@ public:
 //  It will not actually render it.
 //
 ////////////////////////////////////////////////////////////////////////////////
-short	CFileTextInput::ParseTextInput(FILE* fp)
+int16_t	CFileTextInput::ParseTextInput(FILE* fp)
 	{
 	if (m_pStream)
 		{
@@ -628,16 +628,16 @@ short	CFileTextInput::ParseTextInput(FILE* fp)
 	char* pszToken;
 	//gpCurStream = new CTextStream;
 
-	short sGlobalY = 0;
-	short sLocalY = 0;
-	short sCurStripTop = 0;
-	short	sMaxH = 0;
+	int16_t sGlobalY = 0;
+	int16_t sLocalY = 0;
+	int16_t sCurStripTop = 0;
+	int16_t	sMaxH = 0;
 	bool	bNewChunk = true;
  
-	short sCurFontSize = 0;
-	short	sCurTabX = 0;
+	int16_t sCurFontSize = 0;
+	int16_t	sCurTabX = 0;
 	CTextPhrase::Justify eCurJust = CTextPhrase::Left;
-	short sCurColor = 255;
+	int16_t sCurColor = 255;
 
 	CTextChunk*	pChunk = new CTextChunk;
 	CTextPhrase* pCurPhrase = new CTextPhrase;
@@ -663,7 +663,7 @@ short	CFileTextInput::ParseTextInput(FILE* fp)
 			{
 			pCurPhrase->m_sFontSize = 0;
 
-			short sNewSize = atoi(m_bf.NextToken());
+			int16_t sNewSize = atoi(m_bf.NextToken());
 
 			// If we are starting a new chunk, we MUST give a font
 			// size!
@@ -676,7 +676,7 @@ short	CFileTextInput::ParseTextInput(FILE* fp)
 			sCurFontSize = sNewSize;
 			bNewChunk = false;
 
-			sMaxH = MAX(sMaxH,short(sLocalY + sNewSize));
+			sMaxH = MAX(sMaxH,int16_t(sLocalY + sNewSize));
 
 			continue;
 			}
@@ -709,7 +709,7 @@ short	CFileTextInput::ParseTextInput(FILE* fp)
 		if (!strcmp(pszToken,";")) // means new line (& should benew phrase)
 			{
 			sLocalY += sCurFontSize;
-			sMaxH = MAX(sMaxH,short(sLocalY + sCurFontSize));
+			sMaxH = MAX(sMaxH,int16_t(sLocalY + sCurFontSize));
 
 			continue;
 			}
@@ -725,7 +725,7 @@ short	CFileTextInput::ParseTextInput(FILE* fp)
 			//TRACE("New chunk!\n");
 			bNewChunk = true;
 
-			sMaxH = MAX(sMaxH,short(sLocalY + sCurFontSize));
+			sMaxH = MAX(sMaxH,int16_t(sLocalY + sCurFontSize));
 
 			// Figure out how big chunk was:
 			sGlobalY += MAX(sMaxH,sLocalY);
@@ -737,7 +737,7 @@ short	CFileTextInput::ParseTextInput(FILE* fp)
 				}
 
 			// create a new chunk
-			short sVal = atoi(m_bf.NextToken());
+			int16_t sVal = atoi(m_bf.NextToken());
 			sGlobalY += sVal;
 			pChunk = new CTextChunk;
 			pChunk->m_sGlobalTopY = pChunk->m_sGlobalBottomY = sGlobalY;
@@ -752,8 +752,8 @@ short	CFileTextInput::ParseTextInput(FILE* fp)
 			// first, parse through it all, then validate the information:
 
 			// Good standards: (in milliseconds)
-			short sDelay = 0,sFadeInTime = 1000,sFadeOutTime = 1000;
-			short sBlackTime = 0, sOnExit = FALSE;
+			int16_t sDelay = 0,sFadeInTime = 1000,sFadeOutTime = 1000;
+			int16_t sBlackTime = 0, sOnExit = FALSE;
 			char	szName[64] = {0,};
 
 			// The order doesn't matter - go until ')'
@@ -861,10 +861,10 @@ short	CFileTextInput::ParseTextInput(FILE* fp)
 //	All resources are assumed from the shell sak.
 //
 ////////////////////////////////////////////////////////////////////////////////
-short	ScrollPage(char* pszBackground,char* pszScrollScript,double dScrollRate,RRect *prWindow)
+int16_t	ScrollPage(char* pszBackground,char* pszScrollScript,double dScrollRate,RRect *prWindow)
 	{
 	// Try to load resources:
-	short sResult;
+	int16_t sResult;
 
 	rspLockBuffer();
 	// clear background BEFORE doing a palette swap:
@@ -942,15 +942,15 @@ short	ScrollPage(char* pszBackground,char* pszScrollScript,double dScrollRate,RR
 	pScript->m_pStream->Start(&print);
 
 	// Wait until user input
-	long lKey = 0;
-	short sButtons = 0;
-	short sJoyPress = 0;
+	int32_t lKey = 0;
+	int16_t sButtons = 0;
+	int16_t sJoyPress = 0;
 
 //******************  STATISTICAL ANALYSIS!
 /*
 long lTimeCount[256] = {0,}; // bucket sort
 */
-long lRunningTime,lPrevTime;
+int32_t lRunningTime,lPrevTime;
 lRunningTime = lPrevTime = rspGetMilliseconds();
 
 	while ( (pScript->m_pStream->Update(&print) == SUCCESS) && !lKey && !sButtons && !(rspGetQuitStatus()) && !sJoyPress)
@@ -1042,11 +1042,11 @@ for (short i=0;i < 256;i++) fprintf(fp,"%hd = %ld\n",i,lTimeCount[i]);
 ////////////////////////////////////////////////////////////////////////////////
 
 // Returns 0 if successfull, non-zero otherwise
-short Credits(SampleMasterID* pMusic,
+int16_t Credits(SampleMasterID* pMusic,
 							char*	pszBackground,
 							char* pszCredits)					
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 #ifdef SHOW_EXIT_SCREEN
 	
@@ -1082,13 +1082,13 @@ short Credits(SampleMasterID* pMusic,
 	rspUpdateDisplay();
 
 	// Wait a while or until user input
-	long lKey = 0;
-	short sButtons = 0;
+	int32_t lKey = 0;
+	int16_t sButtons = 0;
 	do	{
 		UpdateSystem();
 
 		// Get key and mouse button inputs
-		short sButtons;
+		int16_t sButtons;
 		rspGetMouse(NULL, NULL, &sButtons);
 		rspGetKey(&lKey);
 
@@ -1170,21 +1170,21 @@ short Credits(SampleMasterID* pMusic,
 		true);
 
 
-	long	lTimeToFade = 15000;
-	long	lStartTime = rspGetMilliseconds();
+	int32_t	lTimeToFade = 15000;
+	int32_t	lStartTime = rspGetMilliseconds();
 
 	// Copy the palette:
-	UCHAR PaletteCopy[256 * 3] = {0,};
+	uint8_t PaletteCopy[256 * 3] = {0,};
 	
 	rspGetPaletteEntries(10,236,PaletteCopy+30,PaletteCopy + 31,PaletteCopy + 32,3);
 
 	//====================================================================
-	long lCurTime;
+	int32_t lCurTime;
 
 	while ( (lCurTime = rspGetMilliseconds() - lStartTime) < lTimeToFade)
 		{
 
-		short sByteLevel = short((255.0 * lCurTime) / lTimeToFade);
+		int16_t sByteLevel = int16_t((255.0 * lCurTime) / lTimeToFade);
 		if (sByteLevel > 255) sByteLevel = 255;
 
 		// Update the sound volumes:
@@ -1192,9 +1192,9 @@ short Credits(SampleMasterID* pMusic,
 		SetInstanceVolume(siLaughter,sByteLevel);
 
 		// Update the Palette:
-		short i=0;
+		int16_t i=0;
 
-		short sCurPal = 10 * 3;
+		int16_t sCurPal = 10 * 3;
 
 		for (i=10; i < 246; i++, sCurPal += 3)
 			{

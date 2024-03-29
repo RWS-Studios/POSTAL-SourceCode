@@ -67,7 +67,7 @@ extern char* g_pszNetProb_General;
 // Do network game dialog
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern short DoNetGameDialog(							// Returns 0 if successfull, non-zero otherwise.
+extern int16_t DoNetGameDialog(							// Returns 0 if successfull, non-zero otherwise.
 	CNetClient*	pclient,									// I/O: Client interface
 	bool bBrowse,											// In:  Whether to browse (true) or connect (false)
 	CNetServer*	pserver,									// I/O: Server interface or NULL if not server
@@ -109,7 +109,7 @@ extern void NetBlockingWatchdog(void);
 // essential).
 //
 //////////////////////////////////////////////////////////////////////////////
-extern short InitNetProbGUI(void);
+extern int16_t InitNetProbGUI(void);
 
 //////////////////////////////////////////////////////////////////////////////
 //

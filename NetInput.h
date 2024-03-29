@@ -181,7 +181,7 @@ class CNetInput
 		////////////////////////////////////////////////////////////////////////////////
 		void Reset(void)
 			{
-			short i = 0;
+			int16_t i = 0;
 			// Clear the entire window to "invalid" values
 			for (i = 0; i < Size; i++)
 				m_aInputs[i] = Invalid;

@@ -60,18 +60,18 @@ class CAlpha
 		
 		// BLiTs using loaded m_im (8 bpp only) as mask.
 		// 0 in mask indicates opaque.  Other values are punch through.
-		short Blit(				// Returns 0 on success.
+		int16_t Blit(				// Returns 0 on success.
 			RImage*	pimSrc,	// Source image.
 			RImage*	pimDst,	// Destination image.
-			short	sSrcX,		// Source coordinate in pimSrc to start blit.
-			short	sSrcY,		// Source coordinate in pimSrc to start blit.
-			short	sDstX,		// Destination coordinate in pimDst for pimSrc(0,0).
-			short	sDstY,		// Destination coordinate in pimDst for pimSrc(0,0).
+			int16_t	sSrcX,		// Source coordinate in pimSrc to start blit.
+			int16_t	sSrcY,		// Source coordinate in pimSrc to start blit.
+			int16_t	sDstX,		// Destination coordinate in pimDst for pimSrc(0,0).
+			int16_t	sDstY,		// Destination coordinate in pimDst for pimSrc(0,0).
 			RRect*	prc);		// Rectangle to clip Dst to.
 
 		// Loads the specified file into m_imMask using LoadDib() and calls
 		// Convert(FSPR1) to prepare the data.
-		short Load(					// Returns 0 on success.
+		int16_t Load(					// Returns 0 on success.
 			char*	pszFileName);	// Filename to load.
 
 	///////////////////////////////////////////////////////////////////////////
@@ -79,10 +79,10 @@ class CAlpha
 	///////////////////////////////////////////////////////////////////////////
 	public:
 		RImage	m_imMask;	// Mask for "alpha" blit.
-		short		m_sShadowX;	// X position from user sprite of shadow.
-		short		m_sShadowY;	// Y posiiton from user sprite of shadow.
-		short		m_sShadowW;	// Width of shadow.
-		short		m_sShadowH;	// Height of shadow.
+		int16_t		m_sShadowX;	// X position from user sprite of shadow.
+		int16_t		m_sShadowY;	// Y posiiton from user sprite of shadow.
+		int16_t		m_sShadowW;	// Width of shadow.
+		int16_t		m_sShadowH;	// Height of shadow.
 
 	///////////////////////////////////////////////////////////////////////////
 	// Static data.

@@ -77,7 +77,7 @@ RFontOld::~RFontOld()
 		{
 		FontNode* ftemp;
 		RImage* pimTemp;
-		short i;
+		int16_t i;
 		while (m_pFontList) 
 			{
 			// Free each CharNode:
@@ -173,7 +173,7 @@ void	RFontOld::AddLetter(RImage* pimLetter)
 //
 /*
 short RFontOld::Create(char *pszFontName,char *pszFullInputName,
-						 UCHAR ucInitialTrim,UCHAR ucBackCol,short sTrimTop,
+						 uint8_t ucInitialTrim,uint8_t ucBackCol,short sTrimTop,
 						short sMaxH)
 	{
 	// Create a temp FNT, and a base CImage:
@@ -209,7 +209,7 @@ short RFontOld::Create(char *pszFontName,char *pszFullInputName,
 			short(pimLetter->lHeight) );
 
 		// Add it in:
-		//rspSetConvertToFSPR1((ULONG)ucInitialTrim,(ULONG)ucBackCol,sTrimTop,sMaxH,(UCHAR)i);
+		//rspSetConvertToFSPR1((uint32_t)ucInitialTrim,(uint32_t)ucBackCol,sTrimTop,sMaxH,(uint8_t)i);
 		//short sX = 0,sY = 0,sW = pimLetter
 		// Need to use rsplasso with this...
 		// Will be writing a utility to do this...
@@ -229,7 +229,7 @@ short RFontOld::Create(char *pszFontName,char *pszFullInputName,
 */
 
 // Open my own CNFile
-short RFontOld::Save(char* pszFile)
+int16_t RFontOld::Save(char* pszFile)
 	{
 	RFile  File;
 
@@ -247,7 +247,7 @@ short RFontOld::Save(char* pszFile)
 
 // Give it an existing file
 //
-short	RFontOld::Save(RFile* /*pFile*/)
+int16_t	RFontOld::Save(RFile* /*pFile*/)
 	{
 	/*
 	//char	fname[255];
@@ -302,9 +302,9 @@ short	RFontOld::Save(RFile* /*pFile*/)
 
 				// Save the current letter!
 			
-				UCHAR	ucCheckSum;
-				UCHAR*	pCode = pInfo->m_pCode;
-				ucCheckSum = (UCHAR)0; 
+				uint8_t	ucCheckSum;
+				uint8_t*	pCode = pInfo->m_pCode;
+				ucCheckSum = (uint8_t)0; 
 				for (long i=0;i < (long)pInfo->m_lSize;i++,pCode++)
 					ucCheckSum ^= *pCode;
 
@@ -327,7 +327,7 @@ short	RFontOld::Save(RFile* /*pFile*/)
 	}
 
 // Backwards?
-short	RFontOld::Load(char*	pszPath,char*	pszName)
+int16_t	RFontOld::Load(char*	pszPath,char*	pszName)
 	{
 	char	fname[255];
 
@@ -342,13 +342,13 @@ short	RFontOld::Load(char*	pszPath,char*	pszName)
 
 // Must supply correctly formatted path AND etension.
 //
-short	RFontOld::Load(char*	pszName)
+int16_t	RFontOld::Load(char*	pszName)
 	{
 	char	pszCompare[255];
 	char	c;
-	short	sDone = FALSE;
-	short	i,s1;//,s2,s3,s4;
-	long l1;
+	int16_t	sDone = FALSE;
+	int16_t	i,s1;//,s2,s3,s4;
+	int32_t l1;
 	
 	TRACE("Loading font %s\n",pszName);
 	RFile cf;
@@ -375,10 +375,10 @@ short	RFontOld::Load(char*	pszName)
 	// get max cell height:
 	fscanf(fp,"%hd\n",&s1); //m_sMaxCellHeight should be logical
 	RImage*	pimLetter = NULL;
-	long	lCodeLen;
-	UCHAR	ucCheckSum;
-	long	ucCheck;
-	UCHAR*	pCode;
+	int32_t	lCodeLen;
+	uint8_t	ucCheckSum;
+	int32_t	ucCheck;
+	uint8_t*	pCode;
 	RSpecialFSPR1* pInfo = NULL;
 
 	// Note: 'K' will denote a kerning table which should
@@ -399,7 +399,7 @@ short	RFontOld::Load(char*	pszName)
 				pimLetter = new RImage;
 				pimLetter->CreateImage(0,0,RImage::FSPR1);
 				pInfo = new RSpecialFSPR1;
-				pimLetter->m_pSpecialMem = pimLetter->m_pSpecial = (UCHAR*) pInfo;
+				pimLetter->m_pSpecialMem = pimLetter->m_pSpecial = (uint8_t*) pInfo;
 
 				fscanf(fp,"%hd\n",&pInfo->m_u16ASCII);
 				//TRACE("Adding letter:{%c}\n",(char)pInfo->usASCII);
@@ -415,39 +415,39 @@ short	RFontOld::Load(char*	pszName)
 				fscanf(fp,"%hd\n",&pimLetter->sOffsetH);
 				*/
 				// but leave space:
-				short sDummy;
+				int16_t sDummy;
 				fscanf(fp,"%hd\n",&sDummy);
 				fscanf(fp,"%hd\n",&sDummy);
 				fscanf(fp,"%hd\n",&sDummy);
 				fscanf(fp,"%hd\n",&sDummy);
 				fscanf(fp,"%hd\n",&sDummy);
 
-				ucCheck = (UCHAR)0;
+				ucCheck = (uint8_t)0;
 				fscanf(fp,"%02x\n",&l1);
-				ucCheckSum = (UCHAR) l1;
+				ucCheckSum = (uint8_t) l1;
 				fscanf(fp,"%ld\n",&lCodeLen);
 
 				pInfo->m_lSize = lCodeLen;
-				pCode = pInfo->m_pCode = (UCHAR*)calloc(1,lCodeLen+2);// for debugging
+				pCode = pInfo->m_pCode = (uint8_t*)calloc(1,lCodeLen+2);// for debugging
 
 				for (i=0;i<lCodeLen;i++,pCode++)
 					{
 					//fscanf(fp,"%c",pCode);
-					*pCode = (UCHAR)fgetc(fp);
+					*pCode = (uint8_t)fgetc(fp);
 					ucCheck ^= (*pCode);
 					}
 				// AN extension to FSPR1 uses FFFF as end of line:
-				*pCode++ = UCHAR(0xff);
-				*pCode++ = UCHAR(0xff);
+				*pCode++ = uint8_t(0xff);
+				*pCode++ = uint8_t(0xff);
 
 				if (ucCheck != ucCheckSum)
 					{
 					TRACE("ERROR: character %02x, parity error\n"
 							"%02x vs %02x\n",
-							(unsigned long)pInfo->m_u16ASCII,
-							(unsigned long)ucCheckSum,(unsigned short)ucCheck);
+							(uint32_t)pInfo->m_u16ASCII,
+							(uint32_t)ucCheckSum,(uint16_t)ucCheck);
 					fscanf(fp,"%c",&c);	// remove trailing newline...
-					TRACE("Next character is %02x\n",(unsigned long) c);
+					TRACE("Next character is %02x\n",(uint32_t) c);
 					sDone = TRUE;
 					break;
 					}
@@ -469,8 +469,8 @@ short	RFontOld::Load(char*	pszName)
 RPrint::RPrint()
 	{
 	m_pBuf = m_buffer;
-	m_clrBKD = (UCHAR)0;
-	m_clrFGD = (UCHAR)255;
+	m_clrBKD = (uint8_t)0;
+	m_clrFGD = (uint8_t)255;
 	m_fnCurrent = NULL;
 	m_pFontSize = NULL;
 	m_pCurFracX = m_pCurFracY = NULL;
@@ -486,7 +486,7 @@ RPrint::RPrint()
 	m_sTabW = m_sBold = m_sItalic = m_sSpace = 0;
 	m_fTabW = m_fItalic = m_fBold = (float)0;
 	m_fWide = (float)1.0;
-	for (short i=0;i<cgsMAX_FONT_SIZE;i++) m_psItalic[i] = 0;
+	for (int16_t i=0;i<cgsMAX_FONT_SIZE;i++) m_psItalic[i] = 0;
 	}
 
 RPrint::~RPrint()
@@ -526,7 +526,7 @@ void	RPrint::Clear()
 	m_pCurBuf = m_pBuf = m_buffer;
 	}
 
-void	RPrint::SetColumn(short sX,short sY,short sW,short sH,RImage* pimDst)
+void	RPrint::SetColumn(int16_t sX,int16_t sY,int16_t sW,int16_t sH,RImage* pimDst)
 	{
 	m_sL = sX;
 	m_sT = sY;
@@ -545,7 +545,7 @@ void	RPrint::SetColumn(short sX,short sY,short sW,short sH,RImage* pimDst)
 		}
 	}
 
-void	RPrint::SetFont(RFontOld* pFnt,short	sHeight)
+void	RPrint::SetFont(RFontOld* pFnt,int16_t	sHeight)
 	{
 	// choose a font to draw with!
 	if (pFnt == NULL)
@@ -611,7 +611,7 @@ void	RPrint::SetFont(RFontOld* pFnt,short	sHeight)
 //=========  Let's Print!!!   ===============
 //===========================================
 
-short RPrint::LineFeed()
+int16_t RPrint::LineFeed()
 	{
 	m_sCurX = m_sL;
 	m_sCurY += m_sCellH;
@@ -629,7 +629,7 @@ short RPrint::LineFeed()
 	return 0;
 	}
 
-void	RPrint::print(short sX,short sY,RImage* pimTarget)
+void	RPrint::print(int16_t sX,int16_t sY,RImage* pimTarget)
 	{
 	m_sCurX = sX;
 	m_sCurY = sY;
@@ -642,9 +642,9 @@ void	RPrint::print(short sX,short sY,RImage* pimTarget)
 	print();
 	}
 
-void	RPrint::printC(short sX,short sY,short sW,RImage* pimTarget)
+void	RPrint::printC(int16_t sX,int16_t sY,int16_t sW,RImage* pimTarget)
 	{
-	short sCenterOffset = 0;
+	int16_t sCenterOffset = 0;
 	if (pimTarget == NULL) return;
 
 	sCenterOffset = (sW - GetWidth())>>1;
@@ -655,13 +655,13 @@ void	RPrint::printC(short sX,short sY,short sW,RImage* pimTarget)
 
 //============================================================================
 
-void RPrint::SetColor(short sLetter,short sBkd)
+void RPrint::SetColor(int16_t sLetter,int16_t sBkd)
 	{
-	m_clrBKD = (UCHAR) sBkd;
-	m_clrFGD = (UCHAR) sLetter;
+	m_clrBKD = (uint8_t) sBkd;
+	m_clrFGD = (uint8_t) sLetter;
 	}
 
-void	RPrint::SetTab(short sPixNum)
+void	RPrint::SetTab(int16_t sPixNum)
 	{
 	m_sTabW = sPixNum;
 	m_fTabW = (float)sPixNum / (float)m_sCellH;
@@ -670,7 +670,7 @@ void	RPrint::SetTab(short sPixNum)
 void	RPrint::SetTab(float fTab) // in height units
 	{
 	m_fTabW = fTab;
-	m_sTabW = (short)(fTab * (float)m_sCellH);
+	m_sTabW = (int16_t)(fTab * (float)m_sCellH);
 	}
 
 void	RPrint::SetStretch(float fWide) // 1.0 = normal
@@ -682,10 +682,10 @@ void	RPrint::SetStretch(float fWide) // 1.0 = normal
 void	RPrint::SetSpace(float fSpace)
 	{
 	m_fSpace = fSpace;
-	m_sSpace = (short)(fSpace * m_sCellH);
+	m_sSpace = (int16_t)(fSpace * m_sCellH);
 	}
 
-void	RPrint::SetSpace(short sSpace) // in pixels
+void	RPrint::SetSpace(int16_t sSpace) // in pixels
 	{
 	m_sSpace = sSpace;
 	m_fSpace = (float)sSpace / (float)m_sCellH;
@@ -694,13 +694,13 @@ void	RPrint::SetSpace(short sSpace) // in pixels
 void	RPrint::SetItalic(float fItalic)
 	{
 	m_fItalic = fItalic;
-	m_sItalic = (short)(fItalic * m_sCellH);
+	m_sItalic = (int16_t)(fItalic * m_sCellH);
 	SetItalic(m_sItalic); // do the logic down there!
 	}
 
-void	RPrint::SetItalic(short sItalic) // in pixels
+void	RPrint::SetItalic(int16_t sItalic) // in pixels
 	{
-	short i;
+	int16_t i;
 	/*
 	static sLastItalic = -9999;
 
@@ -727,7 +727,7 @@ void	RPrint::SetItalic(short sItalic) // in pixels
 
 	// populate the offset array based on current font height!
 	u16Frac	fr16CurOff = {0};
-	short sAbsOff = ABS(sItalic);
+	int16_t sAbsOff = ABS(sItalic);
 	u16Frac	fr16Inc = {0};
 	MakeProper(fr16Inc,sAbsOff,m_sCellH);
 	fr16CurOff.frac = (m_sCellH>>1); // for a clean look go by center points.
@@ -746,9 +746,9 @@ void	RPrint::SetItalic(short sItalic) // in pixels
 	}
 
 // Does NOT include extra kerning width!
-void	RPrint::GetCell(RImage* pimLetter,short* psH,
-							 short* psCellW, // all effects INCLUDING addspace
-							 short* psStretchW // ONLY stretch effect included
+void	RPrint::GetCell(RImage* pimLetter,int16_t* psH,
+							 int16_t* psCellW, // all effects INCLUDING addspace
+							 int16_t* psStretchW // ONLY stretch effect included
 							 )
 	{
 	if (pimLetter == NULL)
@@ -760,16 +760,16 @@ void	RPrint::GetCell(RImage* pimLetter,short* psH,
 		return;
 		}
 
-	short w,h;
+	int16_t w,h;
 	h = pimLetter->m_sHeight;
 	w = pimLetter->m_sWidth;
 
 	// scale proportionally from pim description to current height:
-	w = (short) ((long)m_sCellH * (long)w / h);
+	w = (int16_t) ((int32_t)m_sCellH * (int32_t)w / h);
 	h = m_sCellH;
 	if (psH) *psH = h;
 
-	if (m_sATTRIB & TXT_WIDE) w = (short) (m_fWide * w);
+	if (m_sATTRIB & TXT_WIDE) w = (int16_t) (m_fWide * w);
 	if (psStretchW) *psStretchW = w;
 
 	if (m_sATTRIB & TXT_BOLD) w += m_sBold;
@@ -783,10 +783,10 @@ void	RPrint::GetCell(RImage* pimLetter,short* psH,
 
 // handle special characters, etc....
 // deals with printable characters only:
-short	RPrint::GetChar()
+int16_t	RPrint::GetChar()
 	{
 	if (m_pCurBuf == m_pBuf) return 0;
-	short sChar;
+	int16_t sChar;
 
 	do	sChar = *(m_pCurBuf++);
 	while ( (m_pFontSize->pLetters[sChar] == NULL) && // remove non-printables
@@ -800,13 +800,13 @@ short	RPrint::GetChar()
 // Goes from current character on...
 // Goes from current position right
 //
-void	RPrint::PrintLine(short sNumChar,short /*sJustDelta*/,
-		short /*sJustFraction*/,short /*sDen*/)
+void	RPrint::PrintLine(int16_t sNumChar,int16_t /*sJustDelta*/,
+		int16_t /*sJustFraction*/,int16_t /*sDen*/)
 	{
-	short sX = m_sCurX,sFracX = 0;
-	short	sChar = 0;
+	int16_t sX = m_sCurX,sFracX = 0;
+	int16_t	sChar = 0;
 	RImage* pimCur;
-	short sCellW,sStretchW,sH;
+	int16_t sCellW,sStretchW,sH;
 	RRect	rCol;
 
 	rCol.sX = m_sL;
@@ -814,7 +814,7 @@ void	RPrint::PrintLine(short sNumChar,short /*sJustDelta*/,
 	rCol.sW = m_sW;
 	rCol.sH = m_sH;
 	
-	for (short i=0;i<sNumChar;i++)
+	for (int16_t i=0;i<sNumChar;i++)
 		{
 		sChar = GetChar();
 		pimCur = m_pFontSize->pLetters[sChar];
@@ -827,15 +827,15 @@ void	RPrint::PrintLine(short sNumChar,short /*sJustDelta*/,
 		sW = pimCur->Draw(-1,m_sCellH,m_pimTarget,m_sCurX,m_sCurY,
 			m_clrBKD,m_clrFGD,-1,m_pCurFracX,m_pCurFracY);
 		*/
-	//	_rspBlit((ULONG)m_clrFGD,(ULONG)m_clrBKD,pimCur,m_pimTarget,
+	//	_rspBlit((uint32_t)m_clrFGD,(uint32_t)m_clrBKD,pimCur,m_pimTarget,
 	//		m_sCurX,m_sCurY,sW,sH,0,m_pCurFracY);//,m_pCurFracY,m_pCurFracX);
 		
 		/* old...
-		rspBlit((ULONG)m_clrFGD,(ULONG)m_clrBKD,pimCur,m_pimTarget,
+		rspBlit((uint32_t)m_clrFGD,(uint32_t)m_clrBKD,pimCur,m_pimTarget,
 			m_sCurX,m_sCurY,sStretchW,sH,&rCol,0,m_psItalic);
 		*/
 		// New...can't clip...
-		rspBlit((ULONG)m_clrFGD,pimCur,m_pimTarget,
+		rspBlit((uint32_t)m_clrFGD,pimCur,m_pimTarget,
 			m_sCurX,m_sCurY,sStretchW,sH,m_psItalic);
 
 		sX += sCellW;
@@ -855,8 +855,8 @@ void	RPrint::PrintLine(short sNumChar,short /*sJustDelta*/,
 RPrint& RPrint::print()
 	{
 	*m_pBuf = '\0';
-	short	sChar = 0;
-	short	sCellW = 0,sStretchW = 0;
+	int16_t	sChar = 0;
+	int16_t	sCellW = 0,sStretchW = 0;
 
 	if (m_pimTarget == NULL) 
 		{
@@ -891,10 +891,10 @@ RPrint& RPrint::print()
 	while (*m_pCurBuf)
 		{
 		// print each char;
-		sChar = (short)((UCHAR) *(m_pCurBuf++)); // Must force it positive!
+		sChar = (int16_t)((uint8_t) *(m_pCurBuf++)); // Must force it positive!
 
 		// look for special characters:
-		switch ( (UCHAR) sChar)
+		switch ( (uint8_t) sChar)
 			{
 			case '\n': // do newline + cr
 				if (LineFeed()) return *this;
@@ -916,7 +916,7 @@ RPrint& RPrint::print()
 
 		// Draw the letter!
 		// Scan ahead for line wrap:
-		short sH;
+		int16_t sH;
 
 
 		RImage* pimCur = m_pFontSize->pLetters[sChar];
@@ -935,16 +935,16 @@ RPrint& RPrint::print()
 		sCellW = pimCur->Draw(-1,m_sCellH,m_pimTarget,m_sCurX,m_sCurY,
 			m_clrBKD,m_clrFGD,-1,m_pCurFracX,m_pCurFracY);
 			*/
-		//_rspBlit((ULONG)m_clrFGD,(ULONG)m_clrBKD,pimCur,m_pimTarget,
+		//_rspBlit((uint32_t)m_clrFGD,(uint32_t)m_clrBKD,pimCur,m_pimTarget,
 		//	m_sCurX,m_sCurY,sW,sH,0,m_pCurFracY);//,m_pCurFracY,m_pCurFracX);
 		// Pull out interspacing:
 
 		/* Old style...
-		rspBlit((ULONG)m_clrFGD,(ULONG)m_clrBKD,pimCur,m_pimTarget,
+		rspBlit((uint32_t)m_clrFGD,(uint32_t)m_clrBKD,pimCur,m_pimTarget,
 			m_sCurX,m_sCurY,sStretchW,sH,&rCol,m_sSpace,m_psItalic);//,m_pCurFracY,m_pCurFracX);
 		*/
 		// New style (can't clip...
-		rspBlit((ULONG)m_clrFGD,pimCur,m_pimTarget,
+		rspBlit((uint32_t)m_clrFGD,pimCur,m_pimTarget,
 			m_sCurX,m_sCurY,sStretchW,sH,m_psItalic);
 
 		m_sCurX += sCellW - ABS(m_sItalic);
@@ -977,14 +977,14 @@ RPrint&	RPrint::operator<<(char* psz)
 	}
 
 
-RPrint& RPrint::operator|(short	in)
+RPrint& RPrint::operator|(int16_t	in)
 	{
 	sprintf(m_temp,"%hd",in);
 	return (*this) | m_temp;
 	};
 
 
-RPrint& RPrint::operator|(long	in)
+RPrint& RPrint::operator|(int32_t	in)
 	{
 	sprintf(m_temp,"%ld",in);
 	return (*this) | m_temp;
@@ -1011,7 +1011,7 @@ RPrint& RPrint::operator|(char	in)
 // Makes it easy for the app to ge the current characteristics:
 // This INCLUDES extra space padding?
 //
-void	RPrint::GetCell(short sASCII,short &w,short &h)
+void	RPrint::GetCell(int16_t sASCII,int16_t &w,int16_t &h)
 	{
 	RImage* pimLetter = m_pFontSize->pLetters[sASCII];
 	GetCell(pimLetter,&h,&w);
@@ -1019,15 +1019,15 @@ void	RPrint::GetCell(short sASCII,short &w,short &h)
 
 // current buffer, current settings...
 //
-short	RPrint::GetWidth()
+int16_t	RPrint::GetWidth()
 	{
 	char* pcPos = m_buffer;
-	short sW = 0;
-	short sTotW = 0;
+	int16_t sW = 0;
+	int16_t sTotW = 0;
 
 	while (*pcPos)
 		{
-		GetCell(m_pFontSize->pLetters[(UCHAR)(*(pcPos++))],NULL,&sW);
+		GetCell(m_pFontSize->pLetters[(uint8_t)(*(pcPos++))],NULL,&sW);
 		sTotW += sW;
 		}
 

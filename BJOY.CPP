@@ -50,12 +50,12 @@
 // Module specific (static) variables.
 //////////////////////////////////////////////////////////////////////////////
 static JOYCAPS		ms_ajoycaps[NUM_JOYSTICKS];	// Capabilities of each joy.
-static USHORT		ms_ausXmids[NUM_JOYSTICKS];	// Middle positions for x.
-static USHORT		ms_ausYmids[NUM_JOYSTICKS];	// Middle positions for y.
-static USHORT		ms_ausZmids[NUM_JOYSTICKS];	// Middle positions for z.
-static USHORT		ms_ausXThresh[NUM_JOYSTICKS];	// Center thresholds for x.
-static USHORT		ms_ausYThresh[NUM_JOYSTICKS];	// Center thresholds for y.
-static USHORT		ms_ausZThresh[NUM_JOYSTICKS];	// Center thresholds for z.
+static uint16_t		ms_ausXmids[NUM_JOYSTICKS];	// Middle positions for x.
+static uint16_t		ms_ausYmids[NUM_JOYSTICKS];	// Middle positions for y.
+static uint16_t		ms_ausZmids[NUM_JOYSTICKS];	// Middle positions for z.
+static uint16_t		ms_ausXThresh[NUM_JOYSTICKS];	// Center thresholds for x.
+static uint16_t		ms_ausYThresh[NUM_JOYSTICKS];	// Center thresholds for y.
+static uint16_t		ms_ausZThresh[NUM_JOYSTICKS];	// Center thresholds for z.
 
 static JOYINFO		ms_ajiCurr[NUM_JOYSTICKS];		// Current joystick info.
 static JOYINFO		ms_ajiPrev[NUM_JOYSTICKS];		// Previous joystick info.
@@ -79,7 +79,7 @@ extern void Joy_Init(void)
 	{
 	short sNum = (short)joyGetNumDevs();
 
-	USHORT	usRangeX, usRangeY, usRangeZ;
+	uint16_t	usRangeX, usRangeY, usRangeZ;
 
 	for (short i = 0; i < sNum && i < NUM_JOYSTICKS; i++)
 		{
@@ -175,12 +175,12 @@ extern short Blu_UpdateJoy(short sJoy)
 			ms_ajsCurr[sJoy].button2	= (((jiTemp.wButtons & JOY_BUTTON2) != 0) ? 1 : 0);
 			ms_ajsCurr[sJoy].button3	= (((jiTemp.wButtons & JOY_BUTTON3) != 0) ? 1 : 0);
 			ms_ajsCurr[sJoy].button4	= (((jiTemp.wButtons & JOY_BUTTON4) != 0) ? 1 : 0);
-			ms_ajsCurr[sJoy].left		= (jiTemp.wXpos < (USHORT)(ms_ausXmids[sJoy] - ms_ausXThresh[sJoy]));
-			ms_ajsCurr[sJoy].right		= (jiTemp.wXpos > (USHORT)(ms_ausXmids[sJoy] + ms_ausXThresh[sJoy]));
-			ms_ajsCurr[sJoy].up			= (jiTemp.wYpos < (USHORT)(ms_ausYmids[sJoy] - ms_ausYThresh[sJoy]));
-			ms_ajsCurr[sJoy].down		= (jiTemp.wYpos > (USHORT)(ms_ausYmids[sJoy] + ms_ausYThresh[sJoy]));
-			ms_ajsCurr[sJoy].toward		= (jiTemp.wZpos < (USHORT)(ms_ausZmids[sJoy] - ms_ausZThresh[sJoy]));
-			ms_ajsCurr[sJoy].away		= (jiTemp.wZpos > (USHORT)(ms_ausZmids[sJoy] + ms_ausZThresh[sJoy]));
+			ms_ajsCurr[sJoy].left		= (jiTemp.wXpos < (uint16_t)(ms_ausXmids[sJoy] - ms_ausXThresh[sJoy]));
+			ms_ajsCurr[sJoy].right		= (jiTemp.wXpos > (uint16_t)(ms_ausXmids[sJoy] + ms_ausXThresh[sJoy]));
+			ms_ajsCurr[sJoy].up			= (jiTemp.wYpos < (uint16_t)(ms_ausYmids[sJoy] - ms_ausYThresh[sJoy]));
+			ms_ajsCurr[sJoy].down		= (jiTemp.wYpos > (uint16_t)(ms_ausYmids[sJoy] + ms_ausYThresh[sJoy]));
+			ms_ajsCurr[sJoy].toward		= (jiTemp.wZpos < (uint16_t)(ms_ausZmids[sJoy] - ms_ausZThresh[sJoy]));
+			ms_ajsCurr[sJoy].away		= (jiTemp.wZpos > (uint16_t)(ms_ausZmids[sJoy] + ms_ausZThresh[sJoy]));
 			break;
 		}
 
@@ -224,7 +224,7 @@ extern void Blu_GetJoyPrevPos(short sJoy, long *px, long *py, long *pz)
 // Returns the current joystick sJoy's state.
 //
 //////////////////////////////////////////////////////////////////////////////
-extern USHORT Blu_GetJoyState(short sJoy)
+extern uint16_t Blu_GetJoyState(short sJoy)
 	{
 	ASSERT(sJoy == 0 || sJoy == 1);
 
@@ -236,7 +236,7 @@ extern USHORT Blu_GetJoyState(short sJoy)
 // Returns the previous joystick sJoy's state.
 //
 //////////////////////////////////////////////////////////////////////////////
-extern USHORT Blu_GetJoyPrevState(short sJoy)
+extern uint16_t Blu_GetJoyPrevState(short sJoy)
 	{
 	ASSERT(sJoy == 0 || sJoy == 1);
 

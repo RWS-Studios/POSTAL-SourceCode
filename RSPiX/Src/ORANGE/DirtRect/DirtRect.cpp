@@ -132,10 +132,10 @@ RDirtyRects::RDirtyRects()
 	}
 
 RDirtyRects::RDirtyRects(	
-				short sMinDistX,				// Copied into m_sMinDistanceX.
-				short sMinDistY,				// Copied into m_sMinDistanceY.
-				short sClipX	/*= -1*/,	// Copied into m_sClipX.
-				short	sClipY	/*= -1*/)	// Copied into m_sClipY.
+				int16_t sMinDistX,				// Copied into m_sMinDistanceX.
+				int16_t sMinDistY,				// Copied into m_sMinDistanceY.
+				int16_t sClipX	/*= -1*/,	// Copied into m_sClipX.
+				int16_t	sClipY	/*= -1*/)	// Copied into m_sClipY.
 	{
 	m_sMinDistanceX	= sMinDistX;
 	m_sMinDistanceY	= sMinDistY;
@@ -165,11 +165,11 @@ RDirtyRects::~RDirtyRects()
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short RDirtyRects::Add(RDRect* pdr)
+int16_t RDirtyRects::Add(RDRect* pdr)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
-	short		sClippedOut	= FALSE;
+	int16_t		sClippedOut	= FALSE;
 	RDRect	drTemp		= *pdr;	
 	
 	if (m_sClipX >= 0)
@@ -242,7 +242,7 @@ short RDirtyRects::Add(RDRect* pdr)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short RDirtyRects::Add(short sX, short sY, short sW, short sH)
+int16_t RDirtyRects::Add(int16_t sX, int16_t sY, int16_t sW, int16_t sH)
 	{
 	RDRect	dr	= { sX, sY, sW, sH };
 		
@@ -273,9 +273,9 @@ void RDirtyRects::Empty(void)
 // Returns 0 if combined.
 //
 //////////////////////////////////////////////////////////////////////////////
-short RDirtyRects::Combine(RDRect* pdr)
+int16_t RDirtyRects::Combine(RDRect* pdr)
 	{
-	short	sRes	= 1;	// Assume not combined.
+	int16_t	sRes	= 1;	// Assume not combined.
 
 	// If combinable . . .
 	if (m_sMinDistanceX >= 0)
@@ -337,11 +337,11 @@ short RDirtyRects::Combine(RDRect* pdr)
 //////////////////////////////////////////////////////////////////////////////
 void RDirtyRects::Expand(RDRect* pdrExpand, RDRect* pdrNew)
 	{
-	short	sExpandRight	= pdrExpand->sX + pdrExpand->sW;
-	short	sExpandBottom	= pdrExpand->sY + pdrExpand->sH;
+	int16_t	sExpandRight	= pdrExpand->sX + pdrExpand->sW;
+	int16_t	sExpandBottom	= pdrExpand->sY + pdrExpand->sH;
 
-	short sNewRight		= pdrNew->sX + pdrNew->sW;
-	short	sNewBottom		= pdrNew->sY + pdrNew->sH;
+	int16_t sNewRight		= pdrNew->sX + pdrNew->sW;
+	int16_t	sNewBottom		= pdrNew->sY + pdrNew->sH;
 
 	if (pdrNew->sX < pdrExpand->sX)
 		{
@@ -373,9 +373,9 @@ void RDirtyRects::Expand(RDRect* pdrExpand, RDRect* pdrNew)
 // Returns non-zero if clipped out.
 //
 //////////////////////////////////////////////////////////////////////////////
-short RDirtyRects::Clip(short* psPos, short* psDistance, short sClipDistance)
+int16_t RDirtyRects::Clip(int16_t* psPos, int16_t* psDistance, int16_t sClipDistance)
 	{
-	short	sRes	= 0;	// Assume not clipped out.
+	int16_t	sRes	= 0;	// Assume not clipped out.
 
 	if (*psPos > sClipDistance)
 		{
@@ -397,7 +397,7 @@ short RDirtyRects::Clip(short* psPos, short* psDistance, short sClipDistance)
 			}
 
 		// Get amount clipped out.
-		short	sClippedEnd	= (*psPos + *psDistance) - sClipDistance;
+		int16_t	sClippedEnd	= (*psPos + *psDistance) - sClipDistance;
 
 		// If anything clipped out . . .
 		if (sClippedEnd > 0)

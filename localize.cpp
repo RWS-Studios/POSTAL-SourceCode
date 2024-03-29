@@ -548,7 +548,9 @@ extern char g_pszPlayOneRealmOnlyMessage[]	=
 	extern char g_pszOptionsMenu_Performance[]				= "PERFORMANCE";
 	extern char g_pszOptionsMenu_Difficulty[]					= "DIFFICULTY";
 	extern char g_pszOptionsMenu_Crosshair[]					= "CROSSHAIR";
-
+#ifdef KID_FRIENDLY_OPTION
+	extern char g_pszOptionsMenu_KidMode[]						= "KID MODE";
+#endif
 	extern char g_pszDifficultyMenu_Title[]					= "DIFFICULTY";
 	extern char g_pszDifficultyMenu_SetDifficulty[]			= "SET";
 
@@ -562,6 +564,10 @@ extern char g_pszPlayOneRealmOnlyMessage[]	=
 	extern char g_pszAudioMenu_Title[]							= "AUDIO";
 	extern char g_pszAudioMenu_Mixer[]							= "MIXER";
 	extern char g_pszAudioMenu_SoundTest[]						= "SOUND TEST";
+	extern char g_pszAudioMenu_Language[]						= "LANGUAGE";
+	extern char g_pszAudioMenu_PainFrequency[]					= "PAIN FREQ.";
+	extern char g_pszAudioMenu_English[]						= "English";
+	extern char g_pszAudioMenu_Japanese[]						= "Japanese";
 
 	extern char g_pszVideoMenu_Title[]							= "VIDEO";
 	extern char g_pszVideoMenu_Gamma[]							= "GAMMA";
@@ -572,6 +578,7 @@ extern char g_pszPlayOneRealmOnlyMessage[]	=
 	extern char g_pszControlsMenu_JoystickSetup[]			= "X CONTROLLER SETUP";
 	extern char g_pszControlsMenu_TurningSpeeds[]			= "TURNING SPEEDS";
 	extern char g_pszControlsMenu_UseMouse[]					= "USE MOUSE";
+	extern char g_pszControlsMenu_ClassicMouse[]			= "CLASSIC MOUSE";	
 	extern char g_pszControlsMenu_HorizMouseSensitivity[]	= "HORIZ MOUSE SENS.";
 	extern char g_pszControlsMenu_VertMouseSensitivity[]	= "VERT MOUSE SENS.";
 
@@ -613,8 +620,11 @@ extern char g_pszPlayOneRealmOnlyMessage[]	=
 		extern char g_pszStartSinglePlayerMenu_New[]			= "NEW GAME (ALL LEVELS)";
 		extern char g_pszStartSinglePlayerMenu_AddOn[]		= "SPECIAL DELIVERY LEVELS";
 	#elif TARGET == POSTAL_2015
-		extern char g_pszStartSinglePlayerMenu_New[]		= "NEW GAME";
+		extern char g_pszStartSinglePlayerMenu_NewCampaign[]	= "NEW CAMPAIGN";
+		extern char g_pszStartSinglePlayerMenu_New[]		= "POSTAL";
 		extern char g_pszStartSinglePlayerMenu_AddOn[]		= "SPECIAL DELIVERY";
+		extern char g_pszStartSinglePlayerMenu_AddOn2[]		= "SUPER POSTAL";
+		extern char g_pszStartSinglePlayerMenu_AllLevels[]	= "EXCESS POSTAGE (ALL LEVELS)";
 	#else
 		#error Strings must be customized for current TARGET
 	#endif
@@ -627,7 +637,7 @@ extern char g_pszPlayOneRealmOnlyMessage[]	=
 		#error Strings must be customized for current TARGET
 	#endif
 #endif
-	extern char g_pszStartSinglePlayerMenu_LoadLevel[]		= "LOAD LEVEL";
+	extern char g_pszStartSinglePlayerMenu_LoadLevel[]		= "LEVEL SELECT";
 	extern char g_pszStartSinglePlayerMenu_LoadGame[]		= "LOAD GAME";
 	extern char g_pszStartSinglePlayerMenu_Challenge[]		= "GAUNTLET CHALLENGE";
 
@@ -655,10 +665,13 @@ extern char g_pszPlayOneRealmOnlyMessage[]	=
 	extern char g_pszStartDemoMenu_Browse[]					= "BROWSE";
 	extern char g_pszStartDemoMenu_Play[]						= "PLAY";
 	extern char g_pszStartDemoMenu_Record[]					= "RECORD";
+	extern char g_pszStartDemoMenu_ConSite[]				= "CONSTRUCTION";
+	extern char g_pszStartDemoMenu_Home[]					= "HOME";
+	extern char g_pszStartDemoMenu_Bridge[]					= "BRIDGE";
 
 	extern char g_pszMultiplayerSetupMenu_Title[]			= "MULTIPLAYER";
 	extern char g_pszMultiplayerSetupMenu_Name[]				= "NAME";
-	extern char g_pszMultiplayerSetupMenu_Color[]			= "COLOR";
+	extern char g_pszMultiplayerSetupMenu_Color[]			= "COAT COLOR";
 	extern char g_pszMultiplayerSetupMenu_Protocol[]		= "PROTOCOL";
 	extern char g_pszMultiplayerSetupMenu_Connection[]		= "CONNECTION";
 
@@ -700,7 +713,9 @@ extern char g_pszPlayOneRealmOnlyMessage[]	=
 	extern char g_pszOptionsMenu_Multiplayer[]				= "MEHRERE SPIELER";
 	extern char g_pszOptionsMenu_Performance[]				= "LEISTUNG";
 	extern char g_pszOptionsMenu_Difficulty[]					= "SCHWIERIGKEIT";
-
+#ifdef KID_FRIENDLY_OPTION
+	extern char g_pszOptionsMenu_KidMode[]						= "KID-MODUS";  // FIXME: Google translated, again. But does it matter this time?
+#endif
 	extern char g_pszDifficultyMenu_Title[]					= "SCHWIERIGKEIT";
 	extern char g_pszDifficultyMenu_SetDifficulty[]			= "";
 
@@ -714,6 +729,10 @@ extern char g_pszPlayOneRealmOnlyMessage[]	=
 	extern char g_pszAudioMenu_Title[]							= "AUDIO";
 	extern char g_pszAudioMenu_Mixer[]							= "MISCHPULT";
 	extern char g_pszAudioMenu_SoundTest[]						= "SOUND-TEST";
+	extern char g_pszAudioMenu_Language[]						= "SPRACHE"; // Google Translated, but almost certainly right
+	extern char g_pszAudioMenu_English[]						= "Englisch"; // Google Translated
+	extern char g_pszAudioMenu_Japanese[]						= "Japanisch"; // Google Translated
+	extern char g_pszAudioMenu_PainFrequency[]					= "SCHMERZFREQUENZ"; // Google Translated
 
 	extern char g_pszVideoMenu_Title[]							= "VIDEO";
 	extern char g_pszVideoMenu_Gamma[]							= "GAMMA";
@@ -724,6 +743,7 @@ extern char g_pszPlayOneRealmOnlyMessage[]	=
 	extern char g_pszControlsMenu_JoystickSetup[]			= "JOYSTICK-SETUP";
 	extern char g_pszControlsMenu_TurningSpeeds[]			= "DREHGESCHWINDIGKEITEN";
 	extern char g_pszControlsMenu_UseMouse[]					= "MAUS VERWENDEN";
+	extern char g_pszControlsMenu_ClassicMouse[] = "KLASSISCHE MAUSSTEUERUNG";
 	extern char g_pszControlsMenu_HorizMouseSensitivity[]	= "HORIZONTALE MAUSBEWEGUNG";
 	extern char g_pszControlsMenu_VertMouseSensitivity[]	= "VERTIKALE MAUSBEWEGUNG";
 
@@ -756,8 +776,13 @@ extern char g_pszPlayOneRealmOnlyMessage[]	=
 	extern char g_pszStartGameMenu_Demo[]						= "DEMO";
 
 	extern char g_pszStartSinglePlayerMenu_Title[]			= "EINZELSPIELER";
+	extern char g_pszStartSinglePlayerMenu_NewCampaign[]	= "NEUE KAMPAGNE"; // FIXME: Google Translated, probably wrong
 	extern char g_pszStartSinglePlayerMenu_New[]				= "ORIGINAL SPIEL";	// Mike's lame translation
 	extern char g_pszStartSinglePlayerMenu_AddOn[]			= "ADD-ON SPIEL"		// Mike's lame translation
+#if TARGET == POSTAL_2015
+	extern char g_pszStartSinglePlayerMenu_AddOn2[]			= "SUPER POSTAL";
+	extern char g_pszStartSinglePlayerMenu_AllLevels[]	= "ALLE EBENEN"; // FIXME: Google Translated, possibly wrong
+#endif
 	extern char g_pszStartSinglePlayerMenu_LoadLevel[]		= "EBENE LADEN";
 	extern char g_pszStartSinglePlayerMenu_LoadGame[]		= "SPIEL LADEN";
 	extern char g_pszStartSinglePlayerMenu_Challenge[]		= "HERAUSFORDERUNG";
@@ -786,6 +811,9 @@ extern char g_pszPlayOneRealmOnlyMessage[]	=
 	extern char g_pszStartDemoMenu_Browse[]					= "DURCHSUCHEN";
 	extern char g_pszStartDemoMenu_Play[]						= "ABSPIELEN";
 	extern char g_pszStartDemoMenu_Record[]					= "AUSZEICHNEN";
+	extern char g_pszStartDemoMenu_ConSite[]				= "DIE BAUSTELLE"; // FIXME: Google Translated
+	extern char g_pszStartDemoMenu_Home[]					= "ZUHAUSE"; // FIXME: Google Translated
+	extern char g_pszStartDemoMenu_Bridge[]					= "DIE BRÜCKE";	// FIXME: Google Translated
 
 	extern char g_pszMultiplayerSetupMenu_Title[]			= "MEHRERE SPIELER";
 	extern char g_pszMultiplayerSetupMenu_Name[]				= "NAME";
@@ -831,7 +859,9 @@ extern char g_pszPlayOneRealmOnlyMessage[]	=
 	extern char g_pszOptionsMenu_Multiplayer[]				= "JOUEURS MULTIPLES";
 	extern char g_pszOptionsMenu_Performance[]				= "PERFORMANCE";
 	extern char g_pszOptionsMenu_Difficulty[]					= "DIFFICULTE";
-
+#ifdef KID_FRIENDLY_OPTION
+	extern char g_pszOptionsMenu_KidMode[]						= "MODE ENFANT"; // FIXME: Google Translated, again.
+#endif
 	extern char g_pszDifficultyMenu_Title[]					= "DIFFICULTE";
 	extern char g_pszDifficultyMenu_SetDifficulty[]			= "DEFINIR";
 
@@ -845,6 +875,10 @@ extern char g_pszPlayOneRealmOnlyMessage[]	=
 	extern char g_pszAudioMenu_Title[]							= "AUDIO";
 	extern char g_pszAudioMenu_Mixer[]							= "MIXER";
 	extern char g_pszAudioMenu_SoundTest[]						= "TEST SONORE";
+	extern char g_pszAudioMenu_Language[]						= "LA LANGUE"; // Google Translated
+	extern char g_pszAudioMenu_English[]						= "Anglais"; // Google Translated
+	extern char g_pszAudioMenu_Japanese[]						= "Japonais"; // Google Translated
+	extern char g_pszAudioMenu_PainFrequency[]					= "FREQ. DOULER"; // Google Translated & I removed "de la" even though I don't know French grammar
 
 	extern char g_pszVideoMenu_Title[]							= "VIDEO";
 	extern char g_pszVideoMenu_Gamma[]							= "GAMMA";
@@ -855,6 +889,7 @@ extern char g_pszPlayOneRealmOnlyMessage[]	=
 	extern char g_pszControlsMenu_JoystickSetup[]			= "CONFIGURATION DE LA MANETTE DE JEU";
 	extern char g_pszControlsMenu_TurningSpeeds[]			= "VITESSES DE ROTATION";
 	extern char g_pszControlsMenu_UseMouse[]					= "UTILISER LA SOURIS";
+	extern char g_pszControlsMenu_UseClassicMouse[] = "Souris classique"; //Google Translated	
 	extern char g_pszControlsMenu_HorizMouseSensitivity[]	= "SOURIS HORIZONTALE";
 	extern char g_pszControlsMenu_VertMouseSensitivity[]	= "SOURIS VERTICALE";
 
@@ -887,8 +922,13 @@ extern char g_pszPlayOneRealmOnlyMessage[]	=
 	extern char g_pszStartGameMenu_Demo[]						= "DEMO";
 
 	extern char g_pszStartSinglePlayerMenu_Title[]			= "JOUEUR UNIQUE";
+	extern char g_pszStartSinglePlayerMenu_NewCampaign[]	= "NOUVELLE CAMPAGNE"; // FIXME: Google Translated, probably wrong
 	extern char g_pszStartSinglePlayerMenu_New[]				= "CHARGER ORIGINAL";	// Mike's lame translation
 	extern char g_pszStartSinglePlayerMenu_AddOn[]			= "CHARGER ADD-ON";		// Mike's lame translation
+#if TARGET == POSTAL_2015
+	extern char g_pszStartSinglePlayerMenu_AddOn2[]			= "SUPER POSTAL";
+	extern char g_pszStartSinglePlayerMenu_AllLevels[]	= "TOUS LES NIVEAUX"; // FIXME: Google Translated, probably wrong
+#endif
 	extern char g_pszStartSinglePlayerMenu_LoadLevel[]		= "CHARGER LE NIVEAU";
 	extern char g_pszStartSinglePlayerMenu_LoadGame[]		= "CHARGER LE JEU";
 	extern char g_pszStartSinglePlayerMenu_Challenge[]		= "DEFI";
@@ -917,6 +957,9 @@ extern char g_pszPlayOneRealmOnlyMessage[]	=
 	extern char g_pszStartDemoMenu_Browse[]					= "PARCOURIR";
 	extern char g_pszStartDemoMenu_Play[]						= "JOUER";
 	extern char g_pszStartDemoMenu_Record[]					= "ENREGISTRER";
+	extern char g_pszStartDemoMenu_ConSite[]				= "LE CHANTIER"; // FIXME: Google Translated
+	extern char g_pszStartDemoMenu_Home[]					= "DOMICILE"; // FIXME: Google Translated
+	extern char g_pszStartDemoMenu_Bridge[]					= "LE PONT";	// FIXME: Google Translated	
 
 	extern char g_pszMultiplayerSetupMenu_Title[]			= "JOUEURS MULTIPLES";
 	extern char g_pszMultiplayerSetupMenu_Name[]				= "NOM";

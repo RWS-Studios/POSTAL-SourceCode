@@ -163,19 +163,19 @@
 // These are default values -- actually values are set using the editor!
 
 // Let this auto-init to 0
-short CNavigationNet::ms_sFileCount;
+int16_t CNavigationNet::ms_sFileCount;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CNavigationNet::Load(							// Returns 0 if successfull, non-zero otherwise
+int16_t CNavigationNet::Load(							// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 	{
 	// Call the base class load to get the instance ID
-	short sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	if (sResult == 0)
 		{
 		// Load common data just once per file (not with each object)
@@ -233,9 +233,9 @@ short CNavigationNet::Load(							// Returns 0 if successfull, non-zero otherwis
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CNavigationNet::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CNavigationNet::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 	{
 	// Call the base class save to save the instance ID
 	CThing::Save(pFile, sFileCount);
@@ -256,7 +256,7 @@ short CNavigationNet::Save(										// Returns 0 if successfull, non-zero other
 	// Save the number of nodes so we can check after load to see if all
 	// of the Bouys have been loaded yet.
 //	pFile->Write(&m_ucNextID);
-	UCHAR ucNumNodes = m_NodeMap.size();
+	uint8_t ucNumNodes = m_NodeMap.size();
 	pFile->Write(&ucNumNodes);
 
 	m_rstrNetName.Save(pFile);
@@ -268,11 +268,11 @@ short CNavigationNet::Save(										// Returns 0 if successfull, non-zero other
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CNavigationNet::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+int16_t CNavigationNet::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 	{
-	short sReturn = 0;
+	int16_t sReturn = 0;
 	// At this point we can assume the CHood was loaded, so we init our height
-	m_dY = m_pRealm->GetHeight((short) m_dX, (short) m_dZ);
+	m_dY = m_pRealm->GetHeight((int16_t) m_dX, (int16_t) m_dZ);
 	// Set yourself to be the new current Nav Net
 	m_pRealm->m_pCurrentNavNet = this;
 
@@ -292,7 +292,7 @@ short CNavigationNet::Startup(void)								// Returns 0 if successfull, non-zero
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-short CNavigationNet::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CNavigationNet::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 	{
 	return 0;
 	}
@@ -341,9 +341,9 @@ void CNavigationNet::Render(void)
 // similar to EditNew but without the positioning.
 ////////////////////////////////////////////////////////////////////////////////
 
-short CNavigationNet::EditPostLoad(void)
+int16_t CNavigationNet::EditPostLoad(void)
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	CListNode<CThing>* pEditorList = m_pRealm->m_aclassHeads[CThing::CGameEditThingID].m_pnNext;
 	CGameEditThing* peditor = (CGameEditThing*) pEditorList->m_powner;
@@ -353,7 +353,7 @@ short CNavigationNet::EditPostLoad(void)
 		RGuiItem* pgui = plb->AddString((char*) m_rstrNetName);
 		pgui->m_lId = GetInstanceID();
 		pgui->m_bcUser = NavNetListPressedCall;
-		pgui->m_ulUserInstance = (unsigned long) this;
+		pgui->m_ulUserInstance = (U64) this;
 		plb->AdjustContents();
 		plb->SetSel(pgui);
 	}
@@ -369,12 +369,12 @@ short CNavigationNet::EditPostLoad(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CNavigationNet::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CNavigationNet::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -394,7 +394,7 @@ short CNavigationNet::EditNew(									// Returns 0 if successfull, non-zero oth
 			RGuiItem* pgui = plb->AddString((char*) m_rstrNetName);
 			pgui->m_lId = GetInstanceID();
 			pgui->m_bcUser = NavNetListPressedCall;
-			pgui->m_ulUserInstance = (unsigned long) this;
+			pgui->m_ulUserInstance = (U64) this;
 			plb->AdjustContents();
 			plb->SetSel(pgui);
 		}
@@ -409,7 +409,7 @@ short CNavigationNet::EditNew(									// Returns 0 if successfull, non-zero oth
 inline
 void SetText(					// Returns nothing.
 	RGuiItem*	pguiRoot,	// In:  Root GUI.
-	long			lId,			// In:  ID of GUI to set text.
+	int32_t			lId,			// In:  ID of GUI to set text.
 	char*			str)			// In:  Value to set text to.
 	{
 	RGuiItem*	pgui	= pguiRoot->GetItemFromId(lId);
@@ -424,9 +424,9 @@ void SetText(					// Returns nothing.
 // Edit Modify
 ////////////////////////////////////////////////////////////////////////////////
 
-short CNavigationNet::EditModify(void)
+int16_t CNavigationNet::EditModify(void)
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	RGuiItem* pGui = RGuiItem::LoadInstantiate(FullPathVD("res/editor/network.gui"));
 	if (pGui)
 	{
@@ -474,10 +474,10 @@ short CNavigationNet::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CNavigationNet::EditMove(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CNavigationNet::EditMove(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
 	m_dX = (double)sX;
 	m_dY = (double)sY;
@@ -505,9 +505,9 @@ void CNavigationNet::EditRender(void)
 
 	// Map from 3d to 2d coords
 	Map3Dto2D(
-		(short) m_dX, 
-		(short) m_dY, 
-		(short) m_dZ, 
+		(int16_t) m_dX, 
+		(int16_t) m_dY, 
+		(int16_t) m_dZ, 
 		&m_sprite.m_sX2, 
 		&m_sprite.m_sY2);
 
@@ -519,7 +519,7 @@ void CNavigationNet::EditRender(void)
 	m_sprite.m_sY2	-= m_pImage->m_sHeight;
 
 	// Layer should be based on info we get from attribute map.
-	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 	// Image would normally animate, but doesn't for now
 	m_sprite.m_pImage = m_pImage;
@@ -557,9 +557,9 @@ void CNavigationNet::EditRect(RRect* pRect)
 // Called by editor to get the hotspot of an object in 2D.
 ////////////////////////////////////////////////////////////////////////////////
 void CNavigationNet::EditHotSpot(	// Returns nothiing.
-	short*	psX,							// Out: X coord of 2D hotspot relative to
+	int16_t*	psX,							// Out: X coord of 2D hotspot relative to
 												// EditRect() pos.
-	short*	psY)							// Out: Y coord of 2D hotspot relative to
+	int16_t*	psY)							// Out: Y coord of 2D hotspot relative to
 												// EditRect() pos.
 	{
 	// Base of navnet is hotspot.
@@ -571,9 +571,9 @@ void CNavigationNet::EditHotSpot(	// Returns nothiing.
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CNavigationNet::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CNavigationNet::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	if (m_pImage == 0)
 		{
@@ -597,9 +597,9 @@ short CNavigationNet::GetResources(void)						// Returns 0 if successfull, non-z
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CNavigationNet::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CNavigationNet::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	if (m_pImage != 0)
 		{
@@ -613,9 +613,9 @@ short CNavigationNet::FreeResources(void)						// Returns 0 if successfull, non-
 // AddBouy - Returns zero if there are no bouys left.
 ////////////////////////////////////////////////////////////////////////////////
 
-UCHAR CNavigationNet::AddBouy(CBouy* pBouy)
+uint8_t CNavigationNet::AddBouy(CBouy* pBouy)
 {
-	UCHAR ucID = 0;
+	uint8_t ucID = 0;
 
 	if (m_ucNextID < 254)
 	{
@@ -633,7 +633,7 @@ UCHAR CNavigationNet::AddBouy(CBouy* pBouy)
 // RemoveBouy
 ////////////////////////////////////////////////////////////////////////////////
 
-void CNavigationNet::RemoveBouy(UCHAR ucBouyID)
+void CNavigationNet::RemoveBouy(uint8_t ucBouyID)
 {
 	m_NodeMap.erase(ucBouyID);
 	UpdateRoutingTables();
@@ -643,7 +643,7 @@ void CNavigationNet::RemoveBouy(UCHAR ucBouyID)
 // GetBouy
 ////////////////////////////////////////////////////////////////////////////////
 
-CBouy* CNavigationNet::GetBouy(UCHAR ucBouyID)
+CBouy* CNavigationNet::GetBouy(uint8_t ucBouyID)
 {
 	CBouy* pBouy = NULL;
 	nodeMap::iterator i;
@@ -663,7 +663,7 @@ CBouy* CNavigationNet::GetBouy(UCHAR ucBouyID)
 //							bouy - one that is not blocked by terrain.
 ////////////////////////////////////////////////////////////////////////////////
 
-UCHAR CNavigationNet::FindNearestBouy(short sX, short sZ)
+uint8_t CNavigationNet::FindNearestBouy(int16_t sX, int16_t sZ)
 {
 	nodeMap::iterator i;
 	double dSqDist;
@@ -672,7 +672,7 @@ UCHAR CNavigationNet::FindNearestBouy(short sX, short sZ)
 	CBouy* pBouy;
 	TreeListNode* pRoot = NULL;
 	TreeListNode* pCurrent = NULL;
-	UCHAR	ucNode = 0;
+	uint8_t	ucNode = 0;
 
 	// Build the sorted list of bouys
 	for (i = m_NodeMap.begin(); i != m_NodeMap.end(); i++)
@@ -696,7 +696,7 @@ UCHAR CNavigationNet::FindNearestBouy(short sX, short sZ)
 	pCurrent = m_BouyTreeListHead.m_pnNext;
 	bool bSearching = true;
 	// Get the height at the startling location for path checking
-	short sY = m_pRealm->GetHeight(sX, sZ);
+	int16_t sY = m_pRealm->GetHeight(sX, sZ);
 
 	// Go through the sorted list of bouys and check to see if you could
 	// get to it from where you are standing.  If not, check the next one.
@@ -706,7 +706,7 @@ UCHAR CNavigationNet::FindNearestBouy(short sX, short sZ)
 //		ASSERT(pBouy != NULL);
 		if (pBouy)
 		{
-			if (m_pRealm->IsPathClear(sX, sY, sZ, 4.0, (short) pBouy->GetX(), (short) pBouy->GetZ()))
+			if (m_pRealm->IsPathClear(sX, sY, sZ, 4.0, (int16_t) pBouy->GetX(), (int16_t) pBouy->GetZ()))
 			{
 				ucNode = pBouy->m_ucID;
 				bSearching = false;
@@ -729,7 +729,7 @@ UCHAR CNavigationNet::FindNearestBouy(short sX, short sZ)
 }
 
 #if 0
-UCHAR CNavigationNet::FindNearestBouy(short sX, short sZ)
+uint8_t CNavigationNet::FindNearestBouy(short sX, short sZ)
 {
 	nodeMap::iterator i;
 	double dSqDist;
@@ -737,7 +737,7 @@ UCHAR CNavigationNet::FindNearestBouy(short sX, short sZ)
 	double dX;
 	double dZ;
 	CBouy* pBouy;
-	UCHAR ucNode = 0;
+	uint8_t ucNode = 0;
 
 	for (i = m_NodeMap.begin(); i != m_NodeMap.end(); i++)
 	{
@@ -823,9 +823,9 @@ void CNavigationNet::PrintRoutingTables(void)
 // DeleteNetwork - Delte all bouys from this network
 ////////////////////////////////////////////////////////////////////////////////
 
-short CNavigationNet::DeleteNetwork(void)
+int16_t CNavigationNet::DeleteNetwork(void)
 {
-	short sReturn = SUCCESS;
+	int16_t sReturn = SUCCESS;
 
 	nodeMap::iterator i;
 	for (i = m_NodeMap.begin(); i != m_NodeMap.end(); i++)

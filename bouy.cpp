@@ -180,22 +180,22 @@
 // These are default values -- actually values are set using the editor!
 
 // Let this auto-init to 0
-short CBouy::ms_sFileCount;
+int16_t CBouy::ms_sFileCount;
 bool  CBouy::ms_bShowBouys = true;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CBouy::Load(										// Returns 0 if successfull, non-zero otherwise
+int16_t CBouy::Load(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 {
 	GameMessage msg;
 	// Call the base load to get the u16InstanceID
-	short sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	if (sResult == 0)
 	{
 		// Load common data just once per file (not with each object)
@@ -291,9 +291,9 @@ short CBouy::Load(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CBouy::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CBouy::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 {
 	// Call the base class save to save the u16InstanceID
 	CThing::Save(pFile, sFileCount);
@@ -337,12 +337,12 @@ short CBouy::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CBouy::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+int16_t CBouy::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// At this point we can assume the CHood was loaded, so we init our height
-	m_dY = m_pRealm->GetHeight((short) m_dX, (short) m_dZ);
+	m_dY = m_pRealm->GetHeight((int16_t) m_dX, (int16_t) m_dZ);
 
 	// Init other stuff
 	// Get pointer to Navigation Net
@@ -381,7 +381,7 @@ short CBouy::Startup(void)								// Returns 0 if successfull, non-zero otherwis
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-short CBouy::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CBouy::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 {
 	return 0;
 }
@@ -421,9 +421,9 @@ void CBouy::Update(void)
 // AddLink - Add a 1 hop direct link to the routing table
 ////////////////////////////////////////////////////////////////////////////////
 
-short CBouy::AddLink(CBouy* pBouy)
+int16_t CBouy::AddLink(CBouy* pBouy)
 {
-	short sReturn = SUCCESS;
+	int16_t sReturn = SUCCESS;
 	
 	if (!m_aplDirectLinks.Find(pBouy))
 	{
@@ -445,12 +445,12 @@ void CBouy::Render(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CBouy::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CBouy::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -471,7 +471,7 @@ short CBouy::EditNew(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-short CBouy::EditModify(void)
+int16_t CBouy::EditModify(void)
 {
 	return 0;
 }
@@ -480,10 +480,10 @@ short CBouy::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CBouy::EditMove(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CBouy::EditMove(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
 	m_dX = (double)sX;
 	m_dY = (double)sY;
@@ -525,9 +525,9 @@ void CBouy::EditRender(void)
 
 	// Map from 3d to 2d coords
 	Map3Dto2D(
-		(short) m_dX, 
-		(short) m_dY, 
-		(short) m_dZ, 
+		(int16_t) m_dX, 
+		(int16_t) m_dY, 
+		(int16_t) m_dZ, 
 		&m_sprite.m_sX2, 
 		&m_sprite.m_sY2);
 
@@ -539,7 +539,7 @@ void CBouy::EditRender(void)
 	m_sprite.m_sPriority = m_dZ;
 
 	// Layer should be based on info we get from attribute map.
-	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 	// Image would normally animate, but doesn't for now
 	m_sprite.m_pImage = m_pImage;
@@ -577,9 +577,9 @@ void CBouy::EditRect(RRect* pRect)
 // Called by editor to get the hotspot of an object in 2D.
 ////////////////////////////////////////////////////////////////////////////////
 void CBouy::EditHotSpot(	// Returns nothiing.
-	short*	psX,				// Out: X coord of 2D hotspot relative to
+	int16_t*	psX,				// Out: X coord of 2D hotspot relative to
 									// EditRect() pos.
-	short*	psY)				// Out: Y coord of 2D hotspot relative to
+	int16_t*	psY)				// Out: Y coord of 2D hotspot relative to
 									// EditRect() pos.
 	{
 	// Base of bouy is hotspot.
@@ -590,9 +590,9 @@ void CBouy::EditHotSpot(	// Returns nothiing.
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CBouy::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CBouy::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	if (m_pImage == 0)
 		{
@@ -628,7 +628,7 @@ short CBouy::GetResources(void)						// Returns 0 if successfull, non-zero other
 						0,															// Dst.
 						m_pImage->m_sHeight - BOUY_ID_FONT_HEIGHT,	// Dst.
 						"%d",														// Format.
-						(short)m_ucID);										// Src.
+						(int16_t)m_ucID);										// Src.
 																					
 					// Convert to efficient transparent blit format . . .
 					if (m_pImage->Convert(RImage::FSPR8) != RImage::FSPR8)
@@ -667,7 +667,7 @@ short CBouy::GetResources(void)						// Returns 0 if successfull, non-zero other
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CBouy::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CBouy::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
 	if (m_pImage != NULL)
 		{
@@ -709,19 +709,19 @@ void CBouy::Unlink(void)
 //							  routing table.
 ////////////////////////////////////////////////////////////////////////////////
 
-short CBouy::BuildRoutingTable(void)
+int16_t CBouy::BuildRoutingTable(void)
 {
-	short sResult = SUCCESS;
-	UCHAR* aVisited = NULL;
-	UCHAR* aDistance = NULL;
-	UCHAR* aParent = NULL;
-	UCHAR* pucCurrentNode = NULL;
-	UCHAR* pucAdjNode = NULL;
+	int16_t sResult = SUCCESS;
+	uint8_t* aVisited = NULL;
+	uint8_t* aDistance = NULL;
+	uint8_t* aParent = NULL;
+	uint8_t* pucCurrentNode = NULL;
+	uint8_t* pucAdjNode = NULL;
 	CBouy* pTraverseBouy = NULL;
 
 	ASSERT(m_pParentNavNet != NULL);
-	short sCurrentNumNodes = m_pParentNavNet->GetNumNodes();
-	RQueue <UCHAR, 256> bfsQueue;
+	int16_t sCurrentNumNodes = m_pParentNavNet->GetNumNodes();
+	RQueue <uint8_t, 256> bfsQueue;
 
 	// Make sure there is enough space in the routing table, or
 	// reallocate it if there isn't enough.
@@ -729,14 +729,14 @@ short CBouy::BuildRoutingTable(void)
 	{
 		if (m_paucRouteTable != NULL)
 			free(m_paucRouteTable);
-		m_paucRouteTable = (UCHAR*) malloc(sCurrentNumNodes);
+		m_paucRouteTable = (uint8_t*) malloc(sCurrentNumNodes);
 		m_sRouteTableSize = sCurrentNumNodes;
 	}
 
 	// Allocate memory for use in building the BSF tree
-	aVisited = (UCHAR*) malloc(sCurrentNumNodes);
-	aDistance = (UCHAR*) malloc(sCurrentNumNodes);
-	aParent = (UCHAR*) malloc(sCurrentNumNodes);
+	aVisited = (uint8_t*) malloc(sCurrentNumNodes);
+	aDistance = (uint8_t*) malloc(sCurrentNumNodes);
+	aParent = (uint8_t*) malloc(sCurrentNumNodes);
 
 	if (m_paucRouteTable != NULL &&
 	    aVisited != NULL &&
@@ -781,9 +781,9 @@ short CBouy::BuildRoutingTable(void)
 		// and aParent provides a way to build the routing table by traversing
 		// backwards.
 
-		UCHAR ucCurrentDistance;
-		UCHAR curr;
-		short j;
+		uint8_t ucCurrentDistance;
+		uint8_t curr;
+		int16_t j;
 
 		for (j = 1; j < sCurrentNumNodes; j++)
 		{
@@ -845,7 +845,7 @@ short CBouy::BuildRoutingTable(void)
 // NextRouteNode - Tells you which node to go to next to get to your destination
 ////////////////////////////////////////////////////////////////////////////////
 
-UCHAR CBouy::NextRouteNode(UCHAR dst)
+uint8_t CBouy::NextRouteNode(uint8_t dst)
 {
 	if (dst >= m_pParentNavNet->GetNumNodes())
 		return 255;

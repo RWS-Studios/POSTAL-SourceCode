@@ -364,6 +364,7 @@
 #include "input.h"
 #include "PowerUp.h"
 #include "flag.h"
+#include "gameedit.h"  //Needed for mapping functions
 
 // First shot at a dude, which is a player-controlled character
 class CDude : public CCharacter
@@ -444,7 +445,7 @@ class CDude : public CCharacter
 			char*	pszAmmoName;
 			char*	pszStatusFormat;
 			char*	pszWeaponResName;
-			short	sMinAmmoRequired;
+			int16_t	sMinAmmoRequired;
 			} WeaponDetails;
 
 		// This special version overrides the CAnim3D Get(char*, char*, short).
@@ -459,13 +460,13 @@ class CDude : public CCharacter
 				// Get the various components of this animation from the resource names
 				// specified in the provided array of pointers to strings.
 				virtual								// Overridden here.
-				short Get(							// Returns 0 on success.
+				int16_t Get(							// Returns 0 on success.
 					char*		pszBaseFileName,	// In:  Base string for resource filenames.
 					char*		pszRigidName,		// In:  String to add for rigid transform channel
 														// or NULL for none.
 					char*		pszEventName,		// In:  String to add for event states channel
 														// or NULL for none.
-					short		sLoopFlags);		// In:  Looping flags to apply to all channels
+					int16_t		sLoopFlags);		// In:  Looping flags to apply to all channels
 														// in this anim.
 
 				// Release all resources.
@@ -478,12 +479,12 @@ class CDude : public CCharacter
 	//---------------------------------------------------------------------------
 	public:
 
-		short			m_sDudeNum;							// This dude's number for multiplayer mode
+		int16_t			m_sDudeNum;							// This dude's number for multiplayer mode
 
-		short			m_sTextureIndex;					// This dude's texture index.  Used as an
+		int16_t			m_sTextureIndex;					// This dude's texture index.  Used as an
 																// index into m_aptextures[].
 
-		short			m_sOrigHitPoints;					// Initial hitpoints.
+		int16_t			m_sOrigHitPoints;					// Initial hitpoints.
 		bool			m_bTargetingHelpEnabled;		// Show targeting sprite when enabled.
 
 		// INPUT HACK. Normally we can't move in one direction while facing another. Android version
@@ -497,8 +498,14 @@ class CDude : public CCharacter
 		double			m_dJoyMoveAngle;
 		bool			m_bJoyFire;
 		double			m_dJoyFireAngle;
+		//For mouse stuff
+		double          m_dRotateToAngle;
+		//Mouse pos for crosshair
+		double          m_dMousePosX;
+		double          m_dMousePosY;
 
-
+		//Workaround for mutiplayer (mouse)
+		int16_t m_sDeltaRot = 0;
 
 	protected:
 
@@ -546,11 +553,11 @@ class CDude : public CCharacter
 																// yet been triggered.
 
 
-		long			m_lNextBulletTime;				// Next time a bullet can be fired.
-		long			m_lLastShotTime;					// Last time the dude was shot.
-		long			m_lLastYellTime;					// Last time the dude yelled in pain
+		int32_t			m_lNextBulletTime;				// Next time a bullet can be fired.
+		int32_t			m_lLastShotTime;					// Last time the dude was shot.
+		int32_t			m_lLastYellTime;					// Last time the dude yelled in pain
 																// from being shot or something.
-		long			m_lNextIdleTime;					// Idle animation timer.
+		int32_t			m_lNextIdleTime;					// Idle animation timer.
 
 		WeaponType	m_weapontypeCur;					// Dude's current weapon type.
 		WeaponType	m_weaponShooting;					// The weapon type the dude is currently
@@ -580,7 +587,7 @@ class CDude : public CCharacter
 		bool			m_bInvincible;						// Dude does not loose health when invincible.
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
+		static int16_t ms_sFileCount;
 
 	//---------------------------------------------------------------------------
 	// Static Variables
@@ -627,11 +634,11 @@ class CDude : public CCharacter
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CDude(pRealm);
 			if (*ppNew == 0)
 				{
@@ -647,22 +654,22 @@ class CDude : public CCharacter
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  File version being loaded.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  File version being loaded.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -677,13 +684,13 @@ class CDude : public CCharacter
 		void Render(void);
 
 		// Called by editor to init new object at specified position
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 	//---------------------------------------------------------------------------
 	// Other functions
@@ -702,7 +709,7 @@ class CDude : public CCharacter
 			{return m_dZ;};
 
 		// Return the dude's hit points
-		short GetHealth()
+		int16_t GetHealth()
 			{return m_stockpile.m_sHitPoints;};
 
 		// Sets a new state based on supplied state enum.  Will set animation ptr
@@ -714,7 +721,7 @@ class CDude : public CCharacter
 		void GetWeaponInfo(				// Returns nothing.
 			WeaponType		weapon,		// In:  Weapon type to query.
 			ClassIDType*	pidWeapon,	// Out: CThing class ID of weapon.
-			short**			ppsNum);		// Out: Ptr to the weapon's counter.
+			int16_t**			ppsNum);		// Out: Ptr to the weapon's counter.
 
 		// Determines if supplied position is valid tweaking it if necessary.
 		virtual									// Overridden here.
@@ -726,7 +733,7 @@ class CDude : public CCharacter
 													// Out: New y position.
 			double*	pdNewZ,					// In:  z position to validate.
 													// Out: New z position.
-			short	sVertTolerance = 0);		// Vertical tolerance.
+			int16_t	sVertTolerance = 0);		// Vertical tolerance.
 
 		// Shoot current weapon.
 		// This should be done when the character releases the weapon it's
@@ -810,7 +817,7 @@ class CDude : public CCharacter
 			bool	bWarpIn	= true);	// In:  true, to warp in, false to just get up.
 
 		// Initialize dude.  Must be done before dude is used.
-		short Init(void);											// Returns 0 if successfull, non-zero otherwise
+		int16_t Init(void);											// Returns 0 if successfull, non-zero otherwise
 
 		// Next weapon please.
 		void NextWeapon(void);
@@ -835,7 +842,7 @@ class CDude : public CCharacter
 		void Kill(void);
 
 		// Get all required resources
-		short GetResources(void);								// Returns 0 if successfull, non-zero otherwise
+		int16_t GetResources(void);								// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
 		void FreeResources(void);
@@ -849,7 +856,7 @@ class CDude : public CCharacter
 
 		// Receive damage.
 		void Damage(						// Returns nothing.
-			short	sHitPoints,				// Hit points of damage to do.
+			int16_t	sHitPoints,				// Hit points of damage to do.
 			U16	u16ShooterId);			// In:  Thing responsible for damage.
 
 		// Start the brain splat anim on its way.
@@ -859,14 +866,14 @@ class CDude : public CCharacter
 		void ProcessInput(				// Returns nothing.
 			double*	pdMaxForeVel,		// Out: Maximum forward velocity.
 			double*	pdMaxBackVel,		// Out: Maximum backward velocity.
-			short*	psStrafeAngle);	// Out: Strafe angle.
+			int16_t*	psStrafeAngle);	// Out: Strafe angle.
 
 		// Applies accelerations, velocities, reacts to terrain obstructions, etc.
 		void ProcessForces(				// Returns nothing.
-			long		lCurTime,			// In:  Current game time.
+			int32_t		lCurTime,			// In:  Current game time.
 			double	dMaxForeVel,		// Out: Maximum forward velocity.
 			double	dMaxBackVel,		// Out: Maximum backward velocity.
-			short		sStrafeAngle);		// Out: Strafe angle.
+			int16_t		sStrafeAngle);		// Out: Strafe angle.
 
 		// If the targeting aid is enabled, this function will look for a target
 		// and if it finds one, it will show the Targeting sprite on the target.
@@ -900,7 +907,7 @@ class CDude : public CCharacter
 		// Break a powerup open and toss it.
 		void TossPowerUp(					// Returns nothing.
 			CPowerUp*	ppowerup,		// In:  Powerup to toss.
-			short			sVelocity);		// In:  Velocity of toss.
+			int16_t			sVelocity);		// In:  Velocity of toss.
 
 		// Make sure warp can access this function.
 		friend class CWarp;

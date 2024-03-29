@@ -63,8 +63,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-RMultiGridIndirect*	CreateRegionMap(short sWidth,short sHeight,short sMaxPlanes,
-												 short sTileW,short sTileH)
+RMultiGridIndirect*	CreateRegionMap(int16_t sWidth,int16_t sHeight,int16_t sMaxPlanes,
+												 int16_t sTileW,int16_t sTileH)
 	{
 	ASSERT( (sWidth > 0) && (sHeight > 0) && (sMaxPlanes > 0)
 				&& (sTileW > 0) && (sTileH > 0) );
@@ -122,17 +122,17 @@ RMultiGridIndirect*	CreateRegionMap(short sWidth,short sHeight,short sMaxPlanes,
 //	
 ////////////////////////////////////////////////////////////////////////////////
 
-short	StrafeAddRegion(RMultiGridIndirect* pMGI,TriggerRgn regions[256])
+int16_t	StrafeAddRegion(RMultiGridIndirect* pMGI,TriggerRgn regions[256])
 	{
 	ASSERT(pMGI);
-	short sRet = SUCCESS;
+	int16_t sRet = SUCCESS;
 
-	for (short i=1; i < 256;i++)
+	for (int16_t i=1; i < 256;i++)
 		{
 		if (regions[i].pimRgn)
 			{
 			if (pMGI->AddFSPR1(regions[i].pimRgn,regions[i].sX,regions[i].sY,
-				UCHAR(i),TriggerRgn::MaxRgnWidth,TriggerRgn::MaxRgnHeight)
+				uint8_t(i),TriggerRgn::MaxRgnWidth,TriggerRgn::MaxRgnHeight)
 				!= SUCCESS)
 				{
 				TRACE("StrafeAddRegion:: Problem installing region %hd\n",i);
@@ -152,7 +152,7 @@ short	StrafeAddRegion(RMultiGridIndirect* pMGI,TriggerRgn regions[256])
 //  NOTE:
 //
 ////////////////////////////////////////////////////////////////////////////////
-short CompressMap(RMultiGridIndirect* pMGI,short sTileW,short sTileH)
+int16_t CompressMap(RMultiGridIndirect* pMGI,int16_t sTileW,int16_t sTileH)
 	{
 	ASSERT(pMGI);
 	ASSERT(pMGI->m_pmg);
@@ -167,16 +167,16 @@ short CompressMap(RMultiGridIndirect* pMGI,short sTileW,short sTileH)
 //					alerts all relevant pylons to his presence
 ////////////////////////////////////////////////////////////////////////////////
 //
-void	SpewTriggers(CRealm* pRealm,	USHORT	usDudeUID,short sX,short sZ)
+void	SpewTriggers(CRealm* pRealm,	uint16_t	usDudeUID,int16_t sX,int16_t sZ)
 	{
-	UCHAR	aucHitList[MGI_MAX_PLANES];
+	uint8_t	aucHitList[MGI_MAX_PLANES];
 	if (pRealm->m_pTriggerMap == NULL) return; // No triggers
 
-	short sMax = pRealm->m_pTriggerMap->m_sMaxPlanes;
+	int16_t sMax = pRealm->m_pTriggerMap->m_sMaxPlanes;
 
 	// GET THE ATTRIBUTE MAP FOR THE TRIGGERS:
 	pRealm->m_pTriggerMap->GetVal(aucHitList,sX,sZ);
-	UCHAR*	pHit = aucHitList;
+	uint8_t*	pHit = aucHitList;
 	GameMessage	msg;
 
 	msg.msg_DudeTrigger.eType = typeDudeTrigger;
@@ -185,7 +185,7 @@ void	SpewTriggers(CRealm* pRealm,	USHORT	usDudeUID,short sX,short sZ)
 	msg.msg_DudeTrigger.dX = double(sX);
 	msg.msg_DudeTrigger.dZ = double(sZ);
 
-	short sNum = sMax;
+	int16_t sNum = sMax;
 	while (*pHit && sNum) // got a hit:
 		{
 		// send a trigger message out:

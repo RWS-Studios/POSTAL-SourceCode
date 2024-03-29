@@ -119,8 +119,9 @@
 
 #include "RSPiX.h"
 #include "realm.h"
+#include "camera.h"
 #include "InputSettings.h"
-
+#include "dude.h"
 
 // Maximum number of dudes supported by this module.  Just about any value
 // will work, it merely uses up a few extra bytes per dude, and no extra
@@ -272,7 +273,7 @@ extern INPUT_MODE GetInputMode(void);				// Returns current mode
 // Init demo mode.  Must be called before setting playback or record modes.
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern short InputDemoInit(void);					// Returns 0 if successfull, non-zero otherwise
+extern int16_t InputDemoInit(void);					// Returns 0 if successfull, non-zero otherwise
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -289,7 +290,7 @@ extern void InputDemoKill(void);
 // Load previously saved input demo data
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern short InputDemoLoad(							// Returns 0 if successfull, non-zero otherwise
+extern int16_t InputDemoLoad(							// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile);											// In:  RFile to load from
 
 
@@ -298,7 +299,7 @@ extern short InputDemoLoad(							// Returns 0 if successfull, non-zero otherwis
 // Save current input demo data
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern short InputDemoSave(							// Returns 0 if successfull, non-zero otherwise
+extern int16_t InputDemoSave(							// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile);											// In:  RFile to save to
 
 
@@ -327,8 +328,11 @@ extern bool InputIsDemoOver(void);		// Returns true when demo is over
 //
 ////////////////////////////////////////////////////////////////////////////////
 extern UINPUT GetLocalInput(				// Returns local input structure.
-	CRealm* prealm,							// In:  Realm (used to access realm timer)
-	RInputEvent* pie	= NULL);				// In:  Latest input event.  NULL to 
+	CRealm* prealm,							// In: Realm (used to access realm timer)
+	CCamera* camera,                        // In: Camera (used for mouse input)
+	U16 idLocalDude,						// In: Local dude id (used for mouse input)
+	RInputEvent* pie	= NULL,				// In: Latest input event.  NULL to 
+	bool isMP = false);				        // In: If it's mutiplayer
 													//	disable cheats in a way that will be
 													// harder to hack.
 
@@ -338,7 +342,7 @@ extern UINPUT GetLocalInput(				// Returns local input structure.
 // Get input for specified dude
 //
 ////////////////////////////////////////////////////////////////////////////////
-inline UINPUT GetInput(short sDudeNumber)
+inline UINPUT GetInput(int16_t sDudeNumber)
 	{
 	ASSERT(sDudeNumber < INPUT_MAX_DUDES);
 	extern UINPUT m_aInputs[INPUT_MAX_DUDES];
@@ -351,13 +355,12 @@ inline UINPUT GetInput(short sDudeNumber)
 // Set input for specified dude
 //
 ////////////////////////////////////////////////////////////////////////////////
-inline void SetInput(short sDudeNumber, UINPUT input)
+inline void SetInput(int16_t sDudeNumber, UINPUT input)
 	{
 	ASSERT(sDudeNumber < INPUT_MAX_DUDES);
 	extern UINPUT m_aInputs[INPUT_MAX_DUDES];
 	m_aInputs[sDudeNumber] = input;
 	}
-
 
 #endif //INPUT_H
 ////////////////////////////////////////////////////////////////////////////////

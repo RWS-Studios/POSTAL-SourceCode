@@ -78,8 +78,8 @@
 // "Member" variables (Globals)
 //////////////////////////////////////////////////////////////////////
 
-static long m_lMainProgramStack;		// save Main program stack here
-static long m_lTaskStack;				// save Current task stack here
+static int32_t m_lMainProgramStack;		// save Main program stack here
+static int32_t m_lTaskStack;				// save Current task stack here
 static PTASKINFO ptiCurrentTask;		// Pointer to current task for
 												// use in error reporting
 static RList<TASKINFO> MTaskList;
@@ -92,7 +92,7 @@ static RList<TASKINFO> MTaskList;
 // process.  It is used to transfer control to other tasks.
 // Your task will resume immediately following this call,
 // when its turn comes up again.
-static long* MTaskRun(void);
+static int32_t* MTaskRun(void);
 
 // This function is an error trap in case a task
 // returns.  Tasks are not supposed to return, they
@@ -128,7 +128,7 @@ void MTaskManager(void)
 		ASSERT(ptiTask->plSP != NULL);
 		// Set current task for error reporting & killing
 		ptiCurrentTask = ptiTask;
-		m_lTaskStack = (long) ptiTask->plSP;
+		m_lTaskStack = (int32_t) ptiTask->plSP;
 		ptiTask->plSP = MTaskRun();
 		if (ptiTask->plSP == 0)
 		{
@@ -168,21 +168,21 @@ void MTaskManager(void)
 //
 //////////////////////////////////////////////////////////////////////
 
-short MTaskAddFunc(void* pFunction, char* pszFuncName, short sStackSize)
+int16_t MTaskAddFunc(void* pFunction, char* pszFuncName, int16_t sStackSize)
 {
 	PTASKINFO ptiNewTask = NULL;
-	long* plNewStack = NULL;
-	short sLongElements = sStackSize/4;
-	short sReturn = SUCCESS;
+	int32_t* plNewStack = NULL;
+	int16_t sLongElements = sStackSize/4;
+	int16_t sReturn = SUCCESS;
 	
 	ptiNewTask = new TASKINFO;
 	if (ptiNewTask != NULL)
 	{
-		plNewStack = (long*) calloc(sLongElements, 4);
+		plNewStack = (int32_t*) calloc(sLongElements, 4);
 		if (plNewStack)
 		{
-			plNewStack[sLongElements-1] = (long) MTaskReturnCatcher;
-			plNewStack[sLongElements-2] = (long) pFunction;
+			plNewStack[sLongElements-1] = (int32_t) MTaskReturnCatcher;
+			plNewStack[sLongElements-2] = (int32_t) pFunction;
 			plNewStack[sLongElements-3] = 0; //bp
 
 			ptiNewTask->plStackAddress = plNewStack;
@@ -231,7 +231,7 @@ short MTaskAddFunc(void* pFunction, char* pszFuncName, short sStackSize)
 //
 //////////////////////////////////////////////////////////////////////
 
-__declspec (naked) long* TaskKill(void)
+__declspec (naked) int32_t* TaskKill(void)
 {
 	__asm
 	{
@@ -264,7 +264,7 @@ __declspec (naked) long* TaskKill(void)
 //
 //////////////////////////////////////////////////////////////////////
 
-__declspec (naked) long* MTaskWait(void)
+__declspec (naked) int32_t* MTaskWait(void)
 {
 	__asm
 	{
@@ -298,7 +298,7 @@ __declspec (naked) long* MTaskWait(void)
 //
 //////////////////////////////////////////////////////////////////////
 
-__declspec (naked) long* MTaskRun(void)
+__declspec (naked) int32_t* MTaskRun(void)
 {
 	__asm
 	{

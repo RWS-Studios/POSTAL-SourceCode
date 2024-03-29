@@ -139,18 +139,18 @@ pntBuf.Clear(); // Clear the print buffer early
 class	RRect
 	{
 public:
-	short sX;
-	short sY;
-	short sW;
-	short sH;
+	int16_t sX;
+	int16_t sY;
+	int16_t sW;
+	int16_t sH;
 	// Returns -1 if clipped completely out,
 	// It clips your rect to the input rect
 	// If clipped completely, sets rect to 0
 	// & sets this rect to {0,0,0,0}
 	//
-	short ClipTo(RRect *prClipTo);
+	int16_t ClipTo(RRect *prClipTo);
 	RRect(){};
-	RRect(short sXi,short sYi,short sWi=0,short sHi=0)
+	RRect(int16_t sXi,int16_t sYi,int16_t sWi=0,int16_t sHi=0)
 		{ sX = sXi,sY = sYi,sW = sWi,sH = sHi; }
 	~RRect(){};
 
@@ -162,31 +162,31 @@ extern void rspNameBuffers(RImage** ppimMemBuf,RImage** ppimVidBuf = NULL,
 									RImage** ppimBackBuf = NULL);
 
 // For your convenience...
-extern	short rspSetWindowColors(); // restore system colors
+extern	int16_t rspSetWindowColors(); // restore system colors
 
 // For your convenience...
-extern void	rspWaitForClick(short sButton = 3);
+extern void	rspWaitForClick(int16_t sButton = 3);
 
 // For your convenience...
-extern	void	rspSetBMPColors(RImage* pim,short sStartIndex,short sNum);
+extern	void	rspSetBMPColors(RImage* pim,int16_t sStartIndex,int16_t sNum);
 
-extern	short	rspBlit(RImage* pimSrc,RImage* pimDst,short sSrcX,short sSrcY,short sDstX,
-			  short sDstY,short sW,short sH,const RRect* prDst=NULL,const RRect* prSrc=NULL);
+extern	int16_t	rspBlit(RImage* pimSrc,RImage* pimDst,int16_t sSrcX,int16_t sSrcY,int16_t sDstX,
+			  int16_t sDstY,int16_t sW,int16_t sH,const RRect* prDst=NULL,const RRect* prSrc=NULL);
 
 // This does the compressed transparent BLiTting
 // Currently only 8-bit mode.
 //
-extern	short	rspBlit(RImage* pimSrc,RImage* pimDst,short sX,short sY,const RRect* prDst=NULL);
-extern	short	rspBlitT(RImage* pimSrc,RImage* pimDst,short sSrcX,short sSrcY,short sDstX,
-			  short sDstY,short sW,short sH,const RRect* prDst,const RRect* prSrc);
+extern	int16_t	rspBlit(RImage* pimSrc,RImage* pimDst,int16_t sX,int16_t sY,const RRect* prDst=NULL);
+extern	int16_t	rspBlitT(RImage* pimSrc,RImage* pimDst,int16_t sSrcX,int16_t sSrcY,int16_t sDstX,
+			  int16_t sDstY,int16_t sW,int16_t sH,const RRect* prDst,const RRect* prSrc);
 
 
 // Used only to punch a rectangle between two 128-bit aligned buffers.
 // Source and Destination (X,Y) must be the same.
 // Will widen your rectangle to take advantage of your bus!
 // 
-extern	short	rspBlitA(RImage* pimSrc,RImage* pimDst,short sX,short sY,
-				short sW,short sH,const RRect* prDst=NULL,const RRect* prSrc=NULL);
+extern	int16_t	rspBlitA(RImage* pimSrc,RImage* pimDst,int16_t sX,int16_t sY,
+				int16_t sW,int16_t sH,const RRect* prDst=NULL,const RRect* prSrc=NULL);
 
 // This is not currently designed for 24-bit mode.
 // Returns 0 if something found...
@@ -195,11 +195,11 @@ extern	short	rspBlitA(RImage* pimSrc,RImage* pimDst,short sX,short sY,
 //
 #ifdef WIN32
 	template <class PIXSIZE>
-	extern	short	rspLasso(PIXSIZE ignoreColor,RImage* pimSrc,short &x,short &y,short &w,short &h,
+	extern	int16_t	rspLasso(PIXSIZE ignoreColor,RImage* pimSrc,int16_t &x,int16_t &y,int16_t &w,int16_t &h,
 						int lFlag=1,int rFlag=1,int tFlag=1,int bFlag=1);
 #else // MAC
 	template <class PIXSIZE>
-	short	rspLasso(PIXSIZE ignoreColor,RImage* pimSrc,short &x,short &y,short &w,short &h,
+	int16_t	rspLasso(PIXSIZE ignoreColor,RImage* pimSrc,int16_t &x,int16_t &y,int16_t &w,int16_t &h,
 						int lFlag=1,int rFlag=1,int tFlag=1,int bFlag=1);
 #endif
 
@@ -218,103 +218,103 @@ extern	short	rspBlitA(RImage* pimSrc,RImage* pimDst,short sX,short sY,
 // no restrictions
 #ifdef WIN32
 	template <class PIXSIZE>
-	extern	void rspClipPlot(PIXSIZE color, RImage* pimDst,short sX,short sY,const RRect* prClip);
+	extern	void rspClipPlot(PIXSIZE color, RImage* pimDst,int16_t sX,int16_t sY,const RRect* prClip);
 #else	// MAC
 	template <class PIXSIZE>
-	void rspClipPlot(PIXSIZE color, RImage* pimDst,short sX,short sY,const RRect* prClip);
+	void rspClipPlot(PIXSIZE color, RImage* pimDst,int16_t sX,int16_t sY,const RRect* prClip);
 #endif
 
-extern	short rspRect(U32 color,RImage* pimDst,short sX,short sY,short sW,short sH,RRect* prClip=NULL);
+extern	int16_t rspRect(U32 color,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_t sH,RRect* prClip=NULL);
 
-extern	short rspRect(short sThickness,U32 color,RImage* pimDst,short sX,short sY,short sW,short sH,RRect* prClip=NULL);
+extern	int16_t rspRect(int16_t sThickness,U32 color,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_t sH,RRect* prClip=NULL);
 
-extern	short	rspLockBuffer();
-extern	short	rspLockScreen();
-extern	short	rspUnlockBuffer();
-extern	short	rspUnlockScreen();
-extern	short	rspGeneralLock(RImage* pimDst);
-extern	short	rspGeneralUnlock(RImage* pimDst);
+extern	int16_t	rspLockBuffer();
+extern	int16_t	rspLockScreen();
+extern	int16_t	rspUnlockBuffer();
+extern	int16_t	rspUnlockScreen();
+extern	int16_t	rspGeneralLock(RImage* pimDst);
+extern	int16_t	rspGeneralUnlock(RImage* pimDst);
 
 /* archaic
-extern	void	rspSetConvertToFSPR1(ULONG ulLassoBackCol = 0,ULONG ulComprBackCol = 0,
-								short sTrimT = 0,short sMaxH = 0,UCHAR ucASCII = 0);
+extern	void	rspSetConvertToFSPR1(uint32_t ulLassoBackCol = 0,uint32_t ulComprBackCol = 0,
+								short sTrimT = 0,short sMaxH = 0,uint8_t ucASCII = 0);
 
-extern	void	rspSetConvertFromFSPR1(ULONG ulFrontCol,ULONG ulBackCol = 1);
+extern	void	rspSetConvertFromFSPR1(uint32_t ulFrontCol,uint32_t ulBackCol = 1);
 */
 
 /* Archaic
-extern	short	rspBlit(ULONG ulForeColor,ULONG ulBackColor,RImage* pimSrc,RImage* pimDst,
+extern	short	rspBlit(uint32_t ulForeColor,uint32_t ulBackColor,RImage* pimSrc,RImage* pimDst,
 								  short sDstX,short sDstY,const RRect* prDst = NULL,short sAddW = 0);
-extern	short	rspBlit(ULONG ulForeColor,ULONG ulBackColor,RImage* pimSrc,RImage* pimDst,
+extern	short	rspBlit(uint32_t ulForeColor,uint32_t ulBackColor,RImage* pimSrc,RImage* pimDst,
 	short sDstX,short sDstY,short sDstW,short sDstH,const RRect* prDst=NULL,short sAddW=0,
 	short *psItalics=NULL);
 	*/
 
 //============================  The modern version FSPR1 =================================
-extern	short rspBlit(
-				  ULONG ulForeColor, // will draw in color 0!
+extern	int16_t rspBlit(
+				  uint32_t ulForeColor, // will draw in color 0!
 				  RImage* pimSrc,
 				  RImage* pimDst,
-				  short sDstX,
-				  short sDstY,
+				  int16_t sDstX,
+				  int16_t sDstY,
 				  const RRect* prDst = NULL
 				  ); // no scaling, clipping, or text effects.
 
-extern	short rspBlit(
-				  ULONG ulForeColor, // will draw color 0
+extern	int16_t rspBlit(
+				  uint32_t ulForeColor, // will draw color 0
 				  RImage* pimSrc,
 				  RImage* pimDst,
-				  short sDstX,
-				  short sDstY,
-				  short sDstW,
-				  short sDstH,
+				  int16_t sDstX,
+				  int16_t sDstY,
+				  int16_t sDstW,
+				  int16_t sDstH,
 				  const RRect* prDst = NULL
 				  ); // no clipping or text effects, but scaling.
 
-extern	short rspBlit(
-				  ULONG ulForeColor,
+extern	int16_t rspBlit(
+				  uint32_t ulForeColor,
 				  RImage* pimSrc,
 				  RImage* pimDst,
-				  short sDstX,
-				  short sDstY,
-				  short* psLineOffset // Must be as long as the height!
+				  int16_t sDstX,
+				  int16_t sDstY,
+				  int16_t* psLineOffset // Must be as long as the height!
 				  );	// No clipping ever, text effects, no scaling.
 
-extern	short rspBlit(
-				  ULONG ulForeColor, // will draw color 0
+extern	int16_t rspBlit(
+				  uint32_t ulForeColor, // will draw color 0
 				  RImage* pimSrc,
 				  RImage* pimDst,
-				  short sDstX,
-				  short sDstY,
-				  short sDstW,
-				  short sDstH,
-				  short* psLineOffset // Must be as long as the height!
+				  int16_t sDstX,
+				  int16_t sDstY,
+				  int16_t sDstW,
+				  int16_t sDstH,
+				  int16_t* psLineOffset // Must be as long as the height!
 				  ); // No clipping ever, text effects, scaling	
 
 //========================================================================================
 	
-extern	short	rspCrop(RImage* pimSrc,short sX,short sY,short sW,short sH,
-				  short sAlign = 16);
-extern	short	rspPad(RImage* pimSrc,short sX,short sY,short sW,short sH,
-				  short sAlign = 16);
-extern	short rspRemovePadding(RImage* pimSrc);
-extern	short rspAddRotationPadding(RImage* pimSrc,short sHotX,short sHotY);
+extern	int16_t	rspCrop(RImage* pimSrc,int16_t sX,int16_t sY,int16_t sW,int16_t sH,
+				  int16_t sAlign = 16);
+extern	int16_t	rspPad(RImage* pimSrc,int16_t sX,int16_t sY,int16_t sW,int16_t sH,
+				  int16_t sAlign = 16);
+extern	int16_t rspRemovePadding(RImage* pimSrc);
+extern	int16_t rspAddRotationPadding(RImage* pimSrc,int16_t sHotX,int16_t sHotY);
 
 
 /* archaic
-extern	short	_rspBlit(ULONG ulClrLTR,ULONG ulClrBKD,RImage* pimSrc,RImage* pimDst,
+extern	short	_rspBlit(uint32_t ulClrLTR,uint32_t ulClrBKD,RImage* pimSrc,RImage* pimDst,
 				  short sDstX,short sDstY,short sW,short sH,
 				  short sAddW=0,u16Frac* frSkipY=NULL,u16Frac* frSkipX=NULL);
-extern	short	_rspBlit(ULONG ulForeColor,ULONG ulBackColor,RImage* pimSrc,RImage* pimDst,
+extern	short	_rspBlit(uint32_t ulForeColor,uint32_t ulBackColor,RImage* pimSrc,RImage* pimDst,
 								  short sDstX,short sDstY,const RRect* prDst = NULL,short sAddW = 0);
 
-extern	short	_rspBlit(ULONG ulForeColor,ULONG ulBackColor,RImage* pimSrc,RImage* pimDst,
+extern	short	_rspBlit(uint32_t ulForeColor,uint32_t ulBackColor,RImage* pimSrc,RImage* pimDst,
 								  short sDstX,short sDstY,short sDstW,short sDstH,
 								  const RRect* prDst = NULL,short sAddW = 0);
 */
 
-extern	short rspRectToMono(ULONG ulColor,RImage* pimDst,short sX,short sY,
-						short sW,short sH);
+extern	int16_t rspRectToMono(uint32_t ulColor,RImage* pimDst,int16_t sX,int16_t sY,
+						int16_t sW,int16_t sH);
 
 //****************************************************************************************
 //****************************************************************************************
@@ -324,8 +324,8 @@ extern	short rspRectToMono(ULONG ulColor,RImage* pimDst,short sX,short sY,
 
 typedef	struct tagFont
 	{
-	short	sCellHeight;
-	short	sUnproportionalWidth;
+	int16_t	sCellHeight;
+	int16_t	sUnproportionalWidth;
 	RImage*	pLetters[256];	// ptr to letters or NULL
 	tagFont* pNext;
 	}	FontNode;
@@ -335,7 +335,7 @@ class	RFontOld
 	{
 public:
 	char*	m_pszFontName;
-	short	m_sMaxCellHeight;	// maximum original size
+	int16_t	m_sMaxCellHeight;	// maximum original size
 
 	FontNode* m_pHead;	// last created font...
 	FontNode* m_pFontList;
@@ -347,28 +347,28 @@ public:
 	//===========  Font Installation:
 	//===================================================
 	void	AddLetter(RImage* pimLetter);
-	short	Save(char* pszPath); // only 5 chars standard...
-	short	Save(RFile* pFile);
-	short	Load(char* pszPath,char* pszName); // only 5 chars standard...
-	short	Load(char* pszName); // only 5 chars standard...
+	int16_t	Save(char* pszPath); // only 5 chars standard...
+	int16_t	Save(RFile* pFile);
+	int16_t	Load(char* pszPath,char* pszName); // only 5 chars standard...
+	int16_t	Load(char* pszName); // only 5 chars standard...
 	};
 
 // This IS currently 8=bit color hard wired!
 
 // flags for formatting: (FORMATTING NYI)
-const	short	TXT_LEFT = 1;
-const short	TXT_CENTER = 2;
-const	short	TXT_WORDWRAP = 4;
-const short	TXT_WORDJUST = 8; // change space size
-const	short	TXT_CHARJUST = 16;
-const	short	TXT_MULTILINE = 32; // allow multiple lines
+const	int16_t	TXT_LEFT = 1;
+const int16_t	TXT_CENTER = 2;
+const	int16_t	TXT_WORDWRAP = 4;
+const int16_t	TXT_WORDJUST = 8; // change space size
+const	int16_t	TXT_CHARJUST = 16;
+const	int16_t	TXT_MULTILINE = 32; // allow multiple lines
 
 // flags for attributes:
 // (Tab and Spacing are always considered ON at default values.)
-const	short	TXT_BOLD = 1;
-const	short	TXT_ITALIC = 2;
-const	short	TXT_WIDE = 4;
-const short cgsMAX_FONT_SIZE = 256; // may need to adjust!
+const	int16_t	TXT_BOLD = 1;
+const	int16_t	TXT_ITALIC = 2;
+const	int16_t	TXT_WIDE = 4;
+const int16_t cgsMAX_FONT_SIZE = 256; // may need to adjust!
 
 /*
 class	RPrint
@@ -442,8 +442,8 @@ private:
 	float m_fSpace; // Extra space between pixels based on chosen height.
 	short m_sSpace; // Extra kerning space in pixels
 
-	UCHAR	m_clrBKD;	// current color
-	UCHAR	m_clrFGD;
+	uint8_t	m_clrBKD;	// current color
+	uint8_t	m_clrFGD;
 
 	RFontOld*	m_fnCurrent;	// Current font
 	FontNode* m_pFontSize;	// Base font template
@@ -489,10 +489,10 @@ public:
 		}
 	
 	RImage* pImage;
-	short	sHotX; // subtract from coord
-	short sHotY;
-	short *psLinkX; // a var length array
-	short *psLinkY; // a var length array
+	int16_t	sHotX; // subtract from coord
+	int16_t sHotY;
+	int16_t *psLinkX; // a var length array
+	int16_t *psLinkY; // a var length array
 	} *PStrafe;
 // ARCHAIC Backwards support for BLT_STRAFE:
 
@@ -501,18 +501,18 @@ public:
 typedef	struct
 	{
 	RImage*	pfspr; // must be altered!
-	short sHotX;
-	short sHotY;
-	short sCurDeg;
-	short *psLinkX;
-	short *psLinkY;
+	int16_t sHotX;
+	int16_t sHotY;
+	int16_t sCurDeg;
+	int16_t *psLinkX;
+	int16_t *psLinkY;
 
 	}	StrafeFrame; // archaic
 
 typedef struct 
 	{
-	short sNumFrames;
-	short sNumLinks;
+	int16_t sNumFrames;
+	int16_t sNumLinks;
 	CStrafe *pFrame;
 
 	} Strafe; // archaic!
@@ -524,27 +524,27 @@ extern	Strafe*	BLT_RotStrafe(RImage* pimSrc,short sHotX,short sHotY,short sNumIn
 
 //extern	void	BLT_FreeStrafe(Strafe* pKill);
 
-extern	void	rspSetConvertToROTBUF(short sCenterX,short sCenterY);
+extern	void	rspSetConvertToROTBUF(int16_t sCenterX,int16_t sCenterY);
 
 extern	void	_RotateShrink(float fDeg,RImage* pimSrc,RImage* pimDst,
-						  short sDstX,short sDstY,short sDstW,short sDstH,
-						  short sFlipCode = 0);
-extern	short rspStrafeRotate(void *pReturnArray,	// Output
-							RImage* pimSrc,short sCenterX,short sCenterY,double dScale, // Input
-							 short sNumFrames,double dStartDeg = 0.0,double dDegInc = 0.0,
-							 short sNumLinks=0,short *psX=NULL,short *psY=NULL, // input
+						  int16_t sDstX,int16_t sDstY,int16_t sDstW,int16_t sDstH,
+						  int16_t sFlipCode = 0);
+extern	int16_t rspStrafeRotate(void *pReturnArray,	// Output
+							RImage* pimSrc,int16_t sCenterX,int16_t sCenterY,double dScale, // Input
+							 int16_t sNumFrames,double dStartDeg = 0.0,double dDegInc = 0.0,
+							 int16_t sNumLinks=0,int16_t *psX=NULL,int16_t *psY=NULL, // input
 							 // generic user stucture must be an array:
-							 RImage* pIm = NULL, short *psHotX = NULL, short *psHotY = NULL,
-							 short **ppsX = NULL,short **ppsY = NULL,
-							 long lStructSize = sizeof(CStrafe));
+							 RImage* pIm = NULL, int16_t *psHotX = NULL, int16_t *psHotY = NULL,
+							 int16_t **ppsX = NULL,int16_t **ppsY = NULL,
+							 int32_t lStructSize = sizeof(CStrafe));
 
-extern	short rspBlitToMono(
+extern	int16_t rspBlitToMono(
 				  RImage* pimSrc,
 				  RImage* pimDst,
-				  short sDstX,
-				  short sDstY,
-				  short sDstW,
-				  short sDstH
+				  int16_t sDstX,
+				  int16_t sDstY,
+				  int16_t sDstW,
+				  int16_t sDstH
 				  );
 
 //*****************************************************************************
@@ -552,58 +552,58 @@ extern	short rspBlitToMono(
 // if prSrc == NULL, no source clipping will occure
 // if prDst == NULL, it will clip to the RImage
 //
-extern	short	rspBlitT(ULONG ucTransparent,RImage* pimSrc,RImage* pimDst,short sSrcX,short sSrcY,short sDstX,
-			  short sDstY,short sW,short sH,const RRect* prDst,const RRect* prSrc);
+extern	int16_t	rspBlitT(uint32_t ucTransparent,RImage* pimSrc,RImage* pimDst,int16_t sSrcX,int16_t sSrcY,int16_t sDstX,
+			  int16_t sDstY,int16_t sW,int16_t sH,const RRect* prDst,const RRect* prSrc);
 
-extern	short rspBlitT(RImage* pimSrc,RImage* pimDst,short sDstX,short sDstY,
-					short sDstW,short sDstH,const RRect* prDstClip=NULL);
+extern	int16_t rspBlitT(RImage* pimSrc,RImage* pimDst,int16_t sDstX,int16_t sDstY,
+					int16_t sDstW,int16_t sDstH,const RRect* prDstClip=NULL);
 
-extern	short rspBlitT(RImage* pimSrc,RImage* pimDst,RRect* prSrc,const RRect* prDst,
+extern	int16_t rspBlitT(RImage* pimSrc,RImage* pimDst,RRect* prSrc,const RRect* prDst,
 				  const RRect* prDstClip=NULL,const RRect* prSrcClip=NULL);
 
-extern	short rspBlitT(RImage* pimSrc,RImage* pimDst,short sDstX,short sDstY,
+extern	int16_t rspBlitT(RImage* pimSrc,RImage* pimDst,int16_t sDstX,int16_t sDstY,
 							 double dRatW = 1.0,double dRatH = 1.0,const RRect* prDstClip = NULL);
 
-extern	short rspBlitRot(short sDeg,RImage* pimSrc,RImage* pimDst,
-					 short sDstX,short sDstY,short sDstW,short sDstH,
+extern	int16_t rspBlitRot(int16_t sDeg,RImage* pimSrc,RImage* pimDst,
+					 int16_t sDstX,int16_t sDstY,int16_t sDstW,int16_t sDstH,
 					 const RRect* prDstClip = NULL);
 
-extern	short rspBlitRot(short sDeg,RImage* pimSrc,RImage* pimDst,
-					 short sDstX,short sDstY,double dScaleX,double dScaleY,
+extern	int16_t rspBlitRot(int16_t sDeg,RImage* pimSrc,RImage* pimDst,
+					 int16_t sDstX,int16_t sDstY,double dScaleX,double dScaleY,
 					 const RRect* prDstClip = NULL);
 
-extern	void rspLine(UCHAR ucColor,RImage* pimDst,short sX1,short sY1,short sX2,short sY2,
+extern	void rspLine(uint8_t ucColor,RImage* pimDst,int16_t sX1,int16_t sY1,int16_t sX2,int16_t sY2,
 							 const RRect* prClip = NULL);
 
-extern	short rspRand(short sMax);
+extern	int16_t rspRand(int16_t sMax);
 
-extern	short rspMonoRect(short rspBrightness,RImage* pimDst,short sX,short sY,short sW,short sH,
+extern	int16_t rspMonoRect(int16_t rspBrightness,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_t sH,
 						const RRect* prClip = NULL);
 
-extern	short rspMonoRectLightenTo(short rspBrightness,RImage* pimDst,short sX,short sY,short sW,short sH,
+extern	int16_t rspMonoRectLightenTo(int16_t rspBrightness,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_t sH,
 						const RRect* prClip = NULL);
 
-extern	short rspMonoRectDarkenTo(short rspBrightness,RImage* pimDst,short sX,short sY,short sW,short sH,
+extern	int16_t rspMonoRectDarkenTo(int16_t rspBrightness,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_t sH,
 						const RRect* prClip = NULL);
 
-extern	short rspClipBrightness(short sNum,short sLev);
+extern	int16_t rspClipBrightness(int16_t sNum,int16_t sLev);
 
-extern	short rspMonoRect(short sThickness,short rspBrightness,RImage* pimDst,short sX,short sY,short sW,short sH,
+extern	int16_t rspMonoRect(int16_t sThickness,int16_t rspBrightness,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_t sH,
 						const RRect* prClip = NULL);
 
-extern	short rspMonoRectLightenTo(short sThickness,short rspBrightness,RImage* pimDst,short sX,short sY,short sW,short sH,
+extern	int16_t rspMonoRectLightenTo(int16_t sThickness,int16_t rspBrightness,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_t sH,
 						const RRect* prClip = NULL);
 
-extern	short	rspMonoRectDarkenTo(short sThickness,short rspBrightness,RImage* pimDst,short sX,short sY,short sW,short sH,
+extern	int16_t	rspMonoRectDarkenTo(int16_t sThickness,int16_t rspBrightness,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_t sH,
 						const RRect* prClip = NULL);
 
-extern	short rspGetBrightness(short sIndex,UCHAR* pR,UCHAR* pG,UCHAR* pB,long lInc = 4);
+extern	int16_t rspGetBrightness(int16_t sIndex,uint8_t* pR,uint8_t* pG,uint8_t* pB,int32_t lInc = 4);
 
 //**********************************  FAST CONVERTS:  *******************************
 //----- BYTE dpeth to shift amount:
-static const short gsByteToShift[] = {0,0,1,0,2,0,0,0,3,0,0,0,0,0,0,0,4};
+static const int16_t gsByteToShift[] = {0,0,1,0,2,0,0,0,3,0,0,0,0,0,0,0,4};
 //                         BYTES:     0 1 2 3 4 5 6 7 8 9 a b c d e f *
-static const short gsBitsToShift[] = 
+static const int16_t gsBitsToShift[] = 
 	   {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2};
 //BIT: 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f *
 

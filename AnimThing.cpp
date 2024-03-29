@@ -92,13 +92,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CAnimThing::Load(								// Returns 0 if successfull, non-zero otherwise
+int16_t CAnimThing::Load(								// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,										// In:  File to load from
 	bool bEditMode,									// In:  True for edit mode, false otherwise
-	short sFileCount,									// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)								// In:  Version of file format to load.
+	int16_t sFileCount,									// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)								// In:  Version of file format to load.
 	{
-	short sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	if (sResult == 0)
 		{
 		switch (ulFileVersion)
@@ -133,11 +133,11 @@ short CAnimThing::Load(								// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CAnimThing::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CAnimThing::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 	{
-	short	sResult	= CThing::Save(pFile, sFileCount);
+	int16_t	sResult	= CThing::Save(pFile, sFileCount);
 	if (sResult == 0)
 		{
 		pFile->Write(&m_dX);
@@ -157,7 +157,7 @@ short CAnimThing::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CAnimThing::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+int16_t CAnimThing::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 	{
 	m_lAnimPrevTime	= m_pRealm->m_time.GetGameTime();
 	m_lAnimTime			= 0;
@@ -169,7 +169,7 @@ short CAnimThing::Startup(void)								// Returns 0 if successfull, non-zero oth
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-short CAnimThing::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CAnimThing::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 	{
 	return 0;
 	}
@@ -228,14 +228,14 @@ void CAnimThing::Update(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Render object
 ////////////////////////////////////////////////////////////////////////////////
-short sEdit;
+int16_t sEdit;
 double dScale = 1.0;
 double dScaleInc = 0.025;
 
 void CAnimThing::Render(void)
 	{
 	// Get current time diff.
-	long lCurTime		= m_pRealm->m_time.GetGameTime(); 
+	int32_t lCurTime		= m_pRealm->m_time.GetGameTime(); 
 	m_lAnimTime			+= lCurTime - m_lAnimPrevTime;
 	m_lAnimPrevTime	= lCurTime;
 
@@ -263,7 +263,7 @@ void CAnimThing::Render(void)
 		m_sprite.m_sPriority = m_dZ;
 		
 		// Layer should be based on info we get from attribute map.
-		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 		// Copy the color info and the alpha channel to the Alpha Sprite
 		m_sprite.m_pImage		= &(paa->m_imColor);
@@ -280,7 +280,7 @@ void CAnimThing::Render(void)
 ///////////////////////////////////////////////////////////
 if (sEdit && (paa->m_sNumAlphas > 2))
 	{
-	unsigned char auc[128];
+	uint8_t auc[128];
 	rspScanKeys(auc);
 	if (auc[RSP_SK_LEFT])
 		{
@@ -292,12 +292,12 @@ if (sEdit && (paa->m_sNumAlphas > 2))
 		{
 		dScale += dScaleInc;
 		}
-	for (short y = 0; y < paa->m_pimAlphaArray[1].m_sHeight; y++)
+	for (int16_t y = 0; y < paa->m_pimAlphaArray[1].m_sHeight; y++)
 		{
 		U8* pSrc = paa->m_pimAlphaArray[1].m_pData + (y * paa->m_pimAlphaArray[1].m_lPitch);
 		U8* pDst = paa->m_pimAlphaArray[0].m_pData + (y * paa->m_pimAlphaArray[0].m_lPitch);
 
-		for (short x = 0; x < paa->m_pimAlphaArray[1].m_sWidth; x++)
+		for (int16_t x = 0; x < paa->m_pimAlphaArray[1].m_sWidth; x++)
 			{
 			double dVal = (double)(*pSrc);
 			dVal *= dScale;
@@ -318,12 +318,12 @@ if (sEdit && (paa->m_sNumAlphas > 2))
 	}
 
 
-short CAnimThing::Setup(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CAnimThing::Setup(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -342,12 +342,12 @@ short CAnimThing::Setup(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CAnimThing::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CAnimThing::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -363,9 +363,9 @@ short CAnimThing::EditNew(									// Returns 0 if successfull, non-zero otherwi
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-short CAnimThing::EditModify(void)
+int16_t CAnimThing::EditModify(void)
 	{
-	short	sResult	= 0;
+	int16_t	sResult	= 0;
 
 	RGuiItem* pgui = RGuiItem::LoadInstantiate(FullPathVD(GUI_FILE_NAME));
 	if (pgui != NULL)
@@ -450,10 +450,10 @@ short CAnimThing::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CAnimThing::EditMove(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CAnimThing::EditMove(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
 	m_dX = (double)sX;
 	m_dY = (double)sY;
@@ -498,9 +498,9 @@ void CAnimThing::EditRect(	// Returns nothiing.
 // (virtual	(Overridden here)).
 ////////////////////////////////////////////////////////////////////////////////
 void CAnimThing::EditHotSpot(	// Returns nothiing.
-	short*	psX,					// Out: X coord of 2D hotspot relative to
+	int16_t*	psX,					// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-	short*	psY)					// Out: Y coord of 2D hotspot relative to
+	int16_t*	psY)					// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 	{
 	*psX	= 0;	// Safety.
@@ -540,9 +540,9 @@ void CAnimThing::EditRender(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CAnimThing::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CAnimThing::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Safe to call even if no resource.
 	FreeResources();
@@ -579,9 +579,9 @@ short CAnimThing::GetResources(void)						// Returns 0 if successfull, non-zero 
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CAnimThing::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CAnimThing::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	if (m_paachannel != NULL)
 		{

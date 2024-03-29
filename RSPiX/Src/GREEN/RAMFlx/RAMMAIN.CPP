@@ -31,7 +31,7 @@
 
 void Test(void);
 void LoadBackImage(void);
-void BlitFlx(CRamFlx *pFlx, short sTrans);
+void BlitFlx(CRamFlx *pFlx, int16_t sTrans);
 void DumpHeader(FLX_FILE_HDR* pfilehdr);
 
 int SmartHeap_far_malloc;
@@ -102,7 +102,7 @@ void Test(void)
 		TRACE("Processing frames:\n");
 		
 		// Read each frame until we reach the ring frame
-		for (short sFrame = 1; sFrame <= filehdrRead.sNumFrames+3;)
+		for (int16_t sFrame = 1; sFrame <= filehdrRead.sNumFrames+3;)
 			{
 			if (GetLeftMouseEvent()==M_EVENT_DOWN)
 				if (flxRead.ReadNextFrame(NULL) == 0)
@@ -136,7 +136,7 @@ void LoadBackImage(void)
 		}
 	}	
 
- void BlitFlx(CRamFlx *pFlx, short sTrans)
+ void BlitFlx(CRamFlx *pFlx, int16_t sTrans)
  	{
 	// Blit the image to the buffer
 	CPalImage* ppi = pFlx->GetBuffer();
@@ -201,4 +201,3 @@ void DumpHeader(FLX_FILE_HDR* pfilehdr)
 ///////////////////////////////////////////////////////////////////////////////
 // EOF
 ///////////////////////////////////////////////////////////////////////////////
-

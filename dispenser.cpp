@@ -173,8 +173,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // Let this auto-init to 0
-short CDispenser::ms_sFileCount;
-short CDispenser::ms_sDispenseeFileCount;
+int16_t CDispenser::ms_sFileCount;
+int16_t CDispenser::ms_sDispenseeFileCount;
 
 // Descriptions of logic types and their parameters.
 CDispenser::LogicInfo	CDispenser::ms_aliLogics[NumLogicTypes]	=
@@ -257,13 +257,13 @@ void LogicItemCall(
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CDispenser::Load(		// Returns 0 if successfull, non-zero otherwise
+int16_t CDispenser::Load(		// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,				// In:  File to load from
 	bool bEditMode,			// In:  True for edit mode, false otherwise
-	short sFileCount,			// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)		// In:  Version of file format to load.
+	int16_t sFileCount,			// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)		// In:  Version of file format to load.
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// In most cases, the base class Load() should be called.
 	sResult	= CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
@@ -298,7 +298,7 @@ short CDispenser::Load(		// Returns 0 if successfull, non-zero otherwise
 				m_logictype	= (LogicType)u16LogicType;
 				pFile->Read(m_alLogicParms, 4);
 				pFile->Read(&m_ulFileVersion);
-				long	lSize;
+				int32_t	lSize;
 				if (pFile->Read(&lSize) == 1)
 					{
 					// Open memory file to receive the clone data . . .
@@ -369,14 +369,14 @@ short CDispenser::Load(		// Returns 0 if successfull, non-zero otherwise
 				pFile->Read(m_alLogicParms + 1);
 				pFile->Read(m_alLogicParms + 2);
 
-				short i;
+				int16_t i;
 				for (i = 3; i < NumParms; i++)
 					{
 					m_alLogicParms[i]	= 0;
 					}
 
 				pFile->Read(&m_ulFileVersion);
-				long	lSize;
+				int32_t	lSize;
 				if (pFile->Read(&lSize) == 1)
 					{
 					// Open memory file to receive the clone data . . .
@@ -423,11 +423,11 @@ short CDispenser::Load(		// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CDispenser::Save(		// Returns 0 if successfull, non-zero otherwise
+int16_t CDispenser::Save(		// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,				// In:  File to save to
-	short sFileCount)			// In:  File count (unique per file, never 0)
+	int16_t sFileCount)			// In:  File count (unique per file, never 0)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// In most cases, the base class Save() should be called.
 	sResult	= CThing::Save(pFile, sFileCount);
@@ -481,7 +481,7 @@ short CDispenser::Save(		// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CDispenser::Startup(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CDispenser::Startup(void)						// Returns 0 if successfull, non-zero otherwise
 	{
 	switch (m_logictype)
 		{
@@ -504,7 +504,7 @@ short CDispenser::Startup(void)						// Returns 0 if successfull, non-zero other
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-short CDispenser::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CDispenser::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 	{
 	return 0;
 	}
@@ -518,7 +518,7 @@ void CDispenser::Suspend(void)
 	if (m_sSuspend == 0)
 		{
 		// Store current delta so we can restore it.
-		long	lCurTime				= m_pRealm->m_time.GetGameTime();
+		int32_t	lCurTime				= m_pRealm->m_time.GetGameTime();
 		m_lNextUpdate				= lCurTime - m_lNextUpdate;
 		}
 
@@ -537,7 +537,7 @@ void CDispenser::Resume(void)
 	// This method is far from precise, but I'm hoping it's good enough.
 	if (m_sSuspend == 0)
 		{
-		long	lCurTime				= m_pRealm->m_time.GetGameTime();
+		int32_t	lCurTime				= m_pRealm->m_time.GetGameTime();
 		m_lNextUpdate				= lCurTime - m_lNextUpdate;
 		}
 	}
@@ -549,7 +549,7 @@ void CDispenser::Update(void)
 	{
 	if (!m_sSuspend)
 		{
-		long	lCurTime	= m_pRealm->m_time.GetGameTime();
+		int32_t	lCurTime	= m_pRealm->m_time.GetGameTime();
 
 		if (m_sNumDispensees < m_sMaxDispensees || m_sMaxDispensees < 0)
 			{
@@ -623,7 +623,7 @@ void CDispenser::Update(void)
 					if (lCurTime >= m_lNextUpdate)
 						{
 						// If in range . . .
-						long	lDudeDist;
+						int32_t	lDudeDist;
 						if (GetClosestDudeDistance(&lDudeDist) == 0)
 							{
 							if ( (lDudeDist >= m_alLogicParms[0] || m_alLogicParms[0] == 0) && (lDudeDist <= m_alLogicParms[1] || m_alLogicParms[1] == 0) )
@@ -654,13 +654,13 @@ void CDispenser::Update(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CDispenser::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CDispenser::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
 	// Initialize for edit mode.
-	short sResult	= Init(true);
+	int16_t sResult	= Init(true);
 	if (sResult == 0)
 		{
 		sResult	= EditModify();
@@ -674,9 +674,9 @@ short CDispenser::EditNew(									// Returns 0 if successfull, non-zero otherwi
 ////////////////////////////////////////////////////////////////////////////////
 inline void SetLogicText(	// Returns nothing.
 	RGuiItem*	pguiRoot,	// In:  Root item.
-	long			lId,			// In:  ID of item to update text.
+	int32_t			lId,			// In:  ID of item to update text.
 	char*			pszText,		// In:  New text or NULL for none and to disable lIdEdit.
-	long			lIdEdit)		// In:  Item to enable or disable.
+	int32_t			lIdEdit)		// In:  Item to enable or disable.
 	{
 	RGuiItem*	pguiEdit	= pguiRoot->GetItemFromId(lIdEdit);
 	RGuiItem*	pguiText	= pguiRoot->GetItemFromId(lId);
@@ -699,9 +699,9 @@ inline void SetLogicText(	// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 inline void SetupLogicParms(	// Returns nothing.
 	RGuiItem*	pguiRoot,		// In:  Root item.
-	short			sType)			// In:  Logic type to setup parms for.
+	int16_t			sType)			// In:  Logic type to setup parms for.
 	{
-	short	i;
+	int16_t	i;
 	for (i = 0; i < CDispenser::NumParms; i++)
 		{
 		SetLogicText(
@@ -716,7 +716,7 @@ inline void SetupLogicParms(	// Returns nothing.
 	if (pguiDescription)
 		{
 		// Remember if word wrap was on . . .
-		short	sWasWordWrap	= FALSE;
+		int16_t	sWasWordWrap	= FALSE;
 		if (pguiDescription->m_pprint->m_eModes & RPrint::WORD_WRAP)
 			{
 			sWasWordWrap	= TRUE;
@@ -746,7 +746,7 @@ void LogicItemCall(
 	// Make item the selection.
 	plb->SetSel(pguiLogicItem);
 
-	short	sType	= pguiLogicItem->m_ulUserData;
+	int16_t	sType	= pguiLogicItem->m_ulUserData;
 
 	// Update parms.
 	SetupLogicParms(plb->GetParent(), sType);
@@ -787,12 +787,12 @@ static void UpdateMaxDispensees(
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-short CDispenser::EditModify(void)					// Returns 0 if successfull, non-zero otherwise
+int16_t CDispenser::EditModify(void)					// Returns 0 if successfull, non-zero otherwise
 	{
 	// Get key status array.
 	U8*	pau8KeyStatus	= rspGetKeyStatusArray();
 
-	short	sResult	= 0;
+	int16_t	sResult	= 0;
 	ClassIDType	idNewThingType;
 
 	// Set up to modify dispensee.
@@ -823,7 +823,7 @@ short CDispenser::EditModify(void)					// Returns 0 if successfull, non-zero oth
 				ASSERT(pbtnModify->m_type == RGuiItem::Btn);
 				ASSERT(pmbInfiniteDispensees->m_type == RGuiItem::MultiBtn); 
 
-				short	i;
+				int16_t	i;
 				for (i = 0; i < NumParms; i++)
 					{
 					RGuiItem*	pgui	= pguiRoot->GetItemFromId(LOGIC_PARMS_EDIT_ID_BASE + i);
@@ -839,7 +839,7 @@ short CDispenser::EditModify(void)					// Returns 0 if successfull, non-zero oth
 
 				// Point instance data at the max dispensees edit so it can show and
 				// hide it.
-				pmbInfiniteDispensees->m_ulUserInstance	= (ULONG)peditMaxDispensees;
+				pmbInfiniteDispensees->m_ulUserInstance	= (U64)peditMaxDispensees;
 				pmbInfiniteDispensees->m_sState				= (m_sMaxDispensees < 0) ? 2 : 1;
 				pmbInfiniteDispensees->m_bcUser				= UpdateMaxDispensees;
 				pmbInfiniteDispensees->Compose();
@@ -859,7 +859,7 @@ short CDispenser::EditModify(void)					// Returns 0 if successfull, non-zero oth
 						// Set item number.
 						pguiItem->m_ulUserData		= i;
 						// Set listbox ptr.
-						pguiItem->m_ulUserInstance	= (ULONG)plbLogics;
+						pguiItem->m_ulUserInstance	= (U64)plbLogics;
 						// Set callback.
 						pguiItem->m_bcUser			= LogicItemCall;
 						// If this item is the current logic type . . .
@@ -894,7 +894,7 @@ short CDispenser::EditModify(void)					// Returns 0 if successfull, non-zero oth
 						pguiItem	= plbThings->AddString((char*)CThing::ms_aClassInfo[idCur].pszClassName);
 						if (pguiItem != NULL)
 							{
-							pguiItem->m_ulUserData	= (ULONG)idCur;
+							pguiItem->m_ulUserData	= (uint32_t)idCur;
 
 							// If this is the current type . . .
 							if (m_idDispenseeType == idCur)
@@ -951,7 +951,7 @@ short CDispenser::EditModify(void)					// Returns 0 if successfull, non-zero oth
 									g_pszDispenserNoDispenseeTypeChosen);
 								}
 
-							short i;
+							int16_t i;
 							for (i = 0; i < NumParms; i++)
 								{
 								m_alLogicParms[i]	= pguiRoot->GetVal(LOGIC_PARMS_EDIT_ID_BASE + i);
@@ -1077,12 +1077,12 @@ short CDispenser::EditModify(void)					// Returns 0 if successfull, non-zero oth
 // Called by editor to move object to specified position
 // (virtual (Overridden here)).
 ////////////////////////////////////////////////////////////////////////////////
-short CDispenser::EditMove(							// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CDispenser::EditMove(							// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
-	short	sResult	= 0;	// Assume success.
+	int16_t	sResult	= 0;	// Assume success.
 
 	m_sX	= sX;
 	m_sY	= sY;
@@ -1099,9 +1099,9 @@ void CDispenser::EditRender(void)
 	{
 	// Map from 3d to 2d coords
 	Map3Dto2D(
-		(short) m_sX, 
-		(short) m_sY, 
-		(short) m_sZ, 
+		(int16_t) m_sX, 
+		(int16_t) m_sY, 
+		(int16_t) m_sZ, 
 		&m_sprite.m_sX2, 
 		&m_sprite.m_sY2);
 
@@ -1130,9 +1130,9 @@ void CDispenser::EditRect(RRect* prc)
 	{
 	// Map from 3d to 2d coords
 	Map3Dto2D(
-		(short) m_sX, 
-		(short) m_sY, 
-		(short) m_sZ, 
+		(int16_t) m_sX, 
+		(int16_t) m_sY, 
+		(int16_t) m_sZ, 
 		&(prc->sX), 
 		&(prc->sY) );
 
@@ -1156,9 +1156,9 @@ void CDispenser::EditRect(RRect* prc)
 // (virtual (Overridden here)).
 ////////////////////////////////////////////////////////////////////////////////
 void CDispenser::EditHotSpot(	// Returns nothiing.
-	short*	psX,					// Out: X coord of 2D hotspot relative to
+	int16_t*	psX,					// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-	short*	psY)					// Out: Y coord of 2D hotspot relative to
+	int16_t*	psY)					// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 	{
 	// Base of dispenser is hotspot.
@@ -1169,10 +1169,10 @@ void CDispenser::EditHotSpot(	// Returns nothiing.
 ////////////////////////////////////////////////////////////////////////////////
 // Init dispenser
 ////////////////////////////////////////////////////////////////////////////////
-short CDispenser::Init(	// Returns 0 if successfull, non-zero otherwise
+int16_t CDispenser::Init(	// Returns 0 if successfull, non-zero otherwise
 	bool	bEditMode)		// true, if in edit mode; false, otherwise.
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Remember.
 	m_bEditMode		= bEditMode;
@@ -1230,9 +1230,9 @@ void CDispenser::Kill(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CDispenser::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CDispenser::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	if (m_pim == NULL)
 		{
@@ -1268,11 +1268,11 @@ void CDispenser::FreeResources(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Create a dispensee from the memfile, if open.
 ////////////////////////////////////////////////////////////////////////////////
-short CDispenser::InstantiateDispensee(	// Returns 0 on success.
+int16_t CDispenser::InstantiateDispensee(	// Returns 0 on success.
 	CThing**	ppthing,								// Out: New thing loaded from m_fileDispensee.
 	bool		bEditMode)							// In:  true if in edit mode.
 	{
-	short	sResult	= 0;	// Assume success.
+	int16_t	sResult	= 0;	// Assume success.
 
 	// If we even have a dispensee type . . .
 	if (m_idDispenseeType > 0 && m_idDispenseeType < TotalIDs)
@@ -1355,10 +1355,10 @@ short CDispenser::InstantiateDispensee(	// Returns 0 on success.
 ////////////////////////////////////////////////////////////////////////////////
 // Write dispensee to the memfile.
 ////////////////////////////////////////////////////////////////////////////////
-short CDispenser::SaveDispensee(		// Returns 0 on success.
+int16_t CDispenser::SaveDispensee(		// Returns 0 on success.
 	CThing*	pthing)						// In:  Instance of Dispensee to save.
 	{
-	short	sResult	= 0;	// Assume success.
+	int16_t	sResult	= 0;	// Assume success.
 
 	// If we already have a mem file . . .
 	if (m_fileDispensee.IsOpen() != FALSE)
@@ -1391,10 +1391,10 @@ short CDispenser::SaveDispensee(		// Returns 0 on success.
 ////////////////////////////////////////////////////////////////////////////////
 // Render dispensee to m_imRender.
 ////////////////////////////////////////////////////////////////////////////////
-short CDispenser::RenderDispensee(	// Returns 0 on success.
+int16_t CDispenser::RenderDispensee(	// Returns 0 on success.
 	CThing*	pthing)						// In:  Instance of Dispensee to render.
 	{
-	short	sResult	= 0;	// Assume success.
+	int16_t	sResult	= 0;	// Assume success.
 	
 	// If in edit mode . . .
 	if (m_bEditMode == true)
@@ -1422,9 +1422,9 @@ short CDispenser::RenderDispensee(	// Returns 0 on success.
 			{
 			// Map from 3d to 2d coords
 			Map3Dto2D(
-				(short) m_sX, 
-				(short) m_sY, 
-				(short) m_sZ, 
+				(int16_t) m_sX, 
+				(int16_t) m_sY, 
+				(int16_t) m_sZ, 
 				&(m_rcDispensee.sX), 
 				&(m_rcDispensee.sY) );
 
@@ -1457,8 +1457,8 @@ short CDispenser::RenderDispensee(	// Returns 0 on success.
 				{
 				// Determine offset that would put the dispensee's hotspot in the center
 				// of our image.
-				short	sOffX	= -m_rcDispensee.sX;
-				short	sOffY	= -m_rcDispensee.sY;
+				int16_t	sOffX	= -m_rcDispensee.sX;
+				int16_t	sOffY	= -m_rcDispensee.sY;
 
 				RRect	rcClip(0, 0, m_imRender.m_sWidth, m_imRender.m_sHeight);
 
@@ -1508,15 +1508,15 @@ short CDispenser::RenderDispensee(	// Returns 0 on success.
 ////////////////////////////////////////////////////////////////////////////////
 // Get the distance to the closest dude.
 ////////////////////////////////////////////////////////////////////////////////
-short CDispenser::GetClosestDudeDistance(	// Returns 0 on success.  Fails, if no dudes.
-	long* plClosestDistance)					// Out:  Distance to closest dude.
+int16_t CDispenser::GetClosestDudeDistance(	// Returns 0 on success.  Fails, if no dudes.
+	int32_t* plClosestDistance)					// Out:  Distance to closest dude.
 	{
-	short	sRes	= 1;	// Assume no dude found.
+	int16_t	sRes	= 1;	// Assume no dude found.
 
-	ULONG	ulSqrDistance;
-	ULONG	ulCurSqrDistance	= 0xFFFFFFFF;
-	ULONG	ulDistX;
-	ULONG	ulDistZ;
+	uint32_t	ulSqrDistance;
+	uint32_t	ulCurSqrDistance	= 0xFFFFFFFF;
+	uint32_t	ulDistX;
+	uint32_t	ulDistZ;
 	CDude*	pdude;
 
 	CListNode<CThing>* pDudeList = m_pRealm->m_aclassHeads[CThing::CDudeID].m_pnNext;

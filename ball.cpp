@@ -114,7 +114,7 @@
 // Variables/data
 ////////////////////////////////////////////////////////////////////////////////
 
-short CBall::ms_sFileCount;
+int16_t CBall::ms_sFileCount;
 
 /// Standing Animation Files ////////////////////////////////////////////////////
 // An array of pointers to res names (one for each animation component).
@@ -135,13 +135,13 @@ static char*	ms_apszAnimNames[]	=
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CBall::Load(										// Returns 0 if successfull, non-zero otherwise
+int16_t CBall::Load(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// In most cases, the base class Load() should be called.
 	sResult	= CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
@@ -199,11 +199,11 @@ short CBall::Load(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CBall::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CBall::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// In most cases, the base class Save() should be called.
 	sResult	= CThing::Save(pFile, sFileCount);
@@ -240,9 +240,9 @@ short CBall::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CBall::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+int16_t CBall::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 	{
-	short	sResult	= 0;	// Assume success.
+	int16_t	sResult	= 0;	// Assume success.
 
 	// At this point we can assume the CHood was loaded, so we init our height
 	m_sPrevHeight = m_pRealm->GetHeight(m_dX, m_dZ);
@@ -260,9 +260,9 @@ short CBall::Startup(void)								// Returns 0 if successfull, non-zero otherwis
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-short CBall::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CBall::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 	{
-	short	sResult	= 0;
+	int16_t	sResult	= 0;
 
 	m_trans.Make1();
 	
@@ -295,7 +295,7 @@ void CBall::Update(void)
 	{
 	if (!m_sSuspend)
 		{
-		long	lCurTime				= m_pRealm->m_time.GetGameTime();
+		int32_t	lCurTime				= m_pRealm->m_time.GetGameTime();
 		double dDeltaSeconds		= (lCurTime - m_lPrevTime) / 1000.0;
 
 		// Adjust vertical velocity and calculate new position.
@@ -311,7 +311,7 @@ void CBall::Update(void)
 
 		// Get height and 'no walk' status at new position.
 		bool		bNoWalk;
-		short		sHeight	= m_pRealm->GetHeightAndNoWalk(dNewX, dNewY, &bNoWalk);
+		int16_t		sHeight	= m_pRealm->GetHeightAndNoWalk(dNewX, dNewY, &bNoWalk);
 
 		// If new Y position is less than terrain height or 'no walk' zone . . .
 		if (dNewY < sHeight || bNoWalk == true)
@@ -377,14 +377,14 @@ void CBall::Render(void)
 	m_sprite.m_sPriority = m_dZ;
 
 	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(
-		m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+		m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 
 	// Cheese festival rotation.
 	m_trans.Ry(rspMod360(m_dDX));
 	m_trans.Rz(rspMod360(m_dDZ));
 
-	long lTime	= m_pRealm->m_time.GetGameTime();
+	int32_t lTime	= m_pRealm->m_time.GetGameTime();
 
 	m_sprite.m_pmesh		= (RMesh*)m_anim.m_pmeshes->GetAtTime(lTime);
 	m_sprite.m_psop		= (RSop*)m_anim.m_psops->GetAtTime(lTime);
@@ -402,12 +402,12 @@ void CBall::Render(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CBall::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CBall::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = sX;
@@ -433,9 +433,9 @@ short CBall::EditNew(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-short CBall::EditModify(void)
+int16_t CBall::EditModify(void)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Load GUI . . .
 	RGuiItem*	pguiRoot	= RGuiItem::LoadInstantiate(FullPath(GAME_PATH_VD, BALL_GUI_FILE) );
@@ -540,10 +540,10 @@ short CBall::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CBall::EditMove(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CBall::EditMove(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
 	m_dX = sX;
 	m_dY = sY;
@@ -598,9 +598,9 @@ void CBall::EditRect(	// Returns nothiing.
 // (virtual (Overridden here)).
 ////////////////////////////////////////////////////////////////////////////////
 void CBall::EditHotSpot(			// Returns nothiing.
-	short*	psX,						// Out: X coord of 2D hotspot relative to
+	int16_t*	psX,						// Out: X coord of 2D hotspot relative to
 											// EditRect() pos.
-	short*	psY)						// Out: Y coord of 2D hotspot relative to
+	int16_t*	psY)						// Out: Y coord of 2D hotspot relative to
 											// EditRect() pos.
 	{
 	*psX	= m_sCurRadius;
@@ -610,9 +610,9 @@ void CBall::EditHotSpot(			// Returns nothiing.
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CBall::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CBall::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	sResult	= m_anim.Get(
 		ms_apszAnimNames, 
@@ -625,9 +625,9 @@ short CBall::GetResources(void)						// Returns 0 if successfull, non-zero other
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CBall::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CBall::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	m_anim.Release();
 

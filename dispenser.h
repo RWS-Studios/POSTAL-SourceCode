@@ -100,40 +100,40 @@ class CDispenser : public CThing
 		ClassIDType	m_idDispenseeType;					// Type of object to dispense.
 		RFile			m_fileDispensee;						// Mem file representing
 																	// dispensee.
-		ULONG			m_ulFileVersion;						// File version of data stored
+		uint32_t			m_ulFileVersion;						// File version of data stored
 																	// in m_fileDispensee.
 
-		short			m_sX;										// Location of this object,
-		short			m_sY;										// the dispenser, which is
-		short			m_sZ;										// also the location at which
+		int16_t			m_sX;										// Location of this object,
+		int16_t			m_sY;										// the dispenser, which is
+		int16_t			m_sZ;										// also the location at which
 																	// we will dispense the 
 																	// dispensee.
 
 		LogicType	m_logictype;							// Logic used for dispensing.
-		long			m_alLogicParms[NumParms];			// Generic parameters for logic.
+		int32_t			m_alLogicParms[NumParms];			// Generic parameters for logic.
 
-		short			m_sMaxDispensees;						// Maximum number of dispensees.
-		short			m_sNumDispensees;						// Number of dispensees already
+		int16_t			m_sMaxDispensees;						// Maximum number of dispensees.
+		int16_t			m_sNumDispensees;						// Number of dispensees already
 																	// dispensed.
 
 		U16			m_u16IdDispensee;						// ID of the last dispensee
 																	// we created.
 
-		long			m_lNextUpdate;							// Time of next update.
+		int32_t			m_lNextUpdate;							// Time of next update.
 
 		bool			m_bEditMode;							// true, if in edit mode, false
 																	// otherwise.
 
-		short			m_sDispenseeHotSpotX;				// Hotspot of dispensee.
-		short			m_sDispenseeHotSpotY;				// Hotspot of dispensee.
+		int16_t			m_sDispenseeHotSpotX;				// Hotspot of dispensee.
+		int16_t			m_sDispenseeHotSpotY;				// Hotspot of dispensee.
 		RRect			m_rcDispensee;							// Rect of dispensee.
 
-		short			m_sSuspend;
+		int16_t			m_sSuspend;
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
+		static int16_t ms_sFileCount;
 
-		static short ms_sDispenseeFileCount;
+		static int16_t ms_sDispenseeFileCount;
 
 	//---------------------------------------------------------------------------
 	// Static Variables
@@ -178,11 +178,11 @@ class CDispenser : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CDispenser(pRealm);
 			if (*ppNew == 0)
 				{
@@ -198,22 +198,22 @@ class CDispenser : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -227,21 +227,21 @@ class CDispenser : public CThing
 
 		// Called by editor to init new object at specified position
 		// (virtual (Overridden here)).
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object.
 		// (virtual (Overridden here)).
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
 		// (virtual (Overridden here)).
-		short EditMove(											// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditMove(											// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to render object
 		// (virtual (Overridden here)).
@@ -254,9 +254,9 @@ class CDispenser : public CThing
 		// Called by editor to get the hotspot of an object in 2D.
 		// (virtual (Overridden here)).
 		void EditHotSpot(			// Returns nothiing.
-			short*	psX,			// Out: X coord of 2D hotspot relative to
+			int16_t*	psX,			// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-			short*	psY);			// Out: Y coord of 2D hotspot relative to
+			int16_t*	psY);			// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 
 		// Get the coordinates of this thing.
@@ -281,34 +281,34 @@ class CDispenser : public CThing
 	//---------------------------------------------------------------------------
 	protected:
 		// Init dispenser
-		short Init(					// Returns 0 if successfull, non-zero otherwise
+		int16_t Init(					// Returns 0 if successfull, non-zero otherwise
 			bool	bEditMode);		// true, if in edit mode; false, otherwise.
 		
 		// Kill dispenser
 		void Kill(void);
 
 		// Get all required resources
-		short GetResources(void);	// Returns 0 if successfull, non-zero otherwise
+		int16_t GetResources(void);	// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
 		void FreeResources(void);
 
 		// Create a dispensee from the memfile, if open.
-		short InstantiateDispensee(	// Returns 0 on success.
+		int16_t InstantiateDispensee(	// Returns 0 on success.
 			CThing**	ppthing,				// Out: New thing loaded from m_fileDispensee.
 			bool		bEditMode);			// In:  true if in edit mode.
 
 		// Write dispensee to the memfile.
-		short SaveDispensee(		// Returns 0 on success.
+		int16_t SaveDispensee(		// Returns 0 on success.
 			CThing*	pthing);		// In:  Instance of Dispensee to save.
 
 		// Render dispensee to m_imRender.
-		short RenderDispensee(	// Returns 0 on success.
+		int16_t RenderDispensee(	// Returns 0 on success.
 			CThing*	pthing);		// In:  Instance of Dispensee to render.
 
 		// Get the closest dude.
-		short GetClosestDudeDistance(	// Returns 0 on success.  Fails, if no dudes.
-			long* plClosestDistance);	// Out:  Distance to closest dude.
+		int16_t GetClosestDudeDistance(	// Returns 0 on success.  Fails, if no dudes.
+			int32_t* plClosestDistance);	// Out:  Distance to closest dude.
 
 		// Destroy an instantiated dispensee.
 		void DestroyDispensee(	// Returns nothing.

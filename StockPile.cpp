@@ -204,10 +204,10 @@ CStockPile	CStockPile::ms_stockpileBackPackMax	=	// Maximum one can carry
 	1,				// m_sBackpack
 	};
 
-short		CStockPile::ms_sEnableDeathWad		= FALSE;	// Enable the death wad
+int16_t		CStockPile::ms_sEnableDeathWad		= FALSE;	// Enable the death wad
 																		// check box.
 
-short		CStockPile::ms_sEnableDoubleBarrel	= FALSE;	// Enable the double barrel
+int16_t		CStockPile::ms_sEnableDoubleBarrel	= FALSE;	// Enable the double barrel
 																		// check box.
 
 //////////////////////////////////////////////////////////////////////////////
@@ -224,8 +224,8 @@ short		CStockPile::ms_sEnableDoubleBarrel	= FALSE;	// Enable the double barrel
 inline
 void SetText(					// Returns nothing.
 	RGuiItem*	pguiRoot,	// In:  Root GUI.
-	long			lId,			// In:  ID of GUI to set text.
-	long			lVal)			// In:  Value to set text to.
+	int32_t			lId,			// In:  ID of GUI to set text.
+	int32_t			lVal)			// In:  Value to set text to.
 	{
 	RGuiItem*	pgui	= pguiRoot->GetItemFromId(lId);
 	if (pgui != NULL)
@@ -241,10 +241,10 @@ void SetText(					// Returns nothing.
 inline
 void CheckMultiBtn(			// Returns nothing.
 	RGuiItem*	pguiRoot,	// In:  Root GUI.
-	long			lId,			// In:  ID of GUI to set text.
-	short			sChecked)	// In:  1 to check, 0 to uncheck.
+	int32_t			lId,			// In:  ID of GUI to set text.
+	int16_t			sChecked)	// In:  1 to check, 0 to uncheck.
 	{
-	short	sRes	= 0;	// Assume nothing;
+	int16_t	sRes	= 0;	// Assume nothing;
 
 	RMultiBtn*	pmb	= (RMultiBtn*)pguiRoot->GetItemFromId(lId);
 	if (pmb != NULL)
@@ -261,11 +261,11 @@ void CheckMultiBtn(			// Returns nothing.
 // Helper inline to get a RMultiBtn GUI, and return its state.
 ////////////////////////////////////////////////////////////////////////////////
 inline
-short IsMultiBtnChecked(	// Returns multibtn's state.
+int16_t IsMultiBtnChecked(	// Returns multibtn's state.
 	RGuiItem*	pguiRoot,	// In:  Root GUI.
-	long			lId)			// In:  ID of GUI to set text.
+	int32_t			lId)			// In:  ID of GUI to set text.
 	{
-	short	sRes	= 0;	// Assume nothing;
+	int16_t	sRes	= 0;	// Assume nothing;
 
 	RMultiBtn*	pmb	= (RMultiBtn*)pguiRoot->GetItemFromId(lId);
 	if (pmb != NULL)
@@ -281,11 +281,11 @@ short IsMultiBtnChecked(	// Returns multibtn's state.
 //////////////////////////////////////////////////////////////////////////////
 // Allow user to edit members.
 //////////////////////////////////////////////////////////////////////////////
-short CStockPile::UserEdit(				// Returns 0 on success.
+int16_t CStockPile::UserEdit(				// Returns 0 on success.
 	RGuiItem*	pguiChild /*= NULL*/)	// In: Optional child GUI to be placed at 
 													// botom of Stockpile GUI.
 	{
-	short	sResult	= 0;
+	int16_t	sResult	= 0;
 
 	RGuiItem* pgui = RGuiItem::LoadInstantiate(FullPathVD(GUI_FILE_NAME));
 	if (pgui)
@@ -293,9 +293,9 @@ short CStockPile::UserEdit(				// Returns 0 on success.
 		// If there is a user specified GUI . . .
 		if (pguiChild)
 			{
-			short	sChildPosX;
-			short	sChildPosY;
-			short	sOkHeight;
+			int16_t	sChildPosX;
+			int16_t	sChildPosY;
+			int16_t	sOkHeight;
 			// Get the position of the OK button.
 			RGuiItem*	pguiOk		= pgui->GetItemFromId(1);
 			RGuiItem*	pguiCancel	= pgui->GetItemFromId(2);
@@ -314,9 +314,9 @@ short CStockPile::UserEdit(				// Returns 0 on success.
 
 			// Expand stockpile's GUI as necessary allowing space between
 			// stockpile's stuff and user's stuff and the bottom.
-			short	sOldHeight	= pgui->m_im.m_sHeight;
-			short	sNewWidth	= MAX(short(sChildPosX + pguiChild->m_im.m_sWidth + GUI_SPACING), pgui->m_im.m_sWidth);
-			short	sNewHeight	= sChildPosY + pguiChild->m_im.m_sHeight + GUI_SPACING + sOkHeight;
+			int16_t	sOldHeight	= pgui->m_im.m_sHeight;
+			int16_t	sNewWidth	= MAX(int16_t(sChildPosX + pguiChild->m_im.m_sWidth + GUI_SPACING), pgui->m_im.m_sWidth);
+			int16_t	sNewHeight	= sChildPosY + pguiChild->m_im.m_sHeight + GUI_SPACING + sOkHeight;
 			if (pgui->Create(		// Returns 0 on success.
 				pgui->m_sX,
 				pgui->m_sY,
@@ -423,7 +423,7 @@ short CStockPile::UserEdit(				// Returns 0 on success.
 ///////////////////////////////////////////////////////////////////////////////
 // Save stockpile to the specified file.
 ///////////////////////////////////////////////////////////////////////////////
-short CStockPile::Save(		// Returns 0 on success.
+int16_t CStockPile::Save(		// Returns 0 on success.
 	RFile*	pfile)			// In:  File to save to.
 	{
 	pfile->Write(m_sDoubleBarrel		);
@@ -459,9 +459,9 @@ short CStockPile::Save(		// Returns 0 on success.
 ///////////////////////////////////////////////////////////////////////////////
 // Load stockpile from the specified file.
 ///////////////////////////////////////////////////////////////////////////////
-short CStockPile::Load(		// Returns 0 on success.
+int16_t CStockPile::Load(		// Returns 0 on success.
 	RFile*	pfile,			// In:  File to load from.
-	ULONG		ulVersion)		// In:  File version to load. 
+	uint32_t		ulVersion)		// In:  File version to load. 
 	{
 	// Zero() out first in case file version doesn't support a value.
 	Zero();
@@ -542,7 +542,7 @@ short CStockPile::Load(		// Returns 0 on success.
 void CStockPile::Add(				// Returns nothing.
 	const CStockPile*	pstockpile)	// In:  Stockpile to add to this one.
 	{
-	short	sTypeIndex;
+	int16_t	sTypeIndex;
 	for (sTypeIndex = 0; sTypeIndex < NumStockPileItems; sTypeIndex++)
 		{
 		GetItem(sTypeIndex)	+= ((CStockPile*)pstockpile)->GetItem(sTypeIndex);
@@ -555,7 +555,7 @@ void CStockPile::Add(				// Returns nothing.
 void CStockPile::Sub(				// Returns nothing.
 	const CStockPile*	pstockpile)	// In:  Stockpile to sub from this one.
 	{
-	short	sTypeIndex;
+	int16_t	sTypeIndex;
 	for (sTypeIndex = 0; sTypeIndex < NumStockPileItems; sTypeIndex++)
 		{
 		GetItem(sTypeIndex)	-= ((CStockPile*)pstockpile)->GetItem(sTypeIndex);
@@ -569,7 +569,7 @@ void CStockPile::Sub(				// Returns nothing.
 void CStockPile::Union(					// Returns nothing.
 	const CStockPile*	pstockpile)		// In:  Stockpile to combine into this one.
 	{
-	short	sTypeIndex;
+	int16_t	sTypeIndex;
 	for (sTypeIndex = 0; sTypeIndex < NumStockPileItems; sTypeIndex++)
 		{
 		GetItem(sTypeIndex)	= MAX(GetItem(sTypeIndex), ((CStockPile*)pstockpile)->GetItem(sTypeIndex) );
@@ -583,7 +583,7 @@ void CStockPile::Union(					// Returns nothing.
 void CStockPile::Intersect(			// Returns nothing.
 	const CStockPile*	pstockpile)		// In:  Stockpile to combine into this one.
 	{
-	short	sTypeIndex;
+	int16_t	sTypeIndex;
 	for (sTypeIndex = 0; sTypeIndex < NumStockPileItems; sTypeIndex++)
 		{
 		GetItem(sTypeIndex)	= MIN(GetItem(sTypeIndex), ((CStockPile*)pstockpile)->GetItem(sTypeIndex) );
@@ -596,7 +596,7 @@ void CStockPile::Intersect(			// Returns nothing.
 void CStockPile::Copy(					// Returns nothing.
 	const CStockPile*	pstockpile)		// In:  Stockpile to copy from.
 	{
-	short	sTypeIndex;
+	int16_t	sTypeIndex;
 	for (sTypeIndex = 0; sTypeIndex < NumStockPileItems; sTypeIndex++)
 		{
 		GetItem(sTypeIndex)	= ((CStockPile*)pstockpile)->GetItem(sTypeIndex);
@@ -608,7 +608,7 @@ void CStockPile::Copy(					// Returns nothing.
 ///////////////////////////////////////////////////////////////////////////////
 void CStockPile::Zero(void)			// Returns nothing.
 	{
-	short	sTypeIndex;
+	int16_t	sTypeIndex;
 	for (sTypeIndex = 0; sTypeIndex < NumStockPileItems; sTypeIndex++)
 		{
 		GetItem(sTypeIndex)	= 0;
@@ -635,8 +635,8 @@ void CStockPile::Truncate(void)				// Returns nothing.
 ///////////////////////////////////////////////////////////////////////////////
 // Index by the StockPileItem you are interested in.
 ///////////////////////////////////////////////////////////////////////////////
-short& CStockPile::GetItem(	// Returns a reference to the indexed item.
-	short				 sIndex)		// In:  The item index.
+int16_t& CStockPile::GetItem(	// Returns a reference to the indexed item.
+	int16_t				 sIndex)		// In:  The item index.
 	{
 	// KEEP THIS SWITCH STATEMENT IN ORDER OF SMALLEST TO LARGEST LEAVING OUT
 	// NO INTERMEDIATE VALUES.
@@ -690,7 +690,7 @@ short& CStockPile::GetItem(	// Returns a reference to the indexed item.
 
 			// This should never happen.
 			// Try to save the day in release mode.
-			static short sUnknown;
+			static int16_t sUnknown;
 			sUnknown	= 0;
 			return sUnknown;
 			}
@@ -700,10 +700,10 @@ short& CStockPile::GetItem(	// Returns a reference to the indexed item.
 ///////////////////////////////////////////////////////////////////////////////
 // Index by the CDude::WeaponType you are interested in.
 ///////////////////////////////////////////////////////////////////////////////
-short& CStockPile::GetWeapon(		// Returns a reference to the indexed item.
-	short	sIndex)						// In:  The item index.
+int16_t& CStockPile::GetWeapon(		// Returns a reference to the indexed item.
+	int16_t	sIndex)						// In:  The item index.
 	{
-	static short sNoWeapon;
+	static int16_t sNoWeapon;
 	// KEEP THIS SWITCH STATEMENT IN ORDER OF SMALLEST TO LARGEST LEAVING OUT
 	// NO INTERMEDIATE VALUES.
 	// This allows the compiler, when optimizing for speed, to make a jump table.
@@ -759,7 +759,7 @@ bool CStockPile::IsEmpty(void)		// Returns true, if the stockpile is
 												// empty.
 	{
 	// Inventory.
-	short	sTypeIndex;
+	int16_t	sTypeIndex;
 	bool	bEmpty	= true;
 	for (sTypeIndex = 0; sTypeIndex < NumStockPileItems; sTypeIndex++)
 		{

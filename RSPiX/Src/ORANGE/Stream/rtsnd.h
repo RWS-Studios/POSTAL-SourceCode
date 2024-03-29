@@ -58,45 +58,45 @@ class CRtSnd
 
 		// Use handler for RtSnd buffers.
 		// Returns RET_FREE if done with data on return, RET_DONTFREE otherwise.
-		short Use(	UCHAR* puc, long lSize, USHORT usType, UCHAR ucFlags, 
-						long lTime);
+		int16_t Use(	uint8_t* puc, int32_t lSize, uint16_t usType, uint8_t ucFlags, 
+						int32_t lTime);
 		// Static entry point for above.
-		static short UseStatic(	UCHAR* puc, long lSize, USHORT usType, 
-										UCHAR ucFlags, long lTime, long l_pRtSnd);
+		static int16_t UseStatic(	uint8_t* puc, int32_t lSize, uint16_t usType, 
+										uint8_t ucFlags, int32_t lTime, int32_t l_pRtSnd);
 
 		// Callback for mixer.
 		// Returns new buffer to play or NULL if none.
-		static void* MixCall(USHORT usMsg, void* pData, ULONG* pulBufSize, 
-									ULONG ul_psndhdr);
+		static void* MixCall(uint16_t usMsg, void* pData, uint32_t* pulBufSize, 
+									uint32_t ul_psndhdr);
 
 		// Keeps the mixer channel open and starts the mixing in the beginning
 		// and whenever a break up occurs due to streaming for all active 
 		// channels.
-		static void CritiCall(ULONG);
+		static void CritiCall(uint32_t);
 
 	public:	// Internal typedefs.
 
 		typedef struct
 			{
-			UCHAR*	puc;		// Data.
-			long		lSize;	// Amount of data in bytes.
-			long		lTime;	// Time for chunk to be played.
-			short		sLast;	// TRUE if the last buffer, FALSE otherwise.
+			uint8_t*	puc;		// Data.
+			int32_t		lSize;	// Amount of data in bytes.
+			int32_t		lTime;	// Time for chunk to be played.
+			int16_t		sLast;	// TRUE if the last buffer, FALSE otherwise.
 			} SNDBUF, *PSNDBUF;
 
 		typedef struct
 			{
 			// Header info from stream.
-			long		lSamplesPerSec;	// Sample rate.
-			short		sBitsPerSample;	// Number of bits that constitute a sample.
-			short		sNumChannels;		// Number of channels: 1 == mono, 2 == stereo.
-			long		lLead;				// Amount of time data is received of ahead
+			int32_t		lSamplesPerSec;	// Sample rate.
+			int16_t		sBitsPerSample;	// Number of bits that constitute a sample.
+			int16_t		sNumChannels;		// Number of channels: 1 == mono, 2 == stereo.
+			int32_t		lLead;				// Amount of time data is received of ahead
 												// of being used.
 
 			// Header info for our use.
 			CMix				mix;						// Mixer channel.
 			CQueue<SNDBUF, MAXBUFS>	qsndbufs;	// Queue of SNDBUFs for this channel.
-			USHORT			usStatus;				// Status of current channel.
+			uint16_t			usStatus;				// Status of current channel.
 			CDispatch*		pdispatch;
 			} SND_RT_HDR, *PSND_RT_HDR;
 
@@ -105,7 +105,7 @@ class CRtSnd
 
 	protected:	// Members.
 		SND_RT_HDR	m_asndhdrs[MAX_SND_CHANNELS];// Info for each channel.
-		USHORT		m_usState;					// The current state of this CRtSnd.
+		uint16_t		m_usState;					// The current state of this CRtSnd.
 		CDispatch*	m_pdispatch;				// The dispatcher for this CRtSnd.
 		
 		static CList<SND_RT_HDR>	ms_listSndhdrs;	// List of active channels.

@@ -126,7 +126,7 @@ CChip::~CChip()
 // Returns nothing.
 //
 //////////////////////////////////////////////////////////////////////
-void CChip::SetPosition(long lX, long lY, long lZ)
+void CChip::SetPosition(int32_t lX, int32_t lY, int32_t lZ)
 	{
 	float	fOldZ	= m_fZ;
 
@@ -151,16 +151,16 @@ void CChip::SetPosition(long lX, long lY, long lZ)
 // Returns 0 if successfully started.
 //
 //////////////////////////////////////////////////////////////////////
-short CChip::Slide(long lX, long lY, long lZ, long lRate)
+int16_t CChip::Slide(int32_t lX, int32_t lY, int32_t lZ, int32_t lRate)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// Store destination position.
-	m_sDestX	= (short)lX;
-	m_sDestY	= (short)lY;
-	m_sDestZ	= (short)lZ;
+	m_sDestX	= (int16_t)lX;
+	m_sDestY	= (int16_t)lY;
+	m_sDestZ	= (int16_t)lZ;
 
-	m_sRate	= (short)lRate;
+	m_sRate	= (int16_t)lRate;
 
 	// Success.
 	m_sSliding	= TRUE;
@@ -185,9 +185,9 @@ void CChip::Reset(void)
 // Returns 0 normally, 1 if chip destroyed.
 //
 //////////////////////////////////////////////////////////////////////
-short CChip::Update(void)
+int16_t CChip::Update(void)
 	{
-	short	sDeleted	= 0;	// Assume normal ops.
+	int16_t	sDeleted	= 0;	// Assume normal ops.
 
 	if (m_sSliding == TRUE)
 		{
@@ -198,9 +198,9 @@ short CChip::Update(void)
 		m_sRate--;
 		ASSERT(m_sRate >= 0);
 
-		if (	(short)m_fX == m_sDestX
-			&&	(short)m_fY	== m_sDestY
-			&& (short)m_fZ	== m_sDestZ)
+		if (	(int16_t)m_fX == m_sDestX
+			&&	(int16_t)m_fY	== m_sDestY
+			&& (int16_t)m_fZ	== m_sDestZ)
 			{
 			// Done.
 			m_sSliding	= FALSE;
@@ -234,7 +234,7 @@ void CChip::Draw(void)
 	else
 		{
 		// Otherwise, display a stack.
-		short	sHeight	= (short)(THICKNESS * (float)GetSize());
+		int16_t	sHeight	= (int16_t)(THICKNESS * (float)GetSize());
 		
 		// The smallest stack should look like a stack.
 		if (sHeight < 1)
@@ -242,7 +242,7 @@ void CChip::Draw(void)
 			sHeight = 1;
 			}
 
-		for (short	s = 0; s < sHeight; s++)
+		for (int16_t	s = 0; s < sHeight; s++)
 			{
 //			BLT_FItoBKD(m_pimChip, ms_pimView, (short)m_fX, (short)m_fY - s);
 			rspBlit(m_pimChip, ms_pimView, m_fX, m_fY - s);
@@ -347,9 +347,9 @@ void CChip::DeleteAll(void)
 // Returns 0 normally, 1 if chip destroyed.
 //
 //////////////////////////////////////////////////////////////////////
-short CChip::Stack(void)
+int16_t CChip::Stack(void)
 	{
-	short	sDeleted	= 0;	// Assume normal ops.
+	int16_t	sDeleted	= 0;	// Assume normal ops.
 
 	if (m_sStackable != FALSE)
 		{
@@ -383,9 +383,9 @@ short CChip::Stack(void)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////
-short CChip::Add(CChip*	pchip)
+int16_t CChip::Add(CChip*	pchip)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// Take stack's size and add to this one's.
 	m_sNumChips += pchip->GetSize();
@@ -399,7 +399,7 @@ short CChip::Add(CChip*	pchip)
 // Returns chip/stack on success; NULL on error.
 //
 //////////////////////////////////////////////////////////////////////
-CChip* CChip::Sub(short sNum)
+CChip* CChip::Sub(int16_t sNum)
 	{
 	CChip*	pchip	= NULL;	// Assume failure.
 
@@ -429,7 +429,7 @@ CChip* CChip::Sub(short sNum)
 		SetSize(GetSize() - sNum);
 
 		// Some attributes that should be copied.
-		pchip->SetPosition((long)m_fX, (long)m_fY, (long)m_fZ);
+		pchip->SetPosition((int32_t)m_fX, (int32_t)m_fY, (int32_t)m_fZ);
 		pchip->SetChipImage(GetChipImage());
 		}
 
@@ -447,14 +447,14 @@ CChip* CChip::Sub(short sNum)
 // the one with the greatest Y, is found.
 //
 //////////////////////////////////////////////////////////////////////
-CChip* CChip::IsColliding(short sTop/*	= FALSE*/)
+CChip* CChip::IsColliding(int16_t sTop/*	= FALSE*/)
 	{
 	CChip*	pchip	= NULL;				// Assume not found.
 	CChip*	pchipHighest	= NULL;	// If sTop is TRUE, this is used
 												// to store the chip with the
 												// lowest Y.
 
-	for (short i = 0; i < 2 && (pchip == NULL || sTop == TRUE); i++)
+	for (int16_t i = 0; i < 2 && (pchip == NULL || sTop == TRUE); i++)
 		{
 		// Search back from this one . . .
 		pchip	= (i == 0	? ms_slistChips.GetPrev(this) 
@@ -534,15 +534,15 @@ CChip* CChip::IsColliding(short sTop/*	= FALSE*/)
 // (static)
 //
 //////////////////////////////////////////////////////////////////////
-CChip* CChip::GetChipIn(long lX, long lY, long lW, long lH)
+CChip* CChip::GetChipIn(int32_t lX, int32_t lY, int32_t lW, int32_t lH)
 	{
 	CChip*	pchip	= ms_slistChips.GetHead();
 	while (pchip != NULL)
 		{
-		if (	(long)pchip->m_fX < lX 
-			||	(long)pchip->m_fX > lX + lW
-			|| (long)pchip->m_fY < lY
-			||	(long)pchip->m_fY > lY + lH)
+		if (	(int32_t)pchip->m_fX < lX 
+			||	(int32_t)pchip->m_fX > lX + lW
+			|| (int32_t)pchip->m_fY < lY
+			||	(int32_t)pchip->m_fY > lY + lH)
 			{
 			// No match.
 			pchip = ms_slistChips.GetNext();

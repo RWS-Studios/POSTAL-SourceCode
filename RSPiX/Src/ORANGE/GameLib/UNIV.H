@@ -52,7 +52,7 @@
 
 #define UNIVERSE_MAXLINE 80
 
-typedef short ORIENT;
+typedef int16_t ORIENT;
 
 // Section Structure.  This structure contains the actual data that is
 // needed to load animations and backgrounds for a particular level.  All
@@ -83,10 +83,10 @@ typedef struct tag_SECTION
 	PALETTE*	pBackgroundPal;		// background palette
 	BG*		pBackgroundBuildSet;	// background data
 	ORIENT	orBGOrientation;		// vertical or horizontal world flag
-	short		sBGWidth;				// background width in pixels
-	short		sBGHeight;				// background height in pixels
-	short 	sBGHorzMotionRatio;	//	background horizontal motion ratio*256
-	short		sBGVertMotionRatio;	// background vertical motion ratio*256
+	int16_t		sBGWidth;				// background width in pixels
+	int16_t		sBGHeight;				// background height in pixels
+	int16_t 	sBGHorzMotionRatio;	//	background horizontal motion ratio*256
+	int16_t		sBGVertMotionRatio;	// background vertical motion ratio*256
 	ATTRIB*	pAttribute;				// background attribute data
 	EVENT*	pEvent;					// background event data
 } SECTION;
@@ -103,7 +103,7 @@ typedef struct tag_SECTION
 
 typedef struct tag_STAGE
 {
-	short sNumSections;								// Number of sections in this stage
+	int16_t sNumSections;								// Number of sections in this stage
 	SECTION* apSections[UNIVERSE_MAXSECTIONS];// SECTION's (max set by linker)
 } STAGE;
 
@@ -121,7 +121,7 @@ typedef struct tag_STAGE
 
 typedef struct tag_WORLD
 {
- 	short sNumStages;							// Number of stages in this world
+ 	int16_t sNumStages;							// Number of stages in this world
 	STAGE* apStages[UNIVERSE_MAXSTAGES];// STAGE's (max set by linker)
 } WORLD;
 
@@ -138,7 +138,7 @@ typedef struct tag_WORLD
 
 typedef struct tag_UNIVERSE
 {
- 	short sNumWorlds;							// Number of worlds in the game
+ 	int16_t sNumWorlds;							// Number of worlds in the game
 	WORLD* apWorlds[UNIVERSE_MAXWORLDS];// WORLD's (max set by linker)
 } UNIVERSE;
 	
@@ -157,10 +157,10 @@ class CUniverse
 		char	m_strFileEvent[UNIVERSE_MAX_FILENAME];	// Background Event data
 		char  m_strDataPath[UNIVERSE_MAX_PATHNAME];	// Base path for all data files
 
-		short LoadAnimData();		// private function to load animation file
-		short LoadBackgroundData();// private function to load background file
-		short LoadAttributeData();	// private function to load attribute file
-		short LoadEventData();		// private function to load event file
+		int16_t LoadAnimData();		// private function to load animation file
+		int16_t LoadBackgroundData();// private function to load background file
+		int16_t LoadAttributeData();	// private function to load attribute file
+		int16_t LoadEventData();		// private function to load event file
 		PALETTE* LoadPalette(LPSTR);//private function to load anim/bg palette
 		void SetAnimOffsets(ANIM*);// resolve Anim offset to pointers
 		void SetZonesetOffsets(ZONESET*); // resolve Zoneset offsets to pointers
@@ -175,7 +175,7 @@ class CUniverse
 		PALETTE*	m_pSpritePal;		// Pointer to sprite palette
 		PALETTE* m_pBackgroundPal;	// Pointer to background palette
 		WORD*		m_pAttrMap;			// Pointer to background attribute map
-		short		m_sMapWidth;		// Width of attribute map
+		int16_t		m_sMapWidth;		// Width of attribute map
 		CONTOUR*	m_pAttrCont;		// Pointer to arrays of attribute contours
 		EVENT*	m_pEventData;		// Pointer to background event data
 		IMAGE*	m_pImageData;		// Pointer to animation images
@@ -188,10 +188,10 @@ class CUniverse
 		// This function loads in a SECTION structure from the game info file.
 		// Once this function has been called, other modules such as Anim can
 		// call the other member access function to get pointers to the data.
-		short SetSection(			// Load a section structure from file to memory
-			short sWorld,			// World number
-			short sStage,			// Stage number
-			short sSection			// Section number
+		int16_t SetSection(			// Load a section structure from file to memory
+			int16_t sWorld,			// World number
+			int16_t sStage,			// Stage number
+			int16_t sSection			// Section number
 			);
 
 		// These access functions return pointers to various parts of the
@@ -204,7 +204,7 @@ class CUniverse
 		EVENT*	GetEvents() {return m_pEventData;};			 // Event data
 		void  	GetAttributes(WORD* pwMap, 		 			 // Attribute data
 		                       CONTOUR* pContour,
-									  short* psWidth)
+									  int16_t* psWidth)
 		 			{
 		 				pwMap = m_pAttrMap;
 						pContour = (CONTOUR*) m_pAttrCont;
@@ -219,7 +219,3 @@ class CUniverse
 //*****************************************************************************
 // EOF
 //*****************************************************************************
-
-
-
-

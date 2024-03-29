@@ -24,11 +24,11 @@ class CPixel
 	public:
 		CPixel()
 			{ Init(); }
-		CPixel(short sBitsPerPixel)
+		CPixel(int16_t sBitsPerPixel)
 			{ ASSERT(sBitsPerPixel % 8 == 0); m_sSize = sBitsPerPixel / 8; Init(); }
 
 		void Init(void)
-			{ for (short i = 0; i < sizeof(m_au8); i++) m_au8[i] = 0; }
+			{ for (int16_t i = 0; i < sizeof(m_au8); i++) m_au8[i] = 0; }
 
 		U8 GetU8Val(void)
 			{ return m_au8[0]; }
@@ -48,7 +48,7 @@ class CPixel
 		void SetVal(U32 val)
 			{ memcpy(m_au8, &val, sizeof(val)); }
 
-		void SetVal(UCHAR* puc)
+		void SetVal(uint8_t* puc)
 			{ memcpy(m_au8, puc, m_sSize); }
 
 		int operator <(CPixel &pixel)
@@ -67,7 +67,7 @@ class CPixel
 
 	public:
 		U8		m_au8[sizeof(U32)];
-		short	m_sSize;
+		int16_t	m_sSize;
 	};
 
 #endif	// PIXEL_H

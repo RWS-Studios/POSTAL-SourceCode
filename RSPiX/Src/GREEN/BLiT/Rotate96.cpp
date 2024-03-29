@@ -42,11 +42,11 @@
 // DstW and DstH MUST be positive (not zero)!!!
 // This is POST CLIPPING, POST MIRRORING, POST PARAMETER VALIDATION!
 //
-inline void _BlitRot(short sDeg,short sHeight, // = 2R + 1?
-				  UCHAR* pSrcData,long lSrcXP,long lSrcP,
-				  UCHAR* pDstData,long lDstXP,long lDstP,
-				  short sDstW,short sDstH, // Target this for inlining!
-				  short sClipL,short sClipR,short sClipT,short sClipB)
+inline void _BlitRot(int16_t sDeg,int16_t sHeight, // = 2R + 1?
+				  uint8_t* pSrcData,int32_t lSrcXP,int32_t lSrcP,
+				  uint8_t* pDstData,int32_t lDstXP,int32_t lDstP,
+				  int16_t sDstW,int16_t sDstH, // Target this for inlining!
+				  int16_t sClipL,int16_t sClipR,int16_t sClipT,int16_t sClipB)
 	{
 	// This algorithm uses 4 divisions per BLiT
 	// Second order stuff...
@@ -54,21 +54,21 @@ inline void _BlitRot(short sDeg,short sHeight, // = 2R + 1?
 	//--------------------------------------------------
 	//----------- Initialize the large scale parameters:
 	sDeg = rspMod360(sDeg);
-	short sDegR = sDeg, sDegL = sDeg + 90, sDegP = sDeg + 225;
+	int16_t sDegR = sDeg, sDegL = sDeg + 90, sDegP = sDeg + 225;
 	// we know sDegV and sDeP must be positive, so don't do a full mod:
 	while (sDegL > 359) sDegL -= 360; // FMOD/2
 	while (sDegP > 359) sDegP -= 360; // FMOD/2
 
 	//*************** Find P
-	short sR = ( (sHeight-1) >> 1);		// spinning corner radius
-	short sEdge = short(sR * rspSQRT2);      // square edge size
+	int16_t sR = ( (sHeight-1) >> 1);		// spinning corner radius
+	int16_t sEdge = int16_t(sR * rspSQRT2);      // square edge size
 	// all things start at this source location:
-	UCHAR* pP;
+	uint8_t* pP;
 
-	long	lDen = long(sDstW) * sDstH; // compound fraction
+	int32_t	lDen = int32_t(sDstW) * sDstH; // compound fraction
 
 	// Calculate the sub pixel offset:
-	long lLadNumX,lLadNumY,lRungNumX,lRungNumY;
+	int32_t lLadNumX,lLadNumY,lRungNumX,lRungNumY;
 
 	//**********************************************
 	//******  OVERFLOW AREA - NEEDS 64bit math!
@@ -84,7 +84,7 @@ inline void _BlitRot(short sDeg,short sHeight, // = 2R + 1?
 	l64PX += S64(COSQ[sDegP] * sR * lDen + 0.5 * lDen); // offset to pixel center
 	l64PY += S64(SINQ[sDegP] * sR * lDen  + 0.5 * lDen); // offset to pixel center
 	// Now MUST convert to an asymettrical signed proper fraction:
-	long lPX,lPY;
+	int32_t lPX,lPY;
 	rspDivModA64(l64PX,lDen,lPX,lLadNumX);
 	rspDivModA64(l64PY,lDen,lPY,lLadNumY);
 
@@ -93,10 +93,10 @@ inline void _BlitRot(short sDeg,short sHeight, // = 2R + 1?
 #else
 
 	// 32-bit version
-	long lPX = lDen * sR,lPY = lDen * sR; // go into Denominator space
+	int32_t lPX = lDen * sR,lPY = lDen * sR; // go into Denominator space
 	// Stay in denominator space!
-	lPX += long(COSQ[sDegP] * sR * lDen + 0.5 * lDen); // offset to pixel center
-	lPY += long(SINQ[sDegP] * sR * lDen  + 0.5 * lDen); // offset to pixel center
+	lPX += int32_t(COSQ[sDegP] * sR * lDen + 0.5 * lDen); // offset to pixel center
+	lPY += int32_t(SINQ[sDegP] * sR * lDen  + 0.5 * lDen); // offset to pixel center
 	// Now MUST convert to an asymettrical signed proper fraction:
 	rspDivModA64(lPX,lDen,lPX,lLadNumX);
 	rspDivModA64(lPY,lDen,lPY,lLadNumY);
@@ -115,10 +115,10 @@ inline void _BlitRot(short sDeg,short sHeight, // = 2R + 1?
 	// Find the signed vector length of the rungs, in compound
 	// fraction form...
 
-	long lRungW = long(COSQ[sDegR] * sEdge * sDstH); // horizontal
-	long lRungH = long(SINQ[sDegR] * sEdge * sDstH);
-	long lLadW = long(COSQ[sDegL] * sEdge * sDstW);  // vertical
-	long lLadH = long(SINQ[sDegL] * sEdge * sDstW);
+	int32_t lRungW = int32_t(COSQ[sDegR] * sEdge * sDstH); // horizontal
+	int32_t lRungH = int32_t(SINQ[sDegR] * sEdge * sDstH);
+	int32_t lLadW = int32_t(COSQ[sDegL] * sEdge * sDstW);  // vertical
+	int32_t lLadH = int32_t(SINQ[sDegL] * sEdge * sDstW);
 	// Convert from a point offset to true width and height:
 
 	lRungW += SGN3(lRungW); // 3 phase sign
@@ -129,14 +129,14 @@ inline void _BlitRot(short sDeg,short sHeight, // = 2R + 1?
 	//
 	// 2) Normalize the ratios if needed...
 	//
-	long lRungIncX = lRungW;
-	long lRungIncY = lRungH;
-	long lLadIncX = lLadW;
-	long lLadIncY = lLadH;
+	int32_t lRungIncX = lRungW;
+	int32_t lRungIncY = lRungH;
+	int32_t lLadIncX = lLadW;
+	int32_t lLadIncY = lLadH;
 	// General parameters:
-	long lRungDelX=0,lRungDelY=0,lLadDelX=0,lLadDelY=0;
+	int32_t lRungDelX=0,lRungDelY=0,lLadDelX=0,lLadDelY=0;
 	// For now, only distinguish Rung IC, keep Ladder general:
-	short sCondition = 0; // CONDITION FLAG
+	int16_t sCondition = 0; // CONDITION FLAG
 
 #define sNegRungX 4
 #define sNegRungY 1
@@ -213,11 +213,11 @@ inline void _BlitRot(short sDeg,short sHeight, // = 2R + 1?
 
 	//==================================================================
 	// relative to pP:
-	long lLadX = 0,lLadY = 0,lRungX,lRungY;
+	int32_t lLadX = 0,lLadY = 0,lRungX,lRungY;
 
 	// test template, condition 0, no clip:
-	UCHAR *pDst,*pDstLine = pDstData; // offset included for us...
-	short i,j;
+	uint8_t *pDst,*pDstLine = pDstData; // offset included for us...
+	int16_t i,j;
 
 	// Left Top Clipping:
 	// We can Top Left lip simply by moving the staring position
@@ -275,7 +275,7 @@ inline void _BlitRot(short sDeg,short sHeight, // = 2R + 1?
 		NEGATIVE negative = 0;	// Value doesn't matter since var isn't REALLY used -- just want to avoid unitialized warning
 		switch(sCondition)
 			{
-			UCHAR ucPix;	// The only 8-bit concept:
+			uint8_t ucPix;	// The only 8-bit concept:
 
 			case (sProperRungX | sPosRungX | sProperRungY | sPosRungY):
 				for (i = sDstW; i != 0; i--)
@@ -428,7 +428,7 @@ inline void _BlitRot(short sDeg,short sHeight, // = 2R + 1?
 		for (i = sDstW; i != 0; i--)
 			{
 			// The only 8-bit concept:
-			UCHAR ucPix;
+			uint8_t ucPix;
 			ucPix = *(pP + lRungX + lRungY); // pitch included!
 			if (ucPix) *pDst = ucPix;
 
@@ -461,25 +461,25 @@ inline void _BlitRot(short sDeg,short sHeight, // = 2R + 1?
 // returns pDst and sClips based on mirroring...
 // does NOT currently check input parameters...
 //
-inline short rspClipMirrorDst(RImage* pimDst, // input:
-										short sClipX,	// MUST be set
-										short sClipY,
-										short sClipW,
-										short sClipH,
-										short &sDstX,  // Input AND output:
-										short &sDstY,
-										short &sDstW, 	// Negative for mirror 
-										short &sDstH,	// Negative for mirror
-										UCHAR* &pDst,	// OUTPUT:
-										short &sClipL, // positive = clip...
-										short &sClipR,
-										short &sClipT,
-										short &sClipB,
-										long	&lDstP,	// Including mirroring
-										long	&lDstPX	// Incl. Mirroring & pixDepth
+inline int16_t rspClipMirrorDst(RImage* pimDst, // input:
+										int16_t sClipX,	// MUST be set
+										int16_t sClipY,
+										int16_t sClipW,
+										int16_t sClipH,
+										int16_t &sDstX,  // Input AND output:
+										int16_t &sDstY,
+										int16_t &sDstW, 	// Negative for mirror 
+										int16_t &sDstH,	// Negative for mirror
+										uint8_t* &pDst,	// OUTPUT:
+										int16_t &sClipL, // positive = clip...
+										int16_t &sClipR,
+										int16_t &sClipT,
+										int16_t &sClipB,
+										int32_t	&lDstP,	// Including mirroring
+										int32_t	&lDstPX	// Incl. Mirroring & pixDepth
 										)
 	{
-	short sMirrorX = 1,sMirrorY = 1; // direction flags...
+	int16_t sMirrorX = 1,sMirrorY = 1; // direction flags...
 	//********************* MIRROR PART I => PRE CLIP:
 	lDstP = pimDst->m_lPitch;
 	lDstPX = (pimDst->m_sDepth>>8);
@@ -535,7 +535,7 @@ inline short rspClipMirrorDst(RImage* pimDst, // input:
 // m_lXPos and m_lYPos will point to the moved origin of the 
 // RImage
 //
-short rspAddRotationPadding(RImage* pimSrc,short sHotX,short sHotY)
+int16_t rspAddRotationPadding(RImage* pimSrc,int16_t sHotX,int16_t sHotY)
 	{
 #ifdef _DEBUG
 
@@ -575,28 +575,28 @@ short rspAddRotationPadding(RImage* pimSrc,short sHotX,short sHotY)
 	// center encapsulating the entire image...
 	//
 
-	long lR=0; // squared at first...
+	int32_t lR=0; // squared at first...
 
-	long lHotXS = SQR((long)sHotX);
-	long lHotYS = SQR((long)sHotY);
+	int32_t lHotXS = SQR((int32_t)sHotX);
+	int32_t lHotYS = SQR((int32_t)sHotY);
 	// The radius will also equal the center of the buffer, and the buffer
 	// size will be 2R+1 to deal with the half pixel buffer on all sides.
 	//
-	lR = MAX(lR,(long)SQR((long)sHotX - (pimSrc->m_sWidth - 1) ) + 
-		(long)SQR((long)sHotY - (pimSrc->m_sHeight - 1) ) ); // LR corner
-	lR = MAX(lR,lHotXS + (long)SQR((long)sHotY - (pimSrc->m_sHeight - 1) ) ); // UR corner
+	lR = MAX(lR,(int32_t)SQR((int32_t)sHotX - (pimSrc->m_sWidth - 1) ) + 
+		(int32_t)SQR((int32_t)sHotY - (pimSrc->m_sHeight - 1) ) ); // LR corner
+	lR = MAX(lR,lHotXS + (int32_t)SQR((int32_t)sHotY - (pimSrc->m_sHeight - 1) ) ); // UR corner
 	lR = MAX(lR,SQR(sHotX - (pimSrc->m_sWidth - 1) ) + lHotYS ); // LL corner
 	lR = MAX(lR,lHotXS + lHotYS ); // UL corner
 
-	lR = long(0.999999 + sqrt(double(lR) * 2.0)); // round up
+	lR = int32_t(0.999999 + sqrt(double(lR) * 2.0)); // round up
 	// The sqrt2 factor is needed because the moving window must enclose the circle.
 
-	short sSize = short(1 + (lR << 1) ); // buffer = 2R + 1
+	int16_t sSize = int16_t(1 + (lR << 1) ); // buffer = 2R + 1
 	// Calculate new position of image within the buffer:
-	short sX = short (lR - sHotX); // new offset...
-	short sY = short (lR - sHotY);
-	short sOldW = pimSrc->m_sWidth;
-	short sOldH = pimSrc->m_sHeight;
+	int16_t sX = int16_t (lR - sHotX); // new offset...
+	int16_t sY = int16_t (lR - sHotY);
+	int16_t sOldW = pimSrc->m_sWidth;
+	int16_t sOldH = pimSrc->m_sHeight;
 
 	rspPad(pimSrc,sX,sY,sSize,sSize,1); // go to 8-bit alignment since offset may not align
 
@@ -607,7 +607,7 @@ short rspAddRotationPadding(RImage* pimSrc,short sHotX,short sHotY)
 // This should really be a part of RImage.
 // This function currently only supports 8bit, uncompressed images..
 //
-short rspRemovePadding(RImage* pimSrc)
+int16_t rspRemovePadding(RImage* pimSrc)
 	{
 #ifdef _DEBUG
 
@@ -645,7 +645,7 @@ short rspRemovePadding(RImage* pimSrc)
 
 	// Create a new buffer and Image Stub to BLiT can use it:
 	RImage imDst;
-	long lNewPitch = (pimSrc->m_sWinWidth + 15) & ~15; // 128 bit align it
+	int32_t lNewPitch = (pimSrc->m_sWinWidth + 15) & ~15; // 128 bit align it
 	imDst.CreateImage(pimSrc->m_sWinWidth,pimSrc->m_sWinHeight,pimSrc->m_type,
 		lNewPitch,pimSrc->m_sDepth);
 
@@ -654,7 +654,7 @@ short rspRemovePadding(RImage* pimSrc)
 		pimSrc->m_sWinWidth,pimSrc->m_sWinHeight);
 
 	// tricky part: Swap buffers...
-	UCHAR	*pSrcMem,*pSrcBuf;
+	uint8_t	*pSrcMem,*pSrcBuf;
 	pimSrc->DetachData((void**)&pSrcMem,(void**)&pSrcBuf);
 	// Move the new buffer back to the original
 	imDst.DetachData((void**)&(pimSrc->m_pMem),(void**)&(pimSrc->m_pData));
@@ -679,8 +679,8 @@ short rspRemovePadding(RImage* pimSrc)
 // which is, in reality, the exact center of the buffered source
 // image.
 //
-short rspBlitRot(short sDeg,RImage* pimSrc,RImage* pimDst,
-					 short sDstX,short sDstY,short sDstW,short sDstH,
+int16_t rspBlitRot(int16_t sDeg,RImage* pimSrc,RImage* pimDst,
+					 int16_t sDstX,int16_t sDstY,int16_t sDstW,int16_t sDstH,
 					 const RRect* prDstClip)
 	{
 #ifdef _DEBUG
@@ -730,8 +730,8 @@ short rspBlitRot(short sDeg,RImage* pimSrc,RImage* pimDst,
 	// NOTE: effective destination clipping done at a lower level.
 	// Only source clipping would effect this...
 	//
-	short sDstClipX = 0, sDstClipY = 0;
-	short	sDstClipW = pimDst->m_sWidth, sDstClipH = pimDst->m_sHeight;
+	int16_t sDstClipX = 0, sDstClipY = 0;
+	int16_t	sDstClipW = pimDst->m_sWidth, sDstClipH = pimDst->m_sHeight;
 
 	// Suck it out!
 	if (prDstClip)
@@ -745,8 +745,8 @@ short rspBlitRot(short sDeg,RImage* pimSrc,RImage* pimDst,
 	//********************* MIRROR PART I => PRE CLIP:
 	// Instead of mirror FLAGS, make use of the destination pitch:
 	//
-	long lDstP = pimDst->m_lPitch,lDstXP = (pimDst->m_sDepth>>3);
-	short sMirrorH = 1,sMirrorV = 1;
+	int32_t lDstP = pimDst->m_lPitch,lDstXP = (pimDst->m_sDepth>>3);
+	int16_t sMirrorH = 1,sMirrorV = 1;
 
 	if (sDstW < 0)
 		{
@@ -766,7 +766,7 @@ short rspBlitRot(short sDeg,RImage* pimSrc,RImage* pimDst,
 	//*********************
 
 	//-------- Do the clipping:
-	short sClipL,sClipR,sClipT,sClipB; // positive = clipped
+	int16_t sClipL,sClipR,sClipT,sClipB; // positive = clipped
 
 	sClipL = sDstClipX - sDstX; if (sClipL < 0) sClipL = 0;
 	sClipT = sDstClipY - sDstY; if (sClipT < 0) sClipT = 0;
@@ -798,9 +798,9 @@ short rspBlitRot(short sDeg,RImage* pimSrc,RImage* pimDst,
 	// set up IC
 	//------------------------------------------------------------------------------
 	// Use the old pitch because the coordinates have been changed
-	UCHAR*	pDst = pimDst->m_pData + pimDst->m_lPitch * sDstY + sDstX;
+	uint8_t*	pDst = pimDst->m_pData + pimDst->m_lPitch * sDstY + sDstX;
 	// There is NO source position or source clipping here!
-	UCHAR*	pSrc = pimSrc->m_pData;
+	uint8_t*	pSrc = pimSrc->m_pData;
 
 	// pass the mirrored pitches....
 	_BlitRot(sDeg,pimSrc->m_sHeight,pSrc,pimSrc->m_sDepth>>3,pimSrc->m_lPitch,
@@ -815,11 +815,11 @@ short rspBlitRot(short sDeg,RImage* pimSrc,RImage* pimDst,
 // The scale is in terms of the source image, i.e. (1.0,1.0) = actual size
 // Negative values mirror!
 //
-short rspBlitRot(short sDeg,RImage* pimSrc,RImage* pimDst,
-					 short sDstX,short sDstY,double dScaleX,double dScaleY,
+int16_t rspBlitRot(int16_t sDeg,RImage* pimSrc,RImage* pimDst,
+					 int16_t sDstX,int16_t sDstY,double dScaleX,double dScaleY,
 					 const RRect* prDstClip)
 	{
-	short sDstW,sDstH;
+	int16_t sDstW,sDstH;
 
 #ifdef _DEBUG // Do the minimum redundant validation necessary:
 
@@ -834,11 +834,11 @@ short rspBlitRot(short sDeg,RImage* pimSrc,RImage* pimDst,
 
 	// Calculate the true dimensions.
 	// This occurs when DstW = EdgeW
-	short sR = ( (pimSrc->m_sHeight-1) >> 1);			// spinning corner radius
-	short sEdge = short(sR * rspSQRT2);			// square edge size
+	int16_t sR = ( (pimSrc->m_sHeight-1) >> 1);			// spinning corner radius
+	int16_t sEdge = int16_t(sR * rspSQRT2);			// square edge size
 
-	sDstW = short(dScaleX * sEdge);
-	sDstH = short(dScaleY * sEdge);
+	sDstW = int16_t(dScaleX * sEdge);
+	sDstH = int16_t(dScaleY * sEdge);
 
 	return rspBlitRot(sDeg,pimSrc,pimDst,sDstX,sDstY,sDstW,sDstH,prDstClip);
 	}
@@ -855,14 +855,14 @@ short rspBlitRot(short sDeg,RImage* pimSrc,RImage* pimDst,
 // 1) it will AGAIN default to using a "CSTRAFE" output structure
 // 2) Degrees will be CLOCKWISE, and the offsets will be HOTSPOT convention.
 //
-short rspStrafeRotate(void *pReturnArray,	// Output
-							RImage* pimSrc,short sCenterX,short sCenterY,double dScale, // Input
-							 short sNumFrames,double dStartDeg,double dDegInc,
-							 short sNumLinks,short *psX,short *psY, // input
+int16_t rspStrafeRotate(void *pReturnArray,	// Output
+							RImage* pimSrc,int16_t sCenterX,int16_t sCenterY,double dScale, // Input
+							 int16_t sNumFrames,double dStartDeg,double dDegInc,
+							 int16_t sNumLinks,int16_t *psX,int16_t *psY, // input
 							 // generic user stucture must be an array:
-							 RImage* pIm, short *psHotX, short *psHotY,
-							 short **ppsX,short **ppsY,
-							 long lStructSize)
+							 RImage* pIm, int16_t *psHotX, int16_t *psHotY,
+							 int16_t **ppsX,int16_t **ppsY,
+							 int32_t lStructSize)
 	{
 
 #ifdef _DEBUG
@@ -893,9 +893,9 @@ short rspStrafeRotate(void *pReturnArray,	// Output
 
 #endif
 
-	union { short *pL; UCHAR *pB; } pHotX,pHotY;
-	union { short **ppL; UCHAR *pB; } ppLinkX,ppLinkY;
-	union { RImage **ppI; UCHAR *pB; } ppBuf;
+	union { int16_t *pL; uint8_t *pB; } pHotX,pHotY;
+	union { int16_t **ppL; uint8_t *pB; } ppLinkX,ppLinkY;
+	union { RImage **ppI; uint8_t *pB; } ppBuf;
 
 	// IN PREVIOUS VERSIONS, THE USER COULD NOT UINPUT VALUES,
 	// And then I would fill in a CStrafe for them.
@@ -915,17 +915,17 @@ short rspStrafeRotate(void *pReturnArray,	// Output
 	// Phase one:  make the source ROTBUF, and create a destination
 	
 	rspAddRotationPadding(pimSrc,sCenterX,sCenterY);
-	short sSrcH = pimSrc->m_sHeight; // used for making a copy
-	short sDstH = (sSrcH * dScale); // used for making a copy
+	int16_t sSrcH = pimSrc->m_sHeight; // used for making a copy
+	int16_t sDstH = (sSrcH * dScale); // used for making a copy
 
 	// Make a copy of the input links so they can be center adjusted
-	short *psLinkX = NULL, *psLinkY = NULL;
-	short j;
+	int16_t *psLinkX = NULL, *psLinkY = NULL;
+	int16_t j;
 
 	if (sNumLinks > 0)
 		{
-		psLinkX = (short*)calloc(sizeof(short),sNumLinks);
-		psLinkY = (short*)calloc(sizeof(short),sNumLinks);
+		psLinkX = (int16_t*)calloc(sizeof(int16_t),sNumLinks);
+		psLinkY = (int16_t*)calloc(sizeof(int16_t),sNumLinks);
 
 		for (j=0;j<sNumLinks;j++)
 			{
@@ -935,7 +935,7 @@ short rspStrafeRotate(void *pReturnArray,	// Output
 		}
 
 	// DO the strafing:
-	short i;
+	int16_t i;
 
 	for (i=0;i<sNumFrames;i++,dCurDeg += dDegInc)
 		{	
@@ -952,11 +952,11 @@ short rspStrafeRotate(void *pReturnArray,	// Output
 		//_RotateShrink(dCurDeg,pimSrc,(*ppBuf.ppI),0,0,sDstH,sDstH);
 		
 		// CREATE A CLOCKWISE SENSE:
-		rspBlitRot(short(360.0 - dCurDeg),pimSrc,(*ppBuf.ppI),0,0,dScale,dScale);
+		rspBlitRot(int16_t(360.0 - dCurDeg),pimSrc,(*ppBuf.ppI),0,0,dScale,dScale);
 		
 		// Get the coordinates:
-		short sX=0,sY=0,sW=(short)(*(ppBuf.ppI))->m_sWidth,sH = (short)(*(ppBuf.ppI))->m_sHeight;
-		rspLasso((UCHAR)0,(*(ppBuf.ppI)),sX,sY,sW,sH);
+		int16_t sX=0,sY=0,sW=(int16_t)(*(ppBuf.ppI))->m_sWidth,sH = (int16_t)(*(ppBuf.ppI))->m_sHeight;
+		rspLasso((uint8_t)0,(*(ppBuf.ppI)),sX,sY,sW,sH);
 
 		rspCrop((*(ppBuf.ppI)),sX,sY,sW,sH); // sX,sY are the blitting offset
 
@@ -973,11 +973,11 @@ short rspStrafeRotate(void *pReturnArray,	// Output
 
 		if (sNumLinks > 0)
 			{
-			*(ppLinkX.ppL) = (short*)calloc(sizeof(short),sNumLinks);
-			*(ppLinkY.ppL) = (short*)calloc(sizeof(short),sNumLinks);
+			*(ppLinkX.ppL) = (int16_t*)calloc(sizeof(int16_t),sNumLinks);
+			*(ppLinkY.ppL) = (int16_t*)calloc(sizeof(int16_t),sNumLinks);
 
 			//double dRad = dCurDeg *  0.01745329251994;
-			short sCurDeg = short(dCurDeg); // CLOCKWISE SENSE
+			int16_t sCurDeg = int16_t(dCurDeg); // CLOCKWISE SENSE
 			sCurDeg = rspMod360(sCurDeg);
 
 			double dSin = SINQ[sCurDeg]*dScale;
@@ -985,8 +985,8 @@ short rspStrafeRotate(void *pReturnArray,	// Output
 
 			for (j=0;j<sNumLinks;j++)
 				{
-				(*(ppLinkX.ppL))[j] = (short)(dCos * psLinkX[j] - dSin * psLinkY[j]);
-				(*(ppLinkY.ppL))[j] = (short)(dCos * psLinkY[j] + dSin * psLinkX[j]);
+				(*(ppLinkX.ppL))[j] = (int16_t)(dCos * psLinkX[j] - dSin * psLinkY[j]);
+				(*(ppLinkY.ppL))[j] = (int16_t)(dCos * psLinkY[j] + dSin * psLinkX[j]);
 				}
 			}
 

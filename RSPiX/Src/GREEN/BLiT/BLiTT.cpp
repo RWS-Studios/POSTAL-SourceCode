@@ -35,12 +35,12 @@
 // pre-validated rect copy: (Pitch will be sign based!)
 //
 template <class PIXSIZE>
-inline void _BLiTT(PIXSIZE ucTransparent,PIXSIZE* pSrc,PIXSIZE* pDst,long lSrcPitch, long lDstPitch,
-						short sHeight,short	sPixWidth)
+inline void _BLiTT(PIXSIZE ucTransparent,PIXSIZE* pSrc,PIXSIZE* pDst,int32_t lSrcPitch, int32_t lDstPitch,
+						int16_t sHeight,int16_t	sPixWidth)
 	{
 	union	{
 		PIXSIZE *w;
-		UCHAR	*b;
+		uint8_t	*b;
 		} pSrcLine,pDstLine;
 
 	int i;
@@ -73,10 +73,10 @@ inline void _BLiTT(PIXSIZE ucTransparent,PIXSIZE* pSrc,PIXSIZE* pDst,long lSrcPi
 // if prSrc == NULL, no source clipping will occure
 // if prDst == NULL, it will clip to the CImage
 //
-short	rspBlitT(ULONG ucTransparent,RImage* pimSrc,RImage* pimDst,short sSrcX,short sSrcY,short sDstX,
-			  short sDstY,short sW,short sH,const RRect* prDst,const RRect* prSrc)
+int16_t	rspBlitT(uint32_t ucTransparent,RImage* pimSrc,RImage* pimDst,int16_t sSrcX,int16_t sSrcY,int16_t sDstX,
+			  int16_t sDstY,int16_t sW,int16_t sH,const RRect* prDst,const RRect* prSrc)
 	{
-	short sClip;
+	int16_t sClip;
 
 	// 1) preliminary parameter validation:
 #ifdef _DEBUG
@@ -169,10 +169,10 @@ short	rspBlitT(ULONG ucTransparent,RImage* pimSrc,RImage* pimDst,short sSrcX,sho
 	//**************  INSERT BUFFER HOOKS HERE!  ************************
 
 	// do OS based copying!
-	short sNeedToUnlock = 0; // will be the name of a buffer to unlock.
+	int16_t sNeedToUnlock = 0; // will be the name of a buffer to unlock.
 
-	short sBlitTypeSrc = 0;
-	short sBlitTypeDst = 0;
+	int16_t sBlitTypeSrc = 0;
+	int16_t sBlitTypeDst = 0;
 
 	// IN RELEASE MODE, GIVE THE USER A CHANCE:
 #ifndef _DEBUG
@@ -184,8 +184,8 @@ short	rspBlitT(ULONG ucTransparent,RImage* pimSrc,RImage* pimDst,short sSrcX,sho
 	// IN THIS IMPLEMENTATION, we must do LOCK, BLiT, UNLOCK, so I
 	// must record which UNLOCK (if any) needs to be done AFTER the BLiT
 	// has completed. (Lord help me if a blit gets interrupted)
-	if (pimSrc->m_type == RImage::IMAGE_STUB) sBlitTypeSrc = (short)((long)pimSrc->m_pSpecial);
-	if (pimDst->m_type == RImage::IMAGE_STUB) sBlitTypeDst = (short)((long)pimDst->m_pSpecial);
+	if (pimSrc->m_type == RImage::IMAGE_STUB) sBlitTypeSrc = (int16_t)((S64)pimSrc->m_pSpecial);
+	if (pimDst->m_type == RImage::IMAGE_STUB) sBlitTypeDst = (int16_t)((S64)pimDst->m_pSpecial);
 
 	switch ( (sBlitTypeSrc<<3) + sBlitTypeDst) // 0 = normal image
 		{
@@ -305,13 +305,13 @@ short	rspBlitT(ULONG ucTransparent,RImage* pimSrc,RImage* pimDst,short sSrcX,sho
 	switch (pimDst->m_sDepth)
 		{
 		case 8:
-			_BLiTT((UCHAR)ucTransparent,(U8*)pSrc,(U8*)pDst,pimSrc->m_lPitch,pimDst->m_lPitch,sH,sW); 
+			_BLiTT((uint8_t)ucTransparent,(U8*)pSrc,(U8*)pDst,pimSrc->m_lPitch,pimDst->m_lPitch,sH,sW); 
 		break;
 		case 16:
-			_BLiTT((USHORT)ucTransparent,(U16*)pSrc,(U16*)pDst,(pimSrc->m_lPitch),(pimDst->m_lPitch),sH,short(sW>>1)); 
+			_BLiTT((uint16_t)ucTransparent,(U16*)pSrc,(U16*)pDst,(pimSrc->m_lPitch),(pimDst->m_lPitch),sH,int16_t(sW>>1)); 
 		break;
 		case 32:
-			_BLiTT((ULONG)ucTransparent,(U32*)pSrc,(U32*)pDst,(pimSrc->m_lPitch),(pimDst->m_lPitch),sH,short(sW>>2)); 
+			_BLiTT((uint32_t)ucTransparent,(U32*)pSrc,(U32*)pDst,(pimSrc->m_lPitch),(pimDst->m_lPitch),sH,int16_t(sW>>2)); 
 		break;
 		default:
 			TRACE("rspBlitT: color depth not supported.\n");
@@ -356,4 +356,3 @@ short	rspBlitT(ULONG ucTransparent,RImage* pimSrc,RImage* pimDst,short sSrcX,sho
 //BLIT_DONTUNLOCK:	
 	return 0;
 	}
-

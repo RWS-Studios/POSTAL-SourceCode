@@ -110,8 +110,8 @@
 // Static variables
 ////////////////////////////////////////////////////////////////////////////////
 
-long CDemon::ms_lMinIdleTime = 2000;		// Time before saying next thing
-long CDemon::ms_lBonusKillTime = 5000;		// Kill an amount in this time, get bonus
+int32_t CDemon::ms_lMinIdleTime = 2000;		// Time before saying next thing
+int32_t CDemon::ms_lBonusKillTime = 5000;		// Kill an amount in this time, get bonus
 
 // Sound banks of explosion comments indexed by m_sSoundBank.
 SampleMasterID* CDemon::ms_apsmidExplosion[NumSoundBanks][NumExplosionComments]	=
@@ -347,7 +347,7 @@ SampleMasterID* CDemon::ms_apsmidKillSeries[NumSoundBanks][NumKillSeriesComments
 ////////////////////////////////////////////////////////////////////////////////
 // Preload - cache the sounds that may be used.
 ////////////////////////////////////////////////////////////////////////////////
-short CDemon::Preload(
+int16_t CDemon::Preload(
 	CRealm* prealm)				// In:  Calling realm.
 {
 #if 0
@@ -401,13 +401,13 @@ short CDemon::Preload(
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CDemon::Load(								// Returns 0 if successfull, non-zero otherwise
+int16_t CDemon::Load(								// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 {
-	short sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	if (sResult == 0)
 	{
 		switch (ulFileVersion)
@@ -468,7 +468,7 @@ short CDemon::Load(								// Returns 0 if successfull, non-zero otherwise
 			case 1:
 				{
 				// For backwards compatability.
-				long	alDummy[2];
+				int32_t	alDummy[2];
 				char	szResNameDummy[RSP_MAX_PATH];
 				pFile->Read(&alDummy[0]/*(long*)&m_bInitiallyEnabled*/);
 				pFile->Read(&alDummy[0]/*(long*)&m_bInitiallyRepeats*/);
@@ -498,11 +498,11 @@ short CDemon::Load(								// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CDemon::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CDemon::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 {
-	short	sResult	= CThing::Save(pFile, sFileCount);
+	int16_t	sResult	= CThing::Save(pFile, sFileCount);
 	if (sResult == 0)
 	{
 		pFile->Write(m_sSoundBank);
@@ -521,7 +521,7 @@ short CDemon::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CDemon::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+int16_t CDemon::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 {
 	return 0;
 }
@@ -530,7 +530,7 @@ short CDemon::Startup(void)								// Returns 0 if successfull, non-zero otherwi
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-short CDemon::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CDemon::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 {
 	return 0;
 }
@@ -589,12 +589,12 @@ void CDemon::Render(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CDemon::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CDemon::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -612,9 +612,9 @@ short CDemon::EditNew(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-short CDemon::EditModify(void)
+int16_t CDemon::EditModify(void)
 {
-	short	sResult	= 0;
+	int16_t	sResult	= 0;
 
 	// Load gui dialog
 	RGuiItem* pgui = RGuiItem::LoadInstantiate(FullPath(GAME_PATH_HD, GUI_FILE_NAME));
@@ -630,7 +630,7 @@ short CDemon::EditModify(void)
 		if (DoGui(pgui) == 1)
 			{
 			// Get new values from dialog.
-			m_sSoundBank	= (short)pguiBankName->GetVal();
+			m_sSoundBank	= (int16_t)pguiBankName->GetVal();
 			// Keep it in range.
 			if (m_sSoundBank < 0)
 				{
@@ -668,10 +668,10 @@ short CDemon::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CDemon::EditMove(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CDemon::EditMove(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
 	m_dX = (double)sX;
 	m_dY = (double)sY;
@@ -712,9 +712,9 @@ void CDemon::EditRect(	// Returns nothiing.
 // (virtual	(Overridden here)).
 ////////////////////////////////////////////////////////////////////////////////
 void CDemon::EditHotSpot(	// Returns nothiing.
-	short*	psX,					// Out: X coord of 2D hotspot relative to
+	int16_t*	psX,					// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-	short*	psY)					// Out: Y coord of 2D hotspot relative to
+	int16_t*	psY)					// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 {
 	*psX	= 5;	// Safety.
@@ -757,7 +757,7 @@ void CDemon::EditRender(void)
 	m_sprite.m_sX2	-= m_pImage->m_sWidth / 2;
 	m_sprite.m_sY2	-= m_pImage->m_sHeight;
 
-	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 	m_sprite.m_pImage = m_pImage;
 
@@ -769,9 +769,9 @@ void CDemon::EditRender(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Init object
 ////////////////////////////////////////////////////////////////////////////////
-short CDemon::Init(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CDemon::Init(void)							// Returns 0 if successfull, non-zero otherwise
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	Kill();
 
@@ -797,7 +797,7 @@ short CDemon::Init(void)							// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Kill object
 ////////////////////////////////////////////////////////////////////////////////
-short CDemon::Kill(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CDemon::Kill(void)							// Returns 0 if successfull, non-zero otherwise
 {
 	if (m_pImage != 0)
 		rspReleaseResource(&g_resmgrGame, &m_pImage);
@@ -815,7 +815,7 @@ void CDemon::ProcessMessages(void)
 {
 	SampleMasterID* psmid = &g_smidNil;
 	bool bFoundSample = false;
-	long lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 
 	// Check queue of messages.
 	GameMessage	msg;

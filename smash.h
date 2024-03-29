@@ -176,28 +176,28 @@ class CFatSmash
 public:
 	CSmash*					m_pParent;		// Backwards pointer
 	//--------------------------------------------------------------------
-	short						m_sClipX;		// In tile relative to this fat
-	short						m_sClipY;		// shows active grid based on clipping
-	short						m_sClipW;		// Links outside of this region should
-	short						m_sClipH;		// have NULL list pointers
+	int16_t						m_sClipX;		// In tile relative to this fat
+	int16_t						m_sClipY;		// shows active grid based on clipping
+	int16_t						m_sClipW;		// Links outside of this region should
+	int16_t						m_sClipH;		// have NULL list pointers
 	//--------------------------------------------------------------------
-	short						m_sW;				// Actual size (in grids)
-	short						m_sH;				// Actual Size (in grids)
+	int16_t						m_sW;				// Actual size (in grids)
+	int16_t						m_sH;				// Actual Size (in grids)
 	//--------------------------------------------------------------------
-	short						m_sNumGrids;	// For convenience
+	int16_t						m_sNumGrids;	// For convenience
 	CSmashLink*				m_pLinks;		// 1D representation
 	CSmashLink*				m_pFirstLink;	// offset into pLinks...
 	//--------------------------------------------------------------------
 	CSmashatoriumList*	m_pClippedGrid;// Start Grid in 'torium
-	long						m_lX;				// See if it's moved!
-	long						m_lY;
+	int32_t						m_lX;				// See if it's moved!
+	int32_t						m_lY;
 	//--------------------------------------------------------------------
 	void	Erase();
 	void	Destroy();
 	CFatSmash() { Erase(); }
 	~CFatSmash() { Destroy(); Erase(); }
 
-	short	Alloc(short sNumGrids);
+	int16_t	Alloc(int16_t sNumGrids);
 	};
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -248,10 +248,10 @@ class CSmash
 		Bits m_bits;						// Bits indicating CSmash's classification
 		CThing* m_pThing;					// Pointer to parental thing
 		RSphericalRegion m_sphere;		// Will eventually be a base class like "CRegion"
-		short	m_sInGrid;					// short cut to tell if in a grid...
+		int16_t	m_sInGrid;					// short cut to tell if in a grid...
 
 		//---- these remain separate for fater access, since compilers SUCK
-		long	m_lSearchTagCode;			// By using a 32bit value, we don't need to untag!
+		int32_t	m_lSearchTagCode;			// By using a 32bit value, we don't need to untag!
 		CSmashLink	m_link1;
 		CSmashLink	m_link2;
 		CSmashLink	m_link3;
@@ -289,7 +289,7 @@ public:
 	//---------------------------------------------------------------------------
 	CSmashLink	m_slHead;	// permanent imbedded bookends!
 	CSmashLink	m_slTail;	// permanent imbedded bookends!
-	short	m_sNum;
+	int16_t	m_sNum;
 	//---------------------------------------------------------------------------
 	void	Erase() // will NOT free any of the nodes in the list!
 		{
@@ -316,24 +316,24 @@ class CSmashatorium
 	{
 public:
 	//---------------------------------------------------------------------------
-	short	m_sWorldW;	// for general logic
-	short m_sWorldH;
-	short m_sClipW;	// For clipping border
-	short	m_sClipH;
-	short	m_sGridW;	// NOT TileW -> this is the NUMBER of nodes!
-	short m_sGridH;
-	short m_sTileW;	// For catching size errors
-	short m_sTileH;
+	int16_t	m_sWorldW;	// for general logic
+	int16_t m_sWorldH;
+	int16_t m_sClipW;	// For clipping border
+	int16_t	m_sClipH;
+	int16_t	m_sGridW;	// NOT TileW -> this is the NUMBER of nodes!
+	int16_t m_sGridH;
+	int16_t m_sTileW;	// For catching size errors
+	int16_t m_sTileH;
 
 	CSmashatoriumList	*m_pGrid; // actually a 2d array
 
 	//------------------- ACCESS VARIABLES:
-	short	*m_psAccessX;	// m_sWorldW in size
-	short *m_psAccessY;	// m_sWorldH in size
+	int16_t	*m_psAccessX;	// m_sWorldW in size
+	int16_t *m_psAccessY;	// m_sWorldH in size
 	CSmashatoriumList **m_ppslAccessY;	// m_sWorldH in size
 
-	short	*m_psClipX;	// m_sWorldW + 2 Tiles in size
-	short *m_psClipY;	// m_sWorldH + 2 Tiles in size
+	int16_t	*m_psClipX;	// m_sWorldW + 2 Tiles in size
+	int16_t *m_psClipY;	// m_sWorldH + 2 Tiles in size
 	CSmashatoriumList **m_ppslClipY;	// m_sWorldH + 2 Tiles in size
 
 	//------------------- SEARCHING STATE INFORMATION: (QuickCheck info)
@@ -347,15 +347,15 @@ public:
 	CSmash::Bits m_exclude;
 
 	CSmashatoriumList *m_pCurrentList;
-	short	m_sCurrentListX;
-	short m_sCurrentListY;
-	short m_sSearchW;	//  base 1 !
-	short m_sSearchH; //	 base 1 !
+	int16_t	m_sCurrentListX;
+	int16_t m_sCurrentListY;
+	int16_t m_sSearchW;	//  base 1 !
+	int16_t m_sSearchH; //	 base 1 !
 
-	long	m_lCurrentSearchCode;	// change it for each search
+	int32_t	m_lCurrentSearchCode;	// change it for each search
 
-	short m_sNumInSmash;	// Used for debugging
-	short m_sMaxNumInSmash;	// Used for debugging
+	int16_t m_sNumInSmash;	// Used for debugging
+	int16_t m_sMaxNumInSmash;	// Used for debugging
 
 	//---------------------------------------------------------------------------
 	// Update the specified CSmash.  If it isn't already in the smashatorium, it
@@ -390,7 +390,7 @@ public:
 		Erase();
 		}
 
-	short Alloc(short sWorldW,short sWorldH,short sTileW,short sTileH);
+	int16_t Alloc(int16_t sWorldW,int16_t sWorldH,int16_t sTileW,int16_t sTileH);
 
 	// Lower Level Inline!
 	// These are done multiple times for a true remove
@@ -511,10 +511,10 @@ public:
 		CSmash*	pSmasher = 0);								// Out: Smash that should be excluded from search.
 
 	// Does a 2d XZ collision between two spheres.
-	short	CollideCyl(CSmash* pSmashee,RSphere* pSphere);
+	int16_t	CollideCyl(CSmash* pSmashee,RSphere* pSphere);
 
 	// Does a 2d XZ collision between a sphere and a line
-	short	CollideCyl(CSmash* pSmashee,R3DLine* pLine);
+	int16_t	CollideCyl(CSmash* pSmashee,R3DLine* pLine);
 
 	//---------------------------------------------------------------------------
 	CSmashatorium() { Erase(); } // Needed for defaul construction
@@ -527,7 +527,7 @@ public:
 	//
 	void Reset(void); 
 
-	CSmashatorium(short sWorldW,short sWorldH,short sTileW,short sTileH) 
+	CSmashatorium(int16_t sWorldW,int16_t sWorldH,int16_t sTileW,int16_t sTileH) 
 		{ Erase(); Alloc(sWorldW,sWorldH,sTileW,sTileH); }
 	~CSmashatorium() { Destroy(); }
 	};
@@ -638,4 +638,3 @@ public:
 		if (m_link4.m_pLast) Add(m_link4.m_pLast,&m_link1);
 		}
 	*/
-

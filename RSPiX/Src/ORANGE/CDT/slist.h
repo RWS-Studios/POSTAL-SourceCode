@@ -117,9 +117,9 @@ template <class T, class K> class RSList
 
 		// Reposition ld.
 		// Returns 0 on success.
-		short Reposition(LISTDATA ld)
+		int16_t Reposition(LISTDATA ld)
 			{
-			short	sRes	= 0;	// Assume success.
+			int16_t	sRes	= 0;	// Assume success.
 
 			// Find node.
 			PNODE pn = Find(ld);
@@ -153,9 +153,9 @@ template <class T, class K> class RSList
 
 		// Insert pnNew 
 		// Returns 0 on success.
-		short Insert(LISTDATA ldNew, PSORTKEY psk	= NULL)
+		int16_t Insert(LISTDATA ldNew, PSORTKEY psk	= NULL)
 			{
-			short sRes = 0; // Assume success.
+			int16_t sRes = 0; // Assume success.
 			// Allocate new node.
 			PNODE pnNew = new NODE;
 			// If successful . . .
@@ -178,9 +178,9 @@ template <class T, class K> class RSList
 			}
 
 		// Remove a node from the list.  If no node specified, remove current
-		short Remove(LISTDATA ldRem = NULL)
+		int16_t Remove(LISTDATA ldRem = NULL)
 			{
-			short sRes = 0; // Assume success.
+			int16_t sRes = 0; // Assume success.
 			// Make sure the list is not empty
 			if (IsEmpty() == FALSE)
 				{
@@ -384,8 +384,8 @@ template <class T, class K> class RSList
 			return (m_pnCurrent ? m_pnCurrent->ldData : NULL);
 			}
 
-		short IsEmpty()
-		{ return (short)(m_pnHead == NULL); }
+		int16_t IsEmpty()
+		{ return (int16_t)(m_pnHead == NULL); }
 
 		// Find the item with the key value skFind for its key or the
 		// item that would follow, if that key does not exist.
@@ -441,7 +441,7 @@ template <class T, class K> class RSList
 		// Returns negative	if *pn1 < *pn2.
 		// Returns 0			if *pn1 == *pn2.
 		// Returns positive	if *pn1 > *pn2.
-		short Compare(PNODE pn1, PNODE pn2)
+		int16_t Compare(PNODE pn1, PNODE pn2)
 			{
 			// If user function provided . . .
 			if (m_fncmp != NULL)
@@ -462,7 +462,7 @@ template <class T, class K> class RSList
 
 	public:
 		RSList(
-			short sInitialize	= TRUE)	// If this flag is FALSE, no initialization
+			int16_t sInitialize	= TRUE)	// If this flag is FALSE, no initialization
 												// or freeing will be done.  It will be the
 												// user's responsibility!
 			{
@@ -583,7 +583,7 @@ template <class T, class K> class RSList
 		PNODE		m_pnNext;
 		PNODE		m_pnTail;
 		CMPCALL	m_fncmp;
-		short		m_sInitialize;		// TRUE if this item should handle intializing
+		int16_t		m_sInitialize;		// TRUE if this item should handle intializing
 											// and freeing the list and members.
 	};
    

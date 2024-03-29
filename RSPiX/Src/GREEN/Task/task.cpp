@@ -79,7 +79,7 @@ RTask::RTask(void)
 // Special constructor that passes parms on to Init().
 //
 //////////////////////////////////////////////////////////////////////////////
-RTask::RTask(TaskFunc tf, ULONG ulUser)
+RTask::RTask(TaskFunc tf, uint32_t ulUser)
 	{
 	Reset();
 
@@ -111,7 +111,7 @@ RTask::~RTask(void)
 // Returns nothing.
 //
 //////////////////////////////////////////////////////////////////////////////
-void RTask::Init(TaskFunc tf, ULONG ulUser)
+void RTask::Init(TaskFunc tf, uint32_t ulUser)
 	{
 	ASSERT(tf != NULL);
 
@@ -126,9 +126,9 @@ void RTask::Init(TaskFunc tf, ULONG ulUser)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short RTask::Kill(void)
+int16_t RTask::Kill(void)
 	{
-	short sRes = 0;	// Assume success.
+	int16_t sRes = 0;	// Assume success.
 	
 	// Attempt to stop the task . . .
 	if (Suspend() == 0)
@@ -152,9 +152,9 @@ short RTask::Kill(void)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short RTask::Start(void)
+int16_t RTask::Start(void)
 	{
-	short sRes = 0;	// Assume success.
+	int16_t sRes = 0;	// Assume success.
 
 	if (m_sActive == FALSE)
 		{
@@ -191,9 +191,9 @@ short RTask::Start(void)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short RTask::Suspend(void)
+int16_t RTask::Suspend(void)
 	{
-	short sRes = 0;	// Assume success.
+	int16_t sRes = 0;	// Assume success.
 
 	if (m_sActive == TRUE)
 		{
@@ -250,7 +250,7 @@ void RTask::Reset(void)
 //////////////////////////////////////////////////////////////////////////////
 void RTask::Do(void)
 	{
-	long	lCurTime;
+	int32_t	lCurTime;
 
 	// Go through each node of the list checking its next execution time
 	// against the current.

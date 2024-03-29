@@ -85,15 +85,15 @@
 // (protected/virtual (overridden here)).
 //
 //////////////////////////////////////////////////////////////////////////////
-short RListContents::SaveChildren(	// Returns 0 on success.
+int16_t RListContents::SaveChildren(	// Returns 0 on success.
 	RFile*	pfile)						// File to save to.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	ASSERT(pfile->IsOpen() != FALSE);
 
 	// Determine number of child items.
-	short	sNum	= 0;
+	int16_t	sNum	= 0;
 	RGuiItem*	pgui = m_listguiChildren.GetHead();
 	while (pgui != NULL)
 		{
@@ -111,7 +111,7 @@ short RListContents::SaveChildren(	// Returns 0 on success.
 		{
 		// Before each item is a value indicating whether the item
 		// is an encapsulator.
-		pfile->Write((short)pgui->IsProp(ENCAPSULATOR_PROP_KEY) );
+		pfile->Write((int16_t)pgui->IsProp(ENCAPSULATOR_PROP_KEY) );
 
 		// Save child.
 		sRes	= pgui->Save(pfile);
@@ -128,23 +128,23 @@ short RListContents::SaveChildren(	// Returns 0 on success.
 // (protected/virtual (overridden here)).
 //
 //////////////////////////////////////////////////////////////////////////////
-short RListContents::LoadChildren(	// Returns 0 on success.
+int16_t RListContents::LoadChildren(	// Returns 0 on success.
 	RFile*	pfile)						// File to load from.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	ASSERT(pfile->IsOpen() != FALSE);
 	// Need to know parent.
 	ASSERT(GetParent() != NULL);
 
-	short	sNum;
+	int16_t	sNum;
 	// Read number of children.
 	pfile->Read(&sNum);
 
 	// Instantiate children.
 	RGuiItem* pgui;
-	short	sCurChild;
-	short	sEncapsulator;
+	int16_t	sCurChild;
+	int16_t	sEncapsulator;
 	for (	sCurChild	= 0; 
 			sCurChild < sNum && sRes == 0 && pfile->Error() == FALSE; 
 			sCurChild++)
@@ -165,7 +165,7 @@ short RListContents::LoadChildren(	// Returns 0 on success.
 				// Set callback.
 				pgui->m_bcUser				= RListBox::PressedCall;
 				// Set instance to parent listbox.
-				pgui->m_ulUserInstance	= (ULONG)GetParent();
+				pgui->m_ulUserInstance	= (U64)GetParent();
 				// If pushed in . . .
 				if (pgui->m_sInvertedBorder != FALSE)
 					{
