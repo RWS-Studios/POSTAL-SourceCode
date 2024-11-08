@@ -150,9 +150,9 @@ extern char* rspPathFromSystem(		// Returns pointer to RSPiX path (static!!!)
 // full path of the folder, such as "Macintosh HD:System Folder:Preferences:".
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern short rspGetTempPath(			// Returns 0 on success, non-zero otherwise
+extern int16_t rspGetTempPath(			// Returns 0 on success, non-zero otherwise
 	char* pszPath,							// Out: Temp path returned here if available.
-	short	sMaxPathLen)					// In:  Max path length (to avoid overwrites)
+	int16_t	sMaxPathLen)					// In:  Max path length (to avoid overwrites)
 	{
 	ASSERT(pszPath != NULL);
 	ASSERT(sMaxPathLen > 0);

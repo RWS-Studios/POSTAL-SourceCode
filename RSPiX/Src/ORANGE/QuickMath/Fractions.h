@@ -79,11 +79,11 @@ inline void rspfrAdd32(&lVal,&lNum,&lDel,&lInc,&lDen,&lPixSize)
 
 //======================================= 
 typedef union	{
-	long	set;
+	int32_t	set;
 	struct	
 		{
-		short	mod;
-		short frac;
+		int16_t	mod;
+		int16_t frac;
 		};
 	} RFracS16;
 
@@ -92,15 +92,15 @@ typedef union	{
 	S64	set;
 	struct	
 		{
-		long mod;
-		long frac;
+		int32_t mod;
+		int32_t frac;
 		};
 	} RFracS32; // good for compound fractions
 
 //************* ALERT ALERT!!! FRACTION STUFF HERE!!!!!  *******************
 // There should be more functions to handle simplified cases!
 // sDen MUST be positive!
-inline void rspfrDiv(RFracS16& fr,short sNum,short sDen)
+inline void rspfrDiv(RFracS16& fr,int16_t sNum,int16_t sDen)
 	{
 	fr.mod = sNum / sDen;
 	fr.frac = sNum % sDen;
@@ -112,11 +112,11 @@ inline void rspfrDiv(RFracS16& fr,short sNum,short sDen)
 			}
 	}
 
-inline void rspfrSet(RFracS16& fr,long lVal) { fr.set = lVal; }
+inline void rspfrSet(RFracS16& fr,int32_t lVal) { fr.set = lVal; }
 
 // Signed can go either way... use unsigned for speed!
 // This also assumes it can add greater than one!
-inline void rspfrAdd(RFracS16& frDst,RFracS16& frAdd,short sDen)
+inline void rspfrAdd(RFracS16& frDst,RFracS16& frAdd,int16_t sDen)
 	{ 
 	frDst.mod += frAdd.mod;
 	frDst.frac += frAdd.frac;
@@ -124,7 +124,7 @@ inline void rspfrAdd(RFracS16& frDst,RFracS16& frAdd,short sDen)
 	if (frDst.frac < 0) {frDst.mod--;frDst.frac += sDen;}
 	}
 
-inline void rspfrSub(RFracS16& frDst,RFracS16& frSub,short sDen)
+inline void rspfrSub(RFracS16& frDst,RFracS16& frSub,int16_t sDen)
 	{ 
 	frDst.mod -= frSub.mod;
 	frDst.frac -= frSub.frac;
@@ -132,24 +132,24 @@ inline void rspfrSub(RFracS16& frDst,RFracS16& frSub,short sDen)
 	if (frDst.frac >= sDen) {frDst.mod++;frDst.frac -= sDen;}
 	}
 
-inline void rspfrAddHalf(RFracS16& frDst,short sDen) // useful for rounding
+inline void rspfrAddHalf(RFracS16& frDst,int16_t sDen) // useful for rounding
 	{ 
 	frDst.frac += (sDen >> 1);
 	if (frDst.frac >= sDen) {frDst.mod++;frDst.frac -= sDen;}
 	}
 
 //========================= debugging only! (slow)
-inline void rspfrSetValue(RFracS16& frDst,double dVal,short sDen)
+inline void rspfrSetValue(RFracS16& frDst,double dVal,int16_t sDen)
 	{
-	frDst.mod = (short) floor(dVal);
-	frDst.frac = (short) ((dVal - floor(dVal))*sDen);
+	frDst.mod = (int16_t) floor(dVal);
+	frDst.frac = (int16_t) ((dVal - floor(dVal))*sDen);
 	}
 
 // add two fractions of identical denominators...
 // both fraction MUST be PROPER! 
 // UNSIGNED!!!!
 //
-inline void	rspfrAdd(RFracU16& pDst,RFracU16& pAdd,short sDen)
+inline void	rspfrAdd(RFracU16& pDst,RFracU16& pAdd,int16_t sDen)
 	{
 	pDst.mod += pAdd.mod;
 	if ( (pDst.frac += pAdd.frac) >= sDen)
@@ -162,7 +162,7 @@ inline void	rspfrAdd(RFracU16& pDst,RFracU16& pAdd,short sDen)
 // Creates a proper fraction from an improper one:
 // The sizes MUST be appropriate!
 //
-inline void rspMakeProper(RFracU16& pDst,USHORT usNum,USHORT usDen)
+inline void rspMakeProper(RFracU16& pDst,uint16_t usNum,uint16_t usDen)
 	{
 	pDst.mod = usNum / usDen;
 	pDst.frac = usNum % usDen;
@@ -173,14 +173,14 @@ inline void rspMakeProper(RFracU16& pDst,USHORT usNum,USHORT usDen)
 // 1 is tha base fraction, and 255 is 255 * the base fraction.
 // Both must be unsigned!  (uses calloc)
 //
-inline RFracU16* rspfrU16Strafe256(USHORT usNum,USHORT usDen)
+inline RFracU16* rspfrU16Strafe256(uint16_t usNum,uint16_t usDen)
 	{
 	RFracU16* pu16fNew = (RFracU16*) calloc(256,sizeof(RFracU16));
 	RFracU16 u16fInc;
 	rspMakeProper(u16fInc,usNum,usDen); // the 2 part mod
 
-	ULONG ulNumInc = 0;
-	for (short i = 1; i < 256 ; i++)
+	uint32_t ulNumInc = 0;
+	for (int16_t i = 1; i < 256 ; i++)
 		{
 		pu16fNew[i].mod = pu16fNew[i-1].mod + u16fInc.mod;
 		pu16fNew[i].frac = pu16fNew[i-1].frac + u16fInc.frac;
@@ -206,8 +206,8 @@ typedef S32 IMPROPER;
 // lDel is unused here...
 // all values are signed, including lInc & lDel ...
 //
-inline void rspfrAdd32(long &lVal,long &lNum,long &lDel,long &lInc,
-						  long &lDen,long &lAdd,PROPER,POSITIVE)
+inline void rspfrAdd32(int32_t &lVal,int32_t &lNum,int32_t &lDel,int32_t &lInc,
+						  int32_t &lDen,int32_t &lAdd,PROPER,POSITIVE)
 	{
 	lNum += lInc;
 	if (lNum >= lDen) { lNum -= lDen; lVal += lAdd; }
@@ -215,8 +215,8 @@ inline void rspfrAdd32(long &lVal,long &lNum,long &lDel,long &lInc,
 
 // all values are signed, including lInc & lDel ...
 //
-inline void rspfrAdd32(long &lVal,long &lNum,long &lDel,long &lInc,
-						  long &lDen,long &lAdd,IMPROPER,POSITIVE)
+inline void rspfrAdd32(int32_t &lVal,int32_t &lNum,int32_t &lDel,int32_t &lInc,
+						  int32_t &lDen,int32_t &lAdd,IMPROPER,POSITIVE)
 	{
 	lVal += lDel;
 	lNum += lInc;
@@ -226,8 +226,8 @@ inline void rspfrAdd32(long &lVal,long &lNum,long &lDel,long &lInc,
 // lDel is unused here...
 // all values are signed, including lInc & lDel & lAdd ...
 //
-inline void rspfrAdd32(long &lVal,long &lNum,long &lDel,long &lInc,
-						  long &lDen,long &lAdd,PROPER,NEGATIVE)
+inline void rspfrAdd32(int32_t &lVal,int32_t &lNum,int32_t &lDel,int32_t &lInc,
+						  int32_t &lDen,int32_t &lAdd,PROPER,NEGATIVE)
 	{
 	lNum += lInc;
 	if (lNum < 0) { lNum += lDen; lVal -= lAdd; }
@@ -235,8 +235,8 @@ inline void rspfrAdd32(long &lVal,long &lNum,long &lDel,long &lInc,
 
 // all values are signed, including lInc & lDel & lAdd ...
 //
-inline void rspfrAdd32(long &lVal,long &lNum,long &lDel,long &lInc,
-						  long &lDen,long &lAdd,IMPROPER,NEGATIVE)
+inline void rspfrAdd32(int32_t &lVal,int32_t &lNum,int32_t &lDel,int32_t &lInc,
+						  int32_t &lDen,int32_t &lAdd,IMPROPER,NEGATIVE)
 	{
 	lVal += lDel;
 	lNum += lInc;
@@ -246,8 +246,8 @@ inline void rspfrAdd32(long &lVal,long &lNum,long &lDel,long &lInc,
 // all values are signed, including lInc & lDel & lAdd ...
 // General (slowest) form... Improper and UNKNOWN SIGN
 //
-inline void rspfrAdd32(long &lVal,long &lNum,long &lDel,long &lInc,
-						  long &lDen,long &lPixSize)
+inline void rspfrAdd32(int32_t &lVal,int32_t &lNum,int32_t &lDel,int32_t &lInc,
+						  int32_t &lDen,int32_t &lPixSize)
 	{
 	lVal += lDel;
 	lNum += lInc;

@@ -28,7 +28,7 @@
 //						=========			=========
 //						CNFile				RFile
 //						CPal					RPal
-//						ULONG ulType		RPal::Type ulType
+//						uint32_t ulType		RPal::Type ulType
 //						m_bCanDestroyData	m_sCanDestroyData
 //						
 //						Also, Convert() contained a "lack of m_" bug where it was
@@ -36,8 +36,8 @@
 //						of the stack when it meant the one in the class.
 //
 //						The thing that annoys me the most about using actual enums
-//						instead of ULONGs is that you have to copy it into a dummy
-//						ULONG to use RFile on it.  This isn't very bad, but it's
+//						instead of uint32_ts is that you have to copy it into a dummy
+//						uint32_t to use RFile on it.  This isn't very bad, but it's
 //						annoying.
 //
 //	11/01/96	JMI	Changed all members to be preceded by m_ (e.g., sDepth
@@ -136,7 +136,7 @@ char* RPal::ms_astrTypeNames[END_REG_PAL] =
 // based on the palette type.  This is used by RPal::GetPalEntrySize
 // to return the size of any registered palette type.
 // Note that this uses END_REG_PAL enum item to size the array.
-short RPal::ms_asPalEntrySizes[END_REG_PAL] = 
+int16_t RPal::ms_asPalEntrySizes[END_REG_PAL] = 
 {
 	0,		//NO_PALETTE
 	4,		//PDIB
@@ -222,20 +222,20 @@ RPal::~RPal()
 //		FAILURE if it didn't
 //
 //////////////////////////////////////////////////////////////////////
-short RPal::CreatePalette(
+int16_t RPal::CreatePalette(
 	Type typeNew)
 	{
-	short sResult = SUCCESS;
+	int16_t sResult = SUCCESS;
 	
 	if ((typeNew >= NO_PALETTE) && (typeNew < END_REG_PAL))
 		{
 		// Get size of palette entry
-		short size = GetPalEntrySize(typeNew);
+		int16_t size = GetPalEntrySize(typeNew);
 		
 		// Set number of entries to 256.  This would probably only change
 		// if we add support for 1-, 2- or 4-bit image formats that would
 		// require smaller palettes.
-		short entries = 256;
+		int16_t entries = 256;
 		CreateData(
 			size * entries,
 			typeNew,
@@ -270,7 +270,7 @@ short RPal::CreatePalette(
 //
 //////////////////////////////////////////////////////////////////////
 
-short RPal::GetPalEntrySize(Type type)
+int16_t RPal::GetPalEntrySize(Type type)
 {
  	if (type < END_REG_PAL)
 		return ms_asPalEntrySizes[type];
@@ -302,7 +302,7 @@ short RPal::GetPalEntrySize(Type type)
 //
 //////////////////////////////////////////////////////////////////////
 
-short	RPal::CreateData(ULONG ulNewSize)
+int16_t	RPal::CreateData(uint32_t ulNewSize)
 {
 	if (m_sCanDestroyData && m_pData)
 	{
@@ -319,13 +319,13 @@ short	RPal::CreateData(ULONG ulNewSize)
 	return RImage::sCreateMem((void**) &m_pData, ulNewSize);
 }
 
-short RPal::CreateData(ULONG ulNewSize, 
+int16_t RPal::CreateData(uint32_t ulNewSize, 
                        Type  typeNew,
-							  short sSetPalEntrySize,
-							  short sSetStartIndex,
-							  short sSetNumEntries)
+							  int16_t sSetPalEntrySize,
+							  int16_t sSetStartIndex,
+							  int16_t sSetNumEntries)
 {
-	short sReturn = CreateData(ulNewSize);
+	int16_t sReturn = CreateData(ulNewSize);
 
 	if (sReturn == SUCCESS)
 	{
@@ -356,7 +356,7 @@ short RPal::CreateData(ULONG ulNewSize,
 //
 //////////////////////////////////////////////////////////////////////
 
-short	RPal::DestroyData()
+int16_t	RPal::DestroyData()
 {   
 	// Only if the data was not supplied by the user.
 	if (m_sCanDestroyData)
@@ -392,11 +392,11 @@ short	RPal::DestroyData()
 //
 //////////////////////////////////////////////////////////////////////
 
-short RPal::SetData(void* pUserData)
+int16_t RPal::SetData(void* pUserData)
 {
 	if (pUserData != NULL && m_pData == NULL)
 	{
-		m_pData = (UCHAR*) pUserData;
+		m_pData = (uint8_t*) pUserData;
 		m_sCanDestroyData = FALSE;
 		return SUCCESS;
 	}
@@ -431,9 +431,9 @@ short RPal::SetData(void* pUserData)
 //
 //////////////////////////////////////////////////////////////////////
 
-UCHAR* RPal::DetachData(void)
+uint8_t* RPal::DetachData(void)
 {
- 	UCHAR* pDetachment = m_pData;
+ 	uint8_t* pDetachment = m_pData;
 	m_pData = NULL;
 	m_sCanDestroyData = FALSE;
 	return pDetachment;
@@ -497,10 +497,10 @@ RPal::Type RPal::Convert(Type typeNew)
 //
 //////////////////////////////////////////////////////////////////////
 
-short RPal::Save(char* pszFilename)
+int16_t RPal::Save(char* pszFilename)
 {
 	RFile cf;
-	short sReturn = SUCCESS;
+	int16_t sReturn = SUCCESS;
 
 	if (cf.Open(pszFilename, "wb", RFile::LittleEndian) != SUCCESS)
 	{
@@ -535,11 +535,11 @@ short RPal::Save(char* pszFilename)
 //
 //////////////////////////////////////////////////////////////////////
 
-short RPal::Save(RFile* pcf)
+int16_t RPal::Save(RFile* pcf)
 {
-	short sReturn = SUCCESS;
-	ULONG ulFileType = PAL_COOKIE;
-	ULONG ulCurrentVersion = PAL_CURRENT_VERSION;
+	int16_t sReturn = SUCCESS;
+	uint32_t ulFileType = PAL_COOKIE;
+	uint32_t ulCurrentVersion = PAL_CURRENT_VERSION;
 
 	if (pcf && pcf->IsOpen())
 	{
@@ -547,7 +547,7 @@ short RPal::Save(RFile* pcf)
 		pcf->Write(&ulFileType);
 		pcf->Write(&ulCurrentVersion);
 		// No RFile support for RImage::Type, so we used a U32.
-		U32	u32Temp	= (ULONG)m_type;
+		U32	u32Temp	= (uint32_t)m_type;
 		pcf->Write(&u32Temp);
 		pcf->Write(&m_ulSize);
 		pcf->Write(&m_sStartIndex);
@@ -555,13 +555,13 @@ short RPal::Save(RFile* pcf)
 		pcf->Write(&m_sPalEntrySize);
 		if (m_pData)
 		{
-			USHORT usFlag = 1;
+			uint16_t usFlag = 1;
 			pcf->Write(&usFlag);
 			pcf->Write(m_pData, m_ulSize);
 		}
 		else
 		{
-			USHORT usFlag = 0;
+			uint16_t usFlag = 0;
 			pcf->Write(&usFlag);
 		}
 		if (pcf->Error())
@@ -596,10 +596,10 @@ short RPal::Save(RFile* pcf)
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-short RPal::Load(char* pszFilename)
+int16_t RPal::Load(char* pszFilename)
 {
 	RFile cf;
-	short sReturn = SUCCESS;
+	int16_t sReturn = SUCCESS;
 
 	if (cf.Open(pszFilename, "rb", RFile::LittleEndian) != SUCCESS)
 	{
@@ -634,12 +634,12 @@ short RPal::Load(char* pszFilename)
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-short RPal::Load(RFile* pcf)
+int16_t RPal::Load(RFile* pcf)
 {	
-	short sReturn = SUCCESS;
-	ULONG ulFileType = 0;
-	ULONG ulFileVersion = 0;
-	USHORT usFlag = 2;
+	int16_t sReturn = SUCCESS;
+	uint32_t ulFileType = 0;
+	uint32_t ulFileVersion = 0;
+	uint16_t usFlag = 2;
 
 	if (pcf && pcf->IsOpen())
 	{
@@ -690,13 +690,13 @@ short RPal::Load(RFile* pcf)
 //				  TRACE messages will help pinpoint the failure
 //
 ///////////////////////////////////////////////////////////////////////////////
-short RPal::GetEntries(
-	short sStart,								// In:  Starting palette entry
-	short sCount,								// In:  Number of entries to do
-	unsigned char* pDstRed,					// Out: Starting destination red value
-	unsigned char* pDstGreen,				// Out: Starting destination green value
-	unsigned char* pDstBlue,				// Out: Starting destination blue value
-	long lAddToPointers)						// In:  What to add to pointers to move to next value
+int16_t RPal::GetEntries(
+	int16_t sStart,								// In:  Starting palette entry
+	int16_t sCount,								// In:  Number of entries to do
+	uint8_t* pDstRed,					// Out: Starting destination red value
+	uint8_t* pDstGreen,				// Out: Starting destination green value
+	uint8_t* pDstBlue,				// Out: Starting destination blue value
+	int32_t lAddToPointers)						// In:  What to add to pointers to move to next value
 	{
 	// Validate parameters
 	ASSERT(pDstRed != NULL);
@@ -714,11 +714,11 @@ short RPal::GetEntries(
 		return FAILURE;
 		}
 		
-	short sResult = SUCCESS;
+	int16_t sResult = SUCCESS;
 
 	// Calculate pointer to first entry to be modified
-	unsigned char* pucSrc = m_pData + ((sStart - m_sStartIndex) * m_sPalEntrySize);
-	unsigned char green;
+	uint8_t* pucSrc = m_pData + ((sStart - m_sStartIndex) * m_sPalEntrySize);
+	uint8_t green;
 
 	switch(m_type)
 		{
@@ -845,13 +845,13 @@ short RPal::GetEntries(
 //				  TRACE messages will help pinpoint the failure
 //
 ///////////////////////////////////////////////////////////////////////////////
-short RPal::SetEntries(
-	short sStart,								// In:  Starting palette entry
-	short sCount,								// In:  Number of entries to do
-	unsigned char* pSrcRed,					// In:  Starting source red value
-	unsigned char* pSrcGreen,				// In:  Starting source green value
-	unsigned char* pSrcBlue,				// In:  Starting source blue value
-	long lAddToPointers)						// In:  What to add to pointers to move to next value
+int16_t RPal::SetEntries(
+	int16_t sStart,								// In:  Starting palette entry
+	int16_t sCount,								// In:  Number of entries to do
+	uint8_t* pSrcRed,					// In:  Starting source red value
+	uint8_t* pSrcGreen,				// In:  Starting source green value
+	uint8_t* pSrcBlue,				// In:  Starting source blue value
+	int32_t lAddToPointers)						// In:  What to add to pointers to move to next value
 	{
 	// Validate parameters
 	ASSERT(pSrcRed != NULL);
@@ -869,10 +869,10 @@ short RPal::SetEntries(
 		return FAILURE;
 		}
 		
-	short sResult = SUCCESS;
+	int16_t sResult = SUCCESS;
 
 	// Calculate pointer to first entry to be modified
-	unsigned char* pucDst = m_pData + ((sStart - m_sStartIndex) * m_sPalEntrySize);
+	uint8_t* pucDst = m_pData + ((sStart - m_sStartIndex) * m_sPalEntrySize);
 
 	switch(m_type)
 		{

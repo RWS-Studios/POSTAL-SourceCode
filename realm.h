@@ -499,7 +499,7 @@ class CRealm
 			} Layer;
 
 		// Scoring modes
-		typedef unsigned short ScoringMode;
+		typedef uint16_t ScoringMode;
 		typedef enum
 			{
 			Standard = 0,		// Standard single player showing population, hostiles, kills and kill %
@@ -538,21 +538,21 @@ class CRealm
 														// where one can create new objects, modify,
 														// move them, etc.
 			bool		bEditPlay;					// Playing a realm from within the editor.
-			short		sDifficulty;				// Difficulty level.
+			int16_t		sDifficulty;				// Difficulty level.
 			} Flags;
 
 		// Callback called by various processes in Realm (such as Load and Save)
 		// to indicate current progress and allow a hook that can abort the process.
 		typedef bool (*ProgressCall)(			// Returns true to continue; false to
 														// abort operation.
-			short	sLastItemProcessed,			// In:  Number of items processed so far.
-			short	sTotalItemsToProcess);		// In:  Total items to process.
+			int16_t	sLastItemProcessed,			// In:  Number of items processed so far.
+			int16_t	sTotalItemsToProcess);		// In:  Total items to process.
 
 	//---------------------------------------------------------------------------
 	// Static variables
 	//---------------------------------------------------------------------------
 	private:
-		static short ms_sFileCount;
+		static int16_t ms_sFileCount;
 
 	//---------------------------------------------------------------------------
 	// Public static variables
@@ -560,7 +560,7 @@ class CRealm
 	public:
 		// Maps the layer portion of an attribute to the appropriate
 		// layer.
-		static short ms_asAttribToLayer[LayerAttribMask + 1];
+		static int16_t ms_asAttribToLayer[LayerAttribMask + 1];
 		
 		// Names of layers.  Use Layer enum values to index.
 		static char* ms_apszLayerNames[TotalLayers];
@@ -586,14 +586,14 @@ class CRealm
 		// Head and tail pointers for all CThings.
 		CListNode<CThing> m_everythingHead;
 		CListNode<CThing> m_everythingTail;
-		short m_sNumThings;
+		int16_t m_sNumThings;
 
 		// Array of Head and Tail pointers to the various lists of derived CThings
 		// in the game.  The array is indexed by the class ID, and each list contains
 		// only objects of that type.		
 		CListNode<CThing> m_aclassHeads[CThing::TotalIDs];
 		CListNode<CThing> m_aclassTails[CThing::TotalIDs];
-		short m_asClassNumThings[CThing::TotalIDs];
+		int16_t m_asClassNumThings[CThing::TotalIDs];
 
 		// Pointer to the attribute map.  The CHood is expected to set these
 		// as soon as it can so that other obects can use it.  This is really
@@ -631,15 +631,15 @@ class CRealm
 		// Number of Suspend() calls that have occurred without corresponding 
 		// Resume() calls.
 		// If 0, we are not suspended.
-		short m_sNumSuspends;
+		int16_t m_sNumSuspends;
 
 		// Pylon stuff
-		USHORT	m_asPylonUIDs[256]; // Complete Cheese!
-		short		m_sNumPylons;
-		UCHAR		m_ucNextPylonID;
+		uint16_t	m_asPylonUIDs[256]; // Complete Cheese!
+		int16_t		m_sNumPylons;
+		uint8_t		m_ucNextPylonID;
 
 		// Path index for 2D assets.
-		short		m_s2dResPathIndex;
+		int16_t		m_s2dResPathIndex;
 
 		// Process progress callback.  See ProgressCall typedef for details.
 		ProgressCall	m_fnProgress;
@@ -650,34 +650,34 @@ class CRealm
 	public:
 
 		// Population variables to keep track of those alive and dead.
-		short m_sPopulationBirths;			// Number of enemies & victims born in this level
-		short m_sPopulation;					// Current population
-		short m_sPopulationDeaths;			// Number of enemies & victims killed in this level
-		short m_sHostileBirths;				// Number of hostiles that have been born in this level
-		short m_sHostileKills;				// Number of hostiles that have been killed
-		short m_sHostiles;					// Number of hostiles remaining alive
+		int16_t m_sPopulationBirths;			// Number of enemies & victims born in this level
+		int16_t m_sPopulation;					// Current population
+		int16_t m_sPopulationDeaths;			// Number of enemies & victims killed in this level
+		int16_t m_sHostileBirths;				// Number of hostiles that have been born in this level
+		int16_t m_sHostileKills;				// Number of hostiles that have been killed
+		int16_t m_sHostiles;					// Number of hostiles remaining alive
 
 		// Timer values for different scoring methods.
 		bool m_bScoreTimerCountsUp;		// Which direction the timer runs, up or down
-		long m_lScoreInitialTime;			// What timer was initially set to.
-		long m_lScoreTimeDisplay;			// Time in ms that is used for the Score display
+		int32_t m_lScoreInitialTime;			// What timer was initially set to.
+		int32_t m_lScoreTimeDisplay;			// Time in ms that is used for the Score display
 													// (score converts it to minutes:seconds)
-		long m_lPrevTime;						// Previous read of the clock
-		long m_lElapsedTime;
-		long m_lThisTime;
+		int32_t m_lPrevTime;						// Previous read of the clock
+		int32_t m_lElapsedTime;
+		int32_t m_lThisTime;
 		
 
-		long	m_lLastStatusDrawTime;		// Last time the status was drawn.
+		int32_t	m_lLastStatusDrawTime;		// Last time the status was drawn.
 
 		// Goals for different modes of play.
 		ScoringMode m_ScoringMode;			// Scoring mode that score module uses
 													// to determine what to display.
 		double	m_dKillsPercentGoal;		// Kill Percent needed to end the level.
-		short		m_sKillsGoal;				// Kill number needed to end the level
-		short		m_sFlagsGoal;				// Number of flags needed to end the level
+		int16_t		m_sKillsGoal;				// Kill number needed to end the level
+		int16_t		m_sFlagsGoal;				// Number of flags needed to end the level
 
-		short		m_sFlagsCaptured;			// Number of flags captured.
-		short		m_sFlagbaseCaptured;		// Number of flags returned to proper base
+		int16_t		m_sFlagsCaptured;			// Number of flags captured.
+		int16_t		m_sFlagbaseCaptured;		// Number of flags returned to proper base
 
 		RString	m_rsRealmString;			// Name of realm (currently full path of file)
 
@@ -861,32 +861,32 @@ class CRealm
 
 		// Open the specified realm file (primarily for internal use, but who knows, it might be usefull)
 		static
-		short Open(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Open(													// Returns 0 if successfull, non-zero otherwise
 			const char* pszFileName,							// In:  Name of file to load from
 			RFile* pfile);											// I/O: RFile to be used
 
 		// Load
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			const char* pszFileName,							// In:  Name of file to load from
 			bool bEditMode);										// In:  Use true for edit mode, false otherwise
 
 		// Load
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode);										// In:  Use true for edit mode, false otherwise
 
 		// Save
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			const char* pszFileName);							// In:  Name of file to save to
 
 		// Save
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile);											// In:  File to save to
 
 		// Startup
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
-		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend
 		void Suspend(void);
@@ -916,33 +916,33 @@ class CRealm
 		CNavigationNet* GetCurrentNavNet(void)
 			{ return m_pCurrentNavNet; }
 
-		short GetHeight(short sX, short sZ);
+		int16_t GetHeight(int16_t sX, int16_t sZ);
 
-		short GetHeightAndNoWalk(	// Returns height at new location.
-			short sX,					// In:  X position to check on map.
-			short	sZ,					// In:  Z position to check on map.
+		int16_t GetHeightAndNoWalk(	// Returns height at new location.
+			int16_t sX,					// In:  X position to check on map.
+			int16_t	sZ,					// In:  Z position to check on map.
 			bool* pbNoWalk);			// Out: true, if 'no walk'.
 
-		short GetTerrainAttributes(short sX, short sZ);
+		int16_t GetTerrainAttributes(int16_t sX, int16_t sZ);
 
-		short GetFloorAttribute(short sX, short sZ);
+		int16_t GetFloorAttribute(int16_t sX, int16_t sZ);
 
-		short GetFloorMapValue(short sX, short sZ, short sMask = 0x007f);
+		int16_t GetFloorMapValue(int16_t sX, int16_t sZ, int16_t sMask = 0x007f);
 
-		short GetLayer(short sX, short sZ);
+		int16_t GetLayer(int16_t sX, int16_t sZ);
 
-		short GetEffectAttribute(short sX, short sZ);
+		int16_t GetEffectAttribute(int16_t sX, int16_t sZ);
 
-		short GetEffectMapValue(short sX, short sZ);
+		int16_t GetEffectMapValue(int16_t sX, int16_t sZ);
 			
 		// Determine if a path is clear of terrain.
 		bool IsPathClear(						// Returns true, if the entire path is clear.
 													// Returns false, if only a portion of the path is clear.
 													// (see *psX, *psY, *psZ).
-			short sX,							// In:  Starting X.
-			short	sY,							// In:  Starting Y.
-			short sZ,							// In:  Starting Z.
-			short sRotY,						// In:  Rotation around y axis (direction on X/Z plane).
+			int16_t sX,							// In:  Starting X.
+			int16_t	sY,							// In:  Starting Y.
+			int16_t sZ,							// In:  Starting Z.
+			int16_t sRotY,						// In:  Rotation around y axis (direction on X/Z plane).
 			double dCrawlRate,				// In:  Rate at which to scan ('crawl') path in pixels per
 													// iteration.
 													// NOTE: Values less than 1.0 are inefficient.
@@ -950,11 +950,11 @@ class CRealm
 													// at only one pixel.
 													// NOTE: We could change this to a speed in pixels per second
 													// where we'd assume a certain frame rate.
-			short	sDistanceXZ,				// In:  Distance on X/Z plane.
-			short sVerticalTolerance = 0,	// In:  Max traverser can step up.
-			short* psX = NULL,				// Out: If not NULL, last clear point on path.
-			short* psY = NULL,				// Out: If not NULL, last clear point on path.
-			short* psZ = NULL,				// Out: If not NULL, last clear point on path.
+			int16_t	sDistanceXZ,				// In:  Distance on X/Z plane.
+			int16_t sVerticalTolerance = 0,	// In:  Max traverser can step up.
+			int16_t* psX = NULL,				// Out: If not NULL, last clear point on path.
+			int16_t* psY = NULL,				// Out: If not NULL, last clear point on path.
+			int16_t* psZ = NULL,				// Out: If not NULL, last clear point on path.
 			bool bCheckExtents = true);	// In:  If true, will consider the edge of the realm a path
 													// inhibitor.  If false, reaching the edge of the realm
 													// indicates a clear path.
@@ -964,9 +964,9 @@ class CRealm
 		bool IsPathClear(						// Returns true, if the entire path is clear.
 													// Returns false, if only a portion of the path is clear.
 													// (see *psX, *psY, *psZ).
-			short sX,							// In:  Starting X.
-			short	sY,							// In:  Starting Y.
-			short sZ,							// In:  Starting Z.
+			int16_t sX,							// In:  Starting X.
+			int16_t	sY,							// In:  Starting Y.
+			int16_t sZ,							// In:  Starting Z.
 			double dCrawlRate,				// In:  Rate at which to scan ('crawl') path in pixels per
 													// iteration.
 													// NOTE: Values less than 1.0 are inefficient.
@@ -974,12 +974,12 @@ class CRealm
 													// at only one pixel.
 													// NOTE: We could change this to a speed in pixels per second
 													// where we'd assume a certain frame rate.
-			short	sDstX,						// In:  Destination X.
-			short	sDstZ,						// In:  Destination Z.
-			short sVerticalTolerance = 0,	// In:  Max traverser can step up.
-			short* psX = NULL,				// Out: If not NULL, last clear point on path.
-			short* psY = NULL,				// Out: If not NULL, last clear point on path.
-			short* psZ = NULL,				// Out: If not NULL, last clear point on path.
+			int16_t	sDstX,						// In:  Destination X.
+			int16_t	sDstZ,						// In:  Destination Z.
+			int16_t sVerticalTolerance = 0,	// In:  Max traverser can step up.
+			int16_t* psX = NULL,				// Out: If not NULL, last clear point on path.
+			int16_t* psY = NULL,				// Out: If not NULL, last clear point on path.
+			int16_t* psZ = NULL,				// Out: If not NULL, last clear point on path.
 			bool bCheckExtents = true);	// In:  If true, will consider the edge of the realm a path
 													// inhibitor.  If false, reaching the edge of the realm
 													// indicates a clear path.
@@ -992,11 +992,11 @@ class CRealm
 
 		// Maps a 3D coordinate onto the viewing plane.
 		void Map3Dto2D(	// Returns nothing.
-			short sX,		// In.
-			short	sY,		// In.
-			short	sZ,		// In.
-			short* psX,		// Out.
-			short* psY);	// Out.
+			int16_t sX,		// In.
+			int16_t	sY,		// In.
+			int16_t	sZ,		// In.
+			int16_t* psX,		// Out.
+			int16_t* psY);	// Out.
 
 		// Maps a 3D coordinate onto the viewing plane.
 		void Map3Dto2D(		// Returns nothing.
@@ -1015,8 +1015,8 @@ class CRealm
 		// Scales a Z coordinate onto the viewing plane using the 
 		// view angle (~angle of projection).
 		void MapZ3DtoY2D(		// Returns nothing.
-			short		sZIn,		// In.
-			short*	psYOut);	// Out.
+			int16_t		sZIn,		// In.
+			int16_t*	psYOut);	// Out.
 
 		// Scales a Y coordinate from the viewing plane using the 
 		// view angle (~angle of projection).
@@ -1027,8 +1027,8 @@ class CRealm
 		// Scales a Y coordinate from the viewing plane using the 
 		// view angle (~angle of projection).
 		void MapY2DtoZ3D(		// Returns nothing.
-			short		sYIn,		// In.
-			short*	psZOut);	// Out.
+			int16_t		sYIn,		// In.
+			int16_t*	psZOut);	// Out.
 
 		// Scales a Y coordinate onto the viewing plane using the 
 		// view angle (~angle of projection).
@@ -1039,8 +1039,8 @@ class CRealm
 		// Scales a Y coordinate onto the viewing plane using the 
 		// view angle (~angle of projection).
 		void MapY3DtoY2D(		// Returns nothing.
-			short		sYIn,		// In.
-			short*	psYOut);	// Out.
+			int16_t		sYIn,		// In.
+			int16_t*	psYOut);	// Out.
 
 		// Scales a Y coordinate from the viewing plane using the 
 		// view angle (~angle of projection).
@@ -1051,26 +1051,26 @@ class CRealm
 		// Scales a Y coordinate from the viewing plane using the 
 		// view angle (~angle of projection).
 		void MapY2DtoY3D(		// Returns nothing.
-			short		sYIn,		// In.
-			short*	psYOut);	// Out.
+			int16_t		sYIn,		// In.
+			int16_t*	psYOut);	// Out.
 
 		// If enabled, scales the specified height based on the view angle.
 		void MapAttribHeight(	// Returns nothing.
-			short		sHIn,			// In.
-			short*	psHOut);		// Out.
+			int16_t		sHIn,			// In.
+			int16_t*	psHOut);		// Out.
 
 		// Get dimension of realm on X/Z plane.
-		short GetRealmWidth(void)	// Returns width of realm's X/Z plane.
+		int16_t GetRealmWidth(void)	// Returns width of realm's X/Z plane.
 			{
-			short	sRealmW;
+			int16_t	sRealmW;
 			MapY2DtoZ3D(m_phood->GetWidth(), &sRealmW);
 			return sRealmW;
 			}
 
 		// Get dimension of realm on X/Z plane.
-		short GetRealmHeight(void)	// Returns height of realm's X/Z plane.
+		int16_t GetRealmHeight(void)	// Returns height of realm's X/Z plane.
 			{
-			short	sRealmH;
+			int16_t	sRealmH;
 			MapY2DtoZ3D(m_phood->GetHeight(), &sRealmH);
 			return sRealmH;
 			}
@@ -1102,7 +1102,7 @@ class CRealm
 	//---------------------------------------------------------------------------
 	public:
 
-		static short GetLayerViaAttrib(	// Returns the sprite layer indicated by
+		static int16_t GetLayerViaAttrib(	// Returns the sprite layer indicated by
 													// the specified attribute.             
 			U16 u16Attrib)
 			{

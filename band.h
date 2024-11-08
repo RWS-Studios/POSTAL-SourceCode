@@ -84,7 +84,7 @@ class CBand : public CDoofus
 		U16					m_idChildItem;		// ID of child item or CIdBank::IdNil.
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
+		static int16_t ms_sFileCount;
 
 		// "Constant" values that we want to be able to tune using the editor
 		static double ms_dCloseToBouy;		// How close to be to a bouy to consider yourself 'there'
@@ -92,8 +92,8 @@ class CBand : public CDoofus
 		static double ms_dExplosionVelocity;// How high he will get blown up.
 		static double ms_dMaxMarchVel;		// How fast to march
 		static double ms_dMaxRunVel;			// Hos fast to run
-		static long ms_lMingleTime;			// How long to mingle before moving
-		static short ms_sStartingHitPoints;	// How many hit points to start with
+		static int32_t ms_lMingleTime;			// How long to mingle before moving
+		static int16_t ms_sStartingHitPoints;	// How many hit points to start with
 		static SampleMaster::SoundInstance ms_siBandSongInstance;		// sound played during band march.
 		static U16	ms_idBandLeader;			// The person who adjusts the band sound
 														// volume or IdNil.
@@ -140,11 +140,11 @@ class CBand : public CDoofus
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CBand(pRealm);
 			if (*ppNew == 0)
 				{
@@ -159,19 +159,19 @@ class CBand : public CDoofus
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Update object
 		void Update(void);
@@ -180,10 +180,10 @@ class CBand : public CDoofus
 		void Render(void);
 
 		// Called by editor when a new object is created
-		short EditNew(short sX, short sY, short sZ);
+		int16_t EditNew(int16_t sX, int16_t sY, int16_t sZ);
 
 		// Called by editor to modify object
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 		// Called by editor to render object
 //		void EditRender(void);
 
@@ -225,13 +225,13 @@ class CBand : public CDoofus
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 
 		// Initalize the object - this should be called after the resources are loaded
-		short Init(void);
+		int16_t Init(void);
 
 		// Go through the message queue and change the state if necessary
 		void ProcessMessages(void);

@@ -228,8 +228,8 @@ RResMgr	g_resmgrSamples;
 // Module specific (static) variables / Instantiate class statics.
 //////////////////////////////////////////////////////////////////////////////
 //------------ put in C file:
-short CSoundCatalogue::ms_sCurPos = 0;
-short CSoundCatalogue::ms_sRefCount = 0;
+int16_t CSoundCatalogue::ms_sCurPos = 0;
+int16_t CSoundCatalogue::ms_sRefCount = 0;
 SampleMasterID** CSoundCatalogue::ms_ppsmNameList = NULL;
 
 // Sound channels for playing samples.
@@ -239,7 +239,7 @@ static RSnd		ms_asndChannels[NUM_CHANNELS];
 static SampleMaster::SoundInstance		ms_aSoundInstances[NUM_CHANNELS] = {0,};	
 
 // Stores the Sound Levels (0-255) for each sound category
-static short	ms_asCategoryVolumes[SampleMaster::MAX_NUM_SOUND_CATEGORIES] = {255,};
+static int16_t	ms_asCategoryVolumes[SampleMaster::MAX_NUM_SOUND_CATEGORIES] = {255,};
 
 // Stores the Sound Category for each sound channel:
 static	SampleMaster::SoundCategory	ms_aeSoundTypes[NUM_CHANNELS] = {SampleMaster::Unspecified,};
@@ -270,7 +270,7 @@ char* SampleMaster::ms_apszSoundCategories[SampleMaster::MAX_NUM_SOUND_CATEGORIE
 //////////////////////////////////////////////////////////////
 // These are the default volumes for each category in each
 // quality.
-short SampleMaster::ms_asQualityCategoryAdjustors[NumSoundQualities][MAX_NUM_SOUND_CATEGORIES]	=
+int16_t SampleMaster::ms_asQualityCategoryAdjustors[NumSoundQualities][MAX_NUM_SOUND_CATEGORIES]	=
 	{
 	// SQ_11025_8:
 		{
@@ -406,9 +406,9 @@ void SndDoneCall(		// Returns nothing.
 // This goes through the RSnd array and recalibrates the samples as well
 // returns SUCCESS if input is valid
 //////////////////////////////////////////////////////////////////////////////
-short	SetCategoryVolume(
+int16_t	SetCategoryVolume(
 	SampleMaster::SoundCategory eType,
-	short sVolume /* = SampleMaster::UserMaxVolume*/)
+	int16_t sVolume /* = SampleMaster::UserMaxVolume*/)
 	{
 	if ((eType < SampleMaster::Unspecified) || (eType >= SampleMaster::MAX_NUM_SOUND_CATEGORIES))
 		{
@@ -434,7 +434,7 @@ short	SetCategoryVolume(
 	ms_asCategoryVolumes[eType] = sVolume * SampleMaster::ms_asQualityCategoryAdjustors[g_GameSettings.m_eCurSoundQuality][eType] * SampleMaster::MaxVolume / (SampleMaster::UserMaxVolume * SampleMaster::UserMaxVolume);
 
 	// Notify all playing sounds of that type that their volume has changed
-	for (short i = 0; i < NUM_CHANNELS; i++)
+	for (int16_t i = 0; i < NUM_CHANNELS; i++)
 		{
 		if (ms_aeSoundTypes[i] == eType)
 			{
@@ -449,7 +449,7 @@ short	SetCategoryVolume(
 // Get the volume for a category of sounds (0-UserMaxVolume)
 // returns category volume, ( 0 - MaxUserVolume ) or -1 if category is invalid.
 //////////////////////////////////////////////////////////////////////////////
-short	GetCategoryVolume(
+int16_t	GetCategoryVolume(
 	SampleMaster::SoundCategory eType /*  = SampleMaster::SoundCategory::Unspecified */)
 	{
 	if ((eType < SampleMaster::Unspecified) || (eType >= SampleMaster::MAX_NUM_SOUND_CATEGORIES))
@@ -480,9 +480,9 @@ short	GetCategoryVolume(
 //
 // Returns SUCCESS or FAILURE
 //////////////////////////////////////////////////////////////////////////////
-short	SetInstanceVolume(
+int16_t	SetInstanceVolume(
 	SampleMaster::SoundInstance si,				// make sure it is YOUR sound
-	short sVolume /* = 255 */)	// 0 - 255
+	int16_t sVolume /* = 255 */)	// 0 - 255
 	{
 	if ( (si < 0) || (sVolume < 0) || (sVolume > 255) )
 		{
@@ -490,7 +490,7 @@ short	SetInstanceVolume(
 		}
 
 	// Get the channel number from the lowest bits:
-	short sChannel = si & CHANNEL_MASK;
+	int16_t sChannel = si & CHANNEL_MASK;
 	if (sChannel >= NUM_CHANNELS)
 		{
 		return FAILURE;	// MASK error!
@@ -520,7 +520,7 @@ short	SetInstanceVolume(
 //		Returns 255 if this feature is off.
 //
 //////////////////////////////////////////////////////////////////////////////
-short	DistanceToVolume(float	fX,	// in Postal 3d coordinates
+int16_t	DistanceToVolume(float	fX,	// in Postal 3d coordinates
 							  float	fY,
 							  float	fZ,
 							  float	fR		// Sound half life
@@ -539,7 +539,7 @@ short	DistanceToVolume(float	fX,	// in Postal 3d coordinates
 
 		if (fDist2 < 1.0) return 255;	// Dead epicenter
 
-		return short(255.0 * exp( -fln2 * fDist2 / (fR * fR) ) );
+		return int16_t(255.0 * exp( -fln2 * fDist2 / (fR * fR) ) );
 		}
 	else
 		{
@@ -599,17 +599,17 @@ void PlaySample(												// Returns nothing.
 																	// Does not fail.
 	SampleMasterID	id,										// In:  Identifier of sample you want played.
 	SampleMaster::SoundCategory eType,					// In:  Sound Volume Category for user adjustment
-	short	sInitialVolume /* = 255 */,					// In:  Initial Sound Volume (0 - 255)
+	int16_t	sInitialVolume /* = 255 */,					// In:  Initial Sound Volume (0 - 255)
 	SampleMaster::SoundInstance*	psi/* = NULL */,	// Out: Handle for adjusting sound volume
-	long* plSampleDuration /* = NULL */,				// Out: Sample duration in ms, if not NULL.
-	long lLoopStartTime /* = -1 */,						// In:  Where to loop back to in milliseconds.
+	int32_t* plSampleDuration /* = NULL */,				// Out: Sample duration in ms, if not NULL.
+	int32_t lLoopStartTime /* = -1 */,						// In:  Where to loop back to in milliseconds.
 																	//	-1 indicates no looping (unless m_sLoop is
 																	// explicitly set).
-	long lLoopEndTime /* = 0 */,							// In:  Where to loop back from in milliseconds.
+	int32_t lLoopEndTime /* = 0 */,							// In:  Where to loop back from in milliseconds.
 																	// In:  If less than 1, the end + lLoopEndTime is used.
 	bool bPurgeSample /* = false */)						// In:  Call ReleaseAndPurge rather than Release after playing
 	{
-	short	sError	= 0;					// Assume no error.
+	int16_t	sError	= 0;					// Assume no error.
 	RSnd*		psnd	= &ms_sndFailure;	// Default to failure case.
 	if (psi) *psi = 0;					// Default to failure case.
 
@@ -627,7 +627,7 @@ void PlaySample(												// Returns nothing.
 			SET(plSampleDuration, psample->GetDuration() );
 
 			// Brute force search to find open channel.
-			short	i;
+			int16_t	i;
 			for (i = 0; i < NUM_CHANNELS; i++)
 				{
 				if (ms_asndChannels[i].GetState() == RSnd::Stopped)
@@ -790,7 +790,7 @@ bool IsSamplePlaying(	// Returns true, if the sample is playing,
 	bool	bPlaying	= false;	// Assume not playing.
 
 	// Get the channel number from the lowest bits:
-	short sChannel = si & CHANNEL_MASK;
+	int16_t sChannel = si & CHANNEL_MASK;
 	if (sChannel < NUM_CHANNELS)
 		{
 		// Make sure the sound is still playing (this is NOT an error)
@@ -825,7 +825,7 @@ bool IsSamplePlaying(void)		// Returns true, if a sample is playing,
 
 	// Check all channels.
 	// Brute force search to find open channel.
-	short	i;
+	int16_t	i;
 	for (i = 0; i < NUM_CHANNELS; i++)
 		{
 		if (ms_asndChannels[i].GetState() != RSnd::Stopped)
@@ -843,13 +843,13 @@ bool IsSamplePlaying(void)		// Returns true, if a sample is playing,
 // Aborts the specified play instance if it is still going.
 //
 //////////////////////////////////////////////////////////////////////////////
-short AbortSample(		// Returns 0 if sample aborted, 1 if not.
+int16_t AbortSample(		// Returns 0 if sample aborted, 1 if not.
 	SampleMaster::SoundInstance	si)	// In:  Identifies play instance.
 	{
-	short	sRes	= 1;	// Assume failure.
+	int16_t	sRes	= 1;	// Assume failure.
 
 	// Get the channel number from the lowest bits:
-	short sChannel = si & CHANNEL_MASK;
+	int16_t sChannel = si & CHANNEL_MASK;
 	if (sChannel < NUM_CHANNELS)
 		{
 		// Make sure the sound is still playing (this is NOT an error)
@@ -912,7 +912,7 @@ void PurgeSample(			// Returns nothing.
 void AbortAllSamples(void)	// Returns nothing.
 	{
 	// Check all channels.
-	short	i;
+	int16_t	i;
 	for (i = 0; i < NUM_CHANNELS; i++)
 		{
 		if (ms_asndChannels[i].GetState() != RSnd::Stopped)
@@ -928,7 +928,7 @@ void AbortAllSamples(void)	// Returns nothing.
 extern void PauseAllSamples(void)
 	{
 	// Pause all active channels.
-	short	i;
+	int16_t	i;
 	for (i = 0; i < NUM_CHANNELS; i++)
 		{
 		if (ms_asndChannels[i].GetState() != RSnd::Stopped)
@@ -944,7 +944,7 @@ extern void PauseAllSamples(void)
 extern void ResumeAllSamples(void)
 	{
 	// Resume all active channels.
-	short	i;
+	int16_t	i;
 	for (i = 0; i < NUM_CHANNELS; i++)
 		{
 		if (ms_asndChannels[i].IsPaused() )
@@ -980,7 +980,7 @@ RSnd* GetInstanceChannel(					// Returns ptr to an RSnd.  Yours, if
 	RSnd*	psndInstance	= &ms_sndFailure;	// Assume long gone.
 
 	// Get the channel number from the lowest bits:
-	short sChannel = si & CHANNEL_MASK;
+	int16_t sChannel = si & CHANNEL_MASK;
 	if (sChannel < NUM_CHANNELS)
 		{
 		// Make sure the sound is still playing (this is NOT an error)

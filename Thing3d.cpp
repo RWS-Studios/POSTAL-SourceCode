@@ -250,7 +250,7 @@
 
 double	CThing3d::ms_dDefaultSurfaceDrag	= 220.0;	// Default drag along surfaces.     
 double	CThing3d::ms_dDefaultAirDrag		= 30.0;	// Default drag due to air friction.
-short		CThing3d::ms_sBurntBrightness		= -40;	// Brightness level after being burnt
+int16_t		CThing3d::ms_sBurntBrightness		= -40;	// Brightness level after being burnt
 
 /// These are the points that are checked on the attrib map /////////////////////
 // These points are relative to the thing's origin.
@@ -420,14 +420,14 @@ char* CThing3d::ms_apszStateNames[] =
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CThing3d::Load(									// Returns 0 if successfull, non-zero otherwise
+int16_t CThing3d::Load(									// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 	{
 	// Call the CThing base class load to get the instance ID
-	short sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	if (sResult == 0)
 		{
 		// Load object data
@@ -507,12 +507,12 @@ short CThing3d::Load(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CThing3d::Save(									// Returns 0 if successfull, non-zero otherwise
+int16_t CThing3d::Save(									// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 	{
 	// Call the base class save to save the u16InstanceID
-	short	sResult	= CThing::Save(pFile, sFileCount);
+	int16_t	sResult	= CThing::Save(pFile, sFileCount);
 	if (sResult == 0)
 		{
 		// Save object data
@@ -530,7 +530,7 @@ short CThing3d::Save(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CThing3d::Startup(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CThing3d::Startup(void)						// Returns 0 if successfull, non-zero otherwise
 	{
 	// Init other stuff
 	m_lPrevTime = m_pRealm->m_time.GetGameTime();
@@ -546,7 +546,7 @@ short CThing3d::Startup(void)						// Returns 0 if successfull, non-zero otherwi
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-short CThing3d::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CThing3d::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 	{
 	return 0;
 	}
@@ -560,7 +560,7 @@ void CThing3d::Suspend(void)
 	if (m_sSuspend == 0)
 		{
 		// Store current delta so we can restore it.
-		long	lCurTime				= m_pRealm->m_time.GetGameTime();
+		int32_t	lCurTime				= m_pRealm->m_time.GetGameTime();
 		m_lPrevTime					= lCurTime - m_lPrevTime;
 		m_lAnimPrevUpdateTime	= lCurTime - m_lAnimPrevUpdateTime;
 		}
@@ -580,7 +580,7 @@ void CThing3d::Resume(void)
 	// This method is far from precise, but I'm hoping it's good enough.
 	if (m_sSuspend == 0)
 		{
-		long	lCurTime				= m_pRealm->m_time.GetGameTime();
+		int32_t	lCurTime				= m_pRealm->m_time.GetGameTime();
 		m_lPrevTime					= lCurTime - m_lPrevTime;
 		m_lAnimPrevUpdateTime	= lCurTime - m_lAnimPrevUpdateTime;
 		}
@@ -592,7 +592,7 @@ void CThing3d::Resume(void)
 void CThing3d::Render(void)
 	{
 	U16	u16CombinedAttributes;
-	short	sLightTally;
+	int16_t	sLightTally;
 	GetEffectAttributes(m_dX, m_dZ, &u16CombinedAttributes, &sLightTally);
 
 	// Brightness.
@@ -609,7 +609,7 @@ void CThing3d::Render(void)
 		m_trans.Rz(rspMod360(m_dRotZ) );
 
 		// Map from 3d to 2d coords
-		Map3Dto2D((short) m_dX, (short) m_dY, (short) m_dZ, &m_sprite.m_sX2, &m_sprite.m_sY2);
+		Map3Dto2D((int16_t) m_dX, (int16_t) m_dY, (int16_t) m_dZ, &m_sprite.m_sX2, &m_sprite.m_sY2);
 
 		// If no layer override . . .
 		if (m_sLayerOverride < 0)
@@ -642,7 +642,7 @@ void CThing3d::Render(void)
 		if (!(m_spriteShadow.m_sInFlags & CSprite::InHidden) && m_spriteShadow.m_pImage != NULL)
 			{
 			// Get the height of the terrain from the attribute map
-			short sY = m_pRealm->GetHeight((short) m_dX, (short) m_dZ);
+			int16_t sY = m_pRealm->GetHeight((int16_t) m_dX, (int16_t) m_dZ);
 			// Map from 3d to 2d coords
 			Map3Dto2D(m_dX, (double) sY, m_dZ, &(m_spriteShadow.m_sX2), &(m_spriteShadow.m_sY2) );
 			// Offset hotspot to center of image.
@@ -656,7 +656,7 @@ void CThing3d::Render(void)
 			m_spriteShadow.m_sLayer = m_sprite.m_sLayer; //CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
 
 			// Set the alpha level based on the height difference
-			m_spriteShadow.m_sAlphaLevel = 200 - ((short) m_dY - sY);
+			m_spriteShadow.m_sAlphaLevel = 200 - ((int16_t) m_dY - sY);
 			// Check bounds . . .
 			if (m_spriteShadow.m_sAlphaLevel < 0)
 				{
@@ -694,12 +694,12 @@ void CThing3d::EditRender(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CThing3d::EditNew(								// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CThing3d::EditNew(								// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -713,7 +713,7 @@ short CThing3d::EditNew(								// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-short CThing3d::EditModify(void)
+int16_t CThing3d::EditModify(void)
 	{
 	return 0;
 	}
@@ -722,10 +722,10 @@ short CThing3d::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CThing3d::EditMove(							// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CThing3d::EditMove(							// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
 	m_dX = (double)sX;
 	m_dY = (double)sY;
@@ -790,17 +790,17 @@ void CThing3d::EditRect(RRect* pRect)
 // (virtual (Overridden here)).
 ////////////////////////////////////////////////////////////////////////////////
 void CThing3d::EditHotSpot(		// Returns nothiing.
-	short*	psX,						// Out: X coord of 2D hotspot relative to
+	int16_t*	psX,						// Out: X coord of 2D hotspot relative to
 											// EditRect() pos.
-	short*	psY)						// Out: Y coord of 2D hotspot relative to
+	int16_t*	psY)						// Out: Y coord of 2D hotspot relative to
 											// EditRect() pos.
 	{
 	// Get rectangle.
 	RRect	rc;
 	EditRect(&rc);
 	// Get 2D hotspot.
-	short	sX;
-	short	sY;
+	int16_t	sX;
+	int16_t	sY;
 	Map3Dto2D(
 		m_dX,
 		m_dY,
@@ -850,7 +850,7 @@ bool CThing3d::WhileBlownUp(void)	// Returns true until state is complete.
 	double	dNewX, dNewY, dNewZ;
 
 	// Get time from last call in seconds.
-	long		lCurTime	= m_pRealm->m_time.GetGameTime();
+	int32_t		lCurTime	= m_pRealm->m_time.GetGameTime();
 	double	dSeconds	= double(lCurTime - m_lPrevTime) / 1000.0;
 
 	// Update Velocities ////////////////////////////////////////////////////////
@@ -863,8 +863,8 @@ bool CThing3d::WhileBlownUp(void)	// Returns true until state is complete.
 
 	// Get attribute at new location.
 	// Get height at new position.
-	USHORT	usAttrib;
-	short		sHeight;
+	uint16_t	usAttrib;
+	int16_t		sHeight;
 	GetFloorAttributes(dNewX, dNewZ, &usAttrib, &sHeight);
 
 	// If it was above the ground last time and is now below the ground, it must have
@@ -1112,11 +1112,11 @@ void CThing3d::GetNewPosition(	// Returns nothing.
 	// Make sure rotation is w/i bounds for COSQ and SINQ arrays.
 	// Note:  If we keep the above adjustments on m_dRot, we won't
 	// need this rspMod360().
-	short	sRot	= rspMod360(m_dRot);
+	int16_t	sRot	= rspMod360(m_dRot);
 	m_dRot		= sRot;
 
 	// Make sure external force rotation is w/i bounds for COSQ and SINQ arrays.
-	short	sExtHorzRot	= rspMod360(m_dExtHorzRot);
+	int16_t	sExtHorzRot	= rspMod360(m_dExtHorzRot);
 	m_dExtHorzRot		= sExtHorzRot;
 
 	double dDistance;
@@ -1156,14 +1156,14 @@ void CThing3d::GetNewPositionAngle(				// Returns nothing.
 		// Make sure rotation is w/i bounds for COSQ and SINQ arrays.
 		// Note:  If we keep the above adjustments on m_dRot, we won't
 		// need this rspMod360().
-		short	sRot	= rspMod360(m_dRot);
+		int16_t	sRot	= rspMod360(m_dRot);
 		m_dRot		= sRot;
 
 
 		sRot	= rspMod360(dAngle);
 
 		// Make sure external force rotation is w/i bounds for COSQ and SINQ arrays.
-		short	sExtHorzRot	= rspMod360(m_dExtHorzRot);
+		int16_t	sExtHorzRot	= rspMod360(m_dExtHorzRot);
 		m_dExtHorzRot		= sExtHorzRot;
 
 		double dDistance;
@@ -1194,14 +1194,14 @@ bool CThing3d::MakeValidPosition(	// Returns true, if new position was valid.
 												// Out: New y position.
 	double*	pdNewZ,						// In:  z position to validate.
 												// Out: New z position.
-	short	sVertTolerance /*= 0*/)		// Vertical tolerance.
+	int16_t	sVertTolerance /*= 0*/)		// Vertical tolerance.
 	{
 	bool bValidatedPosition	= false;	// Assume failure.
 
 	// Get attribute at new location.
 	// Get height at new position.
-	USHORT	usAttrib;
-	short		sHeight;
+	uint16_t	usAttrib;
+	int16_t		sHeight;
 	GetFloorAttributes(*pdNewX, *pdNewZ, &usAttrib, &sHeight);
 
 	// If too big a height difference or completely not walkable . . .
@@ -1497,29 +1497,29 @@ void CThing3d::UpdateFirePosition(void)
 // Get attributes at supplied position (uses m_pap2dAttribCheckPoints).
 ////////////////////////////////////////////////////////////////////////////////
 void CThing3d::GetFloorAttributes(	// Returns nothing.
-	short		sX,						// In:  X coord.
-	short		sZ,						// In:  Z coord.
+	int16_t		sX,						// In:  X coord.
+	int16_t		sZ,						// In:  Z coord.
 	U16*		pu16Attrib,				// Out: Combined attribs, if not NULL.
-	short*	psHeight)				// Out: Max height, if not NULL.
+	int16_t*	psHeight)				// Out: Max height, if not NULL.
 	{
 	U16	u16CurAttrib;
 	U16	u16CombinedAttrib	= 0;
-	short	sLightTally			= 0;
-	short	sMaxHeight			= -32767;
-	short	sCurHeight;
+	int16_t	sLightTally			= 0;
+	int16_t	sMaxHeight			= -32767;
+	int16_t	sCurHeight;
 
 	const Point2D*	p2d;
 	for (p2d = m_pap2dAttribCheckPoints; p2d->sX != ATTRIB_CHECK_TERMINATOR; p2d++)
 		{
-		u16CurAttrib = m_pRealm->GetFloorMapValue((short) sX + p2d->sX,
-		                                          (short) sZ + p2d->sZ,
+		u16CurAttrib = m_pRealm->GetFloorMapValue((int16_t) sX + p2d->sX,
+		                                          (int16_t) sZ + p2d->sZ,
 																 REALM_ATTR_NOT_WALKABLE | 0x0000);
 
 		// Combine attributes - and the height for now (since it will be masked out at end)
 		u16CombinedAttrib |= u16CurAttrib;
 
 		// Get height.
-		sCurHeight	= short(u16CurAttrib & REALM_ATTR_HEIGHT_MASK);
+		sCurHeight	= int16_t(u16CurAttrib & REALM_ATTR_HEIGHT_MASK);
 		if (sCurHeight > sMaxHeight)
 			{
 			sMaxHeight	= sCurHeight;
@@ -1543,21 +1543,21 @@ void CThing3d::GetFloorAttributes(	// Returns nothing.
 // Get attributes at supplied position (uses m_pap2dAttribCheckPoints).
 ////////////////////////////////////////////////////////////////////////////////
 void CThing3d::GetEffectAttributes(	// Returns nothing.
-	short		sX,							// In:  X coord.
-	short		sZ,							// In:  Z coord.
+	int16_t		sX,							// In:  X coord.
+	int16_t		sZ,							// In:  Z coord.
 	U16*		pu16Attrib,					// Out: Combined attribs, if not NULL.
-	short*	psLightBits)				// Out: Tally of light bits set, if not NULL.
+	int16_t*	psLightBits)				// Out: Tally of light bits set, if not NULL.
 	{
 	U16	u16CurAttrib;
 	U16	u16CombinedAttrib	= 0;
-	short	sLightTally			= 0;
+	int16_t	sLightTally			= 0;
 
 	const Point2D*	p2d;
 	for (p2d = m_pap2dAttribCheckPoints; p2d->sX != ATTRIB_CHECK_TERMINATOR; p2d++)
 		{
 		u16CurAttrib = m_pRealm->GetEffectAttribute(
-			(short) sX + p2d->sX,
-			(short) sZ + p2d->sZ
+			(int16_t) sX + p2d->sX,
+			(int16_t) sZ + p2d->sZ
 			);
 
 		// Combine attributes other than height.
@@ -1577,9 +1577,9 @@ void CThing3d::GetEffectAttributes(	// Returns nothing.
 //	m_pap2dAttribCheckPoints).
 ////////////////////////////////////////////////////////////////////////////////
 void CThing3d::GetLayer(	// Returns nothing.
-	short  sX,					// In:  X coord.
-	short  sZ,					// In:  Z coord.
-	short* psLayer)			// Out: Combined layer.
+	int16_t  sX,					// In:  X coord.
+	int16_t  sZ,					// In:  Z coord.
+	int16_t* psLayer)			// Out: Combined layer.
 	{
 	U16	u16CombinedLayer	= 0;
 
@@ -1587,8 +1587,8 @@ void CThing3d::GetLayer(	// Returns nothing.
 	for (p2d = m_pap2dAttribCheckPoints; p2d->sX != ATTRIB_CHECK_TERMINATOR; p2d++)
 		{
 		u16CombinedLayer	|= m_pRealm->GetLayer(
-			(short) sX + p2d->sX,
-			(short) sZ + p2d->sZ
+			(int16_t) sX + p2d->sX,
+			(int16_t) sZ + p2d->sZ
 			);
 		}
 
@@ -1729,12 +1729,12 @@ void CThing3d::PositionChild(	// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 void CThing3d::AddForceVector(	// Returns nothing.
 	double	dAddVel,					// In:  Magnitude of additional vector.             
-	short		sRot)						// In:  Direction (in degrees) of additional vector.
+	int16_t		sRot)						// In:  Direction (in degrees) of additional vector.
 	{
 	// Maybe we should make this an inline to add two vectors so we can use
 	// this in other places.
-	short	sAddAngle		= rspMod360(sRot);
-	short sCurAngle		= rspMod360(m_dExtHorzRot);
+	int16_t	sAddAngle		= rspMod360(sRot);
+	int16_t sCurAngle		= rspMod360(m_dExtHorzRot);
 	// Get our current X and Z component vectors.
 	double	dCurVectX	= COSQ[sCurAngle] * m_dExtHorzVel;
 	double	dCurVectZ	= -SINQ[sCurAngle] * m_dExtHorzVel;
@@ -1785,9 +1785,9 @@ void CThing3d::AddForceVector(	// Returns nothing.
 // PrepareShadow
 ////////////////////////////////////////////////////////////////////////////////
 
-short CThing3d::PrepareShadow(void)
+int16_t CThing3d::PrepareShadow(void)
 {
-	short sResult = SUCCESS;
+	int16_t sResult = SUCCESS;
 
 	// If the shadow doesn't have resource loaded yet, load the default
 	if (m_spriteShadow.m_pImage == NULL)
@@ -1812,15 +1812,15 @@ void CThing3d::PlaySample(									// Returns nothing.
 																	// Does not fail.
 	SampleMasterID	id,										// In:  Identifier of sample you want played.
 	SampleMaster::SoundCategory eType,					// In:  Sound Volume Category for user adjustment
-	short	sInitialVolume	/*= -1*/,						// In:  Initial Sound Volume (0 - 255)
+	int16_t	sInitialVolume	/*= -1*/,						// In:  Initial Sound Volume (0 - 255)
 																	// Negative indicates to use the distance to the
 																	// ear to determine the volume.
 	SampleMaster::SoundInstance*	psi /*= NULL*/,	// Out: Handle for adjusting sound volume
-	long* plSampleDuration /*= NULL*/,					// Out: Sample duration in ms, if not NULL.
-	long lLoopStartTime /*= -1*/,							// In:  Where to loop back to in milliseconds.
+	int32_t* plSampleDuration /*= NULL*/,					// Out: Sample duration in ms, if not NULL.
+	int32_t lLoopStartTime /*= -1*/,							// In:  Where to loop back to in milliseconds.
 																	//	-1 indicates no looping (unless m_sLoop is
 																	// explicitly set).
-	long lLoopEndTime /*= 0*/,								// In:  Where to loop back from in milliseconds.
+	int32_t lLoopEndTime /*= 0*/,								// In:  Where to loop back from in milliseconds.
 																	// In:  If less than 1, the end + lLoopEndTime is used.
 	bool bPurgeSample /*= false*/)						// In:  Call ReleaseAndPurge rather than Release after playing
 	{
@@ -1853,9 +1853,9 @@ void CThing3d::PlaySample(									// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 CAnimThing* CThing3d::StartAnim(		// Returns ptr to CAnimThing on success; NULL otherwise.
 	char* pszAnimResName,				// In:  Animation's resource name.
-	short	sX,								// In:  Position.
-	short	sY,								// In:  Position.
-	short	sZ,								// In:  Position.
+	int16_t	sX,								// In:  Position.
+	int16_t	sY,								// In:  Position.
+	int16_t	sZ,								// In:  Position.
 	bool	bLoop)							// In:  true to loop animation.
 	{
 	// Create the animator . . .

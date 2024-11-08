@@ -2,7 +2,7 @@ Postal Plus Demo
 ================
 
 Postal Plus Demo is very similar to Postal Plus, except that it only
-comes with a single leve and does not include the editor or
+comes with a single level and does not include the editor or
 multiplayer support.
 
 Multiplayer was dropped from the demo because it was considiered highly

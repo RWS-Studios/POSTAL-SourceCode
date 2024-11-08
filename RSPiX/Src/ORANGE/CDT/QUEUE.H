@@ -102,7 +102,7 @@
 #define QNEXT(i) 		(((i)+(short)1) >= QSIZE ? (short)0 : ((i)+(short)1))
 #define QPREV(i)		(((i)-(short)1) >= 0 ? ((i)-(short)1) : (QSIZE-(short)1))
 
-template <class T, short sSize> class RQueue
+template <class T, int16_t sSize> class RQueue
 	{
 	public:
 		// Default constructor.  You must call SetSize() before queue can be used.
@@ -128,7 +128,7 @@ template <class T, short sSize> class RQueue
 		
 		// Enqueue the indicated item (0 = success, non-zero = didn't fit)
 		//   NOTICE: No problems with mixed usage of normal and interrupt-driven code!
-		short EnQ(T* pT)
+		int16_t EnQ(T* pT)
 			{
 			// Make sure it isn't already full	
 			if (IsNotFull())
@@ -181,30 +181,30 @@ template <class T, short sSize> class RQueue
 		
 		// Check if queue is empty (returns TRUE if it's empty)
 		//   NOTICE: No problems with mixed usage of normal and interrupt-driven code!
-		short IsEmpty(void)
-			{ return (short)(m_sHead == m_sTail); }
+		int16_t IsEmpty(void)
+			{ return (int16_t)(m_sHead == m_sTail); }
 		
 		// Check if queue is not empty (returns TRUE if it's not empty)
 		//   NOTICE: No problems with mixed usage of normal and interrupt-driven code!
-		short IsNotEmpty(void)
-			{ return (short)(m_sHead != m_sTail); }
+		int16_t IsNotEmpty(void)
+			{ return (int16_t)(m_sHead != m_sTail); }
 		
 		// Check if queue is full (returns TRUE if it's full)
 		//   NOTICE: No problems with mixed usage of normal and interrupt-driven code!
-		short IsFull(void)
-			{ return (short)(QNEXT(m_sTail) == m_sHead); }
+		int16_t IsFull(void)
+			{ return (int16_t)(QNEXT(m_sTail) == m_sHead); }
 		
 		// Check if queue is not full (returns TRUE if it's not full)
 		//   NOTICE: No problems with mixed usage of normal and interrupt-driven code!
-		short IsNotFull(void)
-			{ return (short)(QNEXT(m_sTail) != m_sHead); }
+		int16_t IsNotFull(void)
+			{ return (int16_t)(QNEXT(m_sTail) != m_sHead); }
 			
 		// Get number of items currently in the queue
 		//   WARNING: With mixed usage of normal and interrupt-driven code, this could
 		//   yield innacurate results!  In such cases you can call this function repeatedly
 		//   until it returns the same result two times in a row.  This works fine as long
 		//   as interrupts aren't occuring relentlessly at an extremely high rate!
-		short NumItems(void)
+		int16_t NumItems(void)
 			{ return m_sTail >= m_sHead ? m_sTail - m_sHead : (m_sTail + QSIZE) - m_sHead; };
 			
 		// "Peek" at head item in the queue
@@ -216,8 +216,8 @@ template <class T, short sSize> class RQueue
 		T* PeekTail(void) { return (IsNotEmpty() ? m_aptQ[QPREV(m_sTail)] : NULL); }
 
 	protected:		
-		volatile short m_sHead;		// volatile since it could change on interrupt!
-		volatile short m_sTail;		// volatile since it could change on interrupt!
+		volatile int16_t m_sHead;		// volatile since it could change on interrupt!
+		volatile int16_t m_sTail;		// volatile since it could change on interrupt!
 		T*					m_aptQ[sSize + 1];
 	};
 	

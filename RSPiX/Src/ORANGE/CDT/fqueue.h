@@ -69,7 +69,7 @@
 #define FQUEUE_H
 
 
-template <class T, long Items>
+template <class T, int32_t Items>
 class FQueue
 	{
 	//------------------------------------------------------------------------------

@@ -131,6 +131,11 @@
 #include "GameSettings.h"
 #include "StockPile.h"
 
+#define ENGLISH_AUDIO	0
+#define JAPANESE_AUDIO	1
+
+#define NUM_LANGUAGES 2
+
 ////////////////////////////////////////////////////////////////////////////////
 // Macros.
 ////////////////////////////////////////////////////////////////////////////////
@@ -139,7 +144,7 @@
 extern CGameSettings g_GameSettings;
 
 // Check for cookie flag
-extern long g_lCookieMonster;
+extern int32_t g_lCookieMonster;
 
 // Global screen buffer
 extern RImage* g_pimScreenBuf;
@@ -170,17 +175,17 @@ extern RResMgr	g_resmgrShell;
 extern RResMgr	g_resmgrRes;
 
 // Time codes for registry values and expiration date
-extern long g_lRegTime;
-extern long g_lRegValue;
-extern long g_lExpTime;
-extern long g_lExpValue;
-extern long g_lReleaseTime;
+extern int32_t g_lRegTime;
+extern int32_t g_lRegValue;
+extern int32_t g_lExpTime;
+extern int32_t g_lExpValue;
+extern int32_t g_lReleaseTime;
 
 // Loaded and saved games use this stockpile to transfer to/from the
 // dude's stockpile
 extern CStockPile	g_stockpile;
 extern bool       g_bTransferStockpile;
-extern short	   g_sRealmNumToSave;
+extern int16_t	   g_sRealmNumToSave;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -200,7 +205,7 @@ extern void TheGame(void);
 //
 ////////////////////////////////////////////////////////////////////////////////
 extern void Game_StartSinglePlayerGame(
-	short sMenuItem);
+	int16_t sMenuItem);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -209,7 +214,7 @@ extern void Game_StartSinglePlayerGame(
 //
 ////////////////////////////////////////////////////////////////////////////////
 extern bool Game_StartMultiPlayerGame(
-	short sMenuItem);
+	int16_t sMenuItem);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -218,7 +223,7 @@ extern bool Game_StartMultiPlayerGame(
 //
 ////////////////////////////////////////////////////////////////////////////////
 extern void Game_JoinMultiPlayerGame(
-	short sMenuItem);
+	int16_t sMenuItem);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -227,7 +232,7 @@ extern void Game_JoinMultiPlayerGame(
 //
 ////////////////////////////////////////////////////////////////////////////////
 extern void Game_HostMultiPlayerGame(
-	short sMenuItem);
+	int16_t sMenuItem);
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -235,7 +240,7 @@ extern void Game_HostMultiPlayerGame(
 //
 ////////////////////////////////////////////////////////////////////////////////
 extern void Game_InitMainMenu(	// Returns nothing.
-	short sInit);						// In:  TRUE, if initializing; FALSE, if killing.
+	int16_t sInit);						// In:  TRUE, if initializing; FALSE, if killing.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -244,7 +249,7 @@ extern void Game_InitMainMenu(	// Returns nothing.
 //
 ////////////////////////////////////////////////////////////////////////////////
 extern void Game_StartDemoGame(
-	short sMenuItem);
+	int16_t sMenuItem);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -267,7 +272,7 @@ extern void Game_Buy(void);
 //
 ////////////////////////////////////////////////////////////////////////////////
 extern void Game_ControlsMenu(	// Returns nothing.
-	short sMenuItem);					// In:  Chosen menu item.
+	int16_t sMenuItem);					// In:  Chosen menu item.
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -275,7 +280,7 @@ extern void Game_ControlsMenu(	// Returns nothing.
 //
 ////////////////////////////////////////////////////////////////////////////////
 extern void Game_StartChallengeGame(	// Returns nothing.
-	short sMenuItem);							// In:  Chosen menu item.
+	int16_t sChallengeNum);				// In: Path to Challenge realm
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -283,7 +288,7 @@ extern void Game_StartChallengeGame(	// Returns nothing.
 //
 ////////////////////////////////////////////////////////////////////////////////
 extern void Game_AudioOptionsChoice(	// Returns nothing.
-	short sMenuItem);							// In:  Chosen item.
+	int16_t sMenuItem);							// In:  Chosen item.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -293,9 +298,9 @@ extern void Game_AudioOptionsChoice(	// Returns nothing.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-extern short Game_SavePlayersGame(	// Returns SUCCESS if all goes well
+extern int16_t Game_SavePlayersGame(	// Returns SUCCESS if all goes well
 				char* pszSaveName,		// In:  Name of the save file
-				short sDifficulty);		// In:  Current realm difficulty.
+				int16_t sDifficulty);		// In:  Current realm difficulty.
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -304,7 +309,7 @@ extern short Game_SavePlayersGame(	// Returns SUCCESS if all goes well
 ////////////////////////////////////////////////////////////////////////////////
 #define SeedRand SeedRandom
 extern void SeedRandom(
-	long lSeed);
+	int32_t lSeed);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -317,11 +322,11 @@ extern void SeedRandom(
 #if defined(_DEBUG) || defined(TRACENASSERT)
 
 	#define GetRandom()	GetRandomDebug(__FILE__, __LINE__)
-	extern long GetRandomDebug(char* FILE_MACRO, long LINE_MACRO);
+	extern int32_t GetRandomDebug(char* FILE_MACRO, int32_t LINE_MACRO);
 
 #else
 
-	extern long GetRandom(void);
+	extern int32_t GetRandom(void);
 
 #endif	// defined(_DEBUG) || defined(TRACENASSERT)
 
@@ -337,7 +342,7 @@ extern void SeedRandom(
 extern int SynchLog(		// Result of expr.
 	double	expr,			// In:  Expression to evaluate.
 	char*		pszFile,		// In:  Calling file.
-	long		lLine,		// In:  Calling line.
+	int32_t		lLine,		// In:  Calling line.
 	char*		pszExpr,		// In:  Original C++ source expression.
 	U32		u32User);	// In:  A user value that is intended to be consistent.
 
@@ -369,7 +374,7 @@ extern int SynchLog(		// Result of expr.
 //
 ////////////////////////////////////////////////////////////////////////////////
 extern void PalTranOn(
-	long lTime = -1);											// In:  How long transition should take (or -1 for default)
+	int32_t lTime = -1);											// In:  How long transition should take (or -1 for default)
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -405,7 +410,7 @@ extern void PalTranOff(void);
 #define GAME_PATH_HOODS		5
 
 extern char* FullPath(									// Returns full path in system format
-	short sPathType,										// In:  PATH_CD, PATH_HD, or PATH_VD
+	int16_t sPathType,										// In:  PATH_CD, PATH_HD, or PATH_VD
 	char* pszPartialPath);								// In:  Partial path in RSPiX format
 
 extern char* FullPathCD(								// Returns full path in system format
@@ -439,22 +444,22 @@ extern char* FullPathCustom(							// Returns full path in system format
 // character, depending on which system we're running on.
 //
 ////////////////////////////////////////////////////////////////////////////////
-short CorrectifyBasePath(								// Returns 0 if successfull, non-zero otherwise
+int16_t CorrectifyBasePath(								// Returns 0 if successfull, non-zero otherwise
 	char* pszBasePath,									// I/O: Base path to be corrected
-	short sMaxPathLen);									// In:  Maximum length of base path
+	int16_t sMaxPathLen);									// In:  Maximum length of base path
 
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Get a subpath relative to the specified game path.
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern short SubPathOpenBox(		// Returns 0 on success, negative on error, 1 if 
+extern int16_t SubPathOpenBox(		// Returns 0 on success, negative on error, 1 if 
 											// not subpathable (i.e., returned path is full path).
 	char*	pszFullPath,				// In:  Full path to be relative to.
 	char* pszBoxTitle,				// In:  Title of box.
 	char*	pszDefFileName,			// In:  Default filename.
 	char* pszChosenFileName,		// Out: User's choice.
-	short sStrSize,					// In:  Amount of memory pointed to by pszChosenFileName.
+	int16_t sStrSize,					// In:  Amount of memory pointed to by pszChosenFileName.
 	char*	pszFilter = NULL);		// In:  If not NULL, '.' delimited extension based filename
 											//	filter specification.  Ex: ".cpp.h.exe.lib" or "cpp.h.exe.lib"
 											// Note: Cannot use '.' in filter.  Preceding '.' ignored.
@@ -465,7 +470,7 @@ extern short SubPathOpenBox(		// Returns 0 on success, negative on error, 1 if
 //
 ////////////////////////////////////////////////////////////////////////////////
 extern void SetGammaLevel(
-	short sBase);											// In:  New brighten value
+	int16_t sBase);											// In:  New brighten value
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -483,7 +488,21 @@ extern	void	SetBrightnessContrast(
 // Get gamma/brighten-effect value from palette map (not from settings).
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern short GetGammaLevel(void);					// Returns current brighten value
+extern int16_t GetGammaLevel(void);					// Returns current brighten value
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Callback for the Level Select
+//
+////////////////////////////////////////////////////////////////////////////////
+extern void Game_StartLevelOnce(
+	int16_t sMenuItem);
+
+////////////////////////////////////////////////////////////////////////////////
+// Returns Title of a given Challenge-ID
+////////////////////////////////////////////////////////////////////////////////
+extern char* GetChallengeTitle(
+	int16_t challengeID);
 
 #ifdef WIN32
 #define snprintf _snprintf
@@ -507,9 +526,9 @@ extern int Stat_KilledCivilians;
 extern int Stat_TotalKilled;
 extern int Stat_LevelsPlayed;
 
-extern long playthroughMS;
+extern int32_t playthroughMS;
 
-extern ULONG Flag_Achievements;
+extern uint32_t Flag_Achievements;
 #define FLAG_USED_M16             (1<<0)
 #define FLAG_USED_SHOTGUN         (1<<1)
 #define FLAG_USED_DBL_SHOTGUN     (1<<2)

@@ -31,11 +31,11 @@ typedef struct
 // rendered.
 // sX and sY are additional offsets into pimDst
 //
-void	DrawTri_ZColorFog(UCHAR* pDstOffset,long lDstP,
+void	DrawTri_ZColorFog(uint8_t* pDstOffset,int32_t lDstP,
 			RP3d* p1,RP3d* p2,RP3d* p3,
-			RZBuffer* pZB,UCHAR* pFog,
-			short sOffsetX/* = 0*/,		// In: 2D offset for pZB.
-			short sOffsetY/* = 0*/) 	// In: 2D offset for pZB.
+			RZBuffer* pZB,uint8_t* pFog,
+			int16_t sOffsetX/* = 0*/,		// In: 2D offset for pZB.
+			int16_t sOffsetY/* = 0*/) 	// In: 2D offset for pZB.
 	{
 //////////////////////////////////////////////////////////////////
 //****************************************************************
@@ -49,18 +49,18 @@ void	DrawTri_ZColorFog(UCHAR* pDstOffset,long lDstP,
 	RRenderPt32 *pv2 = &pt2;
 	RRenderPt32 *pv3 = &pt3;
 	// Cast from REAL to short in fp32 format:
-	pt1.x.mod = short(p1->x);
-	pt1.y.mod = short(p1->y);
-	pt1.z.mod = short(p1->z);
-	pt2.x.mod = short(p2->x);
-	pt2.y.mod = short(p2->y);
-	pt2.z.mod = short(p2->z);
-	pt3.x.mod = short(p3->x);
-	pt3.y.mod = short(p3->y);
-	pt3.z.mod = short(p3->z);
+	pt1.x.mod = int16_t(p1->x);
+	pt1.y.mod = int16_t(p1->y);
+	pt1.z.mod = int16_t(p1->z);
+	pt2.x.mod = int16_t(p2->x);
+	pt2.y.mod = int16_t(p2->y);
+	pt2.z.mod = int16_t(p2->z);
+	pt3.x.mod = int16_t(p3->x);
+	pt3.y.mod = int16_t(p3->y);
+	pt3.z.mod = int16_t(p3->z);
 	pt1.x.frac = 
 	pt2.x.frac = 
-	pt3.x.frac = USHORT(32768); // offset each by 1/2
+	pt3.x.frac = uint16_t(32768); // offset each by 1/2
 
 	/*
 	// Catch the special case of a single pixel
@@ -85,7 +85,7 @@ void	DrawTri_ZColorFog(UCHAR* pDstOffset,long lDstP,
 
 			if (pt1.z.mod > *pBufZ)
 				{
-				UCHAR* pDst = pDstOffset + lDstP * pt1.y.mod + pt1.x.mod; 
+				uint8_t* pDst = pDstOffset + lDstP * pt1.y.mod + pt1.x.mod; 
 				*pDst = pFog[pt1.z.upper]; // can't forget to set the z-buffer!
 				*pBufZ = pt1.z.mod;			
 				}
@@ -157,57 +157,57 @@ void	DrawTri_ZColorFog(UCHAR* pDstOffset,long lDstP,
 
 	// Get point 2 and 3's position relative to point 1:
 	// Use 16 bit accuracy in y, 32-bit in x...
-	short y1 = pv1->y.mod;
+	int16_t y1 = pv1->y.mod;
 
-	short	y2 = pv2->y.mod - y1;
-	short	y3 = pv3->y.mod - y1;
-	short ybot = y3 - y2; // lower half delta
+	int16_t	y2 = pv2->y.mod - y1;
+	int16_t	y3 = pv3->y.mod - y1;
+	int16_t ybot = y3 - y2; // lower half delta
 
 	if (y2 + y3 == 0) return; // don;t bother drawing horiz line
 
 	// get relative floating point x coordinates: (32-bit differences)
-	long fx1 = pv1->x.val;
-	long fz1 = pv1->z.val;
+	int32_t fx1 = pv1->x.val;
+	int32_t fz1 = pv1->z.val;
 
-	long fx2 = pv2->x.val - fx1;
-	long fx3 = pv3->x.val - fx1;
-	long fz2 = pv2->z.val - fz1;
-	long fz3 = pv3->z.val - fz1;
+	int32_t fx2 = pv2->x.val - fx1;
+	int32_t fx3 = pv3->x.val - fx1;
+	int32_t fz2 = pv2->z.val - fz1;
+	int32_t fz3 = pv3->z.val - fz1;
 
 	// calculate the top two edge slopes with 32-bit accuracy:
-	long fx2inc,fz2inc;
+	int32_t fx2inc,fz2inc;
 	if (y2) 
 		{
 		fx2inc = fx2 / y2; // stuck with division using fx32!
 		fz2inc = fz2 / y2; // stuck with division using fx32!
 		/* CANDIDATE FOR ONE_OVER!
-		fx2inc = ULONG(fx2.mod) * CInitNum::OneOver[y2]; // stuck with division using fx32!
-		fz2inc = ULONG(fz2.mod) * CInitNum::OneOver[y2]; // stuck with division using fx32!
+		fx2inc = uint32_t(fx2.mod) * CInitNum::OneOver[y2]; // stuck with division using fx32!
+		fz2inc = uint32_t(fz2.mod) * CInitNum::OneOver[y2]; // stuck with division using fx32!
 		*/
 		}
 
-	long fx3inc = fx3 / y3; // stuck with division using fx32!
-	long fz3inc = fz3 / y3; // stuck with division using fx32!
+	int32_t fx3inc = fx3 / y3; // stuck with division using fx32!
+	int32_t fz3inc = fz3 / y3; // stuck with division using fx32!
 
 	// Set the two absolute edge positions
 	RFixedS32 x2,x3,z2,z3; 
 	x2.val = x3.val = pv1->x.frac;	// preserve floating point x!
 	z2.val = z3.val = pv1->z.frac; // preserve floating point z!
 
-	short sBaseZ = pv1->z.mod; 
+	int16_t sBaseZ = pv1->z.mod; 
 	//TRACE("SBASE Zpt = %hd\n",pv1->z.mod);
 
 
-	long lP = lDstP;
+	int32_t lP = lDstP;
 	// add in extra piece uv rounding!
-	UCHAR* pDst = pDstOffset + lP * pv1->y.mod + pv1->x.mod + x2.mod; 
-	short* pBufZ = pZB -> GetZPtr(pv1->x.mod + x2.mod + sOffsetX, pv1->y.mod + sOffsetY);
-	long lZP = pZB->m_lP; // in words!!!
+	uint8_t* pDst = pDstOffset + lP * pv1->y.mod + pv1->x.mod + x2.mod; 
+	int16_t* pBufZ = pZB -> GetZPtr(pv1->x.mod + x2.mod + sOffsetX, pv1->y.mod + sOffsetY);
+	int32_t lZP = pZB->m_lP; // in words!!!
 
 	// Draw the upper triangle! (Assuming fx2inc < fx3inc.....)
-	short x,y;
+	int16_t x,y;
 	RFixedS32	fz,fzinc; // for tracing across each scan line:
-	short xdel;
+	int16_t xdel;
 
 //////////////////////////////////////////////////////////////////
 //****************************************************************
@@ -224,7 +224,7 @@ void	DrawTri_ZColorFog(UCHAR* pDstOffset,long lDstP,
 
 	if (y2 == 0) // p1.y == p2.y
 		{
-		long fx1inc,fz1inc;
+		int32_t fx1inc,fz1inc;
 		RFixedS32 x1,z1; // Absolute positions
 
 		// Let point I be to the LEFT of point II:
@@ -269,7 +269,7 @@ void	DrawTri_ZColorFog(UCHAR* pDstOffset,long lDstP,
 			xdel = x2.mod - x1.mod;
 			//if (hzdel) hzinc.val = (z3.val - z2.val) / hzdel;
 			//***************8 flipped the inc value:!
-			if (xdel) fzinc.val = long(z2.mod - z1.mod) * RInitNum::OneOver[xdel];
+			if (xdel) fzinc.val = int32_t(z2.mod - z1.mod) * RInitNum::OneOver[xdel];
 			//if (hzdel) Mul(hzinc,z3.val - z2.val,CInitNum::OneOver[hzdel]);
 
 			// Assume 2 to 3:
@@ -308,7 +308,7 @@ void	DrawTri_ZColorFog(UCHAR* pDstOffset,long lDstP,
 			fz.mod += sBaseZ; // This is for coloring but it effects true z as well!
 			xdel = x3.mod - x2.mod;
 			//if (hzdel) hzinc.val = (z3.val - z2.val) / hzdel;
-			if (xdel) fzinc.val = ULONG(z3.mod - z2.mod) * RInitNum::OneOver[xdel];
+			if (xdel) fzinc.val = uint32_t(z3.mod - z2.mod) * RInitNum::OneOver[xdel];
 			//if (hzdel) Mul(hzinc,z3.val - z2.val,CInitNum::OneOver[hzdel]);
 			// Assume 2 to 3:
 			for (x = x2.mod; x<= x3.mod;x++)
@@ -332,8 +332,8 @@ void	DrawTri_ZColorFog(UCHAR* pDstOffset,long lDstP,
 			fx2inc = (fx3 - fx2) / ybot;  // stuck with division using fx32!
 			fz2inc = (fz3 - fz2) / ybot;  // stuck with division using fx32!
 			/*
-			fx2inc = ULONG(fx3.mod-fx2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
-			fz2inc = ULONG(fz3.mod-fz2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
+			fx2inc = uint32_t(fx3.mod-fx2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
+			fz2inc = uint32_t(fz3.mod-fz2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
 			*/
 			//_DrawTri(pDst,lP,x2,x3,fx2inc,fx3inc,yc,ucColor);
 
@@ -351,7 +351,7 @@ void	DrawTri_ZColorFog(UCHAR* pDstOffset,long lDstP,
 				fz.mod += sBaseZ;
 				xdel = x3.mod - x2.mod;
 				//if (hzdel) hzinc.val = (z3.val - z2.val) / hzdel;
-				if (xdel) fzinc.val = long(z3.mod - z2.mod) * RInitNum::OneOver[xdel];
+				if (xdel) fzinc.val = int32_t(z3.mod - z2.mod) * RInitNum::OneOver[xdel];
 				//if (hzdel) Mul(hzinc,z3.val - z2.val,CInitNum::OneOver[hzdel]);
 
 				// Assume 2 to 3:
@@ -392,7 +392,7 @@ void	DrawTri_ZColorFog(UCHAR* pDstOffset,long lDstP,
 
 			xdel = x2.mod - x3.mod; //+ x to z
 			//if (hzdel) hzinc.val = (z2.val - z3.val) / hzdel;
-			if (xdel) fzinc.val = long(z2.mod - z3.mod) * RInitNum::OneOver[xdel];
+			if (xdel) fzinc.val = int32_t(z2.mod - z3.mod) * RInitNum::OneOver[xdel];
 			//if (hzdel) Mul(hzinc,z2.val - z3.val,CInitNum::OneOver[hzdel]);
 
 			// Assume 2 to 3:
@@ -417,8 +417,8 @@ void	DrawTri_ZColorFog(UCHAR* pDstOffset,long lDstP,
 			fx2inc = (fx3 - fx2) / ybot;  // stuck with division using fx32!
 			fz2inc = (fz3 - fz2) / ybot;  // stuck with division using fx32!
 			/*
-			fx2inc = ULONG(fx3.mod-fx2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
-			fz2inc = ULONG(fz3.mod-fz2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
+			fx2inc = uint32_t(fx3.mod-fx2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
+			fz2inc = uint32_t(fz3.mod-fz2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
 			*/
 			//_DrawTri(pDst,lP,x2,x3,fx2inc,fx3inc,yc,ucColor);
 
@@ -436,7 +436,7 @@ void	DrawTri_ZColorFog(UCHAR* pDstOffset,long lDstP,
 				fz.mod += sBaseZ;
 				xdel = x2.mod - x3.mod;
 				//if (hzdel) hzinc.val = (z2.val - z3.val) / hzdel;
-				if (xdel) fzinc.val = ULONG(z2.mod - z3.mod) * RInitNum::OneOver[xdel];
+				if (xdel) fzinc.val = uint32_t(z2.mod - z3.mod) * RInitNum::OneOver[xdel];
 				// Full accuracy fxMul!
 				//if (hzdel) Mul(hzinc,z2.val - z3.val,CInitNum::OneOver[hzdel]);
 				// Assume 2 to 3:
@@ -456,18 +456,18 @@ void	DrawTri_ZColorFog(UCHAR* pDstOffset,long lDstP,
 
 //================================================== 
 // For debugging:
-void	DrawTri_wire(RImage* pimDst,short sX,short sY,
-			RP3d* p1,RP3d* p2,RP3d* p3,UCHAR ucColor)
+void	DrawTri_wire(RImage* pimDst,int16_t sX,int16_t sY,
+			RP3d* p1,RP3d* p2,RP3d* p3,uint8_t ucColor)
 	{
 	rspLine(ucColor,pimDst,
-		sX+short(p1->x),sY+short(p1->y),
-		sX+short(p2->x),sY+short(p2->y));
+		sX+int16_t(p1->x),sY+int16_t(p1->y),
+		sX+int16_t(p2->x),sY+int16_t(p2->y));
 	rspLine(ucColor,pimDst,
-		sX+short(p1->x),sY+short(p1->y),
-		sX+short(p3->x),sY+short(p3->y));
+		sX+int16_t(p1->x),sY+int16_t(p1->y),
+		sX+int16_t(p3->x),sY+int16_t(p3->y));
 	rspLine(ucColor,pimDst,
-		sX+short(p3->x),sY+short(p3->y),
-		sX+short(p2->x),sY+short(p2->y));
+		sX+int16_t(p3->x),sY+int16_t(p3->y),
+		sX+int16_t(p2->x),sY+int16_t(p2->y));
 	}
 
 //================================================== 
@@ -475,11 +475,11 @@ void	DrawTri_wire(RImage* pimDst,short sX,short sY,
 // FLAT SHADED!
 // sX and sY are additional offsets into pimDst
 //
-void	DrawTri_ZColor(UCHAR* pDstOffset,long lDstP,
+void	DrawTri_ZColor(uint8_t* pDstOffset,int32_t lDstP,
 			RP3d* p1,RP3d* p2,RP3d* p3,
-			RZBuffer* pZB,UCHAR ucFlatColor,
-			short sOffsetX/* = 0*/,		// In: 2D offset for pZB.
-			short sOffsetY/* = 0*/) 	// In: 2D offset for pZB.
+			RZBuffer* pZB,uint8_t ucFlatColor,
+			int16_t sOffsetX/* = 0*/,		// In: 2D offset for pZB.
+			int16_t sOffsetY/* = 0*/) 	// In: 2D offset for pZB.
 	{
 //////////////////////////////////////////////////////////////////
 //****************************************************************
@@ -493,18 +493,18 @@ void	DrawTri_ZColor(UCHAR* pDstOffset,long lDstP,
 	RRenderPt32 *pv2 = &pt2;
 	RRenderPt32 *pv3 = &pt3;
 	// Cast from REAL to short in fp32 format:
-	pt1.x.mod = short(p1->x);
-	pt1.y.mod = short(p1->y);
-	pt1.z.mod = short(p1->z);
-	pt2.x.mod = short(p2->x);
-	pt2.y.mod = short(p2->y);
-	pt2.z.mod = short(p2->z);
-	pt3.x.mod = short(p3->x);
-	pt3.y.mod = short(p3->y);
-	pt3.z.mod = short(p3->z);
+	pt1.x.mod = int16_t(p1->x);
+	pt1.y.mod = int16_t(p1->y);
+	pt1.z.mod = int16_t(p1->z);
+	pt2.x.mod = int16_t(p2->x);
+	pt2.y.mod = int16_t(p2->y);
+	pt2.z.mod = int16_t(p2->z);
+	pt3.x.mod = int16_t(p3->x);
+	pt3.y.mod = int16_t(p3->y);
+	pt3.z.mod = int16_t(p3->z);
 	pt1.x.frac = 
 	pt2.x.frac = 
-	pt3.x.frac = USHORT(32768); // offset each by 1/2
+	pt3.x.frac = uint16_t(32768); // offset each by 1/2
 	
 	// sort the triangles and choose which mirror case to render.
 
@@ -515,57 +515,57 @@ void	DrawTri_ZColor(UCHAR* pDstOffset,long lDstP,
 
 	// Get point 2 and 3's position relative to point 1:
 	// Use 16 bit accuracy in y, 32-bit in x...
-	short y1 = pv1->y.mod;
+	int16_t y1 = pv1->y.mod;
 
-	short	y2 = pv2->y.mod - y1;
-	short	y3 = pv3->y.mod - y1;
-	short ybot = y3 - y2; // lower half delta
+	int16_t	y2 = pv2->y.mod - y1;
+	int16_t	y3 = pv3->y.mod - y1;
+	int16_t ybot = y3 - y2; // lower half delta
 
 	if (y2 + y3 == 0) return; // don;t bother drawing horiz line
 
 	// get relative floating point x coordinates: (32-bit differences)
-	long fx1 = pv1->x.val;
-	long fz1 = pv1->z.val;
+	int32_t fx1 = pv1->x.val;
+	int32_t fz1 = pv1->z.val;
 
-	long fx2 = pv2->x.val - fx1;
-	long fx3 = pv3->x.val - fx1;
-	long fz2 = pv2->z.val - fz1;
-	long fz3 = pv3->z.val - fz1;
+	int32_t fx2 = pv2->x.val - fx1;
+	int32_t fx3 = pv3->x.val - fx1;
+	int32_t fz2 = pv2->z.val - fz1;
+	int32_t fz3 = pv3->z.val - fz1;
 
 	// calculate the top two edge slopes with 32-bit accuracy:
-	long fx2inc,fz2inc;
+	int32_t fx2inc,fz2inc;
 	if (y2) 
 		{
 		fx2inc = fx2 / y2; // stuck with division using fx32!
 		fz2inc = fz2 / y2; // stuck with division using fx32!
 		/* CANDIDATE FOR ONE_OVER!
-		fx2inc = ULONG(fx2.mod) * CInitNum::OneOver[y2]; // stuck with division using fx32!
-		fz2inc = ULONG(fz2.mod) * CInitNum::OneOver[y2]; // stuck with division using fx32!
+		fx2inc = uint32_t(fx2.mod) * CInitNum::OneOver[y2]; // stuck with division using fx32!
+		fz2inc = uint32_t(fz2.mod) * CInitNum::OneOver[y2]; // stuck with division using fx32!
 		*/
 		}
 
-	long fx3inc = fx3 / y3; // stuck with division using fx32!
-	long fz3inc = fz3 / y3; // stuck with division using fx32!
+	int32_t fx3inc = fx3 / y3; // stuck with division using fx32!
+	int32_t fz3inc = fz3 / y3; // stuck with division using fx32!
 
 	// Set the two absolute edge positions
 	RFixedS32 x2,x3,z2,z3; 
 	x2.val = x3.val = pv1->x.frac;	// preserve floating point x!
 	z2.val = z3.val = pv1->z.frac; // preserve floating point z!
 
-	short sBaseZ = pv1->z.mod; 
+	int16_t sBaseZ = pv1->z.mod; 
 	//TRACE("SBASE Zpt = %hd\n",pv1->z.mod);
 
 
-	long lP = lDstP;
+	int32_t lP = lDstP;
 	// add in extra piece uv rounding!
-	UCHAR* pDst = pDstOffset + lP * pv1->y.mod + pv1->x.mod + x2.mod; 
-	short* pBufZ = pZB -> GetZPtr(pv1->x.mod + x2.mod + sOffsetX, pv1->y.mod + sOffsetY);
-	long lZP = pZB->m_lP; // in words!!!
+	uint8_t* pDst = pDstOffset + lP * pv1->y.mod + pv1->x.mod + x2.mod; 
+	int16_t* pBufZ = pZB -> GetZPtr(pv1->x.mod + x2.mod + sOffsetX, pv1->y.mod + sOffsetY);
+	int32_t lZP = pZB->m_lP; // in words!!!
 
 	// Draw the upper triangle! (Assuming fx2inc < fx3inc.....)
-	short x,y;
+	int16_t x,y;
 	RFixedS32	fz,fzinc; // for tracing across each scan line:
-	short xdel;
+	int16_t xdel;
 
 //////////////////////////////////////////////////////////////////
 //****************************************************************
@@ -582,7 +582,7 @@ void	DrawTri_ZColor(UCHAR* pDstOffset,long lDstP,
 
 	if (y2 == 0) // p1.y == p2.y
 		{
-		long fx1inc,fz1inc;
+		int32_t fx1inc,fz1inc;
 		RFixedS32 x1,z1; // Absolute positions
 
 		// Let point I be to the LEFT of point II:
@@ -627,7 +627,7 @@ void	DrawTri_ZColor(UCHAR* pDstOffset,long lDstP,
 			xdel = x2.mod - x1.mod;
 			//if (hzdel) hzinc.val = (z3.val - z2.val) / hzdel;
 			//***************8 flipped the inc value:!
-			if (xdel) fzinc.val = long(z2.mod - z1.mod) * RInitNum::OneOver[xdel];
+			if (xdel) fzinc.val = int32_t(z2.mod - z1.mod) * RInitNum::OneOver[xdel];
 			//if (hzdel) Mul(hzinc,z3.val - z2.val,CInitNum::OneOver[hzdel]);
 
 			// Assume 2 to 3:
@@ -666,7 +666,7 @@ void	DrawTri_ZColor(UCHAR* pDstOffset,long lDstP,
 			fz.mod += sBaseZ; // This is for coloring but it effects true z as well!
 			xdel = x3.mod - x2.mod;
 			//if (hzdel) hzinc.val = (z3.val - z2.val) / hzdel;
-			if (xdel) fzinc.val = ULONG(z3.mod - z2.mod) * RInitNum::OneOver[xdel];
+			if (xdel) fzinc.val = uint32_t(z3.mod - z2.mod) * RInitNum::OneOver[xdel];
 			//if (hzdel) Mul(hzinc,z3.val - z2.val,CInitNum::OneOver[hzdel]);
 			// Assume 2 to 3:
 			for (x = x2.mod; x<= x3.mod;x++)
@@ -690,8 +690,8 @@ void	DrawTri_ZColor(UCHAR* pDstOffset,long lDstP,
 			fx2inc = (fx3 - fx2) / ybot;  // stuck with division using fx32!
 			fz2inc = (fz3 - fz2) / ybot;  // stuck with division using fx32!
 			/*
-			fx2inc = ULONG(fx3.mod-fx2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
-			fz2inc = ULONG(fz3.mod-fz2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
+			fx2inc = uint32_t(fx3.mod-fx2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
+			fz2inc = uint32_t(fz3.mod-fz2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
 			*/
 			//_DrawTri(pDst,lP,x2,x3,fx2inc,fx3inc,yc,ucColor);
 
@@ -709,7 +709,7 @@ void	DrawTri_ZColor(UCHAR* pDstOffset,long lDstP,
 				fz.mod += sBaseZ;
 				xdel = x3.mod - x2.mod;
 				//if (hzdel) hzinc.val = (z3.val - z2.val) / hzdel;
-				if (xdel) fzinc.val = long(z3.mod - z2.mod) * RInitNum::OneOver[xdel];
+				if (xdel) fzinc.val = int32_t(z3.mod - z2.mod) * RInitNum::OneOver[xdel];
 				//if (hzdel) Mul(hzinc,z3.val - z2.val,CInitNum::OneOver[hzdel]);
 
 				// Assume 2 to 3:
@@ -750,7 +750,7 @@ void	DrawTri_ZColor(UCHAR* pDstOffset,long lDstP,
 
 			xdel = x2.mod - x3.mod; //+ x to z
 			//if (hzdel) hzinc.val = (z2.val - z3.val) / hzdel;
-			if (xdel) fzinc.val = long(z2.mod - z3.mod) * RInitNum::OneOver[xdel];
+			if (xdel) fzinc.val = int32_t(z2.mod - z3.mod) * RInitNum::OneOver[xdel];
 			//if (hzdel) Mul(hzinc,z2.val - z3.val,CInitNum::OneOver[hzdel]);
 
 			// Assume 2 to 3:
@@ -775,8 +775,8 @@ void	DrawTri_ZColor(UCHAR* pDstOffset,long lDstP,
 			fx2inc = (fx3 - fx2) / ybot;  // stuck with division using fx32!
 			fz2inc = (fz3 - fz2) / ybot;  // stuck with division using fx32!
 			/*
-			fx2inc = ULONG(fx3.mod-fx2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
-			fz2inc = ULONG(fz3.mod-fz2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
+			fx2inc = uint32_t(fx3.mod-fx2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
+			fz2inc = uint32_t(fz3.mod-fz2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
 			*/
 			//_DrawTri(pDst,lP,x2,x3,fx2inc,fx3inc,yc,ucColor);
 
@@ -794,7 +794,7 @@ void	DrawTri_ZColor(UCHAR* pDstOffset,long lDstP,
 				fz.mod += sBaseZ;
 				xdel = x2.mod - x3.mod;
 				//if (hzdel) hzinc.val = (z2.val - z3.val) / hzdel;
-				if (xdel) fzinc.val = ULONG(z2.mod - z3.mod) * RInitNum::OneOver[xdel];
+				if (xdel) fzinc.val = uint32_t(z2.mod - z3.mod) * RInitNum::OneOver[xdel];
 				// Full accuracy fxMul!
 				//if (hzdel) Mul(hzinc,z2.val - z3.val,CInitNum::OneOver[hzdel]);
 				// Assume 2 to 3:
@@ -817,9 +817,9 @@ void	DrawTri_ZColor(UCHAR* pDstOffset,long lDstP,
 // sX and sY are additional offsets into pimDst
 // There is NO Z_BUFFER here!  It is JUST a polygon drawer
 //
-void	DrawTri(UCHAR* pDstOffset,long lDstP,
+void	DrawTri(uint8_t* pDstOffset,int32_t lDstP,
 			RP3d* p1,RP3d* p2,RP3d* p3,
-			UCHAR ucFlatColor)
+			uint8_t ucFlatColor)
 	{
 //////////////////////////////////////////////////////////////////
 //****************************************************************
@@ -833,15 +833,15 @@ void	DrawTri(UCHAR* pDstOffset,long lDstP,
 	RRenderPt32 *pv2 = &pt2;
 	RRenderPt32 *pv3 = &pt3;
 	// Cast from REAL to short in fp32 format:
-	pt1.x.mod = short(p1->x);
-	pt1.y.mod = short(p1->y);
-	pt2.x.mod = short(p2->x);
-	pt2.y.mod = short(p2->y);
-	pt3.x.mod = short(p3->x);
-	pt3.y.mod = short(p3->y);
+	pt1.x.mod = int16_t(p1->x);
+	pt1.y.mod = int16_t(p1->y);
+	pt2.x.mod = int16_t(p2->x);
+	pt2.y.mod = int16_t(p2->y);
+	pt3.x.mod = int16_t(p3->x);
+	pt3.y.mod = int16_t(p3->y);
 	pt1.x.frac = 
 	pt2.x.frac = 
-	pt3.x.frac = USHORT(32768); // offset each by 1/2
+	pt3.x.frac = uint16_t(32768); // offset each by 1/2
 	
 	// sort the triangles and choose which mirror case to render.
 
@@ -852,43 +852,43 @@ void	DrawTri(UCHAR* pDstOffset,long lDstP,
 
 	// Get point 2 and 3's position relative to point 1:
 	// Use 16 bit accuracy in y, 32-bit in x...
-	short y1 = pv1->y.mod;
+	int16_t y1 = pv1->y.mod;
 
-	short	y2 = pv2->y.mod - y1;
-	short	y3 = pv3->y.mod - y1;
-	short ybot = y3 - y2; // lower half delta
+	int16_t	y2 = pv2->y.mod - y1;
+	int16_t	y3 = pv3->y.mod - y1;
+	int16_t ybot = y3 - y2; // lower half delta
 
 	if (y2 + y3 == 0) return; // don;t bother drawing horiz line
 
 	// get relative floating point x coordinates: (32-bit differences)
-	long fx1 = pv1->x.val;
+	int32_t fx1 = pv1->x.val;
 
-	long fx2 = pv2->x.val - fx1;
-	long fx3 = pv3->x.val - fx1;
+	int32_t fx2 = pv2->x.val - fx1;
+	int32_t fx3 = pv3->x.val - fx1;
 
 	// calculate the top two edge slopes with 32-bit accuracy:
-	long fx2inc;
+	int32_t fx2inc;
 	if (y2) 
 		{
 		fx2inc = fx2 / y2; // stuck with division using fx32!
 		/* CANDIDATE FOR ONE_OVER!
-		fx2inc = ULONG(fx2.mod) * CInitNum::OneOver[y2]; // stuck with division using fx32!
+		fx2inc = uint32_t(fx2.mod) * CInitNum::OneOver[y2]; // stuck with division using fx32!
 		*/
 		}
 
-	long fx3inc = fx3 / y3; // stuck with division using fx32!
+	int32_t fx3inc = fx3 / y3; // stuck with division using fx32!
 
 	// Set the two absolute edge positions
 	RFixedS32 x2,x3; 
 	x2.val = x3.val = pv1->x.frac;	// preserve floating point x!
 
-	long lP = lDstP;
+	int32_t lP = lDstP;
 	// add in extra piece uv rounding!
-	UCHAR* pDst = pDstOffset + lP * pv1->y.mod + pv1->x.mod + x2.mod; 
+	uint8_t* pDst = pDstOffset + lP * pv1->y.mod + pv1->x.mod + x2.mod; 
 
 	// Draw the upper triangle! (Assuming fx2inc < fx3inc.....)
-	short x,y;
-	short xdel;
+	int16_t x,y;
+	int16_t xdel;
 
 //////////////////////////////////////////////////////////////////
 //****************************************************************
@@ -905,7 +905,7 @@ void	DrawTri(UCHAR* pDstOffset,long lDstP,
 
 	if (y2 == 0) // p1.y == p2.y
 		{
-		long fx1inc;
+		int32_t fx1inc;
 		RFixedS32 x1; // Absolute positions
 
 		// Let point I be to the LEFT of point II:
@@ -968,7 +968,7 @@ void	DrawTri(UCHAR* pDstOffset,long lDstP,
 			// new x2 slope:
 			fx2inc = (fx3 - fx2) / ybot;  // stuck with division using fx32!
 			/*
-			fx2inc = ULONG(fx3.mod-fx2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
+			fx2inc = uint32_t(fx3.mod-fx2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
 			*/
 			//_DrawTri(pDst,lP,x2,x3,fx2inc,fx3inc,yc,ucColor);
 
@@ -1017,7 +1017,7 @@ void	DrawTri(UCHAR* pDstOffset,long lDstP,
 			// new x2 slope:
 			fx2inc = (fx3 - fx2) / ybot;  // stuck with division using fx32!
 			/*
-			fx2inc = ULONG(fx3.mod-fx2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
+			fx2inc = uint32_t(fx3.mod-fx2.mod) * CInitNum::OneOver[yc]; // stuck with division using fx32!
 			*/
 			//_DrawTri(pDst,lP,x2,x3,fx2inc,fx3inc,yc,ucColor);
 
@@ -1035,4 +1035,3 @@ void	DrawTri(UCHAR* pDstOffset,long lDstP,
 			}
 		}
 	}
-

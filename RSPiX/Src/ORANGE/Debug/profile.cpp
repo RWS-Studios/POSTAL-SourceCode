@@ -64,7 +64,7 @@ RProfile	rspProfileInstance;
 //////////////////////////////////////////////////////////////////////////////
 void	RProfile::StartProfile(char* pszFieldName)
 	{
-	short sKey;
+	int16_t sKey;
 
 	//*****************************************************************************
 	//************************************ TIME NOT BILLED CORRECTLY : START ******
@@ -82,9 +82,9 @@ void	RProfile::StartProfile(char* pszFieldName)
 	//------------------------------------------------------
 	// See if this name currently exists:
 	//------------------------------------------------------
-	short sMatch = FALSE;
+	int16_t sMatch = FALSE;
 	// Do the same length regardless (for consistency)
-	short i;
+	int16_t i;
 	for (i=0; i < m_sNumTracked /*PF_MAX_FIELDS*/;i++)
 		{
 		if (!rspStricmp(pszFieldName,m_aList[i].m_szFieldName))
@@ -177,7 +177,7 @@ void	RProfile::StartProfile(char* pszFieldName)
 //
 void	RProfile::EndProfile(char* pszFieldName)
 	{
-	short sKey;
+	int16_t sKey;
 	//*****************************************************************************
 	//************************************ TIME NOT BILLED CORRECTLY : START ******
 	//*****************************************************************************
@@ -195,9 +195,9 @@ void	RProfile::EndProfile(char* pszFieldName)
 	// See if this name currently exists:
 	//------------------------------------------------------
 
-	short sMatch = FALSE;
+	int16_t sMatch = FALSE;
 	// Do the same length regardless (for consistency)
-	short i;
+	int16_t i;
 	for (i=0; i < m_sNumTracked /*PF_MAX_FIELDS*/;i++)
 		{
 		if (!rspStricmp(pszFieldName,m_aList[i].m_szFieldName))
@@ -293,7 +293,7 @@ void	RProfile::EndProfile(char* pszFieldName)
 	//*****************************************************************************
 	}
 
-short	gsReportNumber = 0;
+int16_t	gsReportNumber = 0;
 //===============================================
 void RProfile::Report()
 	{
@@ -327,7 +327,7 @@ void RProfile::Report()
 
 		if (m_lCount) // safety
 		fprintf(fp,"Profiler overhead: Tot(ms) = %g, # of calls = %ld, Avg(ms) = %g\n\n",
-			double(m_lTotTime)/1000.0,long(m_lCount),double(m_lTotTime)/double(m_lCount * S64(1000)));
+			double(m_lTotTime)/1000.0,int32_t(m_lCount),double(m_lTotTime)/double(m_lCount * S64(1000)));
 		
 		fprintf(fp,"Number of profile ranges was %hd.\n",m_sNumTracked);
 
@@ -343,7 +343,7 @@ void RProfile::Report()
 				{
 				fprintf(fp,"Internal memory exceeded - the profiler was designed to only\n"
 					"handle %hd timing sets.  Please increase the number or get rid of old ones.\n\n",
-					short(PF_MAX_FIELDS));
+					int16_t(PF_MAX_FIELDS));
 
 				return;
 				}
@@ -352,7 +352,7 @@ void RProfile::Report()
 				"same name.  Nor can you have 'unbalanced parenthesis'.\n\n"
 				"Here was the first command in error:\n");
 
-			for (short i=0; i < m_sNumTracked;i++)
+			for (int16_t i=0; i < m_sNumTracked;i++)
 				{
 				if (m_aList[i].m_sInError)
 					{
@@ -374,7 +374,7 @@ void RProfile::Report()
 		// See if there is a relative request:
 		double dRel = 0.0;
 
-		short i;
+		int16_t i;
 		for (i=0; i < m_sNumTracked;i++)
 			{
 			if (!strncmp(m_aList[i].m_szFieldName,"100%",4))
@@ -392,7 +392,7 @@ void RProfile::Report()
 				fprintf(fp,"-------------------------------------------------------\n%s:\n",
 					m_aList[i].m_szFieldName);
 				fprintf(fp,"				# of passes = %ld, Tot(ms) = %g, Avg(ms) = %g",
-					long(m_aList[i].m_lNumCalls),
+					int32_t(m_aList[i].m_lNumCalls),
 					double(m_aList[i].m_lTotTime)/1000.0,
 					double(m_aList[i].m_lTotTime)/double(m_aList[i].m_lNumCalls * S64(1000)));
 
@@ -400,7 +400,7 @@ void RProfile::Report()
 					{
 					double dRat = double(m_aList[i].m_lTotTime)/dRel;
 
-					fprintf(fp,"  [%+1.6g %%]\n",double( long(dRat*10000.0) )/10000.0);
+					fprintf(fp,"  [%+1.6g %%]\n",double( int32_t(dRat*10000.0) )/10000.0);
 					}
 				else
 					fprintf(fp,"\n");

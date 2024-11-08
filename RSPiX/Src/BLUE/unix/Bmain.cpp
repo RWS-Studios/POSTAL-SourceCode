@@ -51,7 +51,7 @@ SDL_Window *sdlWindow = NULL;
 SDL_Surface *sdlShadowSurface = NULL;
 
 bool mouse_grabbed = false;
-static short ms_sQuit = 0;
+static int16_t ms_sQuit = 0;
 
 //////////////////////////////////////////////////////////////////////////////
 // 
@@ -66,9 +66,9 @@ extern void Disp_Init(void);
 extern void Key_Init(void);
 extern void Joy_Init(void);
 
-short rspInitBlue(void)
+int16_t rspInitBlue(void)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 #ifdef BETAEXPIRE
     if ( time(NULL) > (BETAEXPIRE + 30 * 24 * 60 * 60) )
@@ -114,7 +114,7 @@ void rspKillBlue(void)
 // 
 //////////////////////////////////////////////////////////////////////////////
 
-extern void rspSetQuitStatus(short sQuitStatus);
+extern void rspSetQuitStatus(int16_t sQuitStatus);
 
 extern void Mouse_Event(SDL_Event *event);
 extern void Key_Event(SDL_Event *event);
@@ -166,7 +166,7 @@ extern void rspDoSystem(void)										// Returns nothing.
 // 
 //////////////////////////////////////////////////////////////////////////////
 extern void rspSetDoSystemMode(	// Returns nothing.
-	short sCooperativeLevel)		// In:  One of the RSP_DOSYSTEM_* macros 
+	int16_t sCooperativeLevel)		// In:  One of the RSP_DOSYSTEM_* macros 
 											// defining what level of cooperation to use.
 	{
         /* no-op */
@@ -177,7 +177,7 @@ extern void rspSetDoSystemMode(	// Returns nothing.
 // Get system-specific quit status.
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern short rspGetQuitStatus(void)				// Returns TRUE if quit detected, FALSE otherwise
+extern int16_t rspGetQuitStatus(void)				// Returns TRUE if quit detected, FALSE otherwise
 	{
 	return ms_sQuit;
 	}
@@ -192,7 +192,7 @@ extern short rspGetQuitStatus(void)				// Returns TRUE if quit detected, FALSE o
 //
 ////////////////////////////////////////////////////////////////////////////////
 extern void rspSetQuitStatus(
-	short sStatus)										// In:  New status
+	int16_t sStatus)										// In:  New status
 	{
 	ms_sQuit = sStatus;
 	}

@@ -47,24 +47,24 @@ class FLX_RT_HDR
 	{
 	public:
 		// Header info from stream.
-		short			sNumFrames;			// Number of frames. Max 4000.
-		short			sWidth;				// Width in pixels (always 320 in FLI)
-		short			sHeight;				// Height in pixels (always 200 in FLI)
-		short			sDepth;				// Bits per pixel (always 8)
-		long			lMilliPerFrame;	// Milliseconds between frames.
-		short			sNoDelta;			// TRUE if no deltas, FALSE otherwise.
-		short			sTransparent;		// Blt with transparency if TRUE.
-		short			sX;					// Intended position in x direction.
-		short			sY;					// Intended position in y direction.
+		int16_t			sNumFrames;			// Number of frames. Max 4000.
+		int16_t			sWidth;				// Width in pixels (always 320 in FLI)
+		int16_t			sHeight;				// Height in pixels (always 200 in FLI)
+		int16_t			sDepth;				// Bits per pixel (always 8)
+		int32_t			lMilliPerFrame;	// Milliseconds between frames.
+		int16_t			sNoDelta;			// TRUE if no deltas, FALSE otherwise.
+		int16_t			sTransparent;		// Blt with transparency if TRUE.
+		int16_t			sX;					// Intended position in x direction.
+		int16_t			sY;					// Intended position in y direction.
 	
 		// Header info for our use.
 		CImage*		pImage;				// Where to blt.
-		short			sCurFrame;			// Current frame number (0 origin).
-		short			sPixelsModified;	// TRUE if pixels were modified last
+		int16_t			sCurFrame;			// Current frame number (0 origin).
+		int16_t			sPixelsModified;	// TRUE if pixels were modified last
 												// decompression.
-		short			sColorsModified;	// TRUE if colors were modified last
+		int16_t			sColorsModified;	// TRUE if colors were modified last
 												// decompression.
-		long			lMaxLag;				// Maximum lag before skipping frames.
+		int32_t			lMaxLag;				// Maximum lag before skipping frames.
 		RTFLIC_CALL	callbackHeader;	// Callback on header receipt.
 		RTFLIC_CALL	callbackBefore;	// Callback before decompression.
 		RTFLIC_CALL	callbackAfter;		// Callback after decompression.
@@ -84,13 +84,13 @@ class CRtFlic
 
 		// Sets callback(s) called on channel header receipt.
 		void SetCallbackHeader(RTFLIC_CALL callback);
-		void SetCallbackHeader(RTFLIC_CALL callback, short sChannel);
+		void SetCallbackHeader(RTFLIC_CALL callback, int16_t sChannel);
 		// Sets callback(s) called before decompression.
 		void SetCallbackBefore(RTFLIC_CALL callback);
-		void SetCallbackBefore(RTFLIC_CALL callback, short sChannel);
+		void SetCallbackBefore(RTFLIC_CALL callback, int16_t sChannel);
 		// Sets callback(s) called after decompression.
 		void SetCallbackAfter(RTFLIC_CALL callback);
-		void SetCallbackAfter(RTFLIC_CALL callback, short sChannel);
+		void SetCallbackAfter(RTFLIC_CALL callback, int16_t sChannel);
 
 	protected:	// Internal methods.
 		// Sets variables w/o regard to current values.
@@ -100,11 +100,11 @@ class CRtFlic
 
 		// Use handler for RtFlic buffers.
 		// Returns RET_FREE if done with data on return, RET_DONTFREE otherwise.
-		short Use(	UCHAR* puc, long lSize, USHORT usType, UCHAR ucFlags, 
-						long lTime);
+		int16_t Use(	uint8_t* puc, int32_t lSize, uint16_t usType, uint8_t ucFlags, 
+						int32_t lTime);
 		// Static entry point for above.
-		static short UseStatic(	UCHAR* puc, long lSize, USHORT usType, 
-										UCHAR ucFlags, long lTime, long l_pRtFlic);
+		static int16_t UseStatic(	uint8_t* puc, int32_t lSize, uint16_t usType, 
+										uint8_t ucFlags, int32_t lTime, int32_t l_pRtFlic);
 
 	protected:	// Internal typedefs.
 
@@ -113,7 +113,7 @@ class CRtFlic
 
 	protected:	// Members.
 		FLX_RT_HDR	m_aflxhdrs[MAX_VID_CHANNELS];// Info for each channel.
-		USHORT		m_usState;					// The current state of this CRtFlic.
+		uint16_t		m_usState;					// The current state of this CRtFlic.
 		CDispatch*	m_pdispatch;				// The dispatcher for this CRtFlic.
 
 	};

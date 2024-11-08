@@ -96,11 +96,11 @@
 //////////////////////////////////////////////////////////////////////////////
 // Typedefs.
 //////////////////////////////////////////////////////////////////////////////
-template <class FUNCTYPEPTR, class FRIEND, long lMax> class CDynaLink
+template <class FUNCTYPEPTR, class FRIEND, int32_t lMax> class CDynaLink
 	{
 	public:
 		// Constructor Especial.
-		CDynaLink(FUNCTYPEPTR pfn, long lIndex)
+		CDynaLink(FUNCTYPEPTR pfn, int32_t lIndex)
 			{
 			ASSERT(lIndex < lMax);
 			ASSERT(ms_afp[lIndex] == NULL);

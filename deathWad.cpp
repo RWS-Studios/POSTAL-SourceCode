@@ -98,15 +98,15 @@ const double	CDeathWad::ms_dTraversalRate				= 3.0;
 // Distance between thrust feedbacks.
 const double	CDeathWad::ms_dThrustDelta					= 9.0;
 // Go off screen this far before blowing up
-const short		CDeathWad::ms_sOffScreenDist				= 200;
+const int16_t		CDeathWad::ms_sOffScreenDist				= 200;
 // Time for smoke to stick around.
-const long		CDeathWad::ms_lSmokeTimeToLive			= 500;
+const int32_t		CDeathWad::ms_lSmokeTimeToLive			= 500;
 // Time for fireball to stick around.
-const long		CDeathWad::ms_lFireBallTimeToLive		= 500;
+const int32_t		CDeathWad::ms_lFireBallTimeToLive		= 500;
 // Amount to stagger final explosions.
-const short		CDeathWad::ms_sFinalExplosionStagger	= 5;
+const int16_t		CDeathWad::ms_sFinalExplosionStagger	= 5;
 // Radius of collision area (whether sphere or cylinder).
-const short		CDeathWad::ms_sCollisionRadius			= 30;
+const int16_t		CDeathWad::ms_sCollisionRadius			= 30;
 // Velocity for kick from launch.
 const double	CDeathWad::ms_dKickVelocity				= 350.0;
 // Max a WAD can hold.
@@ -138,18 +138,18 @@ const CStockPile CDeathWad::ms_stockpileMax				=
 	};
 
 // Let this auto-init to 0
-short CDeathWad::ms_sFileCount;
+int16_t CDeathWad::ms_sFileCount;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CDeathWad::Load(										// Returns 0 if successfull, non-zero otherwise
+int16_t CDeathWad::Load(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 {
-	short sResult = CWeapon::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CWeapon::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 
 	if (sResult == SUCCESS)
 	{
@@ -195,9 +195,9 @@ short CDeathWad::Load(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CDeathWad::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CDeathWad::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 {
 	// In most cases, the base class Save() should be called.  In this case it
 	// isn't because the base class doesn't have a Save()!
@@ -230,7 +230,7 @@ void CDeathWad::Update(void)
 	if (!m_sSuspend)
 		{
 		// Get new time
-		long lThisTime = m_pRealm->m_time.GetGameTime(); 
+		int32_t lThisTime = m_pRealm->m_time.GetGameTime(); 
 
 		// Calculate elapsed time in seconds
 		double dSeconds = (double)(lThisTime - m_lPrevTime) / 1000.0;
@@ -282,8 +282,8 @@ void CDeathWad::Update(void)
 					m_dHorizVel = ms_dMaxVelBack;
 
 				// Adjust position based on velocity.
-				dNewX = m_dX + COSQ[(short)m_dRot] * (m_dHorizVel * dSeconds);
-				dNewZ = m_dZ - SINQ[(short)m_dRot] * (m_dHorizVel * dSeconds);
+				dNewX = m_dX + COSQ[(int16_t)m_dRot] * (m_dHorizVel * dSeconds);
+				dNewZ = m_dZ - SINQ[(int16_t)m_dRot] * (m_dHorizVel * dSeconds);
 
 				// If the new position is a ways off screen
 				if (	m_dZ > ms_sOffScreenDist + m_pRealm->GetRealmHeight()
@@ -345,7 +345,7 @@ void CDeathWad::Update(void)
 					}
 
 				// Update sound position.
-				short	sVolumeHalfLife	= LaunchSndHalfLife;
+				int16_t	sVolumeHalfLife	= LaunchSndHalfLife;
 				// If inside terrain . . .
 				if (m_bInsideTerrain == true)
 					{
@@ -450,7 +450,7 @@ void CDeathWad::Update(void)
 ////////////////////////////////////////////////////////////////////////////////
 void CDeathWad::Render(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 
 	m_sprite.m_pmesh = (RMesh*) m_anim.m_pmeshes->GetAtTime(lThisTime);
 	m_sprite.m_psop = (RSop*) m_anim.m_psops->GetAtTime(lThisTime);
@@ -479,13 +479,13 @@ void CDeathWad::Render(void)
 	if (m_idParent == CIdBank::IdNil)
 	{
 		// Map from 3d to 2d coords
-		Map3Dto2D((short) m_dX, (short) m_dY, (short) m_dZ, &m_sprite.m_sX2, &m_sprite.m_sY2);
+		Map3Dto2D((int16_t) m_dX, (int16_t) m_dY, (int16_t) m_dZ, &m_sprite.m_sX2, &m_sprite.m_sY2);
 
 		// Priority is based on Z.
 		m_sprite.m_sPriority = m_dZ;
 
 		// Layer should be based on info we get from the attribute map
-		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 		m_sprite.m_ptrans		= &m_trans;
 
@@ -506,12 +506,12 @@ void CDeathWad::Render(void)
 // Setup
 ////////////////////////////////////////////////////////////////////////////////
 
-short CDeathWad::Setup(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CDeathWad::Setup(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -539,9 +539,9 @@ short CDeathWad::Setup(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CDeathWad::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CDeathWad::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	sResult = m_anim.Get(RES_BASE_NAME, NULL, NULL, NULL, 0);
 	if (sResult == 0)
@@ -568,7 +568,7 @@ short CDeathWad::GetResources(void)						// Returns 0 if successfull, non-zero o
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CDeathWad::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CDeathWad::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
 	m_anim.Release();
 
@@ -581,12 +581,12 @@ short CDeathWad::FreeResources(void)						// Returns 0 if successfull, non-zero 
 //				 created.
 ////////////////////////////////////////////////////////////////////////////////
 
-short CDeathWad::Preload(
+int16_t CDeathWad::Preload(
 	CRealm* prealm)				// In:  Calling realm.
 {
 	CAnim3D anim;	
 	RImage* pimage;
-	short sResult = anim.Get(RES_BASE_NAME, NULL, NULL, NULL, 0);
+	int16_t sResult = anim.Get(RES_BASE_NAME, NULL, NULL, NULL, 0);
 	if (sResult == 0)
 		{
 		anim.Release();
@@ -641,13 +641,13 @@ void CDeathWad::ProcessMessages(void)
 ////////////////////////////////////////////////////////////////////////////////
 bool CDeathWad::TraversePath(	// Returns true, when destination reached; false, 
 										// if terrain change.
-	short		sSrcX,				// In:  Starting position.
-	short		sSrcY,				// In:  Starting position.
-	short		sSrcZ,				// In:  Starting position.
+	int16_t		sSrcX,				// In:  Starting position.
+	int16_t		sSrcY,				// In:  Starting position.
+	int16_t		sSrcZ,				// In:  Starting position.
 	bool*		pbInTerrain,		// In:  true, if starting in terrain.
 										// Out: true, if ending in terrain.
-	short		sDstX,				// In:  Destination position.
-	short		sDstZ,				// In:  Destination position.
+	int16_t		sDstX,				// In:  Destination position.
+	int16_t		sDstZ,				// In:  Destination position.
 	double*	pdCurX,				// Out: Position of inside terrain status change.
 	double*	pdCurZ)				// Out: Position of inside terrain status change.
 	{
@@ -666,8 +666,8 @@ bool CDeathWad::TraversePath(	// Returns true, when destination reached; false,
 	double	dX	= sSrcX;
 	double	dZ	= sSrcZ;
 	// Determine iteration rate on X and Z.
-	double	dRateX	= COSQ[(short)m_dRot] * ms_dTraversalRate;
-	double	dRateZ	= -SINQ[(short)m_dRot] * ms_dTraversalRate;
+	double	dRateX	= COSQ[(int16_t)m_dRot] * ms_dTraversalRate;
+	double	dRateZ	= -SINQ[(int16_t)m_dRot] * ms_dTraversalRate;
 	// Store original status.
 	bool	bInitiallyInTerrain	= *pbInTerrain;
 
@@ -730,7 +730,7 @@ void CDeathWad::Explosion(void)
 			DistanceToVolume(m_dX, m_dY, m_dZ, ExplosionSndHalfLife) );	// In:  Initial Sound Volume (0 - 255)
 		}
 	
-	short a;
+	int16_t a;
 	CFire* pSmoke;
 	for (a = 0; a < 8; a++)
 		{

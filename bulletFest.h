@@ -113,7 +113,7 @@ class CBulletFest
 			bool	bDirChange;		// true, if a direction change (relative to 
 										// source) occured at this point; false, 
 										// otherwise.
-			long	lSqrDistance;	// Squared distance traveled (relative to 
+			int32_t	lSqrDistance;	// Squared distance traveled (relative to 
 										// source) at this point in time.
 			} TargetInfo;
 
@@ -141,10 +141,10 @@ class CBulletFest
 		// how much it is moving.  The idea being that targets that move 
 		// irratically(sp?) and more often are harder to hit.
 		void UpdateTarget(	// Returns nothing.
-			short sAngle,		// In:  Angle of aim in degrees (on X/Z plane).
-			short	sX,			// In:  Aim position.
-			short	sY,			// In:  Aim position.
-			short	sZ,			// In:  Aim position.
+			int16_t sAngle,		// In:  Angle of aim in degrees (on X/Z plane).
+			int16_t	sX,			// In:  Aim position.
+			int16_t	sY,			// In:  Aim position.
+			int16_t	sZ,			// In:  Aim position.
 			CRealm* pRealm);	// In:  Realm in which to target.
 
 		// Launch a bullet, create a muzzle flare at the src (sX, sY, sZ), and,
@@ -153,22 +153,22 @@ class CBulletFest
 		// This same process can be done in pieces with more control to the user
 		// by calling Fire(), Flare(), Ricochet(), and Impact().
 		bool FireDeluxe(					// Returns what and as Fire() would.
-			short sAngleY,					// In:  Angle of launch in degrees (on X/Z plane).
-			short	sAngleZ,					// In:  Angle of launch in degrees (on X/Y plane).
-			short	sX,						// In:  Launch position.
-			short	sY,						// In:  Launch position.
-			short	sZ,						// In:  Launch position.
-			short	sRange,					// In:  Maximum distance.
+			int16_t sAngleY,					// In:  Angle of launch in degrees (on X/Z plane).
+			int16_t	sAngleZ,					// In:  Angle of launch in degrees (on X/Y plane).
+			int16_t	sX,						// In:  Launch position.
+			int16_t	sY,						// In:  Launch position.
+			int16_t	sZ,						// In:  Launch position.
+			int16_t	sRange,					// In:  Maximum distance.
 			CRealm* pRealm,				// In:  Realm in which to fire.
 			CSmash::Bits bitsInclude,	// In:  Mask of CSmash masks that this bullet can hit.
 			CSmash::Bits bitsDontCare,	// In:  Mask of CSmash masks that this bullet does not care to hit.
 			CSmash::Bits bitsExclude,	// In:  Mask of CSmash masks that this bullet cannot hit.
-			short	sMaxRicochetAngle,	// In:  Maximum angle with terrain that can cause
+			int16_t	sMaxRicochetAngle,	// In:  Maximum angle with terrain that can cause
 												// a ricochet (on X/Z plane).
-			short	sMaxRicochets,			// In:  The maximum number of ricochets.
-			short* psX,						// Out: Hit position.
-			short* psY,						// Out: Hit position.
-			short* psZ,						// Out: Hit position.
+			int16_t	sMaxRicochets,			// In:  The maximum number of ricochets.
+			int16_t* psX,						// Out: Hit position.
+			int16_t* psY,						// Out: Hit position.
+			int16_t* psZ,						// Out: Hit position.
 			CThing** ppthing,				// Out: Ptr to thing hit or NULL.
 			bool	bTracer = true,		// In:  Draw a tracer at random point along path.
 			SampleMasterID	smid	= g_smidBulletFire);	// In:  Use ammo sample.
@@ -176,45 +176,45 @@ class CBulletFest
 
 		// Launch a bullet.
 		bool Fire(							// Returns true if a hit, false otherwise.
-			short sAngleY,					// In:  Angle of launch in degrees (on X/Z plane).
-			short	sAngleZ,					// In:  Angle of launch in degrees (on X/Y plane).
-			short	sX,						// In:  Launch position.
-			short	sY,						// In:  Launch position.
-			short	sZ,						// In:  Launch position.
-			short	sRange,					// In:  Maximum distance.
+			int16_t sAngleY,					// In:  Angle of launch in degrees (on X/Z plane).
+			int16_t	sAngleZ,					// In:  Angle of launch in degrees (on X/Y plane).
+			int16_t	sX,						// In:  Launch position.
+			int16_t	sY,						// In:  Launch position.
+			int16_t	sZ,						// In:  Launch position.
+			int16_t	sRange,					// In:  Maximum distance.
 			CRealm* pRealm,				// In:  Realm in which to fire.
 			CSmash::Bits bitsInclude,	// In:  Mask of CSmash masks that this bullet can hit.
 			CSmash::Bits bitsDontCare,	// In:  Mask of CSmash masks that this bullet does not care to hit.
 			CSmash::Bits bitsExclude,	// In:  Mask of CSmash masks that this bullet cannot hit.
-			short* psX,						// Out: Hit position.
-			short* psY,						// Out: Hit position.
-			short* psZ,						// Out: Hit position.
+			int16_t* psX,						// Out: Hit position.
+			int16_t* psY,						// Out: Hit position.
+			int16_t* psZ,						// Out: Hit position.
 			CThing** ppthing,				// Out: Ptr to thing hit or NULL.
 			bool	bTracer = true);		// In:  Draw a tracer at random point along path.
 
 		// Create a muzzle flare effect.
 		void Flare(						// Returns nothing.
-			short sAngle,				// In:  Angle of launch in degrees (on X/Z plane).
-			short	sX,					// In:  Launch position.
-			short	sY,					// In:  Launch position.
-			short	sZ,					// In:  Launch position.
+			int16_t sAngle,				// In:  Angle of launch in degrees (on X/Z plane).
+			int16_t	sX,					// In:  Launch position.
+			int16_t	sY,					// In:  Launch position.
+			int16_t	sZ,					// In:  Launch position.
 			CRealm* pRealm,			// In:  Realm in which to fire.
 			SampleMasterID	smid	= g_smidBulletFire);	// In:  Use ammo sample.
 
 		// Create a impact effect.
 		void Impact(				// Returns nothing.
-			short sAngle,			// In:  Angle of launch in degrees (on X/Z plane).
-			short	sX,				// In:  Launch position.
-			short	sY,				// In:  Launch position.
-			short	sZ,				// In:  Launch position.
+			int16_t sAngle,			// In:  Angle of launch in degrees (on X/Z plane).
+			int16_t	sX,				// In:  Launch position.
+			int16_t	sY,				// In:  Launch position.
+			int16_t	sZ,				// In:  Launch position.
 			CRealm* pRealm);		// In:  Realm in which to fire.
 
 		// Create a ricochet effect.
 		void Ricochet(				// Returns nothing.
-			short sAngle,			// In:  Angle of launch in degrees (on X/Z plane).
-			short	sX,				// In:  Launch position.
-			short	sY,				// In:  Launch position.
-			short	sZ,				// In:  Launch position.
+			int16_t sAngle,			// In:  Angle of launch in degrees (on X/Z plane).
+			int16_t	sX,				// In:  Launch position.
+			int16_t	sY,				// In:  Launch position.
+			int16_t	sZ,				// In:  Launch position.
 			CRealm* pRealm);		// In:  Realm in which to fire.
 
 		// Updates the static tracer color.
@@ -222,7 +222,7 @@ class CBulletFest
 			CRealm* prealm);				// In:  Calling realm.
 
 		// Preload any assets that may be used.
-		static short Preload(
+		static int16_t Preload(
 			CRealm* prealm);				// In:  Calling realm.
 
 	///////////////////////////////////////////////////////////////////////////
@@ -236,14 +236,14 @@ class CBulletFest
 	///////////////////////////////////////////////////////////////////////////
 	public:
 
-		short	m_sCurTracerPos;	// Cummulative tracer position to give the look
+		int16_t	m_sCurTracerPos;	// Cummulative tracer position to give the look
 										// of 'forward' movement.
 
 		// Target info.  ***NYI***
 		U16	m_u16IdTarget;		// Last known target or IdNil.
-		short	m_sDirChanges;		// Direction changes (relative to source) over 
+		int16_t	m_sDirChanges;		// Direction changes (relative to source) over 
 										// last targeting duration.
-		long	m_lSqrDistance;	// Squared distance traveled (relative to 
+		int32_t	m_lSqrDistance;	// Squared distance traveled (relative to 
 										// source) over last targeting duration.
 		RQueue<TargetInfo, TargetUpdatesPerPeriod>	m_qtiHistory;
 		TargetInfo	m_ati;		// Array of target info used for history queue.

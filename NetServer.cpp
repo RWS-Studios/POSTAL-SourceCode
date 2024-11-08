@@ -43,12 +43,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Startup
 ////////////////////////////////////////////////////////////////////////////////
-short CNetServer::Startup(								// Returns 0 if successfull, non-zero otherwise
-	unsigned short usPort,								// In:  Server base port number
+int16_t CNetServer::Startup(								// Returns 0 if successfull, non-zero otherwise
+	uint16_t usPort,								// In:  Server base port number
 	char* pszHostName,									// In:  Host name (max size is MaxHostName!!!)
 	RSocket::BLOCK_CALLBACK callback)				// In:  Blocking callback
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Do a reset to be sure we're starting at a good point
 	Reset();
@@ -127,7 +127,7 @@ void CNetServer::Shutdown(void)
 ////////////////////////////////////////////////////////////////////////////////
 void CNetServer::Update(void)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	//------------------------------------------------------------------------------
 	// Accept new clients
@@ -148,7 +148,7 @@ void CNetServer::Update(void)
 				if (m_socketListen.CanAcceptWithoutBlocking())
 					{
 					// Try to accept client's connection
-					short serr = m_aClients[id].m_msgr.Accept(&m_socketListen, m_callback);
+					int16_t serr = m_aClients[id].m_msgr.Accept(&m_socketListen, m_callback);
 					if (serr == 0)
 						{
 						// Upgrade state
@@ -191,9 +191,9 @@ void CNetServer::Update(void)
 		// using the same port as us.  If we do get a message, the address of the sender
 		// will be recorded -- this gives us the host's address!
 		U8 buf1[4];
-		long lReceived;
+		int32_t lReceived;
 		RSocket::Address address;
-		short serr = m_socketAntenna.ReceiveFrom(buf1, sizeof(buf1), &lReceived, &address);
+		int16_t serr = m_socketAntenna.ReceiveFrom(buf1, sizeof(buf1), &lReceived, &address);
 		if (serr == 0)
 			{
 			// Validate the message to make sure it was sent by another app of this
@@ -222,8 +222,8 @@ void CNetServer::Update(void)
 				strncpy((char*)&buf2[8], m_acHostName, sizeof(m_acHostName));
 
 				// Send the message directly to the sender of the previous message
-				long lBytesSent;
-				short serr = m_socketAntenna.SendTo(buf2, sizeof(buf2), &lBytesSent, &address);
+				int32_t lBytesSent;
+				int16_t serr = m_socketAntenna.SendTo(buf2, sizeof(buf2), &lBytesSent, &address);
 				if (serr == 0)
 					{
 					if (lBytesSent != sizeof(buf2))
@@ -384,7 +384,7 @@ void CNetServer::GetMsg(
 							// Store version number from original message before we clobber it
 							// by creating an error message in the same area (not sure if this
 							// is really an issue but just in case).
-							ULONG	ulVersion	= pmsg->msg.login.ulVersion;
+							uint32_t	ulVersion	= pmsg->msg.login.ulVersion;
 							// Incompatible version number.
 							pmsg->msg.err.error		= NetMsg::ServerVersionMismatchError;
 							pmsg->msg.err.ulParam	= ulVersion & ~CNetMsgr::MacVersionBit;
@@ -638,8 +638,8 @@ void CNetServer::GetMsg(
 						// to create a mask that includes only those clients that sent the message.
 						// These values are used to generate the PROGRESS_REALM message afterwards.
 						Net::ID id2;
-						short sNumExpected = 0;
-						short sNumReady = 0;
+						int16_t sNumExpected = 0;
+						int16_t sNumReady = 0;
 						U16 mask = 0;
 						for (id2 = 0; id2 < Net::MaxNumIDs; id2++)
 							{
@@ -884,14 +884,14 @@ void CNetServer::DropClient(
 // Send the specified game settings to all joined clients
 ////////////////////////////////////////////////////////////////////////////////
 void CNetServer::SetupGame(
-	short sRealmNum,										// In:  Realm number
+	int16_t sRealmNum,										// In:  Realm number
 	const char* pszRealmFile,									// In:  Realm file name
-	short sDifficulty,									// In:  Difficulty
-	short sRejuvenate,									// In:  Rejuvenate flag
-	short sTimeLimit,										// In:  Time limit in minutes, or negative if none
-	short sKillLimit,										// In:  Kill limit, or negative if none
-	short	sCoopLevels,									// In:  Zero for deathmatch levels, non-zero for cooperative levels.
-	short	sCoopMode)										// In:  Zero for deathmatch mode, non-zero for cooperative mode.
+	int16_t sDifficulty,									// In:  Difficulty
+	int16_t sRejuvenate,									// In:  Rejuvenate flag
+	int16_t sTimeLimit,										// In:  Time limit in minutes, or negative if none
+	int16_t sKillLimit,										// In:  Kill limit, or negative if none
+	int16_t	sCoopLevels,									// In:  Zero for deathmatch levels, non-zero for cooperative levels.
+	int16_t	sCoopMode)										// In:  Zero for deathmatch mode, non-zero for cooperative mode.
 	{
 	// Setup a special START_GAME message that we keep around so we can send
 	// it to clients as soon as they join.  That way, they get better feedback.
@@ -920,15 +920,15 @@ void CNetServer::SetupGame(
 ////////////////////////////////////////////////////////////////////////////////
 void CNetServer::StartGame(
 	Net::ID idServer,										// In:  Server's client's ID
-	short sRealmNum,										// In:  Realm number
+	int16_t sRealmNum,										// In:  Realm number
 	char* pszRealmFile,									// In:  Realm file name
-	short sDifficulty,									// In:  Difficulty
-	short sRejuvenate,									// In:  Rejuvenate flag
-	short sTimeLimit,										// In:  Time limit in minutes, or negative if none
-	short sKillLimit,										// In:  Kill limit, or negative if none
-	short	sCoopLevels,									// In:  Zero for deathmatch levels, non-zero for cooperative levels.
-	short	sCoopMode,										// In:  Zero for deathmatch mode, non-zero for cooperative mode.
-	short sFrameTime,										// In:  Time per frame (in milliseconds)
+	int16_t sDifficulty,									// In:  Difficulty
+	int16_t sRejuvenate,									// In:  Rejuvenate flag
+	int16_t sTimeLimit,										// In:  Time limit in minutes, or negative if none
+	int16_t sKillLimit,										// In:  Kill limit, or negative if none
+	int16_t	sCoopLevels,									// In:  Zero for deathmatch levels, non-zero for cooperative levels.
+	int16_t	sCoopMode,										// In:  Zero for deathmatch mode, non-zero for cooperative mode.
+	int16_t sFrameTime,										// In:  Time per frame (in milliseconds)
 	Net::SEQ seqMaxAhead)								// In:  Initial max ahead for input versus frame seq
 	{
 	ASSERT(!m_bGameStarted);
@@ -962,7 +962,7 @@ void CNetServer::StartGame(
 // Abort game
 ////////////////////////////////////////////////////////////////////////////////
 void CNetServer::AbortGame(
-	unsigned char ucReason)								// In:  Why game was aborted
+	uint8_t ucReason)								// In:  Why game was aborted
 	{
 	// Tell players to abort game
 	NetMsg msg;

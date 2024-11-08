@@ -57,13 +57,13 @@ class CChip
 			{ ms_pimStack	= pim; }
 
 		// Move this chip to the new location.
-		void SetPosition(long lX, long lY, long lZ);
+		void SetPosition(int32_t lX, int32_t lY, int32_t lZ);
 
 		// Slide this chip on update to the new location.
 		// lRate is the magnitude of the vector directing the
 		// chip.
 		// Returns 0 if successfully started.
-		short Slide(long lX, long lY, long lZ, long lRate);
+		int16_t Slide(int32_t lX, int32_t lY, int32_t lZ, int32_t lRate);
 
 		// Reset this chip.  Stop sliding, if doing so.
 		// Initialize/Release all members.
@@ -71,7 +71,7 @@ class CChip
 
 		// Called to motivate this chip.
 		// Returns 0 normally, 1 if chip destroyed.
-		short Update(void);
+		int16_t Update(void);
 
 		// Called to draw this chip.
 		void Draw(void);
@@ -84,21 +84,21 @@ class CChip
 
 		// Stack chip if necessary.  
 		// Returns 0 normally, 1 if chip destroyed.
-		short Stack(void);
+		int16_t Stack(void);
 
 		// Mark this chip as not stackable if sStack is FALSE.
-		void SetStackable(short sStackable)
+		void SetStackable(int16_t sStackable)
 			{ m_sStackable	= sStackable; }
 
 		// Add to this stack.
 		// Returns 0 on success.
-		short Add(CChip*	pchip);
+		int16_t Add(CChip*	pchip);
 
 		// Remove sNum chips from this stack.
 		// Returns chip/stack on success; NULL on error.
-		CChip* Sub(short sNum);
+		CChip* Sub(int16_t sNum);
 
-		void SetSize(short sNum)
+		void SetSize(int16_t sNum)
 			{	m_sNumChips	= sNum; }
 
 	public:	// Querries.
@@ -115,21 +115,21 @@ class CChip
 			{ return ms_pimStack; }
 
 		// TRUE if sliding, FALSE otherwise.
-		short IsSliding(void)
+		int16_t IsSliding(void)
 			{ return m_sSliding; }
 
 		// Returns the first chip found to be colliding
 		// with this chip.  If sTop is TRUE, the lowest,
 		// the one with the greatest Y, is found.
-		CChip* IsColliding(short sTop	= FALSE);
+		CChip* IsColliding(int16_t sTop	= FALSE);
 
 		// Returns size of this stack.
-		short GetSize(void)
+		int16_t GetSize(void)
 			{ return m_sNumChips; }
 
 		// Returns the first chip/stack in the given rectangle.
 		// Returns NULL if none found.
-		static CChip* GetChipIn(long lX, long lY, long lW, long lH);
+		static CChip* GetChipIn(int32_t lX, int32_t lY, int32_t lW, int32_t lH);
 
 	protected:	// Internal.
 		void Init(void);
@@ -139,13 +139,13 @@ class CChip
 		float		m_fX;					// Current x coordinate.
 		float		m_fY;					// Current y coordinate.
 		float		m_fZ;					// Current z coordinate.
-		short		m_sDestX;			// Destination x coordinate.
-		short		m_sDestY;			// Destination y coordinate.
-		short		m_sDestZ;			// Destination z coordinate.
-		short		m_sRate;				// Rate to destination.
-		short		m_sSliding;			// Sliding if TRUE.
-		short		m_sStackable;		// Stackable if not FALSE.
-		short		m_sNumChips;		// If greater than 1, this is
+		int16_t		m_sDestX;			// Destination x coordinate.
+		int16_t		m_sDestY;			// Destination y coordinate.
+		int16_t		m_sDestZ;			// Destination z coordinate.
+		int16_t		m_sRate;				// Rate to destination.
+		int16_t		m_sSliding;			// Sliding if TRUE.
+		int16_t		m_sStackable;		// Stackable if not FALSE.
+		int16_t		m_sNumChips;		// If greater than 1, this is
 											// a stack.
 
 		static RSList<CChip, float>	ms_slistChips;	// List of all 

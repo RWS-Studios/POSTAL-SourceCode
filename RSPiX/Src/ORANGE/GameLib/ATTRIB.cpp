@@ -185,12 +185,12 @@ const WORD cPixelMasks[16] =
 	0x0001
 };
 
-BOOL CAttribute::GetPointAttrib(short sX, short sY, WORD* pwAttribute)
+BOOL CAttribute::GetPointAttrib(int16_t sX, int16_t sY, WORD* pwAttribute)
 {
-	short sBlockX = sX / 16;
-	short sBlockY = sY / 16;
-	short sPixelX = sX % 16;
-	short sPixelY = sY % 16;
+	int16_t sBlockX = sX / 16;
+	int16_t sBlockY = sY / 16;
+	int16_t sPixelX = sX % 16;
+	int16_t sPixelY = sY % 16;
 
 	WORD wAttribute = m_pAttribMap[sBlockY * m_sMapWidth + sBlockX];
 	*pwAttribute = wAttribute & ATTRIBUTE_MASK;
@@ -233,13 +233,13 @@ BOOL CAttribute::GetPointAttrib(short sX, short sY, WORD* pwAttribute)
 //
 //*****************************************************************************
 
-short CAttribute::GetPointSurface(short sX, short sY)
+int16_t CAttribute::GetPointSurface(int16_t sX, int16_t sY)
 {
-	short sBlockX = sX / 16;
-	short sBlockY = sY / 16;
-	short sPixelX = sX % 16;
-	short sPixelY = sY % 16;
-	short sSurfaceY = sY;
+	int16_t sBlockX = sX / 16;
+	int16_t sBlockY = sY / 16;
+	int16_t sPixelX = sX % 16;
+	int16_t sPixelY = sY % 16;
+	int16_t sSurfaceY = sY;
 //	CONTOUR cCurrent;
 	CONTOUR cAdjacent;
 

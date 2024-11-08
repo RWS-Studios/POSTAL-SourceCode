@@ -33,8 +33,8 @@
 //
 ///////////////////////////////////////////////////////////////
 
-long RPipeLine::ms_lNumPts = 0;
-long	RPipeLine::ms_lNumPipes = 0;
+int32_t RPipeLine::ms_lNumPts = 0;
+int32_t	RPipeLine::ms_lNumPipes = 0;
 
 RP3d*  RPipeLine::ms_pPts = NULL;
 
@@ -59,7 +59,7 @@ void RPipeLine::Init()
 
 // assume the clip rect is identical situation to zBUF:
 //
-short RPipeLine::Create(long lNum,short sW)
+int16_t RPipeLine::Create(int32_t lNum,int16_t sW)
 	{
 	if (sW)
 		{
@@ -98,8 +98,8 @@ short RPipeLine::Create(long lNum,short sW)
 	return 0;
 	}
 
-short RPipeLine::CreateShadow(short sAngleY,
-						double dTanDeclension,short sBufSize)
+int16_t RPipeLine::CreateShadow(int16_t sAngleY,
+						double dTanDeclension,int16_t sBufSize)
 	{
 	ASSERT( (sAngleY >=0 ) && (sAngleY < 360) );
 	ASSERT(dTanDeclension > 0.0);
@@ -177,7 +177,7 @@ RPipeLine::~RPipeLine()
 void RPipeLine::Transform(RSop* pPts,RTransform& tObj)
 	{
 	RTransform tFull;
-	long i;
+	int32_t i;
 	// Use to stretch to z-buffer!
 
 	tFull.Make1();
@@ -195,12 +195,12 @@ void RPipeLine::Transform(RSop* pPts,RTransform& tObj)
 
 // Need to create a slightly more complex pipe:
 void RPipeLine::TransformShadow(RSop* pPts,RTransform& tObj,
-		short sHeight,short *psOffX,short *psOffY)
+		int16_t sHeight,int16_t *psOffX,int16_t *psOffY)
 	{
 	ASSERT(m_pimShadowBuf);
 
 	RTransform tFull;
-	long i;
+	int32_t i;
 	// Use to stretch to z-buffer!
 
 	tFull.Make1();
@@ -233,8 +233,8 @@ void RPipeLine::TransformShadow(RSop* pPts,RTransform& tObj,
 		pOffset.y *= m_tScreen.T[1 + ROW1];
 
 		// store result
-		*psOffX = short (pOffset.x);
-		*psOffY = short (pOffset.y);
+		*psOffX = int16_t (pOffset.x);
+		*psOffY = int16_t (pOffset.y);
 		}
 
 	// 3) Project to the "screen"
@@ -255,7 +255,7 @@ void RPipeLine::TransformShadow(RSop* pPts,RTransform& tObj,
 
 // returns 0 if pts are ClockWise! (Hidden)
 // (to be used AFTER the view or screen transformation)
-short RPipeLine::NotCulled(RP3d *p1,RP3d *p2,RP3d *p3)
+int16_t RPipeLine::NotCulled(RP3d *p1,RP3d *p2,RP3d *p3)
 	{
 	REAL ax,ay,bx,by;
 	ax = p2->x - p1->x;
@@ -270,13 +270,13 @@ short RPipeLine::NotCulled(RP3d *p1,RP3d *p2,RP3d *p3)
 // Currently (sDstX,sDstY) allgns with the upper left half of the z-buffer
 // Uses the static transformed point buffer.
 //
-void RPipeLine::Render(RImage* pimDst,short sDstX,short sDstY,
-		RMesh* pMesh,UCHAR ucColor) // wire!
+void RPipeLine::Render(RImage* pimDst,int16_t sDstX,int16_t sDstY,
+		RMesh* pMesh,uint8_t ucColor) // wire!
 	{
-	long i;
-	long v1,v2,v3;
-	USHORT *psVertex = pMesh->m_pArray;
-	long lNumHidden = 0;
+	int32_t i;
+	int32_t v1,v2,v3;
+	uint16_t *psVertex = pMesh->m_pArray;
+	int32_t lNumHidden = 0;
 
 	for (i=0;i < pMesh->m_sNum; i++)
 		{
@@ -301,11 +301,11 @@ void RPipeLine::Render(RImage* pimDst,short sDstX,short sDstY,
 // Currently (sDstX,sDstY) allgns with the upper left half of the z-buffer
 // Uses the static transformed point buffer.
 //
-void RPipeLine::RenderShadow(RImage* pimDst,RMesh* pMesh,UCHAR ucColor)
+void RPipeLine::RenderShadow(RImage* pimDst,RMesh* pMesh,uint8_t ucColor)
 	{
-	long i;
-	long v1,v2,v3;
-	USHORT *psVertex = pMesh->m_pArray;
+	int32_t i;
+	int32_t v1,v2,v3;
+	uint16_t *psVertex = pMesh->m_pArray;
 
 	for (i=0;i < pMesh->m_sNum; i++)
 		{
@@ -326,18 +326,18 @@ void RPipeLine::RenderShadow(RImage* pimDst,RMesh* pMesh,UCHAR ucColor)
 // Currently (sDstX,sDstY) allgns with the upper left half of the z-buffer
 // Uses the static transformed point buffer.
 //
-void RPipeLine::Render(RImage* pimDst,short sDstX,short sDstY,
+void RPipeLine::Render(RImage* pimDst,int16_t sDstX,int16_t sDstY,
 		RMesh* pMesh,RZBuffer* pZB,RTexture* pTexColors,
-		short sFogOffset,RAlpha* pAlpha,
-		short sOffsetX/* = 0*/,		// In: 2D offset for pimDst and pZB.
-		short sOffsetY/* = 0*/) 	// In: 2D offset for pimDst and pZB.
+		int16_t sFogOffset,RAlpha* pAlpha,
+		int16_t sOffsetX/* = 0*/,		// In: 2D offset for pimDst and pZB.
+		int16_t sOffsetY/* = 0*/) 	// In: 2D offset for pimDst and pZB.
 	{
-	long i;
-	long v1,v2,v3;
-	USHORT *psVertex = pMesh->m_pArray;
-	UCHAR *pColor = pTexColors->m_pIndices;
-	long lDstP = pimDst->m_lPitch;
-	UCHAR* pDst = pimDst->m_pData + (sDstX + sOffsetX) + lDstP * (sDstY + sOffsetY);
+	int32_t i;
+	int32_t v1,v2,v3;
+	uint16_t *psVertex = pMesh->m_pArray;
+	uint8_t *pColor = pTexColors->m_pIndices;
+	int32_t lDstP = pimDst->m_lPitch;
+	uint8_t* pDst = pimDst->m_pData + (sDstX + sOffsetX) + lDstP * (sDstY + sOffsetY);
 
 	for (i=0;i < pMesh->m_sNum; i++,pColor++)
 		{
@@ -361,17 +361,17 @@ void RPipeLine::Render(RImage* pimDst,short sDstX,short sDstY,
 // Currently (sDstX,sDstY) allgns with the upper left half of the z-buffer
 // FLAT SHADE MODE
 //
-void RPipeLine::Render(RImage* pimDst,short sDstX,short sDstY,
+void RPipeLine::Render(RImage* pimDst,int16_t sDstX,int16_t sDstY,
 		RMesh* pMesh,RZBuffer* pZB,RTexture* pTexColors,
-		short sOffsetX/* = 0*/,		// In: 2D offset for pimDst and pZB.
-		short sOffsetY/* = 0*/) 	// In: 2D offset for pimDst and pZB.
+		int16_t sOffsetX/* = 0*/,		// In: 2D offset for pimDst and pZB.
+		int16_t sOffsetY/* = 0*/) 	// In: 2D offset for pimDst and pZB.
 	{
-	long i;
-	long v1,v2,v3;
-	USHORT *psVertex = pMesh->m_pArray;
-	UCHAR *pColor = pTexColors->m_pIndices;
-	long lDstP = pimDst->m_lPitch;
-	UCHAR* pDst = pimDst->m_pData + (sDstX + sOffsetX) + lDstP * (sDstY + sOffsetY);
+	int32_t i;
+	int32_t v1,v2,v3;
+	uint16_t *psVertex = pMesh->m_pArray;
+	uint8_t *pColor = pTexColors->m_pIndices;
+	int32_t lDstP = pimDst->m_lPitch;
+	uint8_t* pDst = pimDst->m_pData + (sDstX + sOffsetX) + lDstP * (sDstY + sOffsetY);
 
 	for (i=0;i < pMesh->m_sNum; i++,pColor++)
 		{
@@ -418,11 +418,11 @@ void RPipeLine::BoundingSphereToScreen(RP3d& ptCenter, RP3d& ptRadius,
 	tFull.TransformInto(ptCenter,ptCen); // z is now distorted
 
 	// store in pieline variables...(ALL OF THEM)
-	m_sCenX = short(ptCen.x);
-	m_sCenY = short(ptCen.y);
-	m_sCenZ = short(ptCen.z / 256.0); // Scale Z's by 256 for lighting later
+	m_sCenX = int16_t(ptCen.x);
+	m_sCenY = int16_t(ptCen.y);
+	m_sCenZ = int16_t(ptCen.z / 256.0); // Scale Z's by 256 for lighting later
 
-	short	sScreenRadius = short(dScreenRadius+1);
+	int16_t	sScreenRadius = int16_t(dScreenRadius+1);
 	
 	m_sX = m_sCenX - sScreenRadius;
 	m_sY = m_sCenY - sScreenRadius;
@@ -438,7 +438,7 @@ void RPipeLine::ClearClipBuffer()
 	{
 	if (m_pimClipBuf == NULL) return;
 
-	rspRect(ULONG(0),m_pimClipBuf,0,0,
+	rspRect(uint32_t(0),m_pimClipBuf,0,0,
 		m_pimClipBuf->m_sWidth,m_pimClipBuf->m_sHeight);
 	}
 
@@ -446,6 +446,6 @@ void RPipeLine::ClearShadowBuffer()
 	{
 	if (m_pimShadowBuf == NULL) return;
 
-	rspRect(ULONG(0),m_pimShadowBuf,0,0,
+	rspRect(uint32_t(0),m_pimShadowBuf,0,0,
 		m_pimShadowBuf->m_sWidth,m_pimShadowBuf->m_sHeight);
 	}

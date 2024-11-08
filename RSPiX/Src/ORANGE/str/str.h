@@ -70,7 +70,7 @@
 // their case. For example, the two strings "ABCDE" and "ABCD^" compare one 
 // way if the comparison is lowercase ("abcde" > "abcd^") and the other way 
 // ("ABCDE" < "ABCD^") if it is uppercase."
-extern short rspStricmp(	// Returns 0 if equivalent.
+extern int16_t rspStricmp(	// Returns 0 if equivalent.
 									// Returns < 0 if pszStr1 less than pszStr2.
 									// Returns > 0 if pszStr1 greater than pszStr2.
 	const char* pszStr1,		// In:  First string to compare.
@@ -85,7 +85,7 @@ extern short rspStricmp(	// Returns 0 if equivalent.
 // their case. For example, the two strings "ABCDE" and "ABCD^" compare one 
 // way if the comparison is lowercase ("abcde" > "abcd^") and the other way 
 // ("ABCDE" < "ABCD^") if it is uppercase."
-extern short rspStrnicmp(	// Returns 0 if equivalent.
+extern int16_t rspStrnicmp(	// Returns 0 if equivalent.
 									// Returns < 0 if pszStr1 less than pszStr2.
 									// Returns > 0 if pszStr1 greater than pszStr2.
 	const char* pszStr1,		// In:  First string to compare.

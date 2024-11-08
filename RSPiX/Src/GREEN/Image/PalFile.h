@@ -70,12 +70,12 @@ class RPalFile
 	public:
 
 		// Maps a particular file load onto the appropriate function, if available.
-		static short Load(	// Returns SUCCESS on success or FAILURE on failure.
+		static int16_t Load(	// Returns SUCCESS on success or FAILURE on failure.
 			RPal*		ppal,		// Pal to load into.
 			RFile*	pfile);	// File to load from.
 
 		// Loads an RPal with no file version into ppal from pfile.
-		static short LoadNoVersion(	// Returns SUCCESS on success or FAILURE on
+		static int16_t LoadNoVersion(	// Returns SUCCESS on success or FAILURE on
 												// failure.
 			RPal*		ppal,					// Pal to load into.
 			RFile*	pfile);				// File to load from.
@@ -83,19 +83,19 @@ class RPalFile
 	protected:
 
 		// Loads an RPal with file version 1 into pim from pfile.
-		static short LoadVersion1(	// Returns SUCCESS on success or FAILURE on
+		static int16_t LoadVersion1(	// Returns SUCCESS on success or FAILURE on
 											// failure.
 			RPal*		ppal,				// Pal to load into.
 			RFile*	pfile);			// File to load from.
 
 		// Loads an RPal with file version 2 into pim from pfile.
-		static short LoadVersion2(	// Returns SUCCESS on success or FAILURE on
+		static int16_t LoadVersion2(	// Returns SUCCESS on success or FAILURE on
 											// failure.
 			RPal*		ppal,				// Pal to load into.
 			RFile*	pfile);			// File to load from.
 
 		// Loads an RPal with file version 3 into pim from pfile.
-		static short LoadVersion3(	// Returns SUCCESS on success or FAILURE on
+		static int16_t LoadVersion3(	// Returns SUCCESS on success or FAILURE on
 											// failure.
 			RPal*		ppal,				// Pal to load into.
 			RFile*	pfile);			// File to load from.

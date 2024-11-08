@@ -171,7 +171,7 @@ void RBtn::Compose(			// Returns nothing.
 	RGuiItem::Compose(pim);
 
 	// Draw btn stuff.
-	short	sX, sY, sW, sH;
+	int16_t	sX, sY, sW, sH;
 	// Get client relative to border so we know where to
 	// put the text.
 	GetClient(&sX, &sY, &sW, &sH);

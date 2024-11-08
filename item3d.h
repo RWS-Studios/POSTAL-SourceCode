@@ -90,7 +90,7 @@ class CItem3d : public CThing3d
 																	// our main sprite).
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
+		static int16_t ms_sFileCount;
 
 	//---------------------------------------------------------------------------
 	// Static Variables
@@ -145,11 +145,11 @@ class CItem3d : public CThing3d
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CItem3d(pRealm);
 			if (*ppNew == 0)
 				{
@@ -165,16 +165,16 @@ class CItem3d : public CThing3d
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Update object
 		void Update(void);
@@ -183,13 +183,13 @@ class CItem3d : public CThing3d
 		void Render(void);										// Returns nothing.
 
 		// Called by editor to init new object at specified position
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object.
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 	//---------------------------------------------------------------------------
 	// Other functions
@@ -198,10 +198,10 @@ class CItem3d : public CThing3d
 		// Setup object after creating it
 		virtual				// Override to implement additional functionality.
 								// Call base class to get default functionality.
-		short Setup(						// Returns 0 on success.
-			short sX,						// In:  Starting X position
-			short sY,						// In:  Starting Y position
-			short sZ,						// In:  Starting Z position
+		int16_t Setup(						// Returns 0 on success.
+			int16_t sX,						// In:  Starting X position
+			int16_t sY,						// In:  Starting Y position
+			int16_t sZ,						// In:  Starting Z position
 			ItemType type,					// In:  Known item type or Custom.
 			char*	pszCustomBaseName = NULL,	// In:  Required if type == Custom.
 														// Base name for custom type resources.
@@ -238,13 +238,13 @@ class CItem3d : public CThing3d
 	//---------------------------------------------------------------------------
 	protected:
 		// Init item3d
-		short Init(void);											// Returns 0 if successfull, non-zero otherwise
+		int16_t Init(void);											// Returns 0 if successfull, non-zero otherwise
 		
 		// Kill item3d
 		void Kill(void);
 
 		// Get all required resources
-		short GetResources(void);								// Returns 0 if successfull, non-zero otherwise
+		int16_t GetResources(void);								// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
 		void FreeResources(void);

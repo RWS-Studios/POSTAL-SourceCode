@@ -156,8 +156,8 @@ class CInputSettings : CSettings
 			char*	pszDescription;	// Description of key.
 			char*	pszSaveName;		// Name for INI.
 			U8		u8DefaultKey;		// Default rspScanKeys val (RSP_SK_*).
-			short	sDefMouseButtons;	// Default rspGetMouse psButtons mask (MouseButtons).
-			short	sDefJoyButtons;	// Default rspGetJoyState buttons mask (JoyButtons).
+			int16_t	sDefMouseButtons;	// Default rspGetMouse psButtons mask (MouseButtons).
+			int16_t	sDefJoyButtons;	// Default rspGetJoyState buttons mask (JoyButtons).
 			} InputInfo;
 
 
@@ -198,9 +198,10 @@ class CInputSettings : CSettings
 															// halved before interpretation by the
 															// input logic.
 
-		short		m_sUseMouse;						// Allow mouse input (for main dude).
+		int16_t		m_sUseMouse;						// Allow mouse input (for main dude).
+		int16_t     m_sUseNewMouse;
 
-		short		m_sUseJoy;							// Allow joystick input.
+		int16_t		m_sUseJoy;							// Allow joystick input.
 
 		U32	m_asPlayKeys[NumInputFunctions];				// Array of game play keys indexed
 																		// by an InputFunction value.
@@ -208,19 +209,19 @@ class CInputSettings : CSettings
 																		// indexed by an InputFunction value.
 		U32	m_asPlayJoyButtons[NumInputFunctions];		// Array of game play joystick buttons
 																		// indexed by an InputFunction value.
-		short	m_sJoyStartButton;						// Default button to use as "Start"
-		short	m_sJoyMenuUpButton;						// Default button to use as "Menu Up"
-		short	m_sJoyMenuDownButton;						// Default button to use as "Menu Down"
-		short	m_sJoyMenuLeftButton;						// Default button to use as "Menu Left"
-		short	m_sJoyMenuRightButton;						// Default button to use as "Menu Right"
-		short	m_sJoyMenuUpAxis;						// Default button to use as "Menu Up"
-		short	m_sJoyMenuDownAxis;						// Default button to use as "Menu Down"
-		short	m_sJoyMenuLeftAxis;						// Default button to use as "Menu Left"
-		short	m_sJoyMenuRightAxis;						// Default button to use as "Menu Right"
-		short	m_sJoyMenuConfirmButton;						// Default button to use as "Confirm"
-		short	m_sJoyMenuBackButton;						// Default button to use as "Back"
-		short	m_sJoyMenuBackButton2;						// Other default button to use as "Back"
-		short	m_sJoyMenuDeleteKeybindButton;			// Default button to use for deleting keybinds
+		int16_t	m_sJoyStartButton;						// Default button to use as "Start"
+		int16_t	m_sJoyMenuUpButton;						// Default button to use as "Menu Up"
+		int16_t	m_sJoyMenuDownButton;						// Default button to use as "Menu Down"
+		int16_t	m_sJoyMenuLeftButton;						// Default button to use as "Menu Left"
+		int16_t	m_sJoyMenuRightButton;						// Default button to use as "Menu Right"
+		int16_t	m_sJoyMenuUpAxis;						// Default button to use as "Menu Up"
+		int16_t	m_sJoyMenuDownAxis;						// Default button to use as "Menu Down"
+		int16_t	m_sJoyMenuLeftAxis;						// Default button to use as "Menu Left"
+		int16_t	m_sJoyMenuRightAxis;						// Default button to use as "Menu Right"
+		int16_t	m_sJoyMenuConfirmButton;						// Default button to use as "Confirm"
+		int16_t	m_sJoyMenuBackButton;						// Default button to use as "Back"
+		int16_t	m_sJoyMenuBackButton2;						// Other default button to use as "Back"
+		int16_t	m_sJoyMenuDeleteKeybindButton;			// Default button to use for deleting keybinds
 
 	public:
 		// Set settings to default values
@@ -230,27 +231,27 @@ class CInputSettings : CSettings
 		~CInputSettings();
 
 		// Read settings that are stored in preference file
-		short LoadPrefs(
+		int16_t LoadPrefs(
 			RPrefs* pPrefs);
 
 		// Write settings that are stored in preference file
-		short SavePrefs(
+		int16_t SavePrefs(
 			RPrefs* pPrefs);
 
 		// Load settings that are stored in game file
-		short LoadGame(
+		int16_t LoadGame(
 			RFile* pFile);
 
 		// Save settings that are stored in game file
-		short SaveGame(
+		int16_t SaveGame(
 			RFile* pFile);
 
 		// Temporarily set settings for demo mode (file is for saving current settings)
-		short PreDemo(
+		int16_t PreDemo(
 			RFile* pFile);
 
 		// Restore settings to what they were prior to demo mode
-		short PostDemo(
+		int16_t PostDemo(
 			RFile* pFile);
 
 		// Set rotation values to the defaults.

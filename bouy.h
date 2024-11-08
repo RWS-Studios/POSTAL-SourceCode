@@ -221,9 +221,9 @@ class CBouy : public CThing
 	// Variables
 	//---------------------------------------------------------------------------
 	public:
-		UCHAR	m_ucID;								// Bouy ID (or address)
+		uint8_t	m_ucID;								// Bouy ID (or address)
 		linklist m_aplDirectLinks;
-		short		m_sNumDirectLinks;
+		int16_t		m_sNumDirectLinks;
 		TreeListNode m_TreeNode;
 
 	protected:
@@ -235,10 +235,10 @@ class CBouy : public CThing
 		RImage* m_pImage;							// Pointer to only image (replace with 3d anim, soon)
 		CSprite2 m_sprite;						// Sprite (replace with CSprite3, soon)
 
-		short m_sSuspend;							// Suspend flag
+		int16_t m_sSuspend;							// Suspend flag
 
-		UCHAR* m_paucRouteTable;				// Routing table (new non-STL way)
-		short m_sRouteTableSize;
+		uint8_t* m_paucRouteTable;				// Routing table (new non-STL way)
+		int16_t m_sRouteTableSize;
 
 		linkinstanceid m_LinkInstanceID;		// Used to relink the network after a load
 
@@ -248,7 +248,7 @@ class CBouy : public CThing
 
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
+		static int16_t ms_sFileCount;
 		static bool  ms_bShowBouys;
 
 		// "Constant" values that we want to be able to tune using the editor
@@ -288,11 +288,11 @@ class CBouy : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CBouy(pRealm);
 			if (*ppNew == 0)
 				{
@@ -307,22 +307,22 @@ class CBouy : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -337,19 +337,19 @@ class CBouy : public CThing
 		void Render(void);
 
 		// Called by editor to init new object at specified position
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
-		short EditMove(											// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditMove(											// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to update object
 		void EditUpdate(void);
@@ -362,9 +362,9 @@ class CBouy : public CThing
 
 		// Called by editor to get the hotspot of an object in 2D.
 		void EditHotSpot(			// Returns nothiing.
-			short*	psX,			// Out: X coord of 2D hotspot relative to
+			int16_t*	psX,			// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-			short*	psY);			// Out: Y coord of 2D hotspot relative to
+			int16_t*	psY);			// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 
 		// Get the coordinates of this thing.
@@ -378,12 +378,12 @@ class CBouy : public CThing
 		double GetZ(void)	{ return m_dZ; }
 
 		// Add a link to this bouy - it is directly connected, ie, 1 hop away
-		short AddLink(CBouy* pBouy);
+		int16_t AddLink(CBouy* pBouy);
 
 		// Get the next link to follow to get to this destination.  This is
 		// normally a routing table lookup unless the entry is not in the routing
 		// table, then it is discovered and added as an entry to the routing table.
-		UCHAR NextRouteNode(UCHAR dst);
+		uint8_t NextRouteNode(uint8_t dst);
 
 		// Disconnect this node from the network.  This will visit all of its
 		// direct links and remove itself from their link list and then free
@@ -392,12 +392,12 @@ class CBouy : public CThing
 		void Unlink(void);
 
 		// Fill in all entries in the routing table.
-		short BuildRoutingTable(void);
+		int16_t BuildRoutingTable(void);
 
 		// Print the routing table for this bouy - for debugging
 		void PrintRouteTable(FILE* fp)
 		{
-			short i;
+			int16_t i;
 			char szLine[256];
 			for (i = 0; i < m_sRouteTableSize; i++)
 			{
@@ -429,10 +429,10 @@ class CBouy : public CThing
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 	};
 
 

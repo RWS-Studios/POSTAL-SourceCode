@@ -74,25 +74,25 @@ typedef struct
 		} Type;
 
 	Type	type;		// Type of event { Mouse, Key, Joy }.
-	long	lTime;	// Time at which event occurred.
-	short	sUsed;	// Indicates that this event has been used.
+	int32_t	lTime;	// Time at which event occurred.
+	int16_t	sUsed;	// Indicates that this event has been used.
 						// Set this if your API utilizes this event so that others
 						// know that it's already been absorbed.
-	long	lUser;	// User value.  Use as you please.
+	int32_t	lUser;	// User value.  Use as you please.
 
 	union
 		{
 		struct	// Mouse event.
 			{
-			short sPosX;		// X position of event.
-			short	sPosY;		// Y position of event.
-			short	sButtons;	// Buttons status at event (ala rspGetMouseEvent).
-			short	sEvent;		// Event type (ala rspGetMouseEvent).
+			int16_t sPosX;		// X position of event.
+			int16_t	sPosY;		// Y position of event.
+			int16_t	sButtons;	// Buttons status at event (ala rspGetMouseEvent).
+			int16_t	sEvent;		// Event type (ala rspGetMouseEvent).
 			};
 		
 		struct	// Keyboard event.
 			{
-			long	lKey;			// Key value and modifiers (ala rspGetKey).
+			int32_t	lKey;			// Key value and modifiers (ala rspGetKey).
 			};
 		};
 	} RInputEvent;
@@ -140,7 +140,7 @@ void rspClearKeyInputEvents(void);	// Returns nothing.
 void rspClearMouseInputEvents(void);	// Returns nothing.
 
 // Gets the next input event.
-short rspGetNextInputEvent(	// Returns 1 if there is an event, 0 if none.
+int16_t rspGetNextInputEvent(	// Returns 1 if there is an event, 0 if none.
 	RInputEvent*	pie);			// Out: Filled with input event type and details.
 
 
@@ -150,12 +150,12 @@ short rspGetNextInputEvent(	// Returns 1 if there is an event, 0 if none.
 void ClearXInputState();
 
 // Gets the next XInput state.
-short GetXInputState(XInputState* xis); // Returns 1 on success, 0 if failure or controller not present.
-short GetXInputStateNoUpdate(XInputState* xis);
-short GetLastXInputState(XInputState* xis);	// Returns the last known XInputState
+int16_t GetXInputState(XInputState* xis); // Returns 1 on success, 0 if failure or controller not present.
+int16_t GetXInputStateNoUpdate(XInputState* xis);
+int16_t GetLastXInputState(XInputState* xis);	// Returns the last known XInputState
 
 // Returns 1 if any button on the controller is pressed.
-short IsXInputButtonPressed();
+int16_t IsXInputButtonPressed();
 
 #endif	// INPUT_EVENT_H
 //////////////////////////////////////////////////////////////////////////////

@@ -74,35 +74,35 @@ class CRtPlay
 	public:		// Methods.
 		// Opens a stream file for play.
 		// Returns 0 on success.
-		short Open(char* pszFileName);
+		int16_t Open(char* pszFileName);
 		// Closes an open stream file.
 		// Returns 0 on success.
-		short Close(void);
+		int16_t Close(void);
 		// Starts play.
 		// Returns 0 on success.
-		short Play(void);
+		int16_t Play(void);
 		// Aborts current play.
 		// Returns 0 on success.
-		short Abort(void);
+		int16_t Abort(void);
 		// Pauses play.
 		// Returns 0 on success.
-		short Pause(void);
+		int16_t Pause(void);
 		// Resumes play (after Pause()).
 		// Returns 0 on success.
-		short Resume(void);
+		int16_t Resume(void);
 
 		// Sets the time handler function in our CRtTime.
 		void SetTimeFunc(RTTIMEFUNC fnTime)
 			{ m_rttime.SetTimeFunc(fnTime); }
 
 		// Sets the channels to play.
-		void SetChannels(USHORT usFilter)
+		void SetChannels(uint16_t usFilter)
 			{ m_filter.SetFilter(usFilter); }
 
 		// Sets the window and panes sizes for the file window (which is set 
 		// imeediately after opening).
-		void SetSizes(	long lWindowSize, long lInputPaneSize, 
-							long lFilterPaneSize)
+		void SetSizes(	int32_t lWindowSize, int32_t lInputPaneSize, 
+							int32_t lFilterPaneSize)
 			{
 			m_lWindowSize		= lWindowSize;
 			m_lInputPaneSize	= lInputPaneSize;
@@ -111,7 +111,7 @@ class CRtPlay
 
 	public:		// Querries.
 		// Get current status.
-		USHORT GetState(void)
+		uint16_t GetState(void)
 			{ return m_usState; }
 
 	protected:	// Internal methods.
@@ -124,26 +124,26 @@ class CRtPlay
 		// Sets the state to the new state.  Generates messages if a state change
 		// occurs.
 		// Returns 0 on success.
-		short SetState(USHORT usState);
+		int16_t SetState(uint16_t usState);
 
 		// Adds an RT_TYPE_RTFINFO chunk to the dispatcher with the specified command
 		// and parameters.
 		// Returns 0 on success.
-		short CreateCmd(USHORT usCmd, long lTime, long lParm1, long lParm2);
+		int16_t CreateCmd(uint16_t usCmd, int32_t lTime, int32_t lParm1, int32_t lParm2);
 
 		// Handles data callbacks from dispatch.
 		// Returns RET_FREE if puc should be freed and RET_DONTFREE, otherwise.
-		short RtInfoCall(	UCHAR* puc, long lSize, USHORT usType, UCHAR ucFlags,
-								long lTime);
+		int16_t RtInfoCall(	uint8_t* puc, int32_t lSize, uint16_t usType, uint8_t ucFlags,
+								int32_t lTime);
 		// Callback dispatcher (calls the implied this version).
 		// Returns RET_FREE if puc should be freed and RET_DONTFREE, otherwise.
-		static short RtInfoCallStatic(UCHAR* puc, long lSize, USHORT usType, 
-												UCHAR ucFlags, long lTime, long l_pRtPlay);
+		static int16_t RtInfoCallStatic(uint8_t* puc, int32_t lSize, uint16_t usType, 
+												uint8_t ucFlags, int32_t lTime, int32_t l_pRtPlay);
 
 		// Handles current state.  Called by Blue's critical handler list.
 		void Critical(void);
 		// Static version of above.
-		static void CriticalStatic(ULONG ul_pRtPlay)
+		static void CriticalStatic(uint32_t ul_pRtPlay)
 			{ ((CRtPlay*)ul_pRtPlay)->Critical(); }
 
 
@@ -158,14 +158,14 @@ class CRtPlay
 
 	protected:	// Members.
 		
-		USHORT		m_usState;				// Current state of class.
+		uint16_t		m_usState;				// Current state of class.
 
-		ULONG			m_ulChannelsDone;		// Masks of channels that have 
+		uint32_t			m_ulChannelsDone;		// Masks of channels that have 
 													// completed.
 
-		long			m_lWindowSize;			// Size for file window.
-		long			m_lInputPaneSize;		// Size for input pane of file window.
-		long			m_lFilterPaneSize;	// Size for filter pane of file window.
+		int32_t			m_lWindowSize;			// Size for file window.
+		int32_t			m_lInputPaneSize;		// Size for input pane of file window.
+		int32_t			m_lFilterPaneSize;	// Size for filter pane of file window.
 
 	};
 

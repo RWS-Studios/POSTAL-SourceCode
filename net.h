@@ -210,7 +210,9 @@ class Net
 		// size of just over 500 bytes.  Anything larger might be broken into multiple
 		// datagrams, which we don't want because datagrams are not necessarily received in
 		// the same order they are sent in, which is something we don't want to deal with.
-		MaxDatagramSize			= 500,
+		MaxDatagramSize			= 556,//This is what I've got form the internet. 
+									//Otherwise assertion fails due to switching of some
+									//vaiables from 32 to 64 bit. Particulary extention of UINPUT.
 
 		// Interval between broadcasts (clients browsing for hosts will generate a
 		// "looking for a host" message every this often)
@@ -249,7 +251,7 @@ class Net
 
 	// This should probably be unsigned, and may as well be as small as we can get
 	// it since we're inherently limited to 16 players anyway.
-	typedef unsigned char	ID;
+	typedef uint8_t	ID;
 
 	// This MUST be unsigned to work properly!!!
 	// See above for an explanation of why 16-bits is a good choice.
@@ -283,7 +285,7 @@ class Net
 	#endif
 
 	// Lookup tables associated with the NetBandwidth enums.
-	NETCRAPTHING long	lBandwidthValues[Net::NumBandwidths];
+	NETCRAPTHING int32_t	lBandwidthValues[Net::NumBandwidths];
 	NETCRAPTHING char* BandwidthText[Net::NumBandwidths];
 	};
 

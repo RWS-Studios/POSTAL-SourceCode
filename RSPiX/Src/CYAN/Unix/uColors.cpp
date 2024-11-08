@@ -40,12 +40,12 @@
 // Data, variables, etc.
 ////////////////////////////////////////////////////////////////////////////////
 
-static unsigned char m_aucWin32R1[10] = {   0, 128,   0, 128,   0, 128,   0, 128, 192, 166 };
-static unsigned char m_aucWin32G1[10] = {   0,   0, 128, 128,   0,   0, 128, 128, 220, 202 };
-static unsigned char m_aucWin32B1[10] = {   0,   0,   0,   0, 128, 128, 128, 128, 192, 240 };
-static unsigned char m_aucWin32R2[10] = { 255, 160, 128, 255,   0, 255,   0, 255,   0, 255 };
-static unsigned char m_aucWin32G2[10] = { 251, 160, 128,   0, 255, 255,   0,   0, 255, 255 };
-static unsigned char m_aucWin32B2[10] = { 240, 164, 128,   0,   0,   0, 255, 255, 255, 255 };
+static uint8_t m_aucWin32R1[10] = {   0, 128,   0, 128,   0, 128,   0, 128, 192, 166 };
+static uint8_t m_aucWin32G1[10] = {   0,   0, 128, 128,   0,   0, 128, 128, 220, 202 };
+static uint8_t m_aucWin32B1[10] = {   0,   0,   0,   0, 128, 128, 128, 128, 192, 240 };
+static uint8_t m_aucWin32R2[10] = { 255, 160, 128, 255,   0, 255,   0, 255,   0, 255 };
+static uint8_t m_aucWin32G2[10] = { 251, 160, 128,   0, 255, 255,   0,   0, 255, 255 };
+static uint8_t m_aucWin32B2[10] = { 240, 164, 128,   0,   0,   0, 255, 255, 255, 255 };
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ static unsigned char m_aucWin32B2[10] = { 240, 164, 128,   0,   0,   0, 255, 255
 //
 ///////////////////////////////////////////////////////////////////////////////
 void rspSetWin32StaticColors(
-	short sLock /*= 0*/)										// In:  1 means lock colors, 0 means don't
+	int16_t sLock /*= 0*/)										// In:  1 means lock colors, 0 means don't
 	{
 	// Make sure display module is alive before we call it
 	if (1) //( (SDL_WasInit(SDL_INIT_VIDEO)) && (SDL_GetVideoSurface() != NULL) )

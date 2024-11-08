@@ -101,31 +101,31 @@ class RMultiBtn : public RBtn
 		// Set number of states.
 		// This will clear all existing state images including the feedback
 		// state.
-		short SetNumStates(		// Returns 0 on success.
-			short sNumStates);	// In:  New number of states.
+		int16_t SetNumStates(		// Returns 0 on success.
+			int16_t sNumStates);	// In:  New number of states.
 
 		// Set button state or feedback state image.
 		// The feedback state image is always the first image.
-		short SetState(		// Returns 0 on success.
+		int16_t SetState(		// Returns 0 on success.
 			RImage*	pim,		// In:  Image for state sState.
-			short		sState);	// In:  State to update (0 == feedback state,
+			int16_t		sState);	// In:  State to update (0 == feedback state,
 									// 1..n == state number).
 
 		// Set button state or feedback state image.
 		// The feedback state image is always the first image.
-		short SetState(			// Returns 0 on success.
+		int16_t SetState(			// Returns 0 on success.
 			char*	pszImageName,	// In:  File name of image for state sState.
-			short		sState);		// In:  State to update (0 == feedback state,
+			int16_t		sState);		// In:  State to update (0 == feedback state,
 										// 1..n == state number).
 
 		// Clear button state or feedback state image.
 		// The feedback state image is always the first image.
 		void ClearState(			// Returns nothing.
-			short	sState);			// In:  State to clear (0 == feedback state,
+			int16_t	sState);			// In:  State to clear (0 == feedback state,
 										// 1..n == state number).
 
 		// Go to the next logical state.
-		short NextState(void);	// Returns new state.
+		int16_t NextState(void);	// Returns new state.
 
 
 		////////////////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ class RMultiBtn : public RBtn
 
 		// Get the current image for the specified state.
 		RImage* GetState(			// Returns image, if available; NULL, otherwise.
-			short	sState);			// In:  State to get (0 == feedback state,
+			int16_t	sState);			// In:  State to get (0 == feedback state,
 										// 1..n == state number).
 
 //////////////////////////////////////////////////////////////////////////////
@@ -154,21 +154,21 @@ class RMultiBtn : public RBtn
 
 		// Read item's members from file.
 		virtual				// Overridden here.
-		short ReadMembers(			// Returns 0 on success.
+		int16_t ReadMembers(			// Returns 0 on success.
 			RFile*	pfile,			// File to read from.
 			U32		u32Version);	// File format version to use.
 
 		// Write item's members to file.
 		virtual				// Overridden here.
-		short WriteMembers(			// Returns 0 on success.
+		int16_t WriteMembers(			// Returns 0 on success.
 			RFile*	pfile);			// File to write to.
 
 //////////////////////////////////////////////////////////////////////////////
 
 	public:	// Member variables.
 
-		short		m_sState;		// The button's current state, 0..m_sNumStates - 1.
-		short		m_sNumStates;	// Number of button states.
+		int16_t		m_sState;		// The button's current state, 0..m_sNumStates - 1.
+		int16_t		m_sNumStates;	// Number of button states.
 		RImage**	m_papimStates;	// Ptr to array of m_sNumStates + 1 ptrs to button 
 										// state images.
 

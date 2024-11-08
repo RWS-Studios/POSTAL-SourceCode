@@ -218,10 +218,10 @@ short CUniverse::SetSection(
 //
 //*****************************************************************************
 
-short CUniverse::SetSection(
-	short sWorld,					// World to load
-	short sStage,					// Stage to load
-	short sSection)				// Section to load
+int16_t CUniverse::SetSection(
+	int16_t sWorld,					// World to load
+	int16_t sStage,					// Stage to load
+	int16_t sSection)				// Section to load
 {
 
  	fstream fsGameInfo("zoo.gme", ios::in, filebuf::sh_read);
@@ -261,7 +261,7 @@ short CUniverse::SetSection(
 	fsGameInfo.eatwhite();
 	fsGameInfo.getline(m_strFileEvent, UNIVERSE_MAXLINE);
 
-	short sReturnValue;
+	int16_t sReturnValue;
 
 	if (sReturnValue = LoadAnimData())
 		return sReturnValue;
@@ -300,7 +300,7 @@ short CUniverse::SetSection(
 //
 //*****************************************************************************
 
-short CUniverse::LoadAnimData()
+int16_t CUniverse::LoadAnimData()
 {
 	char 	strPathName[UNIVERSE_MAX_PATHNAME];
 	CRiff AnimFile;
@@ -331,8 +331,8 @@ short CUniverse::LoadAnimData()
 
 	AnimFile.DescendChunk();
 
-	long lAnim;
-	short sFrame;
+	int32_t lAnim;
+	int16_t sFrame;
 
 	for (lAnim = 0; lAnim < pAnimSet->lNumAnims; lAnim++)
 	{
@@ -342,7 +342,7 @@ short CUniverse::LoadAnimData()
 
 		for (sFrame = 0; sFrame < pAnimSet->apAnims[lAnim]->sNumFrames; sFrame++)
 		{
-		 	ImageFile.SetCurrentChunk((long) pAnimSet->apAnims[lAnim]->aFrames[sFrame].pImage);
+		 	ImageFile.SetCurrentChunk((int32_t) pAnimSet->apAnims[lAnim]->aFrames[sFrame].pImage);
 			ImageFile.ReadHeader(pChunkHeader);
 			pAnimSet->apAnims[lAnim]->aFrames[sFrame].pImage = 
 				(IMAGE*) malloc(pChunkHeader->dwSize);
@@ -470,7 +470,7 @@ short CUniverse::LoadAnimData()
 void CUniverse::SetAnimOffsets(
 	ANIM* pAnimation)							// Pointer to ANIM structure
 {
-	short s;
+	int16_t s;
 
 	for (s = 0; s < pAnimation->sNumFrames; s++)
 	{
@@ -503,7 +503,7 @@ void CUniverse::SetAnimOffsets(
 void CUniverse::SetZonesetOffsets(
 	ZONESET*	pZoneset)						// Pointer to ZONESET structure
 {
- 	short s;
+ 	int16_t s;
 
 	for (s = 0; s < MAX_ZONETYPES; s++)
 	{
@@ -542,7 +542,7 @@ void CUniverse::SetZonesetOffsets(
 //
 //*****************************************************************************
 
-short CUniverse::LoadBackgroundData()
+int16_t CUniverse::LoadBackgroundData()
 {
 	return 0;
 }
@@ -573,19 +573,19 @@ short CUniverse::LoadBackgroundData()
 //
 //*****************************************************************************
 
-short CUniverse::LoadAttributeData()
+int16_t CUniverse::LoadAttributeData()
 {
 	FILE* fpAttrData;
 
 	fpAttrData = fopen(m_strFileAttr, "rb");
 
 
-	short sLength;
+	int16_t sLength;
 
 //	ifstream ifsAttrData(m_strFileAttrib, ios::in, filebuf::sh_read);
 
-	fread(&m_sMapWidth, sizeof(short), 1, fpAttrData);	//get width
-  	fread(&sLength, sizeof(short), 1, fpAttrData);		//get height
+	fread(&m_sMapWidth, sizeof(int16_t), 1, fpAttrData);	//get width
+  	fread(&sLength, sizeof(int16_t), 1, fpAttrData);		//get height
 	sLength *= m_sMapWidth;										//data = width*height
 //	ifsAttrData >> sLength;
 	m_pAttrMap = new WORD[sLength];
@@ -629,7 +629,7 @@ short CUniverse::LoadAttributeData()
 //
 //*****************************************************************************
 
-short CUniverse::LoadEventData()
+int16_t CUniverse::LoadEventData()
 {
 	return 0;
 }
@@ -667,4 +667,3 @@ PALETTE* CUniverse::LoadPalette(
 //*****************************************************************************
 // EOF
 //*****************************************************************************
-

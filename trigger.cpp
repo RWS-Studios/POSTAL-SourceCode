@@ -58,7 +58,7 @@ CTrigger::CTrigger(CRealm* pRealm)
 	m_pRealm->m_pTriggerMap = m_pmgi;
 
 	// Assume we don't know the UID's fdor the pylons yet, so clear them all out:
-	for (short i=0;i < 256;i++)
+	for (int16_t i=0;i < 256;i++)
 		{
 		m_ausPylonUIDs[i] = pRealm->m_asPylonUIDs[i] = 0;
 		}
@@ -81,13 +81,13 @@ CTrigger::~CTrigger()
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CTrigger::Load(								// Returns 0 if successfull, non-zero otherwise
+int16_t CTrigger::Load(								// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,									// In:  File to load from
 	bool bEditMode,								// In:  True for edit mode, false otherwise
-	short sFileCount,								// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)							// In:  Version of file format to load.
+	int16_t sFileCount,								// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)							// In:  Version of file format to load.
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// In most cases, the base class Load() should be called.
 	sResult	= CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
@@ -101,7 +101,7 @@ short CTrigger::Load(								// Returns 0 if successfull, non-zero otherwise
 		if (m_pmgi) delete m_pmgi;
 		m_pmgi = NULL;
 
-		short sData = 0;
+		int16_t sData = 0;
 		pFile->Read(&sData);
 
 		// Was there something here?
@@ -130,7 +130,7 @@ short CTrigger::Load(								// Returns 0 if successfull, non-zero otherwise
 						m_pRealm->m_pTriggerMap = m_pmgi;
 						
 						// Copy the Pylons to the realm!
-						for (short i=0;i < 256;i++) m_pRealm->m_asPylonUIDs[i] = m_ausPylonUIDs[i];
+						for (int16_t i=0;i < 256;i++) m_pRealm->m_asPylonUIDs[i] = m_ausPylonUIDs[i];
 						}
 					}
 				}
@@ -158,18 +158,18 @@ short CTrigger::Load(								// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CTrigger::Save(								// Returns 0 if successfull, non-zero otherwise
+int16_t CTrigger::Save(								// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,									// In:  File to save to
-	short sFileCount)								// In:  File count (unique per file, never 0)
+	int16_t sFileCount)								// In:  File count (unique per file, never 0)
 	{
-	short	sResult	= 0;
+	int16_t	sResult	= 0;
 
 	// In most cases, the base class Save() should be called.
 	sResult	= CThing::Save(pFile, sFileCount);
 	if (sResult == 0)
 		{
 		// Save object data
-		short sData = 0; // NO DATA
+		int16_t sData = 0; // NO DATA
 
 		if (m_pmgi == NULL) 
 			{
@@ -218,7 +218,7 @@ short CTrigger::Save(								// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CTrigger::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+int16_t CTrigger::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 	{
 	return 0;
 	}
@@ -227,7 +227,7 @@ short CTrigger::Startup(void)								// Returns 0 if successfull, non-zero other
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-short CTrigger::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CTrigger::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 	{
 	return 0;
 	}
@@ -268,10 +268,10 @@ void CTrigger::Render(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CTrigger::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CTrigger::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
 	return 0;
 	}
@@ -280,7 +280,7 @@ short CTrigger::EditNew(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-short CTrigger::EditModify(void)
+int16_t CTrigger::EditModify(void)
 	{
 	return 0;
 	}
@@ -289,10 +289,10 @@ short CTrigger::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CTrigger::EditMove(									// Returns 0 if successfull, non-zero otherwise
-	short /*sX*/,											// In:  New x coord
-	short /*sY*/,											// In:  New y coord
-	short /*sZ*/)											// In:  New z coord
+int16_t CTrigger::EditMove(									// Returns 0 if successfull, non-zero otherwise
+	int16_t /*sX*/,											// In:  New x coord
+	int16_t /*sY*/,											// In:  New y coord
+	int16_t /*sZ*/)											// In:  New z coord
 	{
 	return 0;
 	}
@@ -321,7 +321,7 @@ void	CTrigger::AddData(RMultiGridIndirect* pmgi)
 	m_pRealm->m_pTriggerMap = m_pmgi = pmgi;
 
 	// Copy my Pylon Data into the Realm's:
-	for (short i=0;i < 256;i++) m_pRealm->m_asPylonUIDs[i] = m_ausPylonUIDs[i];
+	for (int16_t i=0;i < 256;i++) m_pRealm->m_asPylonUIDs[i] = m_ausPylonUIDs[i];
 	}
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -291,8 +291,8 @@ class CThing3d : public CThing
 		// A 2D point.  Used by the attrib check arrays.
 		typedef struct
 			{
-			short	sX;
-			short	sZ;
+			int16_t	sX;
+			int16_t	sZ;
 			} Point2D;
 
 	//---------------------------------------------------------------------------
@@ -324,10 +324,10 @@ class CThing3d : public CThing
 													// Y axis.
 		double m_dExtRotVelZ;				// Rate of rotation in degrees per second around
 													// Z axis.
-		long   m_lTimer;						// General purpose timer for states
-		long   m_lPrevTime;					// Previous update time
-		short  m_sPrevHeight;				// Previous height
-		short  m_sSuspend;					// Suspend flag
+		int32_t   m_lTimer;						// General purpose timer for states
+		int32_t   m_lPrevTime;					// Previous update time
+		int16_t  m_sPrevHeight;				// Previous height
+		int16_t  m_sSuspend;					// Suspend flag
 
 		U16	m_u16IdFire;					// ID of fire to carry around when you are burning.
 
@@ -338,15 +338,15 @@ class CThing3d : public CThing
 		
 		// Animation specific variables.
 		CAnim3D*	m_panimCur;					// Pointer to current animation.
-		long		m_lAnimTime;				// Time from start of animation.
-		long		m_lAnimPrevUpdateTime;	// Last time m_lAnimTime was updated.
+		int32_t		m_lAnimTime;				// Time from start of animation.
+		int32_t		m_lAnimPrevUpdateTime;	// Last time m_lAnimTime was updated.
 													// Used to determine the delta time to add
 													// to m_lAnimTime.
 		RTransform	m_trans;					// Transform to apply on Render.
 
 		State	m_state;							// Current state of this thing3d.
 
-		short	m_sBrightness;					// Normal brightness level or dark if burnt
+		int16_t	m_sBrightness;					// Normal brightness level or dark if burnt
 
 		bool	m_bAboveTerrain;				// true, if in the air, false if on terrain.
 
@@ -354,7 +354,7 @@ class CThing3d : public CThing
 
 		CStockPile	m_stockpile;			// Stockpile of ammo and health.
 
-		short	m_sLayerOverride;				// Layer override.  If > 0, used instead of
+		int16_t	m_sLayerOverride;				// Layer override.  If > 0, used instead of
 													// layer dictated by attributes.
 
 		const Point2D*	m_pap2dAttribCheckPoints;	// Points to the ms_apt3dAttribCheck*[]
@@ -367,7 +367,7 @@ class CThing3d : public CThing
 	public:
 		static double	ms_dDefaultSurfaceDrag;	// Default drag along surfaces.
 		static double	ms_dDefaultAirDrag;		// Default drag due to air friction.
-		static short	ms_sBurntBrightness;		// Brightness level after being burnt
+		static int16_t	ms_sBurntBrightness;		// Brightness level after being burnt
 		static char*	ms_apszStateNames[];		// Strings describing states, indexed by
 															// the state enum.
 
@@ -451,22 +451,22 @@ class CThing3d : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -478,19 +478,19 @@ class CThing3d : public CThing
 		void Render(void);
 
 		// Called by editor to init new object at specified position
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
-		short EditMove(											// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditMove(											// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to render object
 		void EditRender(void);
@@ -501,9 +501,9 @@ class CThing3d : public CThing
 		// Called by editor to get the hotspot of an object in 2D.
 		// (virtual (Overridden here)).
 		void EditHotSpot(			// Returns nothiing.
-			short*	psX,			// Out: X coord of 2D hotspot relative to
+			int16_t*	psX,			// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-			short*	psY);			// Out: Y coord of 2D hotspot relative to
+			int16_t*	psY);			// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 
 		// Get the sprite for this thing.  If there's more than one, pick one
@@ -657,7 +657,7 @@ class CThing3d : public CThing
 													// Out: New y position.
 			double*	pdNewZ,					// In:  z position to validate.
 													// Out: New z position.
-			short	sVertTolerance = 0);		// Vertical tolerance.
+			int16_t	sVertTolerance = 0);		// Vertical tolerance.
 
 		// Deluxe does all for updating position.
 		void DeluxeUpdatePosVel(	// Returns nothing.
@@ -668,23 +668,23 @@ class CThing3d : public CThing
 
 		// Get Floor attributes (height & floor attributes like nowalk, ladder, cliff)
 		void GetFloorAttributes(	// Returns nothing
-			short  sX,					// In:  X coord.
-			short  sZ,					// In:  Z coord.
+			int16_t  sX,					// In:  X coord.
+			int16_t  sZ,					// In:  Z coord.
 			U16*   pu16Attrib,		// Out: Combined attributes, if not NULL
-			short* psHeight);			// Out: Max height, if not NULL
+			int16_t* psHeight);			// Out: Max height, if not NULL
 
 		// Get Effect attributes (effects attributes like light, camera, oil, blood)
 		void GetEffectAttributes(	// Returns nothing
-			short  sX,					// In:  X coord.
-			short  sZ,					// In:  Z coord.
+			int16_t  sX,					// In:  X coord.
+			int16_t  sZ,					// In:  Z coord.
 			U16*   pu16Attrib,		// Out: Combined attributes, if not NULL
-			short* psLightBits);		// Out: Tally of light bits set, if not NULL.
+			int16_t* psLightBits);		// Out: Tally of light bits set, if not NULL.
 
 		// Get the layer based on the attribute points array.
 		void GetLayer(
-			short  sX,					// In:  X coord.
-			short  sZ,					// In:  Z coord.
-			short* psLayer);			// Out: Combined layer.
+			int16_t  sX,					// In:  X coord.
+			int16_t  sZ,					// In:  Z coord.
+			int16_t* psLayer);			// Out: Combined layer.
 
 		// Detach the specified Thing3d.
 		virtual			// Override to implement additional functionality.
@@ -726,13 +726,13 @@ class CThing3d : public CThing
 		// Add a force vector to this thing's external horizontal velocity vector.
 		void AddForceVector(			// Returns nothing.
 			double	dAddVel,			// In:  Magnitude of additional vector.
-			short		sRot);			// In:  Direction (in degrees) of additional vector.
+			int16_t		sRot);			// In:  Direction (in degrees) of additional vector.
 
 		// Load the default shadow resource unless one has already been loaded
 		// and set the shadow to visible
 		virtual			// Override to implement additional functionality
 							// Call base class to get default functionality
-		short PrepareShadow(void);	// Returns SUCCESS if set successfully
+		int16_t PrepareShadow(void);	// Returns SUCCESS if set successfully
 
 		// Plays a sample and purges the resource after playing (as long as nobody
 		// else has used the same sample resource).  
@@ -742,15 +742,15 @@ class CThing3d : public CThing
 																	// Does not fail.
 			SampleMasterID	id,								// In:  Identifier of sample you want played.
 			SampleMaster::SoundCategory eType,			// In:  Sound Volume Category for user adjustment
-			short	sInitialVolume	= -1,						// In:  Initial Sound Volume (0 - 255)
+			int16_t	sInitialVolume	= -1,						// In:  Initial Sound Volume (0 - 255)
 																	// Negative indicates to use the distance to the
 																	// ear to determine the volume.
 			SampleMaster::SoundInstance*	psi = NULL,	// Out: Handle for adjusting sound volume
-			long* plSampleDuration = NULL,				// Out: Sample duration in ms, if not NULL.
-			long lLoopStartTime = -1,						// In:  Where to loop back to in milliseconds.
+			int32_t* plSampleDuration = NULL,				// Out: Sample duration in ms, if not NULL.
+			int32_t lLoopStartTime = -1,						// In:  Where to loop back to in milliseconds.
 																	//	-1 indicates no looping (unless m_sLoop is
 																	// explicitly set).
-			long lLoopEndTime = 0,							// In:  Where to loop back from in milliseconds.
+			int32_t lLoopEndTime = 0,							// In:  Where to loop back from in milliseconds.
 																	// In:  If less than 1, the end + lLoopEndTime is used.
 			bool bPurgeSample = false);					// In:  Call ReleaseAndPurge rather than Release after playing
 
@@ -758,9 +758,9 @@ class CThing3d : public CThing
 		// Start a CAnimThing.
 		CAnimThing* StartAnim(					// Returns ptr to CAnimThing on success; NULL otherwise.
 			char* pszAnimResName,				// In:  Animation's resource name.
-			short	sX,								// In:  Position.
-			short	sY,								// In:  Position.
-			short	sZ,								// In:  Position.
+			int16_t	sX,								// In:  Position.
+			int16_t	sY,								// In:  Position.
+			int16_t	sZ,								// In:  Position.
 			bool	bLoop);							// In:  true to loop animation.
 
 

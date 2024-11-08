@@ -152,11 +152,11 @@ template <class T> class RList : public RBList<T*>
 			return (RBList<T*>::GetCurrent(&pld) == 0) ? pld : NULL; 
 			}
 
-		short IsEmpty(void)		// Returns TRUE if empty, FALSE otherwise.
+		int16_t IsEmpty(void)		// Returns TRUE if empty, FALSE otherwise.
 			{ return RBList<T*>::IsEmpty(); }
 
 		// Constructor to merely pass on arguments.
-		RList(short sInitialize	= TRUE) :
+		RList(int16_t sInitialize	= TRUE) :
 			RBList<T*>(sInitialize)
 			{
 			}

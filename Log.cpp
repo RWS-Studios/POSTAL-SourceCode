@@ -36,9 +36,9 @@
 //			Open a file for logging
 //		global variables used:		g_GameSettings
 ////////////////////////////////////////////////////////////////////////////////
-short OpenLogFile()
+int16_t OpenLogFile()
 	{
-	short sResult = 0; // Assume success
+	int16_t sResult = 0; // Assume success
 	if (g_GameSettings.m_bLogNetTime)
 		{
 			if (!g_GameSettings.m_rfNetSyncLog.IsOpen())
@@ -65,9 +65,9 @@ short OpenLogFile()
 //			Close a file for logging
 //		global variables used:		g_GameSettings
 ////////////////////////////////////////////////////////////////////////////////
-short CloseLogFile()
+int16_t CloseLogFile()
 	{
-	short sResult = 0; // Assume success
+	int16_t sResult = 0; // Assume success
 	if (g_GameSettings.m_bLogNetTime)
 		{
 		if ((g_GameSettings.m_rfNetSyncLog.Close()) != 0)
@@ -86,20 +86,20 @@ short CloseLogFile()
 //		global variables used:		g_GameSettings
 ////////////////////////////////////////////////////////////////////////////////
 extern
-short WriteTimeStamp(char *pszCaller,						// Name of calling routine
+int16_t WriteTimeStamp(char *pszCaller,						// Name of calling routine
 							char *pszCalleeName,					// Name of player being sent or sending 
-							unsigned char ucMsgType,			// Message type
+							uint8_t ucMsgType,			// Message type
 							Net::SEQ seqStart,					// Beginning sequent sent/received
-							long sNum,								// Number of seq's sent/received
+							int32_t sNum,								// Number of seq's sent/received
 							char bReceived,							// a received or a sent message? TRUE if received
 							U16 u16PackageID/*=0*/)				// Uniquely identifiable package id																		//		True if receiving, false if sending
 	{	
-	short sResult = 0;
+	int16_t sResult = 0;
 	char *szCallerMsg;
 	char szTime[256]; 
 	char szSeq[256];
 	char szNum[256];
-	long lTime = rspGetMilliseconds();
+	int32_t lTime = rspGetMilliseconds();
 
 	if ((ucMsgType == NetMsg::START_REALM)&&(bReceived))
 		{
@@ -148,7 +148,7 @@ short WriteTimeStamp(char *pszCaller,						// Name of calling routine
 
 	// Write package ID
 	char szPackageID[256];
-	ltoa((long)u16PackageID, szPackageID, 10);
+	ltoa((int32_t)u16PackageID, szPackageID, 10);
 	prfLog->Write(szPackageID);
 	prfLog->Write(" ");
 
@@ -293,9 +293,9 @@ short WriteTimeStamp(char *pszCaller,						// Name of calling routine
 //		global variables used:		g_GameSettings
 ////////////////////////////////////////////////////////////////////////////////
 extern
-short WriteInputData(U32 *input)
+int16_t WriteInputData(U32 *input)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	char szInput[256]; 
 
 	// For convenience

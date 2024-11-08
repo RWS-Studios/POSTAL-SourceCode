@@ -63,19 +63,19 @@ inline short rspSqrt(long lVal)
 /*****************************************************************
 
 /****************************************************************/
-const short csNumRotSteps = 360;
+const int16_t csNumRotSteps = 360;
 extern double SINQ[csNumRotSteps],COSQ[csNumRotSteps];
 extern float fSINQ[csNumRotSteps],fCOSQ[csNumRotSteps];
-extern short ATANQ[60];
-extern short SQRTQ[MAX_FAST_SQRT];
+extern int16_t ATANQ[60];
+extern int16_t SQRTQ[MAX_FAST_SQRT];
 /****************************************************************/
-inline short	rspSqrt(long lVal)
+inline int16_t	rspSqrt(int32_t lVal)
 	{
 	if (lVal < MAX_FAST_SQRT) return SQRTQ[lVal];
-	return short(sqrt(double(lVal)));
+	return int16_t(sqrt(double(lVal)));
 	}
 
-inline double rspSin(short sDeg) 
+inline double rspSin(int16_t sDeg) 
 	{ 
 #ifdef _DEBUG
 	ASSERT((sDeg >= 0) || (sDeg < 360));
@@ -84,7 +84,7 @@ inline double rspSin(short sDeg)
 	return SINQ[sDeg]; 
 	}
 
-inline double rspCos(short sDeg) 
+inline double rspCos(int16_t sDeg) 
 	{ 
 #ifdef _DEBUG
 	ASSERT((sDeg >= 0) || (sDeg < 360));
@@ -93,7 +93,7 @@ inline double rspCos(short sDeg)
 	return COSQ[sDeg]; 
 	}
 
-inline float rspfSin(short sDeg) 
+inline float rspfSin(int16_t sDeg) 
 	{ 
 #ifdef _DEBUG
 	ASSERT((sDeg >= 0) || (sDeg < 360));
@@ -102,7 +102,7 @@ inline float rspfSin(short sDeg)
 	return fSINQ[sDeg];
 	}
 
-inline float rspfCos(short sDeg) 
+inline float rspfCos(int16_t sDeg) 
 	{ 
 #ifdef _DEBUG
 	ASSERT((sDeg >= 0) || (sDeg < 360));
@@ -111,11 +111,11 @@ inline float rspfCos(short sDeg)
 	return fCOSQ[sDeg]; 
 	}
 
-extern	short rspATan(short sDeltaY,short sDeltaX);
-extern	short rspATan(double dVal);
-inline	short rspDegDelta(short sDegSrc,short sDegDst)
+extern	int16_t rspATan(int16_t sDeltaY,int16_t sDeltaX);
+extern	int16_t rspATan(double dVal);
+inline	int16_t rspDegDelta(int16_t sDegSrc,int16_t sDegDst)
 	{
-	short sDel = sDegDst - sDegSrc;
+	int16_t sDel = sDegDst - sDegSrc;
 
 	if (sDel >= 0) // positive turn
 		{
@@ -132,26 +132,28 @@ inline	short rspDegDelta(short sDegSrc,short sDegDst)
 // Use individual whiles if you know what 
 // to expect
 //
-inline short rspMod360(short sDeg)
+inline int16_t rspMod360(int16_t sDeg)
 	{
-	while (sDeg < 0) sDeg += 360;
-	while (sDeg > 359) sDeg -= 360;
-	return sDeg;
+	if (sDeg == 0) return 0;
+	if (sDeg > 0) return sDeg % 360;
+	int16_t ret = 360 - (-sDeg % 360);
+	return ret == 360 ? 0 : ret;
 	}
 
-inline short rspMod(short sVal,short &sRange)
+inline int16_t rspMod(int16_t sVal,int16_t &sRange)
 	{
-	while (sVal < 0) sVal += sRange;
-	while (sVal >= sRange) sVal -= sRange;
-	return sVal;
+	if (sVal == 0) return 0;
+	if (sVal > 0) return sVal % sRange;
+	int16_t ret = sRange - (-sVal % sRange);
+	return ret == sRange ? 0 : ret;
 	}
 
-inline void rspMod360(short *sDeg)
+inline void rspMod360(int16_t *sDeg)
 	{
 	*sDeg = rspMod360(*sDeg);
 	}
 
-inline void rspMod(short *sVal,short &sRange)
+inline void rspMod(int16_t *sVal,int16_t &sRange)
 	{
 	*sVal = rspMod(*sVal,sRange);
 	}

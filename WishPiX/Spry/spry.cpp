@@ -74,9 +74,9 @@ RSpry::~RSpry()
 ////////////////////////////////////////////////////////////////////////////////
 // Clear 
 ////////////////////////////////////////////////////////////////////////////////
-short RSpry::Clear(void)
+int16_t RSpry::Clear(void)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Destroy any existing sprites and get rid of all list nodes
 	while (m_listSprites.GetHead())
@@ -92,10 +92,10 @@ short RSpry::Clear(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Load from specified file
 ////////////////////////////////////////////////////////////////////////////////
-short RSpry::Load(
+int16_t RSpry::Load(
 	char* pszFile)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Clear any existing sprites
 	Clear();
@@ -124,34 +124,34 @@ short RSpry::Load(
 ////////////////////////////////////////////////////////////////////////////////
 // Load from already-open file
 ////////////////////////////////////////////////////////////////////////////////
-short RSpry::Load(
+int16_t RSpry::Load(
 	RFile* pFile)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Clear any existing sprites
 	Clear();
 
 	// Read & validate file ID
-	ULONG ulFileID;
+	uint32_t ulFileID;
 	if (pFile->Read(&ulFileID) == 1)
 		{
 		if (ulFileID == RSpry::FileID)
 			{
 
 			// Read & validate file version
-			ULONG ulFileVersion;
+			uint32_t ulFileVersion;
 			if (pFile->Read(&ulFileVersion) == 1)
 				{
 				if (ulFileVersion == RSpry::FileVersion)
 					{
 
 					// Read count of sprites
-					short sCount;
+					int16_t sCount;
 					pFile->Read(&sCount);
 
 					// Construct and load indicated number of RSprite's and add them to list
-					for (short i = 0; (i < sCount) && !sResult; i++)
+					for (int16_t i = 0; (i < sCount) && !sResult; i++)
 						{
 						RSprite* pSprite = new RSprite;
 						if (pSprite != 0)
@@ -199,10 +199,10 @@ short RSpry::Load(
 ////////////////////////////////////////////////////////////////////////////////
 // Save to specified file
 ////////////////////////////////////////////////////////////////////////////////
-short RSpry::Save(
+int16_t RSpry::Save(
 	char* pszFile)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Open file
 	RFile file;
@@ -228,17 +228,17 @@ short RSpry::Save(
 ////////////////////////////////////////////////////////////////////////////////
 // Save to already-open file
 ////////////////////////////////////////////////////////////////////////////////
-short RSpry::Save(
+int16_t RSpry::Save(
 	RFile* pFile)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Write out file ID and version
-	pFile->Write((unsigned long)RSpry::FileID);
-	pFile->Write((unsigned long)RSpry::FileVersion);
+	pFile->Write((uint32_t)RSpry::FileID);
+	pFile->Write((uint32_t)RSpry::FileVersion);
 
 	// Write out number of sprites
-	pFile->Write((short)m_listSprites.GetCount());
+	pFile->Write((int16_t)m_listSprites.GetCount());
 
 	// Write out each sprite
 	ListOfSprites::Pointer p = m_listSprites.GetHead();
@@ -262,10 +262,10 @@ short RSpry::Save(
 ////////////////////////////////////////////////////////////////////////////////
 // Convert to specified RImage type
 ////////////////////////////////////////////////////////////////////////////////
-short RSpry::Convert(
+int16_t RSpry::Convert(
 	RImage::Type type)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Convert all sprites to specified type
 	ListOfSprites::Pointer p = m_listSprites.GetHead();

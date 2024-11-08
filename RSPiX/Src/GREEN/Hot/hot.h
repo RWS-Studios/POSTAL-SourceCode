@@ -37,7 +37,7 @@
 //							dequeued or polled events, but it was getting stale any-
 //							ways.
 //
-//		01/26/97	JMI	Changed callbacks' first parms to RHot* instead of ULONG.
+//		01/26/97	JMI	Changed callbacks' first parms to RHot* instead of uint32_t.
 //
 //		03/19/97	JMI	Added InputEventCall and made Do(pie) the main RHot
 //							interface.
@@ -87,18 +87,18 @@ class RHot
 		typedef void (*REventCall)(	// Returns nothing.
 						RHot*	phot,			// Ptr to the RHot that generated the
 												// callback.
-						short sEvent);		// Event that occurred.
+						int16_t sEvent);		// Event that occurred.
 												// Uses blue.h macros (RSP_MB?_*).
 
 		typedef void (*REventPosCall)(	// Returns nothing.
 						RHot*	phot,				// Ptr to the RHot that generated the
 													// callback.
-						short sEvent,			// Event that occurred.
+						int16_t sEvent,			// Event that occurred.
 													// Uses blue.h macros (RSP_MB?_*).
-						short sPosX,			// Mouse x position at button event
+						int16_t sPosX,			// Mouse x position at button event
 													// relative to hotbox's upper, left
 													// corner.
-						short sPosY);			// Mouse y position at button event
+						int16_t sPosY);			// Mouse y position at button event
 													// relative to hotbox's upper, left
 													// corner.
 
@@ -116,7 +116,7 @@ class RHot
 													// RHot callbacks and will certainly affect 
 													// the RInputEvent passed to RHot::Do().
 
-		typedef RSList <RHot, short>	SListHots;	// Sorted list of RHots.
+		typedef RSList <RHot, int16_t>	SListHots;	// Sorted list of RHots.
 		typedef RList <RHot>				ListHots;	// List of RHots.
 
 	public:
@@ -125,38 +125,38 @@ class RHot
 
 		// Constructura Especial that sets some intial values.
 		RHot(	
-			short sX,									// X position of new hotbox.
-			short sY,									// Y position of new hotbox.
-			short sW,									// Width of new hotbox.
-			short sH,									// Height of new hotbox.
+			int16_t sX,									// X position of new hotbox.
+			int16_t sY,									// Y position of new hotbox.
+			int16_t sW,									// Width of new hotbox.
+			int16_t sH,									// Height of new hotbox.
 			REventCall fnEventCall = NULL,		// Callback on mouse event.
-			short	sActive	= FALSE,					// Initially active, if TRUE.
-			ULONG	ulUser	= 0,						// User value.
-			short sPriority = RHOT_NO_PRIORITY);// Priority.  Default == non-prioritized.
+			int16_t	sActive	= FALSE,					// Initially active, if TRUE.
+			uint32_t	ulUser	= 0,						// User value.
+			int16_t sPriority = RHOT_NO_PRIORITY);// Priority.  Default == non-prioritized.
 
 		// Constructura Especial el Segundario or something that sets some
 		// intial values.
 		RHot(	
-			short sX,									// X position of new hotbox.
-			short sY,									// Y position of new hotbox.
-			short sW,									// Width of new hotbox.
-			short sH,									// Height of new hotbox.
+			int16_t sX,									// X position of new hotbox.
+			int16_t sY,									// Y position of new hotbox.
+			int16_t sW,									// Width of new hotbox.
+			int16_t sH,									// Height of new hotbox.
 			REventPosCall fnEventPosCall,			// Callback on mouse event.
-			short	sActive	= FALSE,					// Initially active, if TRUE.
-			ULONG	ulUser	= 0,						// User value.
-			short sPriority = RHOT_NO_PRIORITY);// Priority.  Default == non-prioritized.
+			int16_t	sActive	= FALSE,					// Initially active, if TRUE.
+			uint32_t	ulUser	= 0,						// User value.
+			int16_t sPriority = RHOT_NO_PRIORITY);// Priority.  Default == non-prioritized.
 
 		// Constructura Especial el Tres or something that sets some
 		// intial values.
 		RHot(	
-			short sX,									// X position of new hotbox.
-			short sY,									// Y position of new hotbox.
-			short sW,									// Width of new hotbox.
-			short sH,									// Height of new hotbox.
+			int16_t sX,									// X position of new hotbox.
+			int16_t sY,									// Y position of new hotbox.
+			int16_t sW,									// Width of new hotbox.
+			int16_t sH,									// Height of new hotbox.
 			InputEventCall fnInputEventCall,		// Callback on mouse event.
-			short	sActive	= FALSE,					// Initially active, if TRUE.
-			ULONG	ulUser	= 0,						// User value.
-			short sPriority = RHOT_NO_PRIORITY);// Priority.  Default == non-prioritized.
+			int16_t	sActive	= FALSE,					// Initially active, if TRUE.
+			uint32_t	ulUser	= 0,						// User value.
+			int16_t sPriority = RHOT_NO_PRIORITY);// Priority.  Default == non-prioritized.
 
 		// Destructor.
 		~RHot();
@@ -166,14 +166,14 @@ class RHot
 		// calls the callback(s) when mouse events occur within its
 		// area.
 		void SetActive(		// Returns nothing.
-			short sActive);	// TRUE to activate, FALSE otherwise.
+			int16_t sActive);	// TRUE to activate, FALSE otherwise.
 
 		// Sets the priority of this hotbox.
 		// If hotbox is already active, it is repositioned in the prioritized 
 		// list so that the new priorty is recognized.
 		// See CPP comment header in regards to specifics of this value.
 		void SetPriority(		// Returns nothing.
-			short sPriority);	// New priority for hotbox.  Lower value
+			int16_t sPriority);	// New priority for hotbox.  Lower value
 									// equals higher priority.
 									// RHOT_NO_PRIORITY(default) indicates non-prioritized.
 
@@ -188,7 +188,7 @@ class RHot
 		// When capturing is active, this hotbox always receives
 		// events.  Sort of a cursor event capture mode.
 		void SetCapture(		// Returns nothing.
-			short sActive);	// TRUE to activate, FALSE otherwise.
+			int16_t sActive);	// TRUE to activate, FALSE otherwise.
 
 		// Processes a single event for all child hotboxes.
 		// Non mouse events are ignored.
@@ -196,7 +196,7 @@ class RHot
 		// is used and decide whether to utilize the event.
 		// Recurses on children.
 		// This is called by the other Do().
-		short Do(					// Returns priority of item that used event
+		int16_t Do(					// Returns priority of item that used event
 										// or RHOT_NO_PRIORITY if none.
 			RInputEvent*	pie);	// In:  Most recent user input event.
 										// Out: Depends on callbacks.  Generally,
@@ -208,11 +208,11 @@ class RHot
 		// take such input, will have its lTime, sButtons, and sUsed set to 0.
 		// If you do not use that type of callback, then there's no problem.
 		// This is purely provided for backward compatibility.
-		short Do(							// Returns priority of item that used event
+		int16_t Do(							// Returns priority of item that used event
 												// or RHOT_NO_PRIORITY if none.
-			short	sPosX,					// In:  X position for event.
-			short	sPosY,					// In:  Y position for event.
-			short sEvent)					// In:  A RSPiX Blue mouse button event
+			int16_t	sPosX,					// In:  X position for event.
+			int16_t	sPosY,					// In:  Y position for event.
+			int16_t sEvent)					// In:  A RSPiX Blue mouse button event
 												// (see <Mac/Win/Etc>Blue.h).
 			{
 			// Create an event.
@@ -230,12 +230,12 @@ class RHot
 
 	public:	// Querries.
 
-		short	IsActive(void)	// Returns TRUE if active, FALSE otherwise.
+		int16_t	IsActive(void)	// Returns TRUE if active, FALSE otherwise.
 			{
 			return m_sActive; 
 			}
 
-		short IsCapturing(void)	// Returns TRUE if capturing events, FALSE
+		int16_t IsCapturing(void)	// Returns TRUE if capturing events, FALSE
 										// otherwise.
 			{ 
 			return m_sCapture; 
@@ -243,16 +243,16 @@ class RHot
 
 		// Get the child position equivalent coordinates.
 		void GetChildPos(	// Returns nothing.
-			short* psX,		// In:  Top-level position.
+			int16_t* psX,		// In:  Top-level position.
 								// Out: Child position.
-			short* psY);	// In:  Top-level position.
+			int16_t* psY);	// In:  Top-level position.
 								// Out: Child position.    
 
 		// Get the top position equivalent coordinates.
 		void GetTopPos(	// Returns nothing.
-			short* psX,		// In:  Child position.
+			int16_t* psX,		// In:  Child position.
 								// Out: Top-level position.
-			short* psY);	// In:  Child position.
+			int16_t* psY);	// In:  Child position.
 								// Out: Top-level position.    
 
 		RHot*	GetParent(void)	// Returns ptr to RHot that is parent to this Rhot.
@@ -275,9 +275,9 @@ class RHot
 	public:	// Static members.
 
 	protected:	// Instantiable members.
-		short		m_sActive;		// TRUE if active, FALSE otherwise.
-		short		m_sCapture;		// TRUE, if capturing events.
-		short		m_sPriority;	// Priority for hotbox.  Lower value     
+		int16_t		m_sActive;		// TRUE if active, FALSE otherwise.
+		int16_t		m_sCapture;		// TRUE, if capturing events.
+		int16_t		m_sPriority;	// Priority for hotbox.  Lower value     
 										// equals closer to front (higher priority).
 										// RHOT_NO_PRIORITY(default) indicates non-prioritized.
 										// See CPP comment header in regards to specifics
@@ -286,12 +286,12 @@ class RHot
 
 	
 	public:	// To be modified by the User.
-		short		m_sX;				// The x-coordinate of this hotbox relative to
+		int16_t		m_sX;				// The x-coordinate of this hotbox relative to
 										// its parent.
-		short		m_sY;				// The y-coordinate of this hotbox relative to
+		int16_t		m_sY;				// The y-coordinate of this hotbox relative to
 										// its parent.
-		short		m_sW;				// The width of this hotbox.
-		short		m_sH;				// The height of this hotbox.
+		int16_t		m_sW;				// The width of this hotbox.
+		int16_t		m_sH;				// The height of this hotbox.
 
 		REventCall		m_ecUser;	// User callback on button events.
 											// All callbacks can be used simultaneously.
@@ -301,7 +301,7 @@ class RHot
 		InputEventCall	m_iecUser;	// User callback on input events.  Includes
 											// a full RInputEvent.
 											// All callbacks can be used simultaneously.
-		ULONG		m_ulUser;			// User value passed to callbacks.
+		uint32_t		m_ulUser;			// User value passed to callbacks.
 
 		SListHots	m_slistActiveChildren;	// List of active child RHots.
 		ListHots		m_listChildren;			// List of all child RHots.

@@ -220,12 +220,12 @@ void CIdBank::Reset(void)
 // Get a unique ID and associate it with a thing (CThing, that is).
 //
 //////////////////////////////////////////////////////////////////////////////
-short CIdBank::Get(	// Returns 0 on success.
+int16_t CIdBank::Get(	// Returns 0 on success.
 	CThing*	pthing,	// In:  Thing that wants to get an ID and be put in
 							// the ID table.
 	U16*		pu16ID)	// Out: ID for this particular CThing.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// Make sure there's one left . . .
 	if (m_u16HeadFreeId != IdNil)
@@ -253,12 +253,12 @@ short CIdBank::Get(	// Returns 0 on success.
 // Take a unique ID and associate it with a thing (CThing).
 //
 //////////////////////////////////////////////////////////////////////////////
-short CIdBank::Take(	// Returns 0 on success.
+int16_t CIdBank::Take(	// Returns 0 on success.
 	CThing*	pthing,	// In:  Thing that wants to take an ID and be put in
 							// the ID table.
 	U16		u16ID)	// In:  ID for this particular CThing.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// Range check.
 	ASSERT(u16ID < NumIds);
@@ -310,11 +310,11 @@ void CIdBank::Release(	// Returns nothing.
 // Get a CThing via its ID.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CIdBank::GetThingByID(	// Returns 0 on success.
+int16_t CIdBank::GetThingByID(	// Returns 0 on success.
 	CThing**	ppthing,				// Out: Ptr to CThing identified by u16ID.
 	U16		u16ID)				// In:  ID of thing to get.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	if (u16ID != IdNil)
 		{

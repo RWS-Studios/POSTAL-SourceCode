@@ -78,10 +78,10 @@ class CWarp : public CThing
 		double m_dX;										// Dude's initial position.
 		double m_dY;										// Dude's initial position.
 		double m_dZ;										// Dude's initial position.
-		short	m_sRotY;										// Dude's initial rotation 
+		int16_t	m_sRotY;										// Dude's initial rotation 
 																// around the Y axis.
 
-		short m_sSuspend;									// Suspend flag
+		int16_t m_sSuspend;									// Suspend flag
 														
 		CSprite2	m_sprite;								// Sprite.
 
@@ -98,7 +98,7 @@ class CWarp : public CThing
 		static CStockPile	ms_stockpile;
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
+		static int16_t ms_sFileCount;
 
 
 	//---------------------------------------------------------------------------
@@ -131,11 +131,11 @@ class CWarp : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CWarp(pRealm);
 			if (*ppNew == 0)
 				{
@@ -150,22 +150,22 @@ class CWarp : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -180,19 +180,19 @@ class CWarp : public CThing
 		void Render(void);
 
 		// Called by editor to init new object at specified position
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
-		short EditMove(											// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditMove(											// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to get the clickable pos/area of an object in 2D.
 		virtual	// Overridden here.
@@ -202,9 +202,9 @@ class CWarp : public CThing
 		// Called by editor to get the hotspot of an object in 2D.
 		virtual	// Overridden here.
 		void EditHotSpot(			// Returns nothiing.
-			short*	psX,			// Out: X coord of 2D hotspot relative to
+			int16_t*	psX,			// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-			short*	psY);			// Out: Y coord of 2D hotspot relative to
+			int16_t*	psY);			// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 
 		// Called by editor to update object
@@ -230,21 +230,21 @@ class CWarp : public CThing
 
 		// Stocks, rejuvenates, and places a CDude.  The dude can be passed to this
 		// function or allocated by this function.
-		short WarpIn(			// Returns 0 on success.
+		int16_t WarpIn(			// Returns 0 on success.
 			CDude**	ppdude,	// In:  CDude to 'warp in', *ppdude = NULL to create one.
 									// Out: Newly created CDude, if no CDude passed in.
-			short	sOptions);	// In:  Options for 'warp in'.
+			int16_t	sOptions);	// In:  Options for 'warp in'.
 
 		// Stocks, rejuvenates, and places a CDude at a random warp.  The dude can 
 		// be passed to this function or allocated by this function.
-		static short WarpInAnywhere(	// Returns 0 on success.
+		static int16_t WarpInAnywhere(	// Returns 0 on success.
 			CRealm*	prealm,				// In:  Realm in which to choose CWarp.
 			CDude**	ppdude,				// In:  CDude to 'warp in', *ppdude = NULL to create one.
 												// Out: Newly created CDude, if no CDude passed in.
-			short	sOptions);				// In:  Options for 'warp in'.
+			int16_t	sOptions);				// In:  Options for 'warp in'.
 
 		// Creates a warp based on a dude's settings.
-		static short CreateWarpFromDude(	// Returns 0 on success.
+		static int16_t CreateWarpFromDude(	// Returns 0 on success.
 			CRealm*	prealm,					// In:  Realm in which to choose CWarp.
 			CDude*	pdude,					// In:  Dude to create warp from.
 			CWarp**	ppwarp,					// Out: New warp on success.
@@ -256,13 +256,13 @@ class CWarp : public CThing
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		short GetResources(void);						// Returns 0, if successfull, non-zero otherwise
+		int16_t GetResources(void);						// Returns 0, if successfull, non-zero otherwise
 		
 		// Free all resources
-		short FreeResources(void);						// Returns 0, if successfull, non-zero otherwise
+		int16_t FreeResources(void);						// Returns 0, if successfull, non-zero otherwise
 
 		// Initialize object.
-		short Init(void);									// Returns 0, on success.
+		int16_t Init(void);									// Returns 0, on success.
 	};
 
 

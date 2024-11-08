@@ -121,13 +121,13 @@ class CIdBank
 		void Reset(void);
 
 		// Get a unique ID and associate it with a thing (CThing, that is).
-		short Get(				// Returns 0 on success.
+		int16_t Get(				// Returns 0 on success.
 			CThing*	pthing,	// In:  Thing that wants to get an ID and be put in
 									// the ID table.
 			U16*		pu16ID);	// Out: ID for this particular CThing.
 
 		// Take a unique ID and associate it with a thing (CThing).
-		short Take(				// Returns 0 on success.
+		int16_t Take(				// Returns 0 on success.
 			CThing*	pthing,	// In:  Thing that wants to take an ID and be put in
 									// the ID table.
 			U16		u16ID);	// In:  ID for this particular CThing.
@@ -137,7 +137,7 @@ class CIdBank
 			U16		u16ID);	// ID to release.
 
 		// Get a CThing via its ID.
-		short GetThingByID(	// Returns 0 on success.
+		int16_t GetThingByID(	// Returns 0 on success.
 			CThing**	ppthing,	// Out: Ptr to CThing identified by u16ID.
 			U16		u16ID);	// In:  ID of thing to get.
 

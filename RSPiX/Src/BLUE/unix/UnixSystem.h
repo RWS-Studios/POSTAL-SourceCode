@@ -69,22 +69,6 @@ using namespace std;
 // Usefull pragms
 ////////////////////////////////////////////////////////////////////////////////
 
-
-////////////////////////////////////////////////////////////////////////////////
-// Old-fashioned base types (BASETYPES macro is for compatibility with WIN32)
-////////////////////////////////////////////////////////////////////////////////
-#ifndef BASETYPES
-#define BASETYPES
-typedef unsigned long ULONG;
-typedef ULONG *PULONG;
-typedef unsigned short USHORT;
-typedef USHORT *PUSHORT;
-typedef unsigned char UCHAR;
-typedef UCHAR *PUCHAR;
-typedef char *PSZ;
-#endif // !BASETYPES
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // Basic RSPiX Types
 ////////////////////////////////////////////////////////////////////////////////
@@ -93,14 +77,14 @@ typedef char *PSZ;
 
 	// The world's most specific types < S | U > < # >
 	// S == signed, U == unsigned, # == number of bits
-	typedef signed		char		S8;
-	typedef unsigned	char		U8;
-	typedef signed		short		S16;
-	typedef unsigned	short		U16;
-	typedef signed		long		S32;
-	typedef unsigned	long		U32;
-	typedef signed long long S64;
-	typedef unsigned long long U64;
+	typedef int8_t		S8;
+	typedef uint8_t		U8;
+	typedef int16_t		S16;
+	typedef uint16_t		U16;
+	typedef int32_t		S32;
+	typedef uint32_t		U32;
+	typedef int64_t S64;
+	typedef uint64_t U64;
 
 	// 128-bit got a little trickier...
 	#ifdef SYS_ENDIAN_LITTLE
@@ -258,13 +242,19 @@ inline bool rspObjCmp(const T* p1, const T* p2, size_t count)
 	}
 
 
-inline char *ltoa(long l, char *buf, size_t bufsize)
+inline char *ltoa(int32_t l, char *buf, int bufsize)
 {
     snprintf(buf, bufsize, "%ld", l);
     return(buf);
 }
 
-inline char *itoa(int l, char *buf, size_t bufsize)
+inline char *ltoa(uint32_t l, char *buf, int bufsize)
+{
+    snprintf(buf, bufsize, "%ld", l);
+    return(buf);
+}
+
+inline char *itoa(int l, char *buf, int bufsize)
 {
     snprintf(buf, bufsize, "%d", l);
     return(buf);
@@ -277,4 +267,3 @@ inline char *itoa(int l, char *buf, size_t bufsize)
 //////////////////////////////////////////////////////////////////////////////
 // EOF
 //////////////////////////////////////////////////////////////////////////////
-

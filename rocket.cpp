@@ -202,14 +202,14 @@ double CRocket::ms_dAccUser     = 250.0;				// Acceleration due to user
 double CRocket::ms_dMaxVelFore  = 250.0;				// Maximum forward velocity
 double CRocket::ms_dMaxVelBack  = -250.0;				// Maximum backward velocity
 double CRocket::ms_dCloseDistance = 30.0;			// Close enough to hit CDude
-long CRocket::ms_lArmingTime = 500;					// Time before weapon arms.
-short CRocket::ms_sOffScreenDist = 200;				// Go off screen this far before blowing up
-long CRocket::ms_lSmokeTrailInterval = 10;			// Time to emit smoke trail.
-long CRocket::ms_lSmokeTimeToLive = 1000;				// Time for smoke to stick around.
+int32_t CRocket::ms_lArmingTime = 500;					// Time before weapon arms.
+int16_t CRocket::ms_sOffScreenDist = 200;				// Go off screen this far before blowing up
+int32_t CRocket::ms_lSmokeTrailInterval = 10;			// Time to emit smoke trail.
+int32_t CRocket::ms_lSmokeTimeToLive = 1000;				// Time for smoke to stick around.
 
 
 // Let this auto-init to 0
-short CRocket::ms_sFileCount;
+int16_t CRocket::ms_sFileCount;
 
 /// Rocket Animation Files
 static char* ms_apszResNames[] = 
@@ -227,13 +227,13 @@ static char* ms_apszResNames[] =
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CRocket::Load(										// Returns 0 if successfull, non-zero otherwise
+int16_t CRocket::Load(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 {
-	short sResult = CWeapon::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CWeapon::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 
 	if (sResult == SUCCESS)
 	{
@@ -283,9 +283,9 @@ short CRocket::Load(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CRocket::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CRocket::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 {
 	// In most cases, the base class Save() should be called.  In this case it
 	// isn't because the base class doesn't have a Save()!
@@ -313,8 +313,8 @@ short CRocket::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 void CRocket::Update(void)
 {
-	USHORT usAttrib;
-	short sHeight;
+	uint16_t usAttrib;
+	int16_t sHeight;
 	double dNewX;
 	double dNewZ;
 	double dPrevX = 0; // compiler warning "not initialized before being used"
@@ -323,7 +323,7 @@ void CRocket::Update(void)
 	if (!m_sSuspend)
 		{
 		// Get new time
-		long lThisTime = m_pRealm->m_time.GetGameTime(); 
+		int32_t lThisTime = m_pRealm->m_time.GetGameTime(); 
 
 		// Calculate elapsed time in seconds
 		double dSeconds = (double)(lThisTime - m_lPrevTime) / 1000.0;
@@ -389,12 +389,12 @@ void CRocket::Update(void)
 					m_dHorizVel = ms_dMaxVelBack;
 
 				// Adjust position based on velocity (this will clearly be optimized later on!)
-				dNewX = m_dX + COSQ[(short)m_dRot] * (m_dHorizVel * dSeconds);
-				dNewZ = m_dZ - SINQ[(short)m_dRot] * (m_dHorizVel * dSeconds);
+				dNewX = m_dX + COSQ[(int16_t)m_dRot] * (m_dHorizVel * dSeconds);
+				dNewZ = m_dZ - SINQ[(int16_t)m_dRot] * (m_dHorizVel * dSeconds);
 
 				// Check for obstacles
-				sHeight = m_pRealm->GetHeight((short) dNewX, (short) dNewZ);
-				usAttrib = m_pRealm->GetFloorAttribute((short) dNewX, (short) dNewZ);
+				sHeight = m_pRealm->GetHeight((int16_t) dNewX, (int16_t) dNewZ);
+				usAttrib = m_pRealm->GetFloorAttribute((int16_t) dNewX, (int16_t) dNewZ);
 
 				// If the new position's height is too high, the new position is a ways
 				// off screen, or the path to the new position is not clear of terrain . . .
@@ -406,9 +406,9 @@ void CRocket::Update(void)
 					 !m_pRealm->IsPathClear(	// Returns true, if the entire path is clear.                 
 														// Returns false, if only a portion of the path is clear.     
 														// (see *psX, *psY, *psZ).                                    
-						(short) m_dX, 				// In:  Starting X.                                           
-						(short) m_dY, 				// In:  Starting Y.                                           
-						(short) m_dZ, 				// In:  Starting Z.                                           
+						(int16_t) m_dX, 				// In:  Starting X.                                           
+						(int16_t) m_dY, 				// In:  Starting Y.                                           
+						(int16_t) m_dZ, 				// In:  Starting Z.                                           
 						3.0, 							// In:  Rate at which to scan ('crawl') path in pixels per    
 														// iteration.                                                 
 														// NOTE: Values less than 1.0 are inefficient.                
@@ -416,8 +416,8 @@ void CRocket::Update(void)
 														// at only one pixel.                                         
 														// NOTE: We could change this to a speed in pixels per second 
 														// where we'd assume a certain frame rate.                    
-						(short) dNewX, 			// In:  Destination X.                                        
-						(short) dNewZ,				// In:  Destination Z.                                        
+						(int16_t) dNewX, 			// In:  Destination X.                                        
+						(int16_t) dNewZ,				// In:  Destination Z.                                        
 						0,								// In:  Max traverser can step up.                      
 						NULL,							// Out: If not NULL, last clear point on path.                
 						NULL,							// Out: If not NULL, last clear point on path.                
@@ -601,7 +601,7 @@ void CRocket::Update(void)
 // Old call:	PlaySample(g_smidRocketExplode);
 				}
 
-				short a;
+				int16_t a;
 				CFire* pSmoke;
 				for (a = 0; a < 8; a++)
 				{
@@ -637,7 +637,7 @@ void CRocket::Update(void)
 ////////////////////////////////////////////////////////////////////////////////
 void CRocket::Render(void)
 {
-	long lThisTime = m_pRealm->m_time.GetGameTime();
+	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 
 	m_sprite.m_pmesh = (RMesh*) m_anim.m_pmeshes->GetAtTime(lThisTime);
 	m_sprite.m_psop = (RSop*) m_anim.m_psops->GetAtTime(lThisTime);
@@ -662,13 +662,13 @@ void CRocket::Render(void)
 	if (m_idParent == CIdBank::IdNil)
 	{
 		// Map from 3d to 2d coords
-		Map3Dto2D((short) m_dX, (short) m_dY, (short) m_dZ, &m_sprite.m_sX2, &m_sprite.m_sY2);
+		Map3Dto2D((int16_t) m_dX, (int16_t) m_dY, (int16_t) m_dZ, &m_sprite.m_sX2, &m_sprite.m_sY2);
 
 		// Priority is based on Z.
 		m_sprite.m_sPriority = m_dZ;
 
 		// Layer should be based on info we get from the attribute map
-		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 		m_sprite.m_ptrans		= &m_trans;
 
@@ -689,12 +689,12 @@ void CRocket::Render(void)
 // Setup
 ////////////////////////////////////////////////////////////////////////////////
 
-short CRocket::Setup(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CRocket::Setup(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -728,9 +728,9 @@ short CRocket::Setup(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CRocket::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CRocket::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	sResult = m_anim.Get(ms_apszResNames);
 	if (sResult == 0)
@@ -757,7 +757,7 @@ short CRocket::GetResources(void)						// Returns 0 if successfull, non-zero oth
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CRocket::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CRocket::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
 	m_anim.Release();
 
@@ -770,12 +770,12 @@ short CRocket::FreeResources(void)						// Returns 0 if successfull, non-zero ot
 //				 created.
 ////////////////////////////////////////////////////////////////////////////////
 
-short CRocket::Preload(
+int16_t CRocket::Preload(
 	CRealm* prealm)				// In:  Calling realm.
 {
 	CAnim3D anim;	
 	RImage* pimage;
-	short sResult = anim.Get(ms_apszResNames);
+	int16_t sResult = anim.Get(ms_apszResNames);
 	anim.Release();
 	rspGetResource(&g_resmgrGame, prealm->Make2dResPath(SMALL_SHADOW_FILE), &pimage, RFile::LittleEndian);
 	rspReleaseResource(&g_resmgrGame, &pimage);

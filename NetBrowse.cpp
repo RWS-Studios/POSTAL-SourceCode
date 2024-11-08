@@ -70,11 +70,11 @@ void CNetBrowse::Reset(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Startup
 ////////////////////////////////////////////////////////////////////////////////
-short CNetBrowse::Startup(							// Returns 0 if sucessfull, non-zero otherwise
-	USHORT usPort,											// In:  Server's base port number
+int16_t CNetBrowse::Startup(							// Returns 0 if sucessfull, non-zero otherwise
+	uint16_t usPort,											// In:  Server's base port number
 	RSocket::BLOCK_CALLBACK callback)				// In:  Blocking callback
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Make sure we start in a good state
 	Reset();
@@ -127,7 +127,7 @@ void CNetBrowse::Update(
 	Hosts* phostsRemoved)								// I/O:  List of hosts that were removed
 	{
 	// Check if it's time to broadcast
-	long lTime = rspGetMilliseconds();
+	int32_t lTime = rspGetMilliseconds();
 	if ((lTime - m_lLastBroadcast) > Net::BroadcastInterval)
 		{
 		// Create message
@@ -142,8 +142,8 @@ void CNetBrowse::Update(
 		RSocket::CreateBroadcastAddress(m_usBasePort + Net::AntennaPortOffset, &address);
 
 		// Broadcast the message
-		long lBytesSent;
-		short serr = m_socketBrowse.SendTo(buf1, sizeof(buf1), &lBytesSent, &address);
+		int32_t lBytesSent;
+		int16_t serr = m_socketBrowse.SendTo(buf1, sizeof(buf1), &lBytesSent, &address);
 		if (serr == 0)
 			{
 			if (lBytesSent != sizeof(buf1))
@@ -170,9 +170,9 @@ void CNetBrowse::Update(
 	// using the same port as us.  If we do get a message, the address of the sender
 	// will be recorded -- this gives us the host's address!
 	CHost host;
-	long lReceived;
+	int32_t lReceived;
 	U8 buf[sizeof(host.m_acName) + 4 + 4];
-	short serr = m_socketBrowse.ReceiveFrom(buf, sizeof(buf), &lReceived, &host.m_address);
+	int16_t serr = m_socketBrowse.ReceiveFrom(buf, sizeof(buf), &lReceived, &host.m_address);
 	if (serr == 0)
 		{
 		// Validate the message to make sure it was sent by another app of this
@@ -189,10 +189,10 @@ void CNetBrowse::Update(
 			// is the same, that entity will get the same value that it sent.  All
 			// other entities will see this as a meaningless value, which is fine.
 			host.m_lMagic =
-				((long)buf[4] & 0x000000ff) +
-				(((long)buf[5] <<  8) & 0x0000ff00) +
-				(((long)buf[6] << 16) & 0x00ff0000) +
-				(((long)buf[7] << 24) & 0xff000000);
+				((int32_t)buf[4] & 0x000000ff) +
+				(((int32_t)buf[5] <<  8) & 0x0000ff00) +
+				(((int32_t)buf[6] << 16) & 0x00ff0000) +
+				(((int32_t)buf[7] << 24) & 0xff000000);
 
 			// Copy the name
 			strncpy(host.m_acName, (char*)&buf[8], sizeof(host.m_acName));
@@ -202,7 +202,7 @@ void CNetBrowse::Update(
 			host.m_lLastHeardFrom = rspGetMilliseconds();
 
 			// Change the host's port number from its antenna port to its base port
-			unsigned short usHostBasePort = RSocket::GetAddressPort(&host.m_address) - Net::AntennaPortOffset;
+			uint16_t usHostBasePort = RSocket::GetAddressPort(&host.m_address) - Net::AntennaPortOffset;
 			RSocket::SetAddressPort(usHostBasePort, &host.m_address);
 
 			// Check if this host already exists in the list
@@ -259,13 +259,13 @@ void CNetBrowse::Update(
 // The specified port must be the host's "base port".
 ////////////////////////////////////////////////////////////////////////////////
 // static
-short CNetBrowse::LookupHost(						// Returns 0 if successfull, non-zero otherwise
+int16_t CNetBrowse::LookupHost(						// Returns 0 if successfull, non-zero otherwise
 	char* pszName,											// In:  Server's name or dotted address (x.x.x.x)
-	USHORT usPort,											// In:  Server's port number
+	uint16_t usPort,											// In:  Server's port number
 	RSocket::Address* paddress)						// Out: Addresss
 	{
 	// Try to get requested address 
-	short sResult = RSocket::GetAddress(pszName, usPort, paddress);
+	int16_t sResult = RSocket::GetAddress(pszName, usPort, paddress);
 	if (sResult != 0)
 		TRACE("CNetBrowse::LookupHost(): Error getting host address!\n");
 	return sResult;

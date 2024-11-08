@@ -87,7 +87,7 @@ class CAnim3D
 		// specified in the provided array of pointers to strings.
 		virtual								// If you override this function,
 												// call base class for default functionality.
-		short Get(							// Returns 0 on success.
+		int16_t Get(							// Returns 0 on success.
 			char**	ppszFileNames);	// Pointer to array of pointers to filenames.
 												// These filenames should be in the order
 												// the members are listed in this class's
@@ -97,18 +97,18 @@ class CAnim3D
 		// specified in the provided array of pointers to strings.
 		virtual								// If you override this function,
 												// call base class for default functionality.
-		short Get(							// Returns 0 on success.
+		int16_t Get(							// Returns 0 on success.
 			char**	ppszFileNames,		// Pointer to array of pointers to filenames.
 												// These filenames should be in the order
 												// the members are listed in this class's
 												// definition.
-			short		sLoopFlags);		// Looping flags to apply to all channels in this anim
+			int16_t		sLoopFlags);		// Looping flags to apply to all channels in this anim
 
 		// Get the various components of this animation from the resource names
 		// specified by base name, optionally, with a rigid name.
 		virtual									// If you override this function,
 													// call base class for default functionality.
-		short Get(								// Returns 0 on success.
+		int16_t Get(								// Returns 0 on success.
 			char*		pszBaseFileName,		// In:  Base string for resource filenames.
 			char*		pszRigidName,			// In:  String to add for rigid transform channel,
 													// "", or NULL for none.
@@ -116,14 +116,14 @@ class CAnim3D
 													// "", or NULL for none.
 			char*		pszWeaponTransName,	// In:  String to add for weapon transforms channel,
 													// "", or NULL for none.
-			short		sLoopFlags);			// In:  Looping flags to apply to all channels
+			int16_t		sLoopFlags);			// In:  Looping flags to apply to all channels
 													// in this anim.
 
 		// Get the various components of this animation from the resource names
 		// specified by base name, optionally, with a rigid name.
 		virtual									// If you override this function,
 													// call base class for default functionality.
-		short Get(								// Returns 0 on success.
+		int16_t Get(								// Returns 0 on success.
 			char*		pszBaseName,			// In:  Base string for resource filenames.
 			char*		pszVerb,					// In:  Action name to be appended to the base
 			char*		pszRigidName,			// In:  String to add for rigid transform channel,
@@ -132,16 +132,16 @@ class CAnim3D
 													// "", or NULL for none.
 			char*		pszWeaponTransName,	// In:  String to add for weapon transforms channel,
 													// "", or NULL for none.
-			short		sLoopFlags);			// In:  Looping flags to apply to all channels
+			int16_t		sLoopFlags);			// In:  Looping flags to apply to all channels
 													// in this anim.
 
 		// Get the various components of this animation from the resource names
 		// specified by base name, optionally, with a rigid name.
 		virtual									// If you override this function,
 													// call base class for default functionality.
-		short Get(								// Returns 0 on success.
+		int16_t Get(								// Returns 0 on success.
 			char*		pszBaseName,			// In:  Base string for resource filenames.
-			short		sTextureScheme,		// In:  Number of texture file to be loaded
+			int16_t		sTextureScheme,		// In:  Number of texture file to be loaded
 			char*		pszVerb,					// In:  Action name to be appended to the base
 			char*		pszRigidName,			// In:  String to add for rigid transform channel,
 													// "", or NULL for none.
@@ -149,7 +149,7 @@ class CAnim3D
 													// "", or NULL for none.
 			char*		pszWeaponTransName,	// In:  String to add for weapon transforms channel,
 													// "", or NULL for none.
-			short		sLoopFlags);			// In:  Looping flags to apply to all channels
+			int16_t		sLoopFlags);			// In:  Looping flags to apply to all channels
 													// in this anim.
 
 
@@ -162,7 +162,7 @@ class CAnim3D
 		virtual							// If you override this function,
 											// call base class for default functionality.
 		void SetLooping(				// Returns nothing.
-			short sLoopFlags);		// In:  Looping flags to apply to all channels
+			int16_t sLoopFlags);		// In:  Looping flags to apply to all channels
 											// in this anim.
 
 	};

@@ -48,27 +48,27 @@ class CMenuSettings : CSettings
 		~CMenuSettings();
 
 		// Read settings that are stored in preference file
-		short LoadPrefs(
+		int16_t LoadPrefs(
 			RPrefs* pPrefs);
 
 		// Write settings that are stored in preference file
-		short SavePrefs(
+		int16_t SavePrefs(
 			RPrefs* pPrefs);
 
 		// Load settings that are stored in game file
-		short LoadGame(
+		int16_t LoadGame(
 			RFile* pFile);
 
 		// Save settings that are stored in game file
-		short SaveGame(
+		int16_t SaveGame(
 			RFile* pFile);
 
 		// Temporarily set settings for demo mode (file is for saving current settings)
-		short PreDemo(
+		int16_t PreDemo(
 			RFile* pFile);
 
 		// Restore settings to what they were prior to demo mode
-		short PostDemo(
+		int16_t PostDemo(
 			RFile* pFile);
 	};
 

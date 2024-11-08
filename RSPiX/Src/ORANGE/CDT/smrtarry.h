@@ -40,7 +40,7 @@
 // Typedefs.
 //////////////////////////////////////////////////////////////////////////////
 
-template <class T, long lSize> class CSmrtArry
+template <class T, int32_t lSize> class CSmrtArry
 	{
 	public:	// Construction/Destruction.
 
@@ -48,14 +48,14 @@ template <class T, long lSize> class CSmrtArry
 
 	public:	// Methods.
 		// Subscript.
-		T& operator [](long lIndex)
+		T& operator [](int32_t lIndex)
 			{
 			ASSERT(lIndex >= 0 && lIndex < lSize);
 			return m_t[lIndex];
 			}
 
 		// Add with index as second operand.
-		T* operator+(long lIndex)
+		T* operator+(int32_t lIndex)
 			{
 			ASSERT(lIndex >= 0 && lIndex < lSize);
 			return m_t + lIndex;

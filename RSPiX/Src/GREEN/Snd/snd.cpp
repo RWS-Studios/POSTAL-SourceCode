@@ -213,10 +213,10 @@ void RSnd::Reset(void)
 // (public)
 //
 ///////////////////////////////////////////////////////////////////////////////
-short RSnd::Stream(	char* pszSampleName, long lPlayBufSize, long lReadBufSize,
-						 UCHAR	ucMainVolume /* = 255 */, UCHAR ucVolume2 /* = 255 */)
+int16_t RSnd::Stream(	char* pszSampleName, int32_t lPlayBufSize, int32_t lReadBufSize,
+						 uint8_t	ucMainVolume /* = 255 */, uint8_t ucVolume2 /* = 255 */)
 	{
-	short sRes = 0;
+	int16_t sRes = 0;
 	
 	// Reset variables and free data if any.
 	Reset();
@@ -237,7 +237,7 @@ short RSnd::Stream(	char* pszSampleName, long lPlayBufSize, long lReadBufSize,
 				// Store the buffer size to stream with.
 				m_lBufSize	= lPlayBufSize;
 				// Attempt to start the mixing . . .
-				if (m_mix.Start(StreamCallStatic, (ULONG)this) == 0)
+				if (m_mix.Start(StreamCallStatic, (uintptr_t)this) == 0)
 					{
 					// Success.  Set state to starting.
 					m_sState	= Starting;
@@ -308,18 +308,18 @@ short RSnd::Stream(	char* pszSampleName, long lPlayBufSize, long lReadBufSize,
 // 3..4 is played.
 //
 ///////////////////////////////////////////////////////////////////////////////
-short RSnd::Play(						// Returns 0 on success.
+int16_t RSnd::Play(						// Returns 0 on success.
 	RSample* psample,					// In:  Sample to play.
-	long lPlayBufSize,				// In:  Size of play buffer in bytes.
-	UCHAR	ucMainVolume/* = 255 */,// In:  Primary Volume (0 - 255)
-	UCHAR ucVolume2 /* = 255 */,	// In:  Secondary Volume (0 - 255)
-	long lLoopStartTime/* = -1*/,	// In:  Where to loop back to in milliseconds.
+	int32_t lPlayBufSize,				// In:  Size of play buffer in bytes.
+	uint8_t	ucMainVolume/* = 255 */,// In:  Primary Volume (0 - 255)
+	uint8_t ucVolume2 /* = 255 */,	// In:  Secondary Volume (0 - 255)
+	int32_t lLoopStartTime/* = -1*/,	// In:  Where to loop back to in milliseconds.
 											//	-1 indicates no looping (unless m_sLoop is
 											// explicitly set).
-	long lLoopEndTime/* = 0*/)		// In:  Where to loop back from in milliseconds.
+	int32_t lLoopEndTime/* = 0*/)		// In:  Where to loop back from in milliseconds.
 											// In:  If less than 1, the end + lLoopEndTime is used.
 	{
-	short sRes = 0; // Assume success.
+	int16_t sRes = 0; // Assume success.
 	
 	ASSERT(psample != NULL);
 	ASSERT(GetState() == Stopped);
@@ -340,7 +340,7 @@ short RSnd::Play(						// Returns 0 on success.
 			// Store the buffer size to stream with.
 			m_lBufSize = lPlayBufSize;
 			// Attempt to play buffer . . .
-			if (m_mix.Start(PlayCallStatic, (ULONG)this,ucMainVolume,ucVolume2) == 0)
+			if (m_mix.Start(PlayCallStatic, (uintptr_t)this,ucMainVolume,ucVolume2) == 0)
 				{
 				// Success.  Set state to starting.
 				m_sState				= Starting;
@@ -442,9 +442,9 @@ short RSnd::Play(						// Returns 0 on success.
 // (public)
 //
 ///////////////////////////////////////////////////////////////////////////////
-short RSnd::Abort(void)
+int16_t RSnd::Abort(void)
 	{
-	short sRes = 0; // Assume success.
+	int16_t sRes = 0; // Assume success.
 
 	ASSERT(GetState() != Stopped);
 
@@ -495,7 +495,7 @@ short RSnd::Abort(void)
 // (public)
 //
 //////////////////////////////////////////////////////////////////////////////
-long RSnd::GetPos(void)
+int32_t RSnd::GetPos(void)
 	{
 	return m_mix.GetPos();
 	}
@@ -506,7 +506,7 @@ long RSnd::GetPos(void)
 // (public)
 //
 //////////////////////////////////////////////////////////////////////////////
-long RSnd::GetTime(void)
+int32_t RSnd::GetTime(void)
 	{
 	return m_mix.GetTime();
 	}
@@ -520,10 +520,10 @@ long RSnd::GetTime(void)
 //////////////////////////////////////////////////////////////////////////////
 void* RSnd::StreamCall(RMix::Msg	msg, 
 								void*		pData, 
-								ULONG*	pulBufSize,
-								ULONG		ulUser,
-								UCHAR*		pucVolume,
-								UCHAR*		pucVol2)
+								uint32_t*	pulBufSize,
+								uintptr_t		ulUser,
+								uint8_t*		pucVolume,
+								uint8_t*		pucVol2)
 	{
 	switch (msg)
 		{
@@ -641,9 +641,9 @@ void* RSnd::StreamCall(RMix::Msg	msg,
 //////////////////////////////////////////////////////////////////////////////
 void* RSnd::PlayCall(RMix::Msg	msg,
 							void*			pData, 
-							ULONG*		pulBufSize,
-							UCHAR*		pucVolume,
-							UCHAR*		pucVol2)
+							uint32_t*		pulBufSize,
+							uint8_t*		pucVolume,
+							uint8_t*		pucVol2)
 	{
 	switch (msg)
 		{
@@ -663,10 +663,10 @@ void* RSnd::PlayCall(RMix::Msg	msg,
 					}
 
 				// Move to next buffer.
-				pData = (UCHAR*)(m_psample->m_pData) + (m_ulSampleSize - m_ulRemaining);
+				pData = (uint8_t*)(m_psample->m_pData) + (m_ulSampleSize - m_ulRemaining);
 
 				// Get next buffer size.
-				(*pulBufSize) = MIN((ULONG)m_lBufSize, m_ulRemaining);
+				(*pulBufSize) = MIN((uint32_t)m_lBufSize, m_ulRemaining);
 
 				if (*pulBufSize > 0)
 					{
@@ -686,7 +686,7 @@ void* RSnd::PlayCall(RMix::Msg	msg,
 					if (m_sLoop == FALSE)
 						{
 						// If we were NOT looping a sub region . . .
-						if (m_ulSampleSize == (ULONG)m_psample->m_lBufSize)
+						if (m_ulSampleSize == (uint32_t)m_psample->m_lBufSize)
 							{
 							// Clear pointer.
 							pData		= NULL;
@@ -790,10 +790,10 @@ void* RSnd::PlayCall(RMix::Msg	msg,
 //////////////////////////////////////////////////////////////////////////////
 void* RSnd::StreamCallStatic(	RMix::Msg	msg, 
 										void*			pData, 
-										ULONG*		pulBufSize, 
-										ULONG			ulUser,
-										UCHAR*		pucVolume,
-										UCHAR*		pucVol2)
+										uint32_t*		pulBufSize, 
+										uintptr_t			ulUser,
+										uint8_t*		pucVolume,
+										uint8_t*		pucVol2)
 	{
 	return ((PSND)ulUser)->StreamCall(msg, pData, pulBufSize,ulUser,pucVolume,pucVol2);
 	}
@@ -808,10 +808,10 @@ void* RSnd::StreamCallStatic(	RMix::Msg	msg,
 //////////////////////////////////////////////////////////////////////////////
 void* RSnd::PlayCallStatic(RMix::Msg	msg, 
 									void*			pData, 
-									ULONG*		pulBufSize, 
-									ULONG			ulUser,
-									UCHAR*		pucVolume,
-									UCHAR*		pucVol2)
+									uint32_t*		pulBufSize, 
+									uintptr_t			ulUser,
+									uint8_t*		pucVolume,
+									uint8_t*		pucVol2)
 	{
 	return ((PSND)ulUser)->PlayCall(msg, pData, pulBufSize, pucVolume, pucVol2);
 	}

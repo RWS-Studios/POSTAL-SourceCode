@@ -42,8 +42,8 @@
 
 typedef struct tag_TaskInfo
 {
-	long* plStackAddress;		// Address of allocated memory for stack
-	long* plSP;					// Current saved position of Stack Pointer
+	int32_t* plStackAddress;		// Address of allocated memory for stack
+	int32_t* plSP;					// Current saved position of Stack Pointer
 	char* pszFunctionName;	// Name of task using this stack 
 									// (used for reporting errors)
 } TASKINFO, *PTASKINFO;
@@ -61,7 +61,7 @@ void MTaskManager(void);
 // this module should be added.  Tasks should
 // never return and need to call MTaskWait
 // periodically.
-short MTaskAddFunc(void* pFunction, char* pszFuncName, short sStackSize = 1024);
+int16_t MTaskAddFunc(void* pFunction, char* pszFuncName, int16_t sStackSize = 1024);
 
 #define MTaskAddwSize(fnTask, sStackSz)	MTaskAddFunc(fnTask, #fnTask, sStackSz)
 #define MTaskAdd(fnTask)						MTaskAddFunc(fnTask, #fnTask);
@@ -82,7 +82,7 @@ void MTaskKill(void);
 // This funciton must be called periodically to allow the
 // other tasks to run.  Your code will resume immediately
 // after this call.
-long* MTaskWait(void);
+int32_t* MTaskWait(void);
 
 #endif // MTASK_H
 

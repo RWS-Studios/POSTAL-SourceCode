@@ -160,7 +160,7 @@ RListBox::RListBox()
 	m_sbVert.m_im.m_sWidth		= DEF_SCROLL_THICKNESS;
 	m_sbVert.m_oOrientation		= RScrollBar::Vertical;
 	m_sbVert.m_upcUser			= ScrollCall;
-	m_sbVert.m_ulUserInstance	= (ULONG)this;
+	m_sbVert.m_ulUserInstance	= (U64)this;
 
 	// Priority for scrollbars should be higher than any other sibling.
 	m_sbVert.m_hot.SetPriority(SCROLLBAR_PRIORITY);
@@ -168,7 +168,7 @@ RListBox::RListBox()
 	m_sbHorz.m_im.m_sHeight		= DEF_SCROLL_THICKNESS;
 	m_sbHorz.m_oOrientation		= RScrollBar::Horizontal;
 	m_sbHorz.m_upcUser			= ScrollCall;
-	m_sbHorz.m_ulUserInstance	= (ULONG)this;
+	m_sbHorz.m_ulUserInstance	= (U64)this;
 
 	// Priority for scrollbars should be higher than any other sibling.
 	m_sbHorz.m_hot.SetPriority(SCROLLBAR_PRIORITY);
@@ -207,14 +207,14 @@ RListBox::~RListBox()
 // Creates a displayable Listbox item.
 //
 //////////////////////////////////////////////////////////////////////////////
-short RListBox::Create(			// Returns 0 on success.
-	short sX,						// X position relative to "parent" item.
-	short sY,						// Y position relative to "parent" item.
-	short sW,						// Width.
-	short sH,						// Height.
-	short sDepth)					// Color depth.
+int16_t RListBox::Create(			// Returns 0 on success.
+	int16_t sX,						// X position relative to "parent" item.
+	int16_t sY,						// Y position relative to "parent" item.
+	int16_t sW,						// Width.
+	int16_t sH,						// Height.
+	int16_t sDepth)					// Color depth.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	Destroy();
 
@@ -239,7 +239,7 @@ short RListBox::Create(			// Returns 0 on success.
 		}
 	
 	// Get client area.
-	short	sClientX, sClientY, sClientW, sClientH;
+	int16_t	sClientX, sClientY, sClientW, sClientH;
 	GetClient(&sClientX, &sClientY, &sClientW, &sClientH);
 
 	// Create child items:
@@ -373,7 +373,7 @@ RGuiItem* RListBox::InsertString(	// Returns new GUI item on success.
 RGuiItem* RListBox::AddItem(			// Returns new GUI item or pgui on
 												// success.  Depends on sEncapsulate.
 	RGuiItem* pgui,						// GUI item to insert.
-	short	sEncapsulate /*= FALSE*/,	// If TRUE, this item will be 
+	int16_t	sEncapsulate /*= FALSE*/,	// If TRUE, this item will be 
 												// encapsulated in an RGuiItem that
 												// will be returned on success.
 												// If FALSE, this item will be a direct
@@ -420,7 +420,7 @@ RGuiItem* RListBox::AddItem(			// Returns new GUI item or pgui on
 RGuiItem* RListBox::InsertItem(		// Returns new GUI item or pgui on
 												// success.  Depends on sEncapsulate.
 	RGuiItem* pgui,						// GUI item to insert.
-	short	sEncapsulate /*= FALSE*/,	// If TRUE, this item will be 
+	int16_t	sEncapsulate /*= FALSE*/,	// If TRUE, this item will be 
 												// encapsulated in an RGuiItem that
 												// will be returned on success.
 												// If FALSE, this item will be a direct
@@ -554,8 +554,8 @@ void RListBox::EnsureVisible(				// Returns nothing.
 	RGuiItem* pgui,							// Item to ensure visibility of.
 	Position	posPreference /*= Top*/)	// In:  Preferred vertical position.
 	{
-	short	sX	= pgui->m_sX;
-	short	sY	= pgui->m_sY;
+	int16_t	sX	= pgui->m_sX;
+	int16_t	sY	= pgui->m_sY;
 
 	// Take position of item to list contents level.
 	RGuiItem*	pguiParent	= pgui->GetParent();
@@ -572,7 +572,7 @@ void RListBox::EnsureVisible(				// Returns nothing.
 		{
 		// Set new position for list contents such that item
 		// is in upper left corner of client.
-		short	sClientX, sClientY, sClientH;
+		int16_t	sClientX, sClientY, sClientH;
 		GetClient(&sClientX, &sClientY, NULL, &sClientH);
 
 		switch (posPreference)
@@ -629,7 +629,7 @@ void RListBox::SetSel(				// Returns nothing.
 void RListBox::UpdateScrollBarVisibility(void)	// Returns nothing.
 	{
 	// Get client.
-	short	sClientX, sClientY, sClientW, sClientH;
+	int16_t	sClientX, sClientY, sClientW, sClientH;
 	GetClient(&sClientX, &sClientY, &sClientW, &sClientH);
 
 	// If visibility is not prohibited . . .
@@ -685,14 +685,14 @@ void RListBox::UpdateScrollBarVisibility(void)	// Returns nothing.
 void RListBox::AdjustContents(void)					// Returns nothing.
 	{
 	// Get client.
-	short	sClientX, sClientY, sClientW, sClientH;
+	int16_t	sClientX, sClientY, sClientW, sClientH;
 	GetClient(&sClientX, &sClientY, &sClientW, &sClientH);
 
 	// Minimum is viewable area (when vertical scrollbar shown).
 	m_sLargestWidth		= sClientW - m_sbVert.m_im.m_sWidth;
 
-	long	lTotalHeight	= 0;	// Used for averaging heights.
-	long	lTotalItems		= 0;	// Used for averaging heights.
+	int32_t	lTotalHeight	= 0;	// Used for averaging heights.
+	int32_t	lTotalItems		= 0;	// Used for averaging heights.
 
 	// Get largest width.
 	RGuiItem*	pguiItem	= m_lcContents.m_listguiChildren.GetHead();
@@ -710,7 +710,7 @@ void RListBox::AdjustContents(void)					// Returns nothing.
 
 	// Go through children sizing encapsulators to m_sLargestWidth and
 	// repositioning items as we go.
-	short	sY	= 0;
+	int16_t	sY	= 0;
 	pguiItem	= m_lcContents.m_listguiChildren.GetHead();
 	while (pguiItem != NULL)
 		{
@@ -777,7 +777,7 @@ void RListBox::AdjustContents(void)					// Returns nothing.
 	// coordinate system.
 
 	// If the horizontal scrollbar is visible . . .
-	short	sScrollBarH	= 0;
+	int16_t	sScrollBarH	= 0;
 	if (m_sbHorz.m_sVisible != FALSE)
 		{
 		// Compensation:
@@ -799,7 +799,7 @@ void RListBox::AdjustContents(void)					// Returns nothing.
 		}
 	
 	// If the vertical scrollbar is visible . . .
-	short	sScrollBarW	= 0;
+	int16_t	sScrollBarW	= 0;
 	if (m_sbVert.m_sVisible != FALSE)
 		{
 		// Compensation:
@@ -821,10 +821,10 @@ void RListBox::AdjustContents(void)					// Returns nothing.
 		}
 
 	// Calculate average height of item.
-	long	lAvgHeight	= 0;
+	int32_t	lAvgHeight	= 0;
 	if (lTotalItems > 0)
 		{
-		lAvgHeight	= (short)(lTotalHeight / lTotalItems);
+		lAvgHeight	= (int16_t)(lTotalHeight / lTotalItems);
 		}
 	
 	// Update vertical scroll bar increments:
@@ -937,7 +937,7 @@ RGuiItem* RListBox::CreateStringItem(	// Returns new item on success;
 	char* pszString)							// Text for new item.
 	{
 	RGuiItem*	pgui		= NULL;	// Assume nothing.
-	short	sError	= 0;
+	int16_t	sError	= 0;
 
 	// We'll need a font and a print for this.
 	ASSERT(m_pprint != NULL);
@@ -952,15 +952,15 @@ RGuiItem* RListBox::CreateStringItem(	// Returns new item on success;
 
 		// Set callback.
 		pgui->m_bcUser				= PressedCall;
-		pgui->m_ulUserInstance	= (ULONG)this;
+		pgui->m_ulUserInstance	= (U64)this;
 
 		// Get thickness of border.
-		short sBorder	= pgui->GetTopLeftBorderThickness()
+		int16_t sBorder	= pgui->GetTopLeftBorderThickness()
 			+ pgui->GetBottomRightBorderThickness();
 
 		// Get the width of the desired string.
-		short	sWidth	= m_pprint->GetWidth(pszString);
-		short	sHeight	= m_sFontCellHeight;
+		int16_t	sWidth	= m_pprint->GetWidth(pszString);
+		int16_t	sHeight	= m_sFontCellHeight;
 
 		// Adjust by border thickness.
 		sWidth	+= sBorder;
@@ -1011,7 +1011,7 @@ RGuiItem* RListBox::CreateEncapsulator(	// Returns new item on success; NULL,
 	RGuiItem*	pgui)								// Item to encapsulate.
 	{
 	RGuiItem*	pguiRes		= NULL;	// Assume nothing.
-	short	sError	= 0;
+	int16_t	sError	= 0;
 
 	// Allocate a new item . . .
 	pguiRes	= new RGuiItem;
@@ -1022,15 +1022,15 @@ RGuiItem* RListBox::CreateEncapsulator(	// Returns new item on success; NULL,
 
 		// Set callback.
 		pguiRes->m_bcUser				= PressedCall;
-		pguiRes->m_ulUserInstance	= (ULONG)this;
+		pguiRes->m_ulUserInstance	= (U64)this;
 
 		// Get thickness of border.
-		short sBorder	= pguiRes->GetTopLeftBorderThickness()
+		int16_t sBorder	= pguiRes->GetTopLeftBorderThickness()
 			+ pguiRes->GetBottomRightBorderThickness();
 
 		// Get the width and height of the encapsulated item.
-		short	sWidth	= pgui->m_im.m_sWidth;
-		short	sHeight	= pgui->m_im.m_sHeight;
+		int16_t	sWidth	= pgui->m_im.m_sWidth;
+		int16_t	sHeight	= pgui->m_im.m_sHeight;
 
 		// Adjust by border thickness.
 		sWidth	+= sBorder;
@@ -1128,7 +1128,7 @@ void RListBox::InsertBefore(	// Returns nothing.
 //////////////////////////////////////////////////////////////////////////////
 void RListBox::SelectItem(		// Returns nothing.
 	RGuiItem*	pguiSel,			// Item to [un]select.
-	short			sSelect)			// If TRUE, item is selected; if FALSE,
+	int16_t			sSelect)			// If TRUE, item is selected; if FALSE,
 										// item is unselected.
 	{
 	// If there was previously a selection . . .
@@ -1152,14 +1152,14 @@ void RListBox::SelectItem(		// Returns nothing.
 // (protected).
 //
 ////////////////////////////////////////////////////////////////////////
-short RListBox::LoadChildren(	// Returns 0 on success.
+int16_t RListBox::LoadChildren(	// Returns 0 on success.
 	RFile*	pfile)				// File to load from.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	ASSERT(pfile->IsOpen() != FALSE);
 
-	short	sNum;
+	int16_t	sNum;
 	// Read number of children.
 	pfile->Read(&sNum);
 
@@ -1200,7 +1200,7 @@ short RListBox::LoadChildren(	// Returns 0 on success.
 
 	// Instantiate rest of children.
 	RGuiItem* pgui;
-	short	sCurChild;
+	int16_t	sCurChild;
 	for (	sCurChild	= 0; 
 			sCurChild < sNum && sRes == 0 && pfile->Error() == FALSE; 
 			sCurChild++)
@@ -1227,15 +1227,15 @@ short RListBox::LoadChildren(	// Returns 0 on success.
 // (protected).
 //
 ////////////////////////////////////////////////////////////////////////
-short RListBox::SaveChildren(	// Returns 0 on success.
+int16_t RListBox::SaveChildren(	// Returns 0 on success.
 	RFile*	pfile)				// File to save to.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	ASSERT(pfile->IsOpen() != FALSE);
 
 	// Determine number of child items.
-	short	sNum	= 0;
+	int16_t	sNum	= 0;
 	RGuiItem*	pgui = m_listguiChildren.GetHead();
 	while (pgui != NULL)
 		{
@@ -1308,11 +1308,11 @@ short RListBox::SaveChildren(	// Returns 0 on success.
 // (virtual/protected (overriden here)).
 //
 ////////////////////////////////////////////////////////////////////////
-short RListBox::ReadMembers(	// Returns 0 on success.
+int16_t RListBox::ReadMembers(	// Returns 0 on success.
 	RFile*	pfile,					// File to read from.
 	U32		u32Version)				// File format version to use.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// Invoke base class to read base members.
 	sRes	= RGuiItem::ReadMembers(pfile, u32Version);
@@ -1368,10 +1368,10 @@ short RListBox::ReadMembers(	// Returns 0 on success.
 // (virtual/protected (overriden here)).
 //
 ////////////////////////////////////////////////////////////////////////
-short RListBox::WriteMembers(	// Returns 0 on success.
+int16_t RListBox::WriteMembers(	// Returns 0 on success.
 	RFile*	pfile)					// File to write to.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// Invoke base class to read base members.
 	sRes	= RGuiItem::WriteMembers(pfile);

@@ -87,81 +87,81 @@ void event_undefined();				//null event handler function
 
 typedef struct tag_EVENT
 {
- 	short sX;					// From data file	= x position
-	short sY;					// From data file = y position
-	short sType;				// From data file = application assigned id number
-	short sFlags;				// From data file = directional or optional trigger
-	short	sTimer;				// Used when the event is on the ignore list
-	short sIgnoreTimer;		// Created & used in CEvent
+ 	int16_t sX;					// From data file	= x position
+	int16_t sY;					// From data file = y position
+	int16_t sType;				// From data file = application assigned id number
+	int16_t sFlags;				// From data file = directional or optional trigger
+	int16_t	sTimer;				// Used when the event is on the ignore list
+	int16_t sIgnoreTimer;		// Created & used in CEvent
 } EVENT;
 
 class CEvent
 {
 protected:
-	short	m_sScanYFrom;
-	short m_sScanYTo;
-	short	m_sScanXFrom;
-	short	m_sScanXTo;
-	short	m_sEventTriggerMin;
-	short m_sEventTriggerMax;
-	short	m_sEventConstMin;
-	short m_sEventConstMax;
-	short m_sDispOldX;
-	short m_sDispOldY;
-	short m_sOrientation;
-	short	m_sEventDir;
+	int16_t	m_sScanYFrom;
+	int16_t m_sScanYTo;
+	int16_t	m_sScanXFrom;
+	int16_t	m_sScanXTo;
+	int16_t	m_sEventTriggerMin;
+	int16_t m_sEventTriggerMax;
+	int16_t	m_sEventConstMin;
+	int16_t m_sEventConstMax;
+	int16_t m_sDispOldX;
+	int16_t m_sDispOldY;
+	int16_t m_sOrientation;
+	int16_t	m_sEventDir;
 	EVENT* m_pEventData;
 
 
 	static EVENT*	m_pEventList;		// Currently selected event set for this level
-	static short 	m_aIndexList[EVENT_MAX_COORD/EVENT_SPACING];
+	static int16_t 	m_aIndexList[EVENT_MAX_COORD/EVENT_SPACING];
 	static CList	m_IgnoreList;	
 
-	short SelectSet(short sEventSet);
-	void  TriggerInit(short sDispX, short sDispY);
-	short Trigger(short sDispX, short sDispY);
-	void  CreateIndexes(short sOrientation);
-	short Scan();
-	short CallHandler(short sIndex);
+	int16_t SelectSet(int16_t sEventSet);
+	void  TriggerInit(int16_t sDispX, int16_t sDispY);
+	int16_t Trigger(int16_t sDispX, int16_t sDispY);
+	void  CreateIndexes(int16_t sOrientation);
+	int16_t Scan();
+	int16_t CallHandler(int16_t sIndex);
 	void  DecrementTimers();
 
 	
-	inline void From_Bottom(short s)
+	inline void From_Bottom(int16_t s)
 	{
 		m_sScanYFrom = s + GRIP_DISPLAY_H + EVENT_TRIGGER_BOTTOM + 1;
 	}
 
-	inline void To_Bottom(short s)
+	inline void To_Bottom(int16_t s)
 	{
 		m_sScanYTo = s + GRIP_DISPLAY_H + EVENT_TRIGGER_BOTTOM;
 	}
 
-	inline void From_Top(short s)
+	inline void From_Top(int16_t s)
 	{
 		m_sScanYFrom = max(0, s - EVENT_TRIGGER_TOP);
 	}
 
-	inline void To_Top(short s)
+	inline void To_Top(int16_t s)
 	{
 		m_sScanYTo = max(0, s - (EVENT_TRIGGER_TOP + 1));
 	}
 
-	inline void From_Left(short s)
+	inline void From_Left(int16_t s)
 	{
 		m_sScanXFrom = max(0, s - EVENT_TRIGGER_LEFT);
 	}
 
-	inline void To_Left(short s)
+	inline void To_Left(int16_t s)
 	{
 		m_sScanXTo = max(0, s - (EVENT_TRIGGER_LEFT + 1));
 	}
 
-	inline void From_Right(short s)
+	inline void From_Right(int16_t s)
 	{
 		m_sScanXFrom = s + GRIP_DISPLAY_W + EVENT_TRIGGER_RIGHT + 1;
 	}
 
-	inline void To_Right(short s)
+	inline void To_Right(int16_t s)
 	{
 		m_sScanXTo = s + GRIP_DISPLAY_W + EVENT_TRIGGER_RIGHT;
 	}
@@ -178,10 +178,10 @@ public:
 	void Reset();
 
 	// Add Set
-	short AddSet(short sSetNum);
+	int16_t AddSet(int16_t sSetNum);
 
 	// Select Set 
-	short SelectSet();
+	int16_t SelectSet();
 
 	// TriggerInit - Call at start of level to trigger on-screen events
 	void TriggerInit();
@@ -196,13 +196,13 @@ public:
 	void Unignore(EVENT* pEvent);
 
 	// Search - search for event in selected event list
-	EVENT* Search(short sEventNum);
+	EVENT* Search(int16_t sEventNum);
 
 	// SearchNext - search for next event of same type in the list
 	EVENT* SearchNext(EVENT* pEvent);
 
 	// SearchAll - search for event in all event lists
-	short SearchAll(short sEventNum);
+	int16_t SearchAll(int16_t sEventNum);
 };
 	
 

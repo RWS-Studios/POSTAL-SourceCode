@@ -81,9 +81,9 @@
 //////////////////////////////////////////////////////////////////////////////
 // Module specific macros.
 //////////////////////////////////////////////////////////////////////////////
-#define HEADERSIZE		(sizeof(UCHAR)		/* Channel		*/	\
-								+ sizeof(UCHAR)	/* Flags			*/	\
-								+ sizeof(USHORT)	/* Type			*/	\
+#define HEADERSIZE		(sizeof(uint8_t)		/* Channel		*/	\
+								+ sizeof(uint8_t)	/* Flags			*/	\
+								+ sizeof(uint16_t)	/* Type			*/	\
 								+ sizeof(long)		/* ID				*/	\
 								+ sizeof(long)		/* Buffer size	*/	\
 								+ sizeof(long)		/* Chunk size	*/	\
@@ -190,7 +190,7 @@ void CFilter::Reset(void)
 //////////////////////////////////////////////////////////////////////////////
 void CFilter::WinCall(PPANE ppane)
 	{
-	short	sError	= 0;
+	int16_t	sError	= 0;
 
 	ASSERT(ppane->lSize		>= 0);
 	// MUST be 4 byte aligned.
@@ -202,14 +202,14 @@ void CFilter::WinCall(PPANE ppane)
 		CNFile file;
 		if (file.Open(ppane->puc, ppane->lSize, ENDIAN_BIG) == 0)
 			{
-			UCHAR		ucChannel;
-			USHORT	usType;
-			UCHAR		ucFlags;
-			long		lId;
-			long		lBufSize;
-			long		lChunkSize;
-			long		lTime;
-			long		lAmt;
+			uint8_t		ucChannel;
+			uint16_t	usType;
+			uint8_t		ucFlags;
+			int32_t		lId;
+			int32_t		lBufSize;
+			int32_t		lChunkSize;
+			int32_t		lTime;
+			int32_t		lAmt;
 		
 			while (file.IsEOF() == FALSE && sError == 0)
 				{
@@ -351,7 +351,7 @@ void CFilter::WinCallStatic(PPANE ppane, CFilter* pFilter)
 // Returns ptr to chunk via lId, returns NULL if not found.
 //
 //////////////////////////////////////////////////////////////////////////////
-PRTCHUNK CFilter::GetChunk(long lId)
+PRTCHUNK CFilter::GetChunk(int32_t lId)
 	{
 	PRTCHUNK	pChunk	= m_listPartial.GetHead();
 
@@ -374,14 +374,14 @@ PRTCHUNK CFilter::GetChunk(long lId)
 // Returns chunk on success, NULL otherwise.
 //
 //////////////////////////////////////////////////////////////////////////////
-PRTCHUNK CFilter::AddChunk(long lSize, USHORT usType, UCHAR ucFlags, long lId,
-									long lTime)
+PRTCHUNK CFilter::AddChunk(int32_t lSize, uint16_t usType, uint8_t ucFlags, int32_t lId,
+									int32_t lTime)
 	{
-	short		sError	= 0;
+	int16_t		sError	= 0;
 	PRTCHUNK	pChunk	= NULL;
 
 	// Attempt to allocate chunk . . .
-	UCHAR* puc;
+	uint8_t* puc;
 	if (AllocChunk(&puc, lSize, usType, ucFlags) == 0)
 		{
 		if (puc != NULL)
@@ -444,9 +444,9 @@ PRTCHUNK CFilter::AddChunk(long lSize, USHORT usType, UCHAR ucFlags, long lId,
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CFilter::RemoveChunk(PRTCHUNK pChunk)
+int16_t CFilter::RemoveChunk(PRTCHUNK pChunk)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	if (m_listPartial.Remove(pChunk) == 0)
 		{
@@ -469,10 +469,10 @@ short CFilter::RemoveChunk(PRTCHUNK pChunk)
 // Returns amount added.
 //
 //////////////////////////////////////////////////////////////////////////////
-long CFilter::AddToChunk(	CNFile*	pfile,		// File pointer.	
-									long		lBufSize)	// Size of piece to add.
+int32_t CFilter::AddToChunk(	CNFile*	pfile,		// File pointer.	
+									int32_t		lBufSize)	// Size of piece to add.
 	{
-	long	lRes	= 0;
+	int32_t	lRes	= 0;
 
 	ASSERT(m_pChunk			!= NULL);
 
@@ -513,10 +513,10 @@ long CFilter::AddToChunk(	CNFile*	pfile,		// File pointer.
 // If this gets a malloc failure, that is considered an error.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CFilter::AllocChunk(	UCHAR** ppuc, long lSize, USHORT usType, 
-									UCHAR ucFlags)
+int16_t CFilter::AllocChunk(	uint8_t** ppuc, int32_t lSize, uint16_t usType, 
+									uint8_t ucFlags)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	if (m_fnAlloc != NULL)
 		{
@@ -524,7 +524,7 @@ short CFilter::AllocChunk(	UCHAR** ppuc, long lSize, USHORT usType,
 		}
 	else
 		{
-		*ppuc = (UCHAR*)malloc(lSize);
+		*ppuc = (uint8_t*)malloc(lSize);
 		// If successful . . .
 		if (*ppuc != NULL)
 			{
@@ -545,7 +545,7 @@ short CFilter::AllocChunk(	UCHAR** ppuc, long lSize, USHORT usType,
 // m_fnAlloc AND m_fnFree are NOT defined.
 //
 //////////////////////////////////////////////////////////////////////////////
-void CFilter::FreeChunk(UCHAR* puc, USHORT usType, UCHAR ucFlags)
+void CFilter::FreeChunk(uint8_t* puc, uint16_t usType, uint8_t ucFlags)
 	{
 	if (puc != NULL)
 		{

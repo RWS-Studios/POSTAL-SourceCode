@@ -40,7 +40,7 @@ namespace Net
 	{
 #endif
 
-	long	NETNAMESPACE lBandwidthValues[Net::NumBandwidths] =
+	int32_t	NETNAMESPACE lBandwidthValues[Net::NumBandwidths] =
 		{
 		   1400,						// Analog14_4
 		   2400,						// Analog28_8

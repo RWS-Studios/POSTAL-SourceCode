@@ -149,28 +149,28 @@ typedef enum		// Flags for mfFlags for Menu structure.
 
 typedef struct
 	{
-	short		sX;	// X coordinate of menu.
-	short		sY;	// Y coordinate of menu.
-	short		sW;	// Width of menu.
-	short		sH;	// Height of menu.
+	int16_t		sX;	// X coordinate of menu.
+	int16_t		sY;	// Y coordinate of menu.
+	int16_t		sW;	// Width of menu.
+	int16_t		sH;	// Height of menu.
 
-	short		sHeaderX;		// X position of menu header text.
+	int16_t		sHeaderX;		// X position of menu header text.
 									// Negative indicates offset from center.
-	short		sHeaderY;		// Y position of menu header text.
+	int16_t		sHeaderY;		// Y position of menu header text.
 									// Negative indicates offset from center.
 
-	short		sItemX;			// X position of menu items w/i menu.
+	int16_t		sItemX;			// X position of menu items w/i menu.
 									// Negative indicates offset from center.
-	short		sItemY;			// Y position of first menu item w/i menu.
+	int16_t		sItemY;			// Y position of first menu item w/i menu.
 									// Negative indicates offset from center.
-	short		sItemSpacingY;	// Space between items vertically.
+	int16_t		sItemSpacingY;	// Space between items vertically.
 
-	short		sIndicatorSpacingX;	// Distance between indicator's right edge
+	int16_t		sIndicatorSpacingX;	// Distance between indicator's right edge
 											// and menu items' left edges.
 
-	short		sMaxItemX;		// X position menu items should not pass w/i Menu.
+	int16_t		sMaxItemX;		// X position menu items should not pass w/i Menu.
 									// Less than 1, indicates offset from right edge.
-	short		sMaxItemY;		// Y position menu items should not pass w/i Menu.
+	int16_t		sMaxItemY;		// Y position menu items should not pass w/i Menu.
 									// Less than 1, indicates offset from right edge.
 										
 	} MenuPos;
@@ -179,21 +179,21 @@ typedef struct
 	{
 	char*			pszFile;				// Filespec of image for background of menu or NULL.
 	U32			u32BackColor;		// Background color.
-	short			sSetStartIndex;	// Starting index of palette entries to set.
-	short			sSetNumEntries;	// Number of palette entries to set.
-	short			sMapStartIndex;	// Starting index of palette entries that can be mapped to.
-	short			sMapNumEntries;	// Number of palette entries that can be mapped to.
+	int16_t			sSetStartIndex;	// Starting index of palette entries to set.
+	int16_t			sSetNumEntries;	// Number of palette entries to set.
+	int16_t			sMapStartIndex;	// Starting index of palette entries that can be mapped to.
+	int16_t			sMapNumEntries;	// Number of palette entries that can be mapped to.
 	} MenuBackground;
 
 typedef struct
 	{
-	short	sTransparent;			// Set GUI to use transparent BLiT'ing.
+	int16_t	sTransparent;			// Set GUI to use transparent BLiT'ing.
 	} MenuGui;
 
 typedef struct
 	{
 	char*	pszFile;				// Filespec of font to use for menu item text.
-	short	sHeight;				// Height to use for menu item text.
+	int16_t	sHeight;				// Height to use for menu item text.
 	U32	u32ForeColor;		// Color or color index for font to use for menu item
 									// text.
 	U32	u32ShadowColor;	// Color or color index for font to use for shadow
@@ -204,7 +204,7 @@ typedef struct
 	{
 	char*	pszHeaderText;		// Header text.
 	char*	pszFontFile;		// Filespec of font to use for menu header text.
-	short	sHeight;				// Height to use for menu header text.
+	int16_t	sHeight;				// Height to use for menu header text.
 	U32	u32ForeColor;		// Color or color index for font to use for menu header
 									// text.
 	U32	u32ShadowColor;	// Color or color index for font to use for shadow
@@ -221,27 +221,27 @@ typedef struct
 
 typedef struct
 	{
-	short	sDefaultItem;	// Menu item (index in ami[]) selected initially.
+	int16_t	sDefaultItem;	// Menu item (index in ami[]) selected initially.
 								// Negative indicates distance from number of items
 								// (e.g., -1 is the last item).
-	short	sCancelItem;	// Menu item (index in ami[]) chosen on cancel.
+	int16_t	sCancelItem;	// Menu item (index in ami[]) chosen on cancel.
 								// Negative indicates distance from number of items
 								// (e.g., -1 is the last item).
 	Menu*	pmenuBack;		// If not NULL, the menu to go back to in the case
 								// the cancel item (sCancelItem) is chosen.
-	short	sBackItem;		// Last item selected on this menu.  Only use, if
+	int16_t	sBackItem;		// Last item selected on this menu.  Only use, if
 								// getting to this menu via pmenuBack.
 	} MenuAutoItems;
 
 // Callback just before a menu is started.
 typedef short (*MenuInitCall)(	// Returns 0 on success, non-zero to cancel menu.
 	Menu*	pmenuCurrent,				// Current menu.
-	short	sInit);						// TRUE, if initializing; FALSE, if killing.
+	int16_t	sInit);						// TRUE, if initializing; FALSE, if killing.
 
 // Callback for when a menu item is chosen or focused.
 typedef bool (*MenuItemCall)(	// Returns true to accept choice, false otherwise.
 	Menu*	pmenuCurrent,			// Current menu.
-	short sMenuItem);				// Indicates menu item chosen, -1 indicates change
+	int16_t sMenuItem);				// Indicates menu item chosen, -1 indicates change
 										// of focused menu item (but no choice yet taken).
 
 typedef struct
@@ -253,7 +253,7 @@ typedef struct
 typedef struct
 	{
 	char*			pszText;		// Text for menu item.
-	short			sEnabled;	// TRUE if item is enabled, FALSE if disabled.
+	int16_t			sEnabled;	// TRUE if item is enabled, FALSE if disabled.
 	Menu*			pmenu;		// Menu this item leads to or NULL.
 	RGuiItem*	pgui;			// GuiItem to appear after text.
 	} MenuItem;
@@ -311,7 +311,7 @@ struct Menu		// Structure defining a menu.
 //////////////////////////////////////////////////////////////////////////////
 
 // Sets up the menu described to be run via DoMenu() calls.
-extern short StartMenu(				// Returns 0 on success.
+extern int16_t StartMenu(				// Returns 0 on success.
 	Menu*	pmenu,						// In: Pointer to Menu describing menu.
 	RResMgr* presmgr,					// In:  Resource manager ptr.
 	RImage*	pimDst);					// In:  Src for erase data.  Erase data is
@@ -322,7 +322,7 @@ extern short StartMenu(				// Returns 0 on success.
 // conjunction with DoMenuOutput() to run the menu.
 extern void DoMenuInput(	// Returns nothing.
 	RInputEvent* pie,		// In:  Most recent user input event.
-	short UseJoystick);
+	int16_t UseJoystick);
 
 // Performs one iteration of menu output logic.  Call this repeatedly in
 // conjunction with DoMenuInput() to run the menu.
@@ -337,7 +337,7 @@ extern Menu* GetCurrentMenu(void);	// Returns a pointer to the current
 // It should be safe to call this function even if StartMenu()  
 // failed, and it should be safe to call it multiple times -- in
 // both cases, it shouldn't do anything.                        
-extern short StopMenu(void);		// Returns 0 on success.
+extern int16_t StopMenu(void);		// Returns 0 on success.
 
 // Get the Menu's background image.
 extern RImage* GetCurrentMenuBackground(void);	// Returns a pointer to the

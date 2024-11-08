@@ -104,7 +104,7 @@ class RPushBtn : public RGuiItem
 		virtual					// Overridden here.
 		void DrawBorder(		// Returns nothing.
 			RImage* pim	= NULL,			// Dest image, uses m_im if NULL.
-			short sInvert	= FALSE);	// Inverts border if TRUE.
+			int16_t sInvert	= FALSE);	// Inverts border if TRUE.
 
 		////////////////////////////////////////////////////////////////////////
 		// Querries.
@@ -112,12 +112,12 @@ class RPushBtn : public RGuiItem
 
 		// Gets the thickness of the top/left border (including border edge effect).
 		virtual		// Overridden here.
-		short GetTopLeftBorderThickness(void);	// Returns border thickness 
+		int16_t GetTopLeftBorderThickness(void);	// Returns border thickness 
 															// including edge effect.                      
 
 		// Gets the thickness of the bottom/right border (including border edge effect).
 		virtual		// Overridden here.
-		short GetBottomRightBorderThickness(void);	// Returns border thickness 
+		int16_t GetBottomRightBorderThickness(void);	// Returns border thickness 
 																	// including edge effect.                      
 
 

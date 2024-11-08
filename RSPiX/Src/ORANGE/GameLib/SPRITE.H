@@ -87,24 +87,24 @@ typedef void (*SPRITE_PREDISP)(RSprite* psprite);
 class RSprite
 {
 	public:
-		short		m_sX;					// Sprite X
- 		short 	m_sY;					// Sprite Y
-		short		m_sZ;					// Sprite Z
-		short		m_sHotSpotX;		// The offset from m_sX to the hotspot.
+		int16_t		m_sX;					// Sprite X
+ 		int16_t 	m_sY;					// Sprite Y
+		int16_t		m_sZ;					// Sprite Z
+		int16_t		m_sHotSpotX;		// The offset from m_sX to the hotspot.
 											// This value would normally be subtracted from
 											// m_sX to get the destination (e.g., screen)
 											// position.
-		short		m_sHotSpotY;		// The offset from m_sY to the hotspot.
+		int16_t		m_sHotSpotY;		// The offset from m_sY to the hotspot.
 											// This value would normally be subtracted from
 											// m_sY to get the destination (e.g., screen)
 											// position.
-		short		m_sHotSpotZ;		// The offset from m_sZ to the hotspot.
+		int16_t		m_sHotSpotZ;		// The offset from m_sZ to the hotspot.
 											// This value would normally be subtracted from
 											// m_sZ to get the destination (e.g., screen)
 											// position.
-		short		m_sAngle;			// Angle of rotation
-		long		m_lWidth;			// Sprite's Desired Display Width (for scale blit)
-		long		m_lHeight;			// Sprite's Desired Display Height (for scale blit)
+		int16_t		m_sAngle;			// Angle of rotation
+		int32_t		m_lWidth;			// Sprite's Desired Display Width (for scale blit)
+		int32_t		m_lHeight;			// Sprite's Desired Display Height (for scale blit)
 		double	m_dX;					// Sprite X as a double (for motion)
 		double	m_dY;					// Sprite Y as a double (for motion)
 		double	m_dZ;					// Sprite Z as a double (for motion)
@@ -114,26 +114,26 @@ class RSprite
 		double	m_dXvel;				// X Velocity
 		double	m_dYvel;				// Y Velocity
 		double	m_dZvel;				// Z Velocity
-		ULONG		m_ulFlags;			// Attribute and status flags
+		uint32_t		m_ulFlags;			// Attribute and status flags
 		RImage*	m_pImage;			// Image
 		RList<RRegion> m_clRegions;// List of regions
 		SPRITE_PREDISP	m_cbPreDisp;// Pre-display callback function
-		short		m_sOwnImage;		// TRUE if image was allocated by us; FALSE, otherwise.
+		int16_t		m_sOwnImage;		// TRUE if image was allocated by us; FALSE, otherwise.
 											// Basically, if this flag is TRUE, this will delete
 											// m_pImage when ~RSprite() is called.
 		
-		static RSList<RSprite, short> SpriteList;
+		static RSList<RSprite, int16_t> SpriteList;
 
 	public:
 		// Default constructor
 		RSprite();
 
 		// Constructor for image and flags
-		RSprite(RImage* pImage, ULONG ulFlags = 0);
+		RSprite(RImage* pImage, uint32_t ulFlags = 0);
 
 		// Constructor for complete initialize
-		RSprite(short sX, short sY, short sZ, short sAngle, long lWidth, long lHeight,
-		        ULONG ulFlags, RImage* pImage);
+		RSprite(int16_t sX, int16_t sY, int16_t sZ, int16_t sAngle, int32_t lWidth, int32_t lHeight,
+		        uint32_t ulFlags, RImage* pImage);
 
 		// Does basic default initialization for RSprite.
 		// Should not be called after CreateImage() unless DestroyImage() is called
@@ -142,7 +142,7 @@ class RSprite
 
 		// Allocates an image pointed to by m_pImage.  Use DestroyImage() to
 		// destroy.
-		short CreateImage(void);	// Returns 0 on success.
+		int16_t CreateImage(void);	// Returns 0 on success.
 
 		// Destroys an image previously allocated by CreateImage().  If m_pImage
 		// is NULL or m_sOwnImage is FALSE, this function does nothing.
@@ -153,21 +153,21 @@ class RSprite
 		// format cannot be saved directly, the image will be converted
 		// to one of the standard types and the Destination type will be
 		// set to reconvert it to its original format upon load.
-		short Save(char* pszFilename);
+		int16_t Save(char* pszFilename);
 
 		// Save sprite information and its image.  This version of the save
 		// takes an open RFile poniter and writes to the file.  This can be
 		// used to include a sprite within another file.
-		short Save(RFile* pcf);
+		int16_t Save(RFile* pcf);
 
 		// Load sprite information and image.  This version of the load takes
 		// a filename and opens that file to read the information.  
-		short Load(char* pszFilename);
+		int16_t Load(char* pszFilename);
 
 		// Load sprite information and image.  This version of the load takes
 		// an open RFile ponter and reads the data from the current position
 		// in the file.
-		short Load(RFile* pcf);
+		int16_t Load(RFile* pcf);
 
 		// Destructor
 		virtual ~RSprite();
@@ -176,31 +176,31 @@ class RSprite
 		virtual void Modified() {m_ulFlags |= SPRITE_FLAG_MODIFIED;};
 
 		// Check for zone collisions
- 		virtual short DoRegionsCollide(// Returns 1 if collision, 0 otherwise
-			short sThisZoneType,			// type of zone for this sprite
-			short sOtherZoneType,		// zone type to check
+ 		virtual int16_t DoRegionsCollide(// Returns 1 if collision, 0 otherwise
+			int16_t sThisZoneType,			// type of zone for this sprite
+			int16_t sOtherZoneType,		// zone type to check
 			RSprite* pSprite);			// other sprite
 
 		// Get details about collision.  Use the predefined COLLIDE_??? masks
 		// with the return value to determine details about the collision.
-		virtual ULONG GetCxFlags() {return m_ulFlags;};	// Returns detailed collision flags
+		virtual uint32_t GetCxFlags() {return m_ulFlags;};	// Returns detailed collision flags
 
 		// Add a region to this sprite's region list
-		virtual short AddRegion(RRegion*);
+		virtual int16_t AddRegion(RRegion*);
 
 		// Remove a region from this sprite's region list
-		virtual short RemoveRegion(RRegion*);
+		virtual int16_t RemoveRegion(RRegion*);
 
 		// Set the X, Y, Z position of this sprite
-		void SetPosition(short sX, short sY, short sZ)
+		void SetPosition(int16_t sX, int16_t sY, int16_t sZ)
 			{m_sX = sX; m_sY = sY; m_sZ = sZ;};
 
 		// Set the angle of rotation for this sprite
-		void SetAngle(short sAngle)
+		void SetAngle(int16_t sAngle)
 			{m_sAngle = sAngle;};
 
 		// Set the desired size of the sprite
-		void SetSize(long lWidth, long lHeight)
+		void SetSize(int32_t lWidth, int32_t lHeight)
 			{m_lWidth = lWidth; m_lHeight = lHeight;};
 
 		// Set acceleration for 3D movement
@@ -224,12 +224,12 @@ class RSprite
 		// a class from this object, overriding this is a good way to grab 
 		// control from a RSprite.
 		// Provides callability from this object to higher layers.
-		virtual short Update(void)	// Returns user defined value or 0.
+		virtual int16_t Update(void)	// Returns user defined value or 0.
 			{ return 0; }
 
 	private:
 		// Add the sprite to the static list of sprites
-		short AddSpriteToList();
+		int16_t AddSpriteToList();
 };
 
 #endif //SPRITE_H

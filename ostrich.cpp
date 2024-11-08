@@ -120,11 +120,11 @@
 double COstrich::ms_dExplosionVelocity = 180.0;
 double COstrich::ms_dMaxMarchVel = 30.0;
 double COstrich::ms_dMaxRunVel = 80.0;
-long COstrich::ms_lStateChangeTime = 10000;
-short COstrich::ms_sStartingHitPoints = 100;
+int32_t COstrich::ms_lStateChangeTime = 10000;
+int16_t COstrich::ms_sStartingHitPoints = 100;
 
 // Let this auto-init to 0
-short COstrich::ms_sFileCount;
+int16_t COstrich::ms_sFileCount;
 
 /// Standing Animation Files
 // An array of pointers to resource names (one for each channel of the animation)
@@ -238,13 +238,13 @@ static RP3d ms_apt3dAttribCheck[] =
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short COstrich::Load(					// Returns 0 if successfull, non-zero otherwise
+int16_t COstrich::Load(					// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,						// In:  File to load from
 	bool bEditMode,					// In:  True for edit mode, false otherwise
-	short sFileCount,					// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)				// In:  Version of file format to load.
+	int16_t sFileCount,					// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)				// In:  Version of file format to load.
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Call the base class load to get the instance ID, position, motion etc.
 	sResult	= CDoofus::Load(pFile, bEditMode, sFileCount, ulFileVersion);
@@ -303,11 +303,11 @@ short COstrich::Load(					// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short COstrich::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t COstrich::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 {
-	short sResult = SUCCESS;
+	int16_t sResult = SUCCESS;
 
 	// Call the base class save to save the instance ID, position etc.
 	CDoofus::Save(pFile, sFileCount);
@@ -339,9 +339,9 @@ short COstrich::Save(										// Returns 0 if successfull, non-zero otherwise
 // Init - Call this after the resources are in place
 ////////////////////////////////////////////////////////////////////////////////
 
-short COstrich::Init(void)
+int16_t COstrich::Init(void)
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Prepare shadow (get resources and setup sprite).
 	sResult	= PrepareShadow();
@@ -371,7 +371,7 @@ short COstrich::Init(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short COstrich::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+int16_t COstrich::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 {
 	// Register this as a victim rather than a hostile.
 	m_bCivilian = true;
@@ -390,14 +390,14 @@ short COstrich::Startup(void)								// Returns 0 if successfull, non-zero other
 ////////////////////////////////////////////////////////////////////////////////
 void COstrich::Update(void)
 {
-	short sHeight = m_sPrevHeight;
+	int16_t sHeight = m_sPrevHeight;
 	double dNewX;
 	double dNewY;
 	double dNewZ;
 	double dX;
 	double dZ;
-	long lThisTime;
-	long lTimeDifference;
+	int32_t lThisTime;
+	int32_t lTimeDifference;
 
 
 	if (!m_sSuspend)
@@ -655,12 +655,12 @@ void COstrich::Render(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short COstrich::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t COstrich::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Call the base class to place the item.
 	sResult = CDoofus::EditNew(sX, sY, sZ);
@@ -682,7 +682,7 @@ short COstrich::EditNew(									// Returns 0 if successfull, non-zero otherwise
 // EditModify - Show dialog box for selecting starting bouy
 ////////////////////////////////////////////////////////////////////////////////
 
-short COstrich::EditModify(void)
+int16_t COstrich::EditModify(void)
 {
 	return 0;
 }
@@ -690,9 +690,9 @@ short COstrich::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short COstrich::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t COstrich::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	sResult = m_animRun.Get(ms_apszRunResNames, RChannel_LoopAtStart | RChannel_LoopAtEnd);
 	if (sResult == 0)
@@ -759,7 +759,7 @@ short COstrich::GetResources(void)						// Returns 0 if successfull, non-zero ot
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short COstrich::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t COstrich::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
 	m_animRun.Release();
 	m_animStand.Release();
@@ -920,9 +920,9 @@ void COstrich::AlertFlock(void)
 
 	msg.msg_Panic.eType = typePanic;
 	msg.msg_Panic.sPriority = 0;
-	msg.msg_Panic.sX = (short) m_dX;
-	msg.msg_Panic.sY = (short) m_dY;
-	msg.msg_Panic.sZ = (short) m_dZ;
+	msg.msg_Panic.sX = (int16_t) m_dX;
+	msg.msg_Panic.sY = (int16_t) m_dY;
+	msg.msg_Panic.sZ = (int16_t) m_dZ;
 
 	CListNode<CThing>* pNext = m_pRealm->m_everythingHead.m_pnNext;
 	while (pNext->m_powner != NULL)
@@ -953,7 +953,7 @@ void COstrich::OnDead(void)
 
 void COstrich::ChangeRandomState(void)
 {
-	short sMod;
+	int16_t sMod;
 	m_lTimer = m_pRealm->m_time.GetGameTime() + ms_lStateChangeTime + GetRandom() % 5000;
 	sMod = m_lTimer % 3;
 	m_dRot = rspMod360(m_dRot - 10 + (GetRandom() % 20));

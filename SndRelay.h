@@ -62,7 +62,7 @@ class CSndRelay : public CThing
 
 		bool m_bEnabled;
 
-		short m_sSuspend;							// Suspend flag
+		int16_t m_sSuspend;							// Suspend flag
 
 		State	m_state;								// Current state.
 
@@ -70,7 +70,7 @@ class CSndRelay : public CThing
 
 	protected:
 
-		static short	ms_sFileCount;			// File count.
+		static int16_t	ms_sFileCount;			// File count.
 														
 	//---------------------------------------------------------------------------
 	// Constructor(s) / destructor
@@ -102,11 +102,11 @@ class CSndRelay : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CSndRelay(pRealm);
 			if (*ppNew == 0)
 				{
@@ -121,22 +121,22 @@ class CSndRelay : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -150,25 +150,25 @@ class CSndRelay : public CThing
 		// Render object
 		void Render(void);
 
-		short Setup(												// Returns 0 on success.
-			short sX,												// In: New x coord
-			short sY,												// In: New y coord
-			short sZ);												// In: New z coord
+		int16_t Setup(												// Returns 0 on success.
+			int16_t sX,												// In: New x coord
+			int16_t sY,												// In: New y coord
+			int16_t sZ);												// In: New z coord
 
 		// Called by editor to init new object at specified position
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
-		short EditMove(											// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditMove(											// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to get the clickable pos/area of an object in 2D.
 		virtual	// Overridden here.
@@ -178,9 +178,9 @@ class CSndRelay : public CThing
 		// Called by editor to get the hotspot of an object in 2D.
 		virtual	// Overridden here.
 		void EditHotSpot(			// Returns nothiing.
-			short*	psX,			// Out: X coord of 2D hotspot relative to
+			int16_t*	psX,			// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-			short*	psY);			// Out: Y coord of 2D hotspot relative to
+			int16_t*	psY);			// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 
 		// Called by editor to update object
@@ -204,10 +204,10 @@ class CSndRelay : public CThing
 	//---------------------------------------------------------------------------
 	protected:
 		// Init object
-		short Init(void);											// Returns 0 if successfull, non-zero otherwise
+		int16_t Init(void);											// Returns 0 if successfull, non-zero otherwise
 		
 		// Kill object
-		short Kill(void);											// Returns 0 if successfull, non-zero otherwise
+		int16_t Kill(void);											// Returns 0 if successfull, non-zero otherwise
 
 		// Process our message queue.
 		void ProcessMessages(void);

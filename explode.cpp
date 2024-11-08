@@ -160,21 +160,21 @@
 // These are default values -- actually values are set using the editor!
 
 // Let this auto-init to 0
-short CExplode::ms_sFileCount;
-short CExplode::ms_sBlastRadius = 30;
-short CExplode::ms_sProjectVelocity = 180;
+int16_t CExplode::ms_sFileCount;
+int16_t CExplode::ms_sBlastRadius = 30;
+int16_t CExplode::ms_sProjectVelocity = 180;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CExplode::Load(									// Returns 0 if successfull, non-zero otherwise
+int16_t CExplode::Load(									// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 	{
-	short sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 
 	if (sResult == 0)
 	{
@@ -224,11 +224,11 @@ short CExplode::Load(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CExplode::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CExplode::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 {
-	short	sResult	= CThing::Save(pFile, sFileCount);
+	int16_t	sResult	= CThing::Save(pFile, sFileCount);
 	if (sResult == 0)
 		{
 		// Save common data just once per file (not with each object)
@@ -251,7 +251,7 @@ short CExplode::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CExplode::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+int16_t CExplode::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 {
 
 	return 0;
@@ -261,7 +261,7 @@ short CExplode::Startup(void)								// Returns 0 if successfull, non-zero other
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-short CExplode::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CExplode::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 {
 	return 0;
 }
@@ -302,7 +302,7 @@ void CExplode::Update(void)
 		m_MessageQueue.Empty();
 
 		// Get new time
-		long lThisTime = m_pRealm->m_time.GetGameTime(); 
+		int32_t lThisTime = m_pRealm->m_time.GetGameTime(); 
 		
 		if (m_lTimer < m_pAnimChannel->TotalTime())
 		{
@@ -311,7 +311,7 @@ void CExplode::Update(void)
 		}
 		else
 		{
-			short a;
+			int16_t a;
 			CFire* pSmoke;
 			for (a = 0; a < 8; a++)
 			{
@@ -341,20 +341,20 @@ void CExplode::Render(void)
 		// Map from 3d to 2d coords
 //		m_sprite.m_sX2 = m_dX + pAnim->m_sX;
 //		m_sprite.m_sY2 = m_dZ + pAnim->m_sY;
-		Map3Dto2D((short) (m_dX + pAnim->m_sX), (short) m_dY, (short) (m_dZ + pAnim->m_sY), &m_sprite.m_sX2, &m_sprite.m_sY2);
+		Map3Dto2D((int16_t) (m_dX + pAnim->m_sX), (int16_t) m_dY, (int16_t) (m_dZ + pAnim->m_sY), &m_sprite.m_sX2, &m_sprite.m_sY2);
 
 		// Priority is based on our Z position.
 		m_sprite.m_sPriority = m_dZ;
 
 		// Layer should be based on info we get from attribute map.
-		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 		// Copy the color info and the alpha channel to the Alpha Sprite
 		m_sprite.m_pImage = &(pAnim->m_imColor);
 		m_sprite.m_pimAlpha = &(pAnim->m_pimAlphaArray[0]);
 
 		// temp
-		short sTemp = pAnim->m_sNumAlphas;
+		int16_t sTemp = pAnim->m_sNumAlphas;
 
 		// Update sprite in scene
 		m_pRealm->m_scene.UpdateSprite(&m_sprite);
@@ -367,14 +367,14 @@ void CExplode::Render(void)
 //			  position and initial settings
 ////////////////////////////////////////////////////////////////////////////////
 
-short CExplode::Setup(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ,												// In:  New z coord
+int16_t CExplode::Setup(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ,												// In:  New z coord
 	U16	u16ShooterID,									// In:  Who is responsible for this explosion
-	short sAnim)											// In:  Which animation to use
+	int16_t sAnim)											// In:  Which animation to use
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -406,9 +406,9 @@ short CExplode::Setup(									// Returns 0 if successfull, non-zero otherwise
 	msg.msg_Explosion.eType = typeExplosion;
 	msg.msg_Explosion.sPriority = 0;
 	msg.msg_Explosion.sDamage = 100;
-	msg.msg_Explosion.sX = (short) m_dX;
-	msg.msg_Explosion.sY = (short) m_dY;
-	msg.msg_Explosion.sZ = (short) m_dZ;
+	msg.msg_Explosion.sX = (int16_t) m_dX;
+	msg.msg_Explosion.sY = (int16_t) m_dY;
+	msg.msg_Explosion.sZ = (int16_t) m_dZ;
 	msg.msg_Explosion.sVelocity = ms_sProjectVelocity;
 	msg.msg_Explosion.u16ShooterID = m_u16ShooterID;
 	m_pRealm->m_smashatorium.QuickCheckReset(
@@ -433,12 +433,12 @@ short CExplode::Setup(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CExplode::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CExplode::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -457,7 +457,7 @@ short CExplode::EditNew(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-short CExplode::EditModify(void)
+int16_t CExplode::EditModify(void)
 {
 	return 0;
 }
@@ -466,10 +466,10 @@ short CExplode::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CExplode::EditMove(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CExplode::EditMove(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
 	m_dX = (double)sX;
 	m_dY = (double)sY;
@@ -502,9 +502,9 @@ void CExplode::EditRender(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CExplode::GetResources(short sAnim)						// Returns 0 if successfull, non-zero otherwise
+int16_t CExplode::GetResources(int16_t sAnim)						// Returns 0 if successfull, non-zero otherwise
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	if (sAnim == 0)
 		sResult = rspGetResource(&g_resmgrGame, m_pRealm->Make2dResPath(AA_FILE), &m_pAnimChannel, RFile::LittleEndian);
@@ -521,7 +521,7 @@ short CExplode::GetResources(short sAnim)						// Returns 0 if successfull, non-
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CExplode::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CExplode::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
 	rspReleaseResource(&g_resmgrGame, &m_pAnimChannel);
 	return 0;
@@ -533,11 +533,11 @@ short CExplode::FreeResources(void)						// Returns 0 if successfull, non-zero o
 //				 the first time, there won't be a delay.
 ////////////////////////////////////////////////////////////////////////////////
 
-short CExplode::Preload(
+int16_t CExplode::Preload(
 	CRealm* prealm)				// In:  Calling realm.
 {
 	ChannelAA* pRes;
-	short sResult = rspGetResource(&g_resmgrGame, prealm->Make2dResPath(AA_FILE), &pRes, RFile::LittleEndian);
+	int16_t sResult = rspGetResource(&g_resmgrGame, prealm->Make2dResPath(AA_FILE), &pRes, RFile::LittleEndian);
 	rspReleaseResource(&g_resmgrGame, &pRes);
 	sResult = rspGetResource(&g_resmgrGame, prealm->Make2dResPath(GE_FILE), &pRes, RFile::LittleEndian);
 	rspReleaseResource(&g_resmgrGame, &pRes);

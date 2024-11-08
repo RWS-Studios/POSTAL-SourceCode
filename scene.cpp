@@ -340,11 +340,11 @@
 // Should be largest to hold largest 3D object.
 #define SCREEN_DIAMETER_FOR_3D	(MODEL_DIAMETER * SCREEN2MODEL_RATIO)	
 
-short	gsGlobalBrightnessPerLightAttribute = 5;  
+int16_t	gsGlobalBrightnessPerLightAttribute = 5;  
 /* short gsGlobalLightingAdjustment = 128; /* neutral center */
 // NOTE: This max value completely depends on the actual lighting effect curve:
 // it should be set near the bright spot of the curve.
-short gsGlobalLightingAdjustment = 128; // NEUTRAL BABY!
+int16_t gsGlobalLightingAdjustment = 128; // NEUTRAL BABY!
 //160 /* Max White */ - 6 * gsGlobalBrightnessPerLightAttribute;
 
 // Used to control whether or not scene will actually blit.  When set to true,
@@ -426,7 +426,7 @@ void CScene::Clear(void)
 void CScene::RemoveAllSprites(void)
 	{
 	// Clear sprites from each layer
-	for (short s = 0; s < m_sNumLayers; s++)
+	for (int16_t s = 0; s < m_sNumLayers; s++)
 		RemoveSprites(s);
 	}
 
@@ -435,7 +435,7 @@ void CScene::RemoveAllSprites(void)
 // Remove sprites from specified layer
 ////////////////////////////////////////////////////////////////////////////////
 void CScene::RemoveSprites(
-	short sLayer)											// In:  Layer number (0 to n-1)
+	int16_t sLayer)											// In:  Layer number (0 to n-1)
 	{
 	// Get pointer to layer
 	Layer* pLayer = &(m_pLayers[sLayer]);
@@ -467,7 +467,7 @@ void CScene::RemoveSprites(
 // Set number of layers (destroys any existing layers!)
 ////////////////////////////////////////////////////////////////////////////////
 void CScene::SetLayers(
-	short sNumLayers)										// In:  Number of layers
+	int16_t sNumLayers)										// In:  Number of layers
 	{
 	// Validate parameters
 	ASSERT(sNumLayers > 0);
@@ -565,8 +565,8 @@ void CScene::RemoveSprite(
 void									// Returns nothing.
 CScene::Render3D(		
 	RImage*		pimDst,			// Destination image.
-	short			sDstX,			// Destination 2D x coord.
-	short			sDstY,			// Destination 2D y coord.
+	int16_t			sDstX,			// Destination 2D x coord.
+	int16_t			sDstY,			// Destination 2D y coord.
 	CSprite3*	ps3Cur,			// 3D sprite to render.
 	CHood*		phood,			// Da hood, homey.
 	RRect*		prcDstClip)		// Dst clip rect.
@@ -620,8 +620,8 @@ CScene::Render3D(
 void									// Returns nothing.
 CScene::Render3D(		
 	RImage*		pimDst,			// Destination image.
-	short			sDstX,			// Destination 2D x coord.
-	short			sDstY,			// Destination 2D y coord.
+	int16_t			sDstX,			// Destination 2D x coord.
+	int16_t			sDstY,			// Destination 2D y coord.
 	CSprite3*	ps3Cur,			// 3D sprite to render.
 	RAlpha*		plight,			// Light to render with.
 	RRect*		prcDstClip)		// Dst clip rect.
@@ -632,31 +632,31 @@ CScene::Render3D(
 	RTransform	transChildAbs;
 	RTransform*	ptransRender;	// The transform used.
 
-	short		sCurX;
-	short		sCurY;
+	int16_t		sCurX;
+	int16_t		sCurY;
 	RP3d		pt3dSrcCenter, pt3dSrcRadius;		// Center and point on outside of bounding
 															// sphere in "Randy" coords.
-	short		sClipLeft;			// Amount clipped off left edge of dest region.
-	short		sClipTop;			// Amount clipped off top edge of dest region.
-	short		sClipRight;			// Amount clipped off right edge of dest region.
-	short		sClipBottom;		// Amount clipped off bottom edge of dest region.
-	short		sRadius;				// Radius of bounding sphere in pixels.
-	short		sDiameter;			// Diameter of bounding sphere in pixels.
-	short		sCenterX;			// Center of bounding sphere as screen coord.
-	short		sCenterY;			// Center of bounding sphere as screen coord.
+	int16_t		sClipLeft;			// Amount clipped off left edge of dest region.
+	int16_t		sClipTop;			// Amount clipped off top edge of dest region.
+	int16_t		sClipRight;			// Amount clipped off right edge of dest region.
+	int16_t		sClipBottom;		// Amount clipped off bottom edge of dest region.
+	int16_t		sRadius;				// Radius of bounding sphere in pixels.
+	int16_t		sDiameter;			// Diameter of bounding sphere in pixels.
+	int16_t		sCenterX;			// Center of bounding sphere as screen coord.
+	int16_t		sCenterY;			// Center of bounding sphere as screen coord.
 	RImage*	pimRender;			// Image to render into.
 	bool		bIndirectRender;	// Rendering to intermediate buffer.
-	short		sIndirectRenderX;	// Render coord when rendering to clip buffer.
-	short		sIndirectRenderY;	// Render coord when rendering to clip buffer.
-	short		sDirectRenderZ;	// Render Coord in either case
-	short		sDirectRenderX;	// Render coord when rendering to pimDst buffer.
-	short		sDirectRenderY;	// Render coord when rendering to pimDst buffer.
-	short		sRenderX;			// Render coord passed to Render().
-	short		sRenderY;			// Render coord passed to Render().
-	short		sBlitX;				// Blit pos for 3D model.
-	short		sBlitY;				// Biit pos for 3D model.
-	short		sRenderOffX;		// Offset to Render().
-	short		sRenderOffY;		// Offset to Render().
+	int16_t		sIndirectRenderX;	// Render coord when rendering to clip buffer.
+	int16_t		sIndirectRenderY;	// Render coord when rendering to clip buffer.
+	int16_t		sDirectRenderZ;	// Render Coord in either case
+	int16_t		sDirectRenderX;	// Render coord when rendering to pimDst buffer.
+	int16_t		sDirectRenderY;	// Render coord when rendering to pimDst buffer.
+	int16_t		sRenderX;			// Render coord passed to Render().
+	int16_t		sRenderY;			// Render coord passed to Render().
+	int16_t		sBlitX;				// Blit pos for 3D model.
+	int16_t		sBlitY;				// Biit pos for 3D model.
+	int16_t		sRenderOffX;		// Offset to Render().
+	int16_t		sRenderOffY;		// Offset to Render().
 
 	ASSERT(ps3Cur->m_psop != NULL);
 	ASSERT(ps3Cur->m_ptex != NULL);
@@ -738,8 +738,8 @@ if (g_bSceneDontBlit == false)
 	sCurY		= ps3Cur->m_sY2 + sDstY;
 
 	// Determine center of sphere of points relative to origin.
-	short	sOrgRelCenX	= (m_pipeline.m_sCenX - (short)(SCREEN_DIAMETER_FOR_3D / 2));
-	short	sOrgRelCenY	= (m_pipeline.m_sCenY - (short)(SCREEN_DIAMETER_FOR_3D / 2));
+	int16_t	sOrgRelCenX	= (m_pipeline.m_sCenX - (int16_t)(SCREEN_DIAMETER_FOR_3D / 2));
+	int16_t	sOrgRelCenY	= (m_pipeline.m_sCenY - (int16_t)(SCREEN_DIAMETER_FOR_3D / 2));
 	// Determine center of sphere of points on screen.
 	sCenterX		= sCurX + sOrgRelCenX;
 	sCenterY		= sCurY + sOrgRelCenY;
@@ -776,7 +776,7 @@ if (g_bSceneDontBlit == false)
 		// Stage two aligns front of sphere:
 		// *** RESTORING DO NON-ADJUSTMENT! ***
 		// re-attempting center adjustment level
-		short sLightOffset = 0;	// Must be initialized here (the other assignments are +=).
+		int16_t sLightOffset = 0;	// Must be initialized here (the other assignments are +=).
 		//	- (m_pipeline.m_sCenZ + m_pipeline.m_sZ); 
 
 		// If no parent . . .
@@ -790,8 +790,8 @@ if (g_bSceneDontBlit == false)
 			// Determine destination for render on screen.
 			// The position you supply to Render() is one 3D screen radius
 			// up and to the left.
-			sDirectRenderX		= sCenterX - (short)(SCREEN_DIAMETER_FOR_3D / 2);
-			sDirectRenderY		= sCenterY - (short)(SCREEN_DIAMETER_FOR_3D / 2);
+			sDirectRenderX		= sCenterX - (int16_t)(SCREEN_DIAMETER_FOR_3D / 2);
+			sDirectRenderY		= sCenterY - (int16_t)(SCREEN_DIAMETER_FOR_3D / 2);
 			sDirectRenderZ		= m_pipeline.m_sCenZ; // don't need to know
 			// Offset by the center relative to the origin.
 			sRenderOffX			= -sOrgRelCenX;
@@ -1025,8 +1025,8 @@ if (g_bSceneDontBlit == false)
 // ****END TEMP****
 
 	// Store this location (it is used by Render() to do collision circle for XRay).
-	ps3Cur->m_sCenX	= ps3Cur->m_sX2 + m_pipeline.m_sCenX - (short)(SCREEN_DIAMETER_FOR_3D / 2);
-	ps3Cur->m_sCenY	= ps3Cur->m_sY2 + m_pipeline.m_sCenY - (short)(SCREEN_DIAMETER_FOR_3D / 2);
+	ps3Cur->m_sCenX	= ps3Cur->m_sX2 + m_pipeline.m_sCenX - (int16_t)(SCREEN_DIAMETER_FOR_3D / 2);
+	ps3Cur->m_sCenY	= ps3Cur->m_sY2 + m_pipeline.m_sCenY - (int16_t)(SCREEN_DIAMETER_FOR_3D / 2);
 	ps3Cur->m_sRadius	= sRadius;
 	}
 
@@ -1037,10 +1037,10 @@ inline
 void DrawLine2d(			// Returns nothing.
 	U8			u8Color,		// Color to draw line with.
 	RImage*	pimDst,		// Destination image.
-	short		sDstX1,		// Start pt.
-	short		sDstY1,		// Start pt.
-	short		sDstX2,		// End pt.
-	short		sDstY2,		// End pt.
+	int16_t		sDstX1,		// Start pt.
+	int16_t		sDstY1,		// Start pt.
+	int16_t		sDstX2,		// End pt.
+	int16_t		sDstY2,		// End pt.
 	RRect*	prcDstClip)	// Dst clip rect.
 	{
 	#if 0
@@ -1080,18 +1080,18 @@ inline
 void DrawLine3d(			// Returns nothing.
 	U8			u8Color,		// Color to draw line with.
 	RImage*	pimDst,		// Destination image.
-	short		sDstX1,		// Start pt.
-	short		sDstY1,		// Start pt.
-	short		sDstZ1,		// Start pt.
-	short		sDstX2,		// End pt.
-	short		sDstY2,		// End pt.
-	short		sDstZ2,		// End pt.
+	int16_t		sDstX1,		// Start pt.
+	int16_t		sDstY1,		// Start pt.
+	int16_t		sDstZ1,		// Start pt.
+	int16_t		sDstX2,		// End pt.
+	int16_t		sDstY2,		// End pt.
+	int16_t		sDstZ2,		// End pt.
 	CHood*	phood,		// Da hood, homey.
 	RRect*	prcDstClip)	// Dst clip rect.
 	{
-	short	s2dX1, s2dY1;
+	int16_t	s2dX1, s2dY1;
 	phood->Map3Dto2D(sDstX1, sDstY1, sDstZ1, &s2dX1, &s2dY1);
-	short s2dX2, s2dY2;
+	int16_t s2dX2, s2dY2;
 	phood->Map3Dto2D(sDstX2, sDstY2, sDstZ2, &s2dX2, &s2dY2);
 
 	DrawLine2d(u8Color, pimDst, s2dX1, s2dY1, s2dX2, s2dY2, prcDstClip);
@@ -1102,8 +1102,8 @@ void DrawLine3d(			// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 void CScene::Line2D(					// Returns nothing.
 	RImage*			pimDst,			// Destination image.
-	short				sDstX,			// Destination 2D x coord.
-	short				sDstY,			// Destination 2D y coord.
+	int16_t				sDstX,			// Destination 2D x coord.
+	int16_t				sDstY,			// Destination 2D y coord.
 	CSpriteLine2d*	psl2,				// Tree of sprites to render.
 	RRect*			prcDstClip)		// Dst clip rect.
 	{
@@ -1123,22 +1123,22 @@ void CScene::Line2D(					// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 void CScene::RenderCylinder3D(			// Returns nothing.
 	RImage*					pimDst,			// Destination image.
-	short						sDstX,			// Destination 2D x coord.
-	short						sDstY,			// Destination 2D y coord.
+	int16_t						sDstX,			// Destination 2D x coord.
+	int16_t						sDstY,			// Destination 2D y coord.
 	CSpriteCylinder3d*	psc3,				// Cylinder sprite.
 	CHood*					phood,			// Da hood, homey.
 	RRect*					prcDstClip)		// Dst clip rect.
 	{
-	short sX	= sDstX + psc3->m_sX2;
-	short	sZ	= sDstY + psc3->m_sY2;
+	int16_t sX	= sDstX + psc3->m_sX2;
+	int16_t	sZ	= sDstY + psc3->m_sY2;
 
 	// Determine points.
-	short	sX1	= sX - psc3->m_sRadius;
-	short	sX2	= sX + psc3->m_sRadius;
-	short	sY1	= 0;
-	short	sY2	= psc3->m_sHeight;
-	short	sZ1	= sZ - psc3->m_sRadius;
-	short	sZ2	= sZ + psc3->m_sRadius;
+	int16_t	sX1	= sX - psc3->m_sRadius;
+	int16_t	sX2	= sX + psc3->m_sRadius;
+	int16_t	sY1	= 0;
+	int16_t	sY2	= psc3->m_sHeight;
+	int16_t	sZ1	= sZ - psc3->m_sRadius;
+	int16_t	sZ2	= sZ + psc3->m_sRadius;
 
 	// Base box.
 	DrawLine3d(
@@ -1293,8 +1293,8 @@ void CScene::RenderCylinder3D(			// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 void CScene::Render2D(		// Returns nothing.
 	RImage*		pimDst,		// Destination image.
-	short			sDstX,		// Destination 2D x coord.
-	short			sDstY,		// Destination 2D y coord.
+	int16_t			sDstX,		// Destination 2D x coord.
+	int16_t			sDstY,		// Destination 2D y coord.
 	CSprite2*	ps2Cur,		// Tree of sprites to render.
 	CHood*		phood,		// Da hood, homey.
 	RRect*		prcDstClip,	// Dst clip rect.
@@ -1358,7 +1358,7 @@ void CScene::Render2D(		// Returns nothing.
 				// If this item is alpha OR this item is an opaque and we are
 				// xraying opaques AND there is an xrayee AND the xray effect is enabled, 
 				// we need to see if the xray should be used via collision detection.
-				short sNormalBlit = 1;
+				int16_t sNormalBlit = 1;
 #if 0			// The math equiv which appears to be slower than the confusing but
 				// similar compares.  Also, the math allows none of the short circuiting 
 				// that the C++ compares do.
@@ -1392,10 +1392,10 @@ void CScene::Render2D(		// Returns nothing.
 					// Check if this sprite collides with the xrayee sprite.  If so, 
 					// we need to do draw this sprite with the xray effect so the 
 					// xrayee(s) can be seen through it.
-					short	sXRayeeW	= phood->m_pimXRayMask->m_sWidth;
-					short	sXRayeeH	= phood->m_pimXRayMask->m_sHeight;
-					short	sXRayeeX	= psprXRayee->m_sX2;	// Default to 2D blit location.
-					short	sXRayeeY	= psprXRayee->m_sY2;	// Default to 2D blit location.
+					int16_t	sXRayeeW	= phood->m_pimXRayMask->m_sWidth;
+					int16_t	sXRayeeH	= phood->m_pimXRayMask->m_sHeight;
+					int16_t	sXRayeeX	= psprXRayee->m_sX2;	// Default to 2D blit location.
+					int16_t	sXRayeeY	= psprXRayee->m_sY2;	// Default to 2D blit location.
 					switch (psprXRayee->m_type)
 						{
 						case CSprite::Standard2d:
@@ -1421,8 +1421,8 @@ void CScene::Render2D(		// Returns nothing.
 
 						// Get coordinate in BUILDING coordinates (i.e., coords inside/realtive-to the building)
 						// for the alpha effect.
-						short	sAlphaX	= (sXRayeeX + sXRayeeW / 2 - phood->m_pimXRayMask->m_sWidth / 2) - ps2Cur->m_sX2;
-						short	sAlphaY	= (sXRayeeY + sXRayeeH / 2 - phood->m_pimXRayMask->m_sHeight / 2) - ps2Cur->m_sY2;
+						int16_t	sAlphaX	= (sXRayeeX + sXRayeeW / 2 - phood->m_pimXRayMask->m_sWidth / 2) - ps2Cur->m_sX2;
+						int16_t	sAlphaY	= (sXRayeeY + sXRayeeH / 2 - phood->m_pimXRayMask->m_sHeight / 2) - ps2Cur->m_sY2;
 
 						// Set position of alpha effect.
 						g_alphaBlit(
@@ -1473,8 +1473,8 @@ void CScene::Render2D(		// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 void CScene::Render(			// Returns nothing.
 	RImage*		pimDst,		// Destination image.
-	short			sDstX,		// Destination 2D x coord.
-	short			sDstY,		// Destination 2D y coord.
+	int16_t			sDstX,		// Destination 2D x coord.
+	int16_t			sDstY,		// Destination 2D y coord.
 	CSprite*		pSprite,		// Tree of sprites to render.
 	CHood*		phood,		// Da hood, homey.
 	RRect*		prcDstClip,	// Dst clip rect.
@@ -1578,10 +1578,10 @@ void CScene::Render(			// Returns nothing.
 
 
 				// Bind it.
-				short	sX	= pSprite->m_sX2 + sDstX;
-				short	sY	= pSprite->m_sY2 + sDstY;
-				short	sW	= prcDstClip->sX + prcDstClip->sW - sX;
-				short	sH	= prcDstClip->sY + prcDstClip->sH - sY;
+				int16_t	sX	= pSprite->m_sX2 + sDstX;
+				int16_t	sY	= pSprite->m_sY2 + sDstY;
+				int16_t	sW	= prcDstClip->sX + prcDstClip->sW - sX;
+				int16_t	sH	= prcDstClip->sY + prcDstClip->sH - sY;
 
 				if (sW > 0 && sH > 0)
 					{
@@ -1625,13 +1625,13 @@ void CScene::Render(			// Returns nothing.
 // Render specified area of scene into specified image
 ///////////////////////////////////////////////////////////////////////////////
 void CScene::Render(
-	short sSrcX,											// In:  Source (scene) x coord
-	short sSrcY,											// In:  Source (scene) y coord
-	short sW,												// In:  Width
-	short sH,												// In:  Height
+	int16_t sSrcX,											// In:  Source (scene) x coord
+	int16_t sSrcY,											// In:  Source (scene) y coord
+	int16_t sW,												// In:  Width
+	int16_t sH,												// In:  Height
 	RImage* pimDst,										// In:  Destination image
-	short sDstX,											// In:  Destination (image) x coord
-	short sDstY,											// In:  Destination (image) y coord
+	int16_t sDstX,											// In:  Destination (image) x coord
+	int16_t sDstY,											// In:  Destination (image) y coord
 	CHood* phood)											// In:  The hood involved.
 	{
 	// Init dst clipping rect
@@ -1644,13 +1644,13 @@ void CScene::Render(
 	ms_print.SetDestination(pimDst, &rDstClip);
 
 	// Calculate mapping from scene to image coords
-	short sMapX = sSrcX - sDstX;
-	short sMapY = sSrcY - sDstY;
+	int16_t sMapX = sSrcX - sDstX;
+	int16_t sMapY = sSrcY - sDstY;
 
 	CSprite*	psprXRayee	= NULL;	// XRayee when not NULL.
 
 	// Go through all the layers, back to front
-	for (short sLayer = 0; sLayer < m_sNumLayers; sLayer++)
+	for (int16_t sLayer = 0; sLayer < m_sNumLayers; sLayer++)
 		{
 		// Get pointer to layer (more readable)
 		Layer* pLayer = &m_pLayers[sLayer];
@@ -1768,7 +1768,7 @@ void CScene::SetupPipeline(						// Returns nothing.
 	////////////////////////////////////////////////////////
 
 	// OK, this is a bit more professional way to do it:
-	short sScreenSize		= SCREEN_DIAMETER_FOR_3D; // diameter in pixels;
+	int16_t sScreenSize		= SCREEN_DIAMETER_FOR_3D; // diameter in pixels;
 //	short	sScreenRadius	= sScreenSize>>1;
 
 	double dModelSize		= MODEL_DIAMETER; // diameter in Randy's coordinates
@@ -1826,7 +1826,7 @@ void CScene::TransformPts(	// Returns nothing.
 									// transforming pts.
 	RP3d*		p3dPtsSrc,		// In:  Ptr to group of pts to transform from.
 	RP3d*		p3dPtsDst,		// Out: Ptr to group of pts to transform into.
-	short		sNum)				// In:  The number of pts in p3dPtsSrc to transform.
+	int16_t		sNum)				// In:  The number of pts in p3dPtsSrc to transform.
 	{
 	// Let's try to be nice and let the user call us all the time.
 	// That is, check if there's anything to do before wasting any time . . .
@@ -1851,7 +1851,7 @@ void CScene::TransformPts(	// Returns nothing.
 			}
 
 		// Translate points
-		short	sCur;
+		int16_t	sCur;
 		// Note that this could save a fraction of a miniscule(sp?) moment by being
 		// a do { } while since we know sNum > 0, but fongooey.
 		for (sCur = 0; sCur < sNum; sCur++)
@@ -1870,7 +1870,7 @@ void CScene::TransformPtsToRealm(	// Returns nothing.
 									// transforming pts.
 	RP3d*		p3dPtsSrc,		// In:  Ptr to group of pts to transform from.
 	RP3d*		p3dPtsDst,		// Out: Ptr to group of pts to transform into.
-	short		sNum)				// In:  The number of pts in p3dPtsSrc to transform.
+	int16_t		sNum)				// In:  The number of pts in p3dPtsSrc to transform.
 	{
 #if 0	// This doesn't work.
 	RTransform	trans;
@@ -1893,7 +1893,7 @@ void CScene::TransformPtsToRealm(	// Returns nothing.
 	TransformPts(ptrans, p3dPtsSrc, p3dPtsDst, sNum);
 
 	// Translate to Postal Realm coords.
-	short	i;
+	int16_t	i;
 	for (i = 0; i < sNum; i++)
 		{
 		p3dPtsDst->x		-= SCREEN_DIAMETER_FOR_3D / 2;
@@ -1914,8 +1914,8 @@ void CScene::DeadRender3D(					// Returns nothing.
 	RImage*		pimDst,						// Destination image.
 	CSprite3*	ps3,							// Tree of 3D sprites to render.
 	CHood*		phood,						// Da hood, homey.
-	short			sDstX /*= 0*/,				// Destination 2D x coord.
-	short			sDstY /*= 0*/,				// Destination 2D y coord.
+	int16_t			sDstX /*= 0*/,				// Destination 2D x coord.
+	int16_t			sDstY /*= 0*/,				// Destination 2D y coord.
 	RRect*		prcDstClip /*= NULL*/)	// Dst clip rect.
 	{
 	// Make sure sprite isn't hidden (if it is, skip it)

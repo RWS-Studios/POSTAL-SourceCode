@@ -230,25 +230,25 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // Let this auto-init to 0
-short CFire::ms_sFileCount;
-short CFire::ms_sLargeRadius = 20;
-short CFire::ms_sSmallRadius = 8;
-short CFire::ms_sWindDirection = INIT_WIND_DIR;		// Start wind in this direction
-long  CFire::ms_lCollisionTime = 250;					// Check for collisions this often
-long  CFire::ms_lSmokeTime = 10000;						// Time to let smoke run
+int16_t CFire::ms_sFileCount;
+int16_t CFire::ms_sLargeRadius = 20;
+int16_t CFire::ms_sSmallRadius = 8;
+int16_t CFire::ms_sWindDirection = INIT_WIND_DIR;		// Start wind in this direction
+int32_t  CFire::ms_lCollisionTime = 250;					// Check for collisions this often
+int32_t  CFire::ms_lSmokeTime = 10000;						// Time to let smoke run
 double CFire::ms_dWindVelocity = INIT_WIND_VEL;		// Pixels per second drift due to wind
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CFire::Load(										// Returns 0 if successfull, non-zero otherwise
+int16_t CFire::Load(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 	{
-	short sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 
 	if (sResult == 0)
 	{
@@ -303,11 +303,11 @@ short CFire::Load(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CFire::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CFire::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 {
-	short	sResult	= CThing::Save(pFile, sFileCount);
+	int16_t	sResult	= CThing::Save(pFile, sFileCount);
 	if (sResult == 0)
 	{
 		// Save common data just once per file (not with each object)
@@ -332,7 +332,7 @@ short CFire::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CFire::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+int16_t CFire::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 {
 	return Init();
 }
@@ -340,7 +340,7 @@ short CFire::Startup(void)								// Returns 0 if successfull, non-zero otherwis
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-short CFire::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CFire::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 {
 	return 0;
 }
@@ -373,7 +373,7 @@ void CFire::Resume(void)
 ////////////////////////////////////////////////////////////////////////////////
 void CFire::Update(void)
 {
-	long lThisTime;
+	int32_t lThisTime;
 	double dSeconds;
 	double dDistance;
 	double dNewX;
@@ -457,15 +457,15 @@ void CFire::Update(void)
 				dSeconds = ((double) lThisTime - (double) m_lPrevTime) / 1000.0;
 				// Apply internal velocity.
 				dDistance	= ms_dWindVelocity * dSeconds;
-				dNewX	= m_dX + COSQ[(short) m_sRot] * dDistance;
-				dNewZ	= m_dZ - SINQ[(short) m_sRot] * dDistance;
+				dNewX	= m_dX + COSQ[(int16_t) m_sRot] * dDistance;
+				dNewZ	= m_dZ - SINQ[(int16_t) m_sRot] * dDistance;
 
 				// Check attribute map for walls, and if you hit a wall, 
 				// set the timer so you will die off next time around.
-				short sHeight = m_pRealm->GetHeight((short) dNewX, (short) dNewZ);
+				int16_t sHeight = m_pRealm->GetHeight((int16_t) dNewX, (int16_t) dNewZ);
 				// If it hits a wall taller than itself, then it will rotate in the
 				// predetermined direction until it is free to move.
-				if ((short) m_dY < sHeight)
+				if ((int16_t) m_dY < sHeight)
 				{
 					if (m_bTurnRight)
 						m_sRot = rspMod360(m_sRot - 20);
@@ -545,7 +545,7 @@ void CFire::Render(void)
 		m_sprite.m_sPriority = m_dZ;
 
 		// Layer should be based on info we get from attribute map.
-		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 		// Copy the color info and the alpha channel to the Alpha Sprite
 		m_sprite.m_pImage = &(pAnim->m_imColor);
@@ -584,15 +584,15 @@ void CFire::Render(void)
 // Setup
 ////////////////////////////////////////////////////////////////////////////////
 
-short CFire::Setup(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ,												// In:  New z coord
-	long lTimeToLive,										// In:  Number of milliseconds to burn, default 1sec
+int16_t CFire::Setup(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ,												// In:  New z coord
+	int32_t lTimeToLive,										// In:  Number of milliseconds to burn, default 1sec
 	bool  bThick,											// In:  Use thick fire (more opaque) default = true
 	FireAnim eAnimType)									// In:  Animation type to use default = LargeFire
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -625,9 +625,9 @@ short CFire::Setup(									// Returns 0 if successfull, non-zero otherwise
 // Init
 ////////////////////////////////////////////////////////////////////////////////
 
-short CFire::Init(void)
+int16_t CFire::Init(void)
 {
-	short sResult = SUCCESS;
+	int16_t sResult = SUCCESS;
 	CAlphaAnim* pAnim = NULL;
 
 	if (m_pAnimChannel != NULL)
@@ -695,9 +695,9 @@ short CFire::Init(void)
 // Smokeout - Change from fire to smoke
 ////////////////////////////////////////////////////////////////////////////////
 
-short CFire::Smokeout(void)
+int16_t CFire::Smokeout(void)
 {
-	short sResult = SUCCESS;
+	int16_t sResult = SUCCESS;
 
 	// Modify the wind direction slightly
 	WindDirectionUpdate();
@@ -742,12 +742,12 @@ short CFire::Smokeout(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CFire::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CFire::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -766,7 +766,7 @@ short CFire::EditNew(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-short CFire::EditModify(void)
+int16_t CFire::EditModify(void)
 {
 	return 0;
 }
@@ -775,10 +775,10 @@ short CFire::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CFire::EditMove(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CFire::EditMove(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 {
 	m_dX = (double)sX;
 	m_dY = (double)sY;
@@ -811,9 +811,9 @@ void CFire::EditRender(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CFire::GetResources(void)			// Returns 0 if successfull, non-zero otherwise
+int16_t CFire::GetResources(void)			// Returns 0 if successfull, non-zero otherwise
 {
-	short sResult = SUCCESS;
+	int16_t sResult = SUCCESS;
 
 	switch (m_eFireAnim)
 	{
@@ -844,9 +844,9 @@ short CFire::GetResources(void)			// Returns 0 if successfull, non-zero otherwis
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CFire::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CFire::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	rspReleaseResource(&g_resmgrGame, &m_pAnimChannel);
 
@@ -859,7 +859,7 @@ short CFire::FreeResources(void)						// Returns 0 if successfull, non-zero othe
 //				 the first time, there won't be a delay while it loads.
 ////////////////////////////////////////////////////////////////////////////////
 
-short CFire::Preload(
+int16_t CFire::Preload(
 	CRealm* prealm)				// In:  Calling realm.
 {
 	// Init the static wind direction and velocity when the class loads.
@@ -867,7 +867,7 @@ short CFire::Preload(
 	ms_dWindVelocity = INIT_WIND_VEL;
 
 	ChannelAA* pRes;
-	short sResult = rspGetResource(&g_resmgrGame, prealm->Make2dResPath(LARGE_FILE), &pRes, RFile::LittleEndian);
+	int16_t sResult = rspGetResource(&g_resmgrGame, prealm->Make2dResPath(LARGE_FILE), &pRes, RFile::LittleEndian);
 	rspReleaseResource(&g_resmgrGame, &pRes);
 	sResult |= rspGetResource(&g_resmgrGame, prealm->Make2dResPath(SMALL_FILE), &pRes, RFile::LittleEndian);
 	rspReleaseResource(&g_resmgrGame, &pRes);

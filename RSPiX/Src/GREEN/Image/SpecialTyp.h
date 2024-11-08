@@ -80,7 +80,7 @@
 class	RSpecialFSPR1
 	{
 public:
-	UCHAR*	m_pCode;	// actual FSPR1 data
+	uint8_t*	m_pCode;	// actual FSPR1 data
 	S32	m_lSize;		// actual size of FSPR1 data
 	U16	m_u16ASCII;	// allow extended character sets
 	S16	m_s16KernL;	// move left position
@@ -153,16 +153,16 @@ extern	void SetConvertFromFSPR1
 class	RSpecialFSPR8
 	{
 public:
-	USHORT	m_usCompType;	// = FSPR8 image type
-	ULONG		m_lBufSize;		// Size of the opaque pixel data
-	ULONG		m_lCodeSize;	// Size of the control block (compression codes)
-	USHORT	m_usSourceType;// uncompressed Image pre-compressed type
+	uint16_t	m_usCompType;	// = FSPR8 image type
+	uint32_t		m_lBufSize;		// Size of the opaque pixel data
+	uint32_t		m_lCodeSize;	// Size of the control block (compression codes)
+	uint16_t	m_usSourceType;// uncompressed Image pre-compressed type
 
-	UCHAR*	m_pCompBuf;		// Compressed picture data, 128bit-aligned
-	UCHAR*	m_pCompMem;		// For alignment
-	UCHAR*	m_pCodeBuf;		// 32-aligned compression codes
-	UCHAR**	m_pBufArry;		// 32-aligned, arry of ptrs to m_pCompBuf scanlines
-	UCHAR**	m_pCodeArry;	// 32-aligned, arry of ptrs into m_pCodeBuf scanlines
+	uint8_t*	m_pCompBuf;		// Compressed picture data, 128bit-aligned
+	uint8_t*	m_pCompMem;		// For alignment
+	uint8_t*	m_pCodeBuf;		// 32-aligned compression codes
+	uint8_t**	m_pBufArry;		// 32-aligned, arry of ptrs to m_pCompBuf scanlines
+	uint8_t**	m_pCodeArry;	// 32-aligned, arry of ptrs into m_pCodeBuf scanlines
 
 	RSpecialFSPR8()
 		{

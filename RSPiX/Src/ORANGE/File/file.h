@@ -154,18 +154,18 @@ class RFile
 			const char* pszFileName,		// File path and name to open.
 			const char* pszFlags,			// Open flags ala fopen.
 			Endian endian,				// Endian nature of file.
-			long lUser);				// User value.
+			int32_t lUser);				// User value.
 
 		typedef short (*CloseHook)(	// Returns 0 to bypass default Close's
 												// functionality.
 			RFile* pfile,					// Pointer to RFile being closed.
-			long lUser);					// User value.
+			int32_t lUser);					// User value.
 
 		// This is the type of the function that is called before every disk
 		// read or write operation to let the user know of (and, perhaps, act
 		// upon) delays that may occur.
 		typedef void (*CritiCall)(	// Returns nothing.
-			long	lBytes);				// Bytes about to be read or written.
+			int32_t	lBytes);				// Bytes about to be read or written.
 
 	public:	// Construction/Destruction.
 		// Default constructor.
@@ -183,7 +183,7 @@ class RFile
 		// Open file pszFileName with fopen flags pszFlags and endian format 
 		// endian { RFile::Big, RFile::Little }.
 		// Returns 0 on success.
-		short Open(					// Returns 0 on success.
+		int16_t Open(					// Returns 0 on success.
 			const char* pszFileName,	// Filename to open.
 			const char* pszFlags,		// fopen flags to use for opening.
 			Endian endian,			// { RFile::BigEndian | RFile::LittleEndian | RFile::NeutralEndian }.
@@ -194,9 +194,9 @@ class RFile
 		// Size and location of memory will not be affected by RFile.
 		// { RFile::Big, RFile::Little }.
 		// Returns 0 on success.
-		short Open(					// Returns 0 on success.
+		int16_t Open(					// Returns 0 on success.
 			void* pFile,			// Pointer to memory to open.
-			long lSize,				// Size of *pFile in bytes.
+			int32_t lSize,				// Size of *pFile in bytes.
 			Endian endian);		// { RFile::BigEndian | RFile::LittleEndian | RFile::NeutralEndian }.
 
 		// Open memory pFile of size lSize and endian format endian.
@@ -204,9 +204,9 @@ class RFile
 		// Deallocates on Close().
 		// { RFile::Big, RFile::Little }.
 		// Returns 0 on success.
-		short Open(					// Returns 0 on success.
-			long	lSize,			// Size in bytes to begin with.
-			long	lGrowSize,		// Min amount in bytes to grow memory file when written passed end.
+		int16_t Open(					// Returns 0 on success.
+			int32_t	lSize,			// Size in bytes to begin with.
+			int32_t	lGrowSize,		// Min amount in bytes to grow memory file when written passed end.
 										// Note: The larger of lGrowSize and the amount overwritten will
 										// be allocated in the case of an overrun.
 			Endian endian);		// { RFile::BigEndian | RFile::LittleEndian | RFile::NeutralEndian }.
@@ -214,7 +214,7 @@ class RFile
 		// Open an existing FILE* stream.
 		// Once a FILE* is opened, you can use this class's Close() instead of fclose(),
 		// if that is more convenient.
-		short Open(					// Returns 0 on success.
+		int16_t Open(					// Returns 0 on success.
 			FILE*	fs,				// FILE* stream to open.
 			Endian endian,			// { RFile::BigEndian | RFile::LittleEndian | RFile::NeutralEndian }.
 			Flags flags	=			// See comments in Typedefs & Enums section 
@@ -228,13 +228,13 @@ class RFile
 		// original RFile is attached to.  When Close() is called, the synchronization is finsished
 		// by updating the original RFile with the state from this.
 		// Danger:  Do not access the original RFile between Open(RFile*)/Close() pairs!
-		short Open(					// Returns 0 on success.
+		int16_t Open(					// Returns 0 on success.
 			RFile* pfile);			// RFile to open.
 
 		// Sets an Open(char*...) hook.  NOTE: You CAN call any RFile Open from
 		// within an Open hook.  The Open hook should return 0 to bypass RFile's
 		// functionality.
-		static void SetOpenHook(OpenHook hook, long lUser)
+		static void SetOpenHook(OpenHook hook, int32_t lUser)
 			{ ms_hOpen = hook; ms_lOpenUser = lUser; }
 
 		// Change the endian format used to read/write the file.
@@ -244,12 +244,12 @@ class RFile
 		// Set the size of the buffer used to read from the disk.
 		// This function only applies to files open from the disk.
 		// Returns 0 on success.
-		short SetBufferSize(size_t stBufSize)
+		int16_t SetBufferSize(size_t stBufSize)
 			{
 			if (IsFile() == TRUE)
 				{
 				KEEPCONNECTEDANDUPDATELASTACCESS;
-				return (short)setvbuf(m_fs, NULL, _IOFBF, stBufSize);
+				return (int16_t)setvbuf(m_fs, NULL, _IOFBF, stBufSize);
 				}
 			else
 				if (IsMemory() == TRUE)
@@ -260,12 +260,12 @@ class RFile
 
 		// Close a file successfully opened with Open().
 		// Returns 0 on success.
-		short Close(void);
+		int16_t Close(void);
 
 		// Sets a Close() hook.  NOTE: You CAN call any RFile Close from
 		// within a Close hook.  The Close hook should return 0 to bypass RFile's
 		// functionality.
-		static void SetCloseHook(CloseHook hook, long lUser)
+		static void SetCloseHook(CloseHook hook, int32_t lUser)
 			{ ms_hClose = hook; ms_lCloseUser = lUser; }
 
 		////////////////////////////////////////////////////////////////////////
@@ -275,10 +275,10 @@ class RFile
 		// Seeks within the file based on the supplied position argument
 		// { SEEK_SET, SEEK_CUR, SEEK_END }.
 		// Returns 0 on success.
-		short Seek(long lPos, long lOrigin);
+		int16_t Seek(int32_t lPos, int32_t lOrigin);
 
 		// Returns the current file position or -1 on error.
-		long Tell(void);
+		int32_t Tell(void);
 
 		////////////////////////////////////////////////////////////////////////
 		// Read.
@@ -294,62 +294,62 @@ class RFile
 		// swapping, cast it as U8* or S8*.
 		// Reads lNum bytes from currently open file.
 		// Returns number of bytes successfully read.
-		long Read(void* pData, long lNum);
+		int32_t Read(void* pData, int32_t lNum);
 
 	public:
 		// Reads lNum char values from currently open file.
 		// Returns number of char values successfully read.
-		long Read(char* pcData, long lNum)
+		int32_t Read(char* pcData, int32_t lNum)
 			{ return Read((void*)pcData, lNum); }
 
 		// Reads lNum U8 values from currently open file.
 		// Returns number of U8 values successfully read.
-		long Read(U8*	pu8Data, long lNum = 1L);
+		int32_t Read(U8*	pu8Data, int32_t lNum = 1L);
 
 		// Reads lNum S8 values from currently open file.
 		// Returns number of S8 values successfully read.
-		long Read(S8*	ps8Data, long lNum = 1L);
+		int32_t Read(S8*	ps8Data, int32_t lNum = 1L);
 
 		// Reads lNum U16 values from currently open file.
 		// Returns number of U16 values successfully read.
-		long Read(U16* pu16Data, long lNum = 1L);
+		int32_t Read(U16* pu16Data, int32_t lNum = 1L);
 		
 		// Reads lNum S16 values from currently open file.
 		// Returns number of S16 values successfully read.
-		long Read(S16* ps16Data, long lNum = 1L);
+		int32_t Read(S16* ps16Data, int32_t lNum = 1L);
 
 		// Reads lNum RPixel24 values from currently open file.
 		// Returns number of RPixel24 values successfully read.
-		long Read(RPixel24* ppix24, long lNum = 1L);
+		int32_t Read(RPixel24* ppix24, int32_t lNum = 1L);
 
 		// Reads lNum U32 values from currently open file.
 		// Returns number of U32 values successfully read.
-		long Read(U32* pu32Data, long lNum = 1L);
+		int32_t Read(U32* pu32Data, int32_t lNum = 1L);
 
 		// Reads lNum S32 values from currently open file.
 		// Returns number of S32 values successfully read.
-		long Read(S32* ps32Data, long lNum = 1L);
+		int32_t Read(S32* ps32Data, int32_t lNum = 1L);
 
 		// Reads lNum RPixel32 values from currently open file.
 		// Returns number of RPixel32 values successfully read.
-		long Read(RPixel32* ppix32Data, long lNum = 1L)
+		int32_t Read(RPixel32* ppix32Data, int32_t lNum = 1L)
 			{ return Read((U32*)ppix32Data, lNum); }
 
 		// Reads lNum U64 values from currently open file.
 		// Returns number of U64 values successfully read.
-		long Read(U64* pu64Data, long lNum = 1L);
+		int32_t Read(U64* pu64Data, int32_t lNum = 1L);
 
 		// Reads lNum S64 values from currently open file.
 		// Returns number of S64 values successfully read.
-		long Read(S64* ps64Data, long lNum = 1L);
+		int32_t Read(S64* ps64Data, int32_t lNum = 1L);
 
 		// Reads lNum float values from currently open file.
 		// Returns number of float values successfully read.
-		long Read(float* pfData, long lNum = 1L);
+		int32_t Read(float* pfData, int32_t lNum = 1L);
 
 		// Reads lNum double values from currently open file.
 		// Returns number of double values successfully read.
-		long Read(double* pdData, long lNum = 1L);
+		int32_t Read(double* pdData, int32_t lNum = 1L);
 
 		// Reads a NULL terminated string.  The '\0' must be
 		// actually in the file to denote the end of the string.
@@ -357,7 +357,7 @@ class RFile
 		// enough to hold the string.
 		// Returns number of characters successfully read,
 		// including the NULL terminator (unlike strlen()).
-		long Read(char* pszString);
+		int32_t Read(char* pszString);
 
 		////////////////////////////////////////////////////////////////////////
 		// Write.
@@ -373,68 +373,68 @@ class RFile
 		// swapping, cast it as U8* or S8*.
 		// Writes lNum bytes from currently open file.
 		// Returns number of bytes successfully written.
-		long Write(const void* pData, long lNum);
+		int32_t Write(const void* pData, int32_t lNum);
 
 	public:
 		// Writes lNum char values to currently open file.
 		// Returns number of U8 values successfully written.
-		long Write(const char*	pcData, long lNum)
+		int32_t Write(const char*	pcData, int32_t lNum)
 			{ return Write((void*)pcData, lNum); }
 
 		// Writes lNum U8 values to currently open file.
 		// Returns number of U8 values successfully written.
-		long Write(const U8*	pu8Data, long lNum = 1L);
+		int32_t Write(const U8*	pu8Data, int32_t lNum = 1L);
 
 		// Writes lNum S8 values to currently open file.
 		// Returns number of S8 values successfully written.
-		long Write(const S8*	ps8Data, long lNum = 1L);
+		int32_t Write(const S8*	ps8Data, int32_t lNum = 1L);
 
 		// Writes lNum U16 values to currently open file.
 		// Returns number of U16 values successfully written.
-		long Write(const U16* pu16Data, long lNum = 1L);
+		int32_t Write(const U16* pu16Data, int32_t lNum = 1L);
 
 		// Writes lNum S16 values to currently open file.
 		// Returns number of S16 values successfully written.
-		long Write(const S16* ps16Data, long lNum = 1L);
+		int32_t Write(const S16* ps16Data, int32_t lNum = 1L);
 
 		// Writes lNum RPixel24 values to currently open file.
 		// Returns number of RPixel24 values successfully written.
-		long Write(const RPixel24* ppix24, long lNum = 1L);
+		int32_t Write(const RPixel24* ppix24, int32_t lNum = 1L);
 
 		// Writes lNum U32 values to currently open file.
 		// Returns number of U32 values successfully written.
-		long Write(const U32* pu32Data, long lNum = 1L);
+		int32_t Write(const U32* pu32Data, int32_t lNum = 1L);
 
 		// Writes lNum S32 values to currently open file.
 		// Returns number of S32 values successfully written.
-		long Write(const S32* ps32Data, long lNum = 1L);
+		int32_t Write(const S32* ps32Data, int32_t lNum = 1L);
 
 		// Writes lNum RPixel32 values to currently open file.
 		// Returns number of RPixel32 values successfully written.
-		long Write(const RPixel32* ppix32Data, long lNum = 1L)
+		int32_t Write(const RPixel32* ppix32Data, int32_t lNum = 1L)
 			{ return Write((U32*)ppix32Data, lNum); }
 
 		// Writes lNum U64 values to currently open file.
 		// Returns number of U64 values successfully written.
-		long Write(const U64* pu64Data, long lNum = 1L);
+		int32_t Write(const U64* pu64Data, int32_t lNum = 1L);
 
 		// Writes lNum S64 values to currently open file.
 		// Returns number of S64 values successfully written.
-		long Write(const S64* ps64Data, long lNum = 1L);
+		int32_t Write(const S64* ps64Data, int32_t lNum = 1L);
 
 		// Writes lNum float values to the currently open file.
 		// Returns number of float values successfully written.
-		long Write(const float* pfData, long lNum = 1L);
+		int32_t Write(const float* pfData, int32_t lNum = 1L);
 
 		// Writes lNum double values to the currently open file.
 		// Returns number of double values successfully written.
-		long Write(const double* pdData, long lNum = 1L);
+		int32_t Write(const double* pdData, int32_t lNum = 1L);
 
 		// Writes a NULL terminated string.  The '\0' must be
 		// actually written to file to denote the end of the string.
 		// Returns number of characters successfully written,
 		// including the NULL terminator (unlike strlen()).
-		long Write(const char* pszString);
+		int32_t Write(const char* pszString);
 
 		////////////////////////////////////////////////////////////////////////
 		// These functions write one value when passed by value.
@@ -444,55 +444,55 @@ class RFile
 		////////////////////////////////////////////////////////////////////////
 
 		// Writes one char.
-		long Write(char cVal)
+		int32_t Write(char cVal)
 			{ return Write(&cVal, 1); }
 
 		// Writes one U8.
-		long Write(U8 u8Val)
+		int32_t Write(U8 u8Val)
 			{ return Write(&u8Val); }
 
 		// Writes one S8.
-		long Write(S8 s8Val)
+		int32_t Write(S8 s8Val)
 			{ return Write(&s8Val); }
 
 		// Writes one U16.
-		long Write(U16 u16Val)
+		int32_t Write(U16 u16Val)
 			{ return Write(&u16Val); }
 
 		// Writes one S16.
-		long Write(S16 s16Val)
+		int32_t Write(S16 s16Val)
 			{ return Write(&s16Val); }
 
 		// Writes one RPixel24.
-		long Write(RPixel24 pix24Val)
+		int32_t Write(RPixel24 pix24Val)
 			{ return Write(&pix24Val); }
 
 		// Writes one U32.
-		long Write(U32 u32Val)
+		int32_t Write(U32 u32Val)
 			{ return Write(&u32Val); }
 
 		// Writes one S32.
-		long Write(S32 s32Val)
+		int32_t Write(S32 s32Val)
 			{ return Write(&s32Val); }
 
 		// Writes one RPixel32.
-		long Write(RPixel32 pix32Val)
+		int32_t Write(RPixel32 pix32Val)
 			{ return Write(&pix32Val); }
 
 		// Writes one float.
-		long Write(float fVal)
+		int32_t Write(float fVal)
 			{ return Write(&fVal); }
 
 		// Writes one U64.
-		long Write(U64 u64Val)
+		int32_t Write(U64 u64Val)
 			{ return Write(&u64Val); }
 
 		// Writes one S64.
-		long Write(S64 s64Val)
+		int32_t Write(S64 s64Val)
 			{ return Write(&s64Val); }
 
 		// Writes one double.
-		long Write(double dVal)
+		int32_t Write(double dVal)
 			{ return Write(&dVal); }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -503,17 +503,17 @@ class RFile
 		////////////////////////////////////////////////////////////////////////
 
 		// Returns TRUE, if open, FALSE if closed.
-		short IsOpen(void)	{ return (m_fs == NULL && m_pucFile == NULL ? FALSE : TRUE); }
+		int16_t IsOpen(void)	{ return (m_fs == NULL && m_pucFile == NULL ? FALSE : TRUE); }
 
 		// Returns TRUE, if connected to a non-memory file.
-		short IsFile(void)	{ return (m_fs == NULL ? FALSE : TRUE); }
+		int16_t IsFile(void)	{ return (m_fs == NULL ? FALSE : TRUE); }
 
 		// Returns TRUE, if connected to a memory file.
-		short IsMemory(void)	{ return (m_pucFile == NULL ? FALSE : TRUE); }
+		int16_t IsMemory(void)	{ return (m_pucFile == NULL ? FALSE : TRUE); }
 
 		// Returns FALSE if no error has occurred on this stream; TRUE if an
 		// error has occurred.
-		short Error(void) 
+		int16_t Error(void) 
 			{ 
 			if (IsFile() == TRUE)
 				{
@@ -543,7 +543,7 @@ class RFile
 		// Returns TRUE if end of file has been reached, FALSE otherwise.
 		// For disk files, does not return TRUE until the first i/o operation
 		// fails due to EOF.
-		short IsEOF(void)
+		int16_t IsEOF(void)
 			{
 			if (IsFile() == TRUE)
 				{
@@ -558,27 +558,27 @@ class RFile
 			}
 
 		// Returns the size of the file on success.  Negative on error.
-		long GetSize(void);
+		int32_t GetSize(void);
 
 		// Returns the endian setting for this object.
-		short GetEndian(void)
+		int16_t GetEndian(void)
 			{ return m_endian; }
 
 		// Returns the memory ptr if this is a memory file; NULL, otherwise.
 		// NOTE:  This buffer may move after any Write() call that exceeds the
 		// existing buffer size.
-		UCHAR* GetMemory(void)
+		uint8_t* GetMemory(void)
 			{ return m_pucFile; }
 
 //////////////////////////////////////////////////////////////////////////////
 	protected:	// Functions for my friends.
 
 		// Sets the instantiable user value.
-		void SetUserVal(long lUser)
+		void SetUserVal(int32_t lUser)
 			{ m_lUser = lUser; }
 
 		// Gets the instantiable user value.
-		long GetUserVal(void)
+		int32_t GetUserVal(void)
 			{ return m_lUser; }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -588,71 +588,71 @@ class RFile
 /////////// Binary Reads /////////////////////////////////////////////////////
 
 		// Reads in 8 bit data, swapped if necessary (BWAH HA).
-		long Read8(		// Returns number of 8 bit items read.
+		int32_t Read8(		// Returns number of 8 bit items read.
 			U8*	pu8,		// In:  8 bit data to read (swapping, if necessary).
-			long	lNum);	// In:  Number of 8 bit items to read.
+			int32_t	lNum);	// In:  Number of 8 bit items to read.
 
 		// Reads in 16 bit data, swapped if necessary.
-		long Read16(		// Returns number of 16 bit items read.
+		int32_t Read16(		// Returns number of 16 bit items read.
 			U16*	pu16,		// In:  16 bit data to read (swapping, if necessary).
-			long	lNum);	// In:  Number of 16 bit items to read.
+			int32_t	lNum);	// In:  Number of 16 bit items to read.
 
 		// Reads in 24 bit data, swapped if necessary.
-		long Read24(			// Returns number of 24 bit items read.
+		int32_t Read24(			// Returns number of 24 bit items read.
 			RPixel24* ppix24,	// In:  24 bit data to read (swapping, if necessary).
-			long	lNum);		// In:  Number of 24 bit items to read.
+			int32_t	lNum);		// In:  Number of 24 bit items to read.
 
 		// Reads in 32 bit data, swapped if necessary.
-		long Read32(		// Returns number of 32 bit items read.
+		int32_t Read32(		// Returns number of 32 bit items read.
 			U32*	pu32,		// In:  32 bit data to read (swapping, if necessary).
-			long	lNum);	// In:  Number of 32 bit items to read.
+			int32_t	lNum);	// In:  Number of 32 bit items to read.
 
 		// Reads in 64 bit data, swapped if necessary.
-		long Read64(		// Returns number of 64 bit items read.
+		int32_t Read64(		// Returns number of 64 bit items read.
 			U64*	pu64,		// In:  64 bit data to read (swapping, if necessary).
-			long	lNum);	// In:  Number of 64 bit items to read.
+			int32_t	lNum);	// In:  Number of 64 bit items to read.
 
 /////////// Binary Writes ////////////////////////////////////////////////////
 
 		// Writes out 8 bit data, swapped if necessary (BWAH HA).
-		long Write8(		// Returns number of 8 bit items written.
+		int32_t Write8(		// Returns number of 8 bit items written.
 			const U8*	pu8,		// In:  8 bit data to write (swapping, if necessary).
-			long	lNum);	// In:  Number of 8 bit items to write.
+			int32_t	lNum);	// In:  Number of 8 bit items to write.
 
 		// Writes out 16 bit data, swapped if necessary.
-		long Write16(		// Returns number of 16 bit items written.
+		int32_t Write16(		// Returns number of 16 bit items written.
 			const U16*	pu16,		// In:  16 bit data to write (swapping, if necessary).
-			long	lNum);	// In:  Number of 16 bit items to write.
+			int32_t	lNum);	// In:  Number of 16 bit items to write.
 
 		// Writes out 24 bit data, swapped if necessary.
-		long Write24(			// Returns number of 24 bit items written.
+		int32_t Write24(			// Returns number of 24 bit items written.
 			const RPixel24* ppix24,	// In:  24 bit data to write (swapping, if necessary).
-			long	lNum);		// In:  Number of 24 bit items to write.
+			int32_t	lNum);		// In:  Number of 24 bit items to write.
 
 		// Writes out 32 bit data, swapped if necessary.
-		long Write32(		// Returns number of 32 bit items written.
+		int32_t Write32(		// Returns number of 32 bit items written.
 			const U32*	pu32,		// In:  32 bit data to write (swapping, if necessary).
-			long	lNum);	// In:  Number of 32 bit items to write.
+			int32_t	lNum);	// In:  Number of 32 bit items to write.
 
 		// Writes out 64 bit data, swapped if necessary.
-		long Write64(		// Returns number of 64 bit items written.
+		int32_t Write64(		// Returns number of 64 bit items written.
 			const U64*	pu64,		// In:  64 bit data to write (swapping, if necessary).
-			long	lNum);	// In:  Number of 64 bit items to write.
+			int32_t	lNum);	// In:  Number of 64 bit items to write.
 
 		#ifdef ALLOW_RFILE_REOPEN
 			// Disconnects this RFile from the disk temporarily so that another
 			// can use the FILE* that is made available.  Returns 0 on success.
-			short Disconnect(void);
+			int16_t Disconnect(void);
 
 			// Reconnects a disk file that has been previously disconnected.
 			// Does nothing if connected (i.e., if m_sDisconnected == FALSE).
 			// Returns 0 on success.
-			short Reconnect(void);
+			int16_t Reconnect(void);
 
 			// Disconnect the RFile attached to disk file that was accessed 
 			// longest ago.
 			// Returns 0 on success.
-			static short MakeStreamAvailable(void);
+			static int16_t MakeStreamAvailable(void);
 		#endif	// ALLOW_RFILE_REOPEN
 
 //////////////////////////////////////////////////////////////////////////////
@@ -666,13 +666,13 @@ class RFile
 													// processed.
 
 	protected:	// Member variables.
-		UCHAR*		m_pucFile;			// Memory file ptr.
-		short			m_sOwnMem;			// TRUE, if RFile allocated m_pucFile.
-		UCHAR*		m_pucCur;			// Current position in memory file.
-		long			m_lSize;				// Size of memory file (in bytes).
-		long			m_lGrowSize;		// Amount to grow memfile when buffer 
+		uint8_t*		m_pucFile;			// Memory file ptr.
+		int16_t			m_sOwnMem;			// TRUE, if RFile allocated m_pucFile.
+		uint8_t*		m_pucCur;			// Current position in memory file.
+		int32_t			m_lSize;				// Size of memory file (in bytes).
+		int32_t			m_lGrowSize;		// Amount to grow memfile when buffer 
 												// overwritten.
-		short			m_sMemError;		// TRUE if memory file access functions
+		int16_t			m_sMemError;		// TRUE if memory file access functions
 												// caused an error.
 		Endian		m_endian;			// Endian type.
 		Flags			m_flags;				// Flags.  See comments in Typedefs & 
@@ -684,21 +684,21 @@ class RFile
 		static U8	ms_au8SwapBuf[RFILE_SWAP_SIZE];	// Used to byte swap by Write().
 
 		// Hook stuff.
-		long							m_lUser;			// Instantiable hook value.
+		int32_t							m_lUser;			// Instantiable hook value.
 		static OpenHook			ms_hOpen;		// Hook for calls to Open(char*...).
-		static long					ms_lOpenUser;	// User value passed to m_hOpen.
-		short							m_sOpenSem;		// Semaphore to block recursion greater
+		static int32_t					ms_lOpenUser;	// User value passed to m_hOpen.
+		int16_t							m_sOpenSem;		// Semaphore to block recursion greater
 															// than 1.
 		static CloseHook			ms_hClose;		// Hook for calls to Close().
-		static long					ms_lCloseUser;	// User value passed to m_hClose.
-		short							m_sCloseSem;	// Semaphore to block recursion greater
+		static int32_t					ms_lCloseUser;	// User value passed to m_hClose.
+		int16_t							m_sCloseSem;	// Semaphore to block recursion greater
 															// than 1.
 	#ifdef ALLOW_RFILE_REOPEN
 		// Reopen stuff.
 		static RList <RFile>	ms_listOpen;				// List of open RFiles.
-		long			m_lLastAccess;							// Time of last access.
+		int32_t			m_lLastAccess;							// Time of last access.
 		char			m_szFlags[MAX_MODE_LEN + 1];		// Last Open's flags.
-		short			m_sDisconnected;						// TRUE if file has been 
+		int16_t			m_sDisconnected;						// TRUE if file has been 
 																	// diskonnected.
 		char			m_szFileName[MAX_NAME_LEN + 1];	// Filename for reopening.
 	#endif // ALLOW_RFILE_REOPEN
@@ -721,18 +721,18 @@ class RFile
 
 template <class ClassType>
 #ifdef _DEBUG
-short RFileEZLoadDebug(
+int16_t RFileEZLoadDebug(
 	char* FILE_MACRO,
-	long LINE_MACRO,
+	int32_t LINE_MACRO,
 #else
-short RFileEZLoad(
+int16_t RFileEZLoad(
 #endif
 	ClassType* pObject,
 	char* pszName,
 	char* pszMode,
 	RFile::Endian endian)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Create RFile object
 	RFile* pFile = new RFile;
@@ -797,18 +797,18 @@ short RFileEZLoad(
 
 template <class ClassType>
 #ifdef _DEBUG
-short RFileEZSaveDebug(
+int16_t RFileEZSaveDebug(
 	char* FILE_MACRO,
- 	long LINE_MACRO,
+ 	int32_t LINE_MACRO,
 #else
-short RFileEZSave(
+int16_t RFileEZSave(
 #endif
 	ClassType* pObject,
 	char* pszName, 
 	char* pszMode,
 	RFile::Endian endian)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Create RFile object
 	RFile* pFile = new RFile;
@@ -930,7 +930,7 @@ RFILE_INSTANTIATE_ANYSAVE(double)
 // only works for types that have their own Load(RFile*) member function.
 //////////////////////////////////////////////////////////////////////////////
 template <class obj>
-short rspAnyLoad(		// Returns 0 on success.
+int16_t rspAnyLoad(		// Returns 0 on success.
 	obj*		pobj,		// Ptr to object to load.
 	RFile*	pfile)	// Open RFile.  Must have read access.
 	{
@@ -942,7 +942,7 @@ short rspAnyLoad(		// Returns 0 on success.
 // only works for types that have their own Save(RFile*) member function.
 //////////////////////////////////////////////////////////////////////////////
 template <class obj>
-short rspAnySave(		// Returns 0 on success.
+int16_t rspAnySave(		// Returns 0 on success.
 	obj*		pobj,		// Ptr to object to save.
 	RFile*	pfile)	// Open RFile.  Must have write access.
 	{

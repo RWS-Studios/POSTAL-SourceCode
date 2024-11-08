@@ -204,13 +204,13 @@ char*	CPowerUp::ms_apszPowerUpResNames[CStockPile::NumStockPileItems + 2]	=
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CPowerUp::Load(								// Returns 0 if successfull, non-zero otherwise
+int16_t CPowerUp::Load(								// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,										// In:  File to load from
 	bool bEditMode,									// In:  True for edit mode, false otherwise
-	short sFileCount,									// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)								// In:  Version of file format to load.
+	int16_t sFileCount,									// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)								// In:  Version of file format to load.
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	if (ulFileVersion < 20)
 		{
 		sResult	= CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
@@ -271,7 +271,7 @@ short CPowerUp::Load(								// Returns 0 if successfull, non-zero otherwise
 				pFile->Read(&m_dZ);
 				U8	u8Type	= (U8)CStockPile::Bullets; 
 				pFile->Read(&u8Type);
-				long	lPowerVal;
+				int32_t	lPowerVal;
 				pFile->Read(&lPowerVal);
 				switch (u8Type)
 					{
@@ -333,12 +333,12 @@ short CPowerUp::Load(								// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CPowerUp::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CPowerUp::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 	{
 	// Note that we bypass CItem3d::Save() cuz I think that would be wierd.
-	short	sResult	= CThing3d::Save(pFile, sFileCount);
+	int16_t	sResult	= CThing3d::Save(pFile, sFileCount);
 	if (sResult == 0)
 		{
 		// Base class does it all.
@@ -356,10 +356,10 @@ void CPowerUp::Update(void)
 	if (!m_sSuspend)
 		{
 		// Get new time
-		long lThisTime = m_pRealm->m_time.GetGameTime();
+		int32_t lThisTime = m_pRealm->m_time.GetGameTime();
 
 		// Advance the animation timer.
-		long	lDifTime		= lThisTime - m_lAnimPrevUpdateTime;
+		int32_t	lDifTime		= lThisTime - m_lAnimPrevUpdateTime;
 		m_lAnimTime			+= lDifTime;
 
 		// Update prev time.
@@ -422,12 +422,12 @@ void CPowerUp::Render(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Setup object.
 ////////////////////////////////////////////////////////////////////////////////
-short CPowerUp::Setup(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CPowerUp::Setup(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -449,12 +449,12 @@ short CPowerUp::Setup(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CPowerUp::EditNew(								// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CPowerUp::EditNew(								// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -470,9 +470,9 @@ short CPowerUp::EditNew(								// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-short CPowerUp::EditModify(void)
+int16_t CPowerUp::EditModify(void)
 	{
-	short	sResult	= m_stockpile.UserEdit();
+	int16_t	sResult	= m_stockpile.UserEdit();
 
 	// If successful so far . . .
 	if (sResult == 0)
@@ -488,9 +488,9 @@ short CPowerUp::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Initialize object.
 ////////////////////////////////////////////////////////////////////////////////
-short CPowerUp::Init(void)	// Returns 0 on success.
+int16_t CPowerUp::Init(void)	// Returns 0 on success.
 	{
-	short	sRes	= GetResources();
+	int16_t	sRes	= GetResources();
 
 	// Prepare shadow (get resources and setup sprite).
 	sRes	|= PrepareShadow();
@@ -511,8 +511,8 @@ short CPowerUp::Init(void)	// Returns 0 on success.
 void CPowerUp::GetResName(	// Returns nothing.
 	char*	pszResName)			// Out: Resource base name.
 	{
-	short	sTypeIndex;
-	short	sTypeInPowerUp	= CStockPile::NumStockPileItems;
+	int16_t	sTypeIndex;
+	int16_t	sTypeInPowerUp	= CStockPile::NumStockPileItems;
 	for (sTypeIndex = 0; sTypeIndex < CStockPile::NumStockPileItems; sTypeIndex++)
 		{
 		if (m_stockpile.GetItem(sTypeIndex) > 0)
@@ -536,9 +536,9 @@ void CPowerUp::GetResName(	// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CPowerUp::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CPowerUp::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Safe to call even if no resource.
 	FreeResources();
@@ -559,9 +559,9 @@ short CPowerUp::GetResources(void)						// Returns 0 if successfull, non-zero ot
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CPowerUp::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CPowerUp::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	if (m_anim.m_psops != NULL)
 		{
@@ -576,11 +576,11 @@ short CPowerUp::FreeResources(void)						// Returns 0 if successfull, non-zero o
 // Preload - Preload assets needed so they can be cached and don't have to load
 //			    during the game
 ////////////////////////////////////////////////////////////////////////////////
-short CPowerUp::Preload(CRealm* /*prealm*/)
+int16_t CPowerUp::Preload(CRealm* /*prealm*/)
 {
-	short sResult = 0;
+	int16_t sResult = 0;
 
-	short i;
+	int16_t i;
 	CAnim3D anim;
 
 	for (i = 0; i < CStockPile::NumStockPileItems + 2; i++)
@@ -595,10 +595,10 @@ short CPowerUp::Preload(CRealm* /*prealm*/)
 ////////////////////////////////////////////////////////////////////////////////
 // Call to grab this item.
 ////////////////////////////////////////////////////////////////////////////////
-short CPowerUp::Grab(		// Returns 0 on success..
+int16_t CPowerUp::Grab(		// Returns 0 on success..
 	CSprite* psprParent)		// In:  Parent's sprite.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// If we are not already grabbed . . .
 	if (m_sprite.m_psprParent == NULL)
@@ -630,9 +630,9 @@ short CPowerUp::Grab(		// Returns 0 on success..
 // Call to release this item.
 ////////////////////////////////////////////////////////////////////////////////
 void CPowerUp::Drop(			// Returns nothing.
-	short sX,					// In:  Position from which to release.
-	short sY,					// In:  Position from which to release.
-	short sZ)					// In:  Position from which to release.
+	int16_t sX,					// In:  Position from which to release.
+	int16_t sY,					// In:  Position from which to release.
+	int16_t sZ)					// In:  Position from which to release.
 	{
 	m_dX	= sX;
 	m_dY	= sY;
@@ -705,9 +705,9 @@ void CPowerUp::OnExplosionMsg(			// Returns nothing.
 	{
 	// Break into smaller pieces and pass the message on . . .
 	// Inventory.
-	short	sTypeIndex;
+	int16_t	sTypeIndex;
 	bool	bFirst	= true;
-	short	sNumGenerated	= 0;
+	int16_t	sNumGenerated	= 0;
 	for (sTypeIndex = 0; sTypeIndex < CStockPile::NumStockPileItems; sTypeIndex++)
 		{
 		if (m_stockpile.GetItem(sTypeIndex) > 0)

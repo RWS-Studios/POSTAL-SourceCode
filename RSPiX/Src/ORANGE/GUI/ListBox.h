@@ -135,12 +135,12 @@ class RListBox : public RGuiItem
 		// Creates a displayable Gui.  Call SetFont and SetText before calling
 		// this as it calls Compose.
 		virtual					// If you override this, call this base if possible.
-		short Create(			// Returns 0 on success.
-			short sX,			// X position relative to "parent" item.
-			short sY,			// Y position relative to "parent" item.
-			short sW,			// Width.
-			short sH,			// Height.
-			short sDepth);		// Color depth.
+		int16_t Create(			// Returns 0 on success.
+			int16_t sX,			// X position relative to "parent" item.
+			int16_t sY,			// Y position relative to "parent" item.
+			int16_t sW,			// Width.
+			int16_t sH,			// Height.
+			int16_t sDepth);		// Color depth.
 
 		// Destroys dynamic display data.
 		virtual						// If you override this, call this base if possible.
@@ -179,7 +179,7 @@ class RListBox : public RGuiItem
 		RGuiItem* AddItem(					// Returns new GUI item or pgui on
 													// success.  Depends on sEncapsulate.
 			RGuiItem* pgui,					// GUI item to insert.
-			short	sEncapsulate = FALSE,	// If TRUE, this item will be 
+			int16_t	sEncapsulate = FALSE,	// If TRUE, this item will be 
 													// encapsulated in an RGuiItem that
 													// will be returned on success.
 													// If FALSE, this item will be a direct
@@ -193,7 +193,7 @@ class RListBox : public RGuiItem
 		RGuiItem* InsertItem(				// Returns new GUI item or pgui on
 													// success.  Depends on sEncapsulate.
 			RGuiItem* pgui,					// GUI item to insert.
-			short	sEncapsulate = FALSE,	// If TRUE, this item will be 
+			int16_t	sEncapsulate = FALSE,	// If TRUE, this item will be 
 													// encapsulated in an RGuiItem that
 													// will be returned on success.
 													// If FALSE, this item will be a direct
@@ -296,7 +296,7 @@ class RListBox : public RGuiItem
 
 		// Returns TRUE, if the specified item is a list item contained within
 		// this listbox; FALSE otherwise.
-		short IsListItem(					
+		int16_t IsListItem(					
 			RGuiItem*	pguiListItem)	// In:  Item to check.
 			{
 			return m_lcContents.IsChild(pguiListItem);
@@ -308,12 +308,12 @@ class RListBox : public RGuiItem
 	public:	// Static.
 
 		// Determines if the specified item is an encapsulator item.
-		static short IsEncapsulator(	// Returns TRUE, if encapsulator item;
+		static int16_t IsEncapsulator(	// Returns TRUE, if encapsulator item;
 												// FALSE, otherwise.
 			RGuiItem*	pgui)				// In:  Item in question.
 			{
 			// Return encapsulation status.
-			return (short)pgui->IsProp(ENCAPSULATOR_PROP_KEY);
+			return (int16_t)pgui->IsProp(ENCAPSULATOR_PROP_KEY);
 			}
 
 		// Makes the specified item an encapsulator item.
@@ -338,7 +338,7 @@ class RListBox : public RGuiItem
 			RListBox*	plb	= (RListBox*)psb->m_ulUserInstance;
 			ASSERT(plb != NULL);
 
-			short	sPos	= psb->GetPos();
+			int16_t	sPos	= psb->GetPos();
 
 			if (psb->m_oOrientation == RScrollBar::Vertical)
 				{
@@ -392,28 +392,28 @@ class RListBox : public RGuiItem
 		// [Un]Select the specified item.
 		void SelectItem(					// Returns nothing.
 			RGuiItem*	pguiSel,			// Item to [un]select.
-			short			sSelect);		// If TRUE, item is selected; if FALSE,
+			int16_t			sSelect);		// If TRUE, item is selected; if FALSE,
 												// item is unselected.
 
 		// Save item's children to the specified file.
 		virtual					// Overridden here.
-		short SaveChildren(	// Returns 0 on success.
+		int16_t SaveChildren(	// Returns 0 on success.
 			RFile*	pfile);	// File to save to.
 
 		// Load item's children from the specified file.
 		virtual					// Overridden here.
-		short LoadChildren(	// Returns 0 on success.
+		int16_t LoadChildren(	// Returns 0 on success.
 			RFile*	pfile);	// File to load from.
 
 		// Read item's members from file.
 		virtual				// Overridden here.
-		short ReadMembers(			// Returns 0 on success.
+		int16_t ReadMembers(			// Returns 0 on success.
 			RFile*	pfile,			// File to read from.
 			U32		u32Version);	// File format version to use.
 
 		// Write item's members to file.
 		virtual				// Overridden here.
-		short WriteMembers(			// Returns 0 on success.
+		int16_t WriteMembers(			// Returns 0 on success.
 			RFile*	pfile);			// File to write to.
 
 //////////////////////////////////////////////////////////////////////////////
@@ -431,7 +431,7 @@ class RListBox : public RGuiItem
 		RGuiItem*				m_pguiSel;
 
 		// Width of largest list item currently in listbox.
-		short						m_sLargestWidth;
+		int16_t						m_sLargestWidth;
 
 		// Scrollbar visibility state for vertical scrollbar.
 		ScrollBarVisibility	m_sbvVert;

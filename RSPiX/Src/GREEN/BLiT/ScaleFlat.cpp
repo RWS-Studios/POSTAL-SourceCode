@@ -96,17 +96,17 @@
 // I believe the memptrs are to the UNCLIPPED rects...
 //
 inline void _Blit_HS_VS_C(
-							UCHAR* pSrc,long lSrcP,short sSrcW,short sSrcH,
-							UCHAR* pDst,long lDstP,short sDstW,short sDstH,
-							short sClipL,short sClipT,short sClipR,short sClipB,
-							short sMirrorH,short sMirrorV)
+							uint8_t* pSrc,int32_t lSrcP,int16_t sSrcW,int16_t sSrcH,
+							uint8_t* pDst,int32_t lDstP,int16_t sDstW,int16_t sDstH,
+							int16_t sClipL,int16_t sClipT,int16_t sClipR,int16_t sClipB,
+							int16_t sMirrorH,int16_t sMirrorV)
 	{
 	//-------------------------------------------------------------------------
 	// Set up vertical variables:
 	//
-	UCHAR*	pSrcLine = pSrc,*pDstLine = pDst;
-	long	lDelMemY;
-	short	sIncY,sNumY,sClipH;
+	uint8_t*	pSrcLine = pSrc,*pDstLine = pDst;
+	int32_t	lDelMemY;
+	int16_t	sIncY,sNumY,sClipH;
 
 	if (sMirrorV == -1) lDstP = -lDstP; // make sure pDst is correctly positioned
 	
@@ -117,13 +117,13 @@ inline void _Blit_HS_VS_C(
 	//-------------------------------------------------------------------------
 	// Set up horizontal variables:
 	//
-	short	sDelX,sIncX,sNumX,sClipW,sShowW;
+	int16_t	sDelX,sIncX,sNumX,sClipW,sShowW;
 	// ASSUME SHRINKING FOR NOW:
 	INIT_IMPROPER_FRACTION_H(sDstW,sSrcW,sDelX,sIncX,sNumX) // sDstW is the numerator
 	sClipW = sDstW - sClipR; // right clip...
 	sShowW = sClipW - sClipL;
 
-	short i;
+	int16_t i;
 	//-------------------------------------------------------------------------
 	// Do vertical clipping:
 	if (sClipT)
@@ -141,13 +141,13 @@ inline void _Blit_HS_VS_C(
 			{
 			pSrc = pSrcLine; pDst = pDstLine; // synch position:
 			sNumX = (sDstW>>1);
-			UCHAR ucPix;
+			uint8_t ucPix;
 			i = sClipW;
 
 			while (i--)
 				{
 				if (i < sShowW)
-					SET_PIX_CLEAR(pSrc,pDst,UCHAR(0),ucPix)
+					SET_PIX_CLEAR(pSrc,pDst,uint8_t(0),ucPix)
 				INC_FRAC_H(pSrc,sDelX,sIncX,sNumX,sDstW)
 				pDst += sMirrorH;
 				}
@@ -163,11 +163,11 @@ inline void _Blit_HS_VS_C(
 			pSrc = pSrcLine; pDst = pDstLine; // synch position:
 			sNumX = (sDstW>>1);
 			i = sClipW;
-			UCHAR ucPix;
+			uint8_t ucPix;
 
 			while (i--)
 				{
-				SET_PIX_CLEAR(pSrc,pDst,UCHAR(0),ucPix)
+				SET_PIX_CLEAR(pSrc,pDst,uint8_t(0),ucPix)
 				INC_FRAC_H(pSrc,sDelX,sIncX,sNumX,sDstW)
 				pDst += sMirrorH;
 				}
@@ -186,16 +186,16 @@ inline void _Blit_HS_VS_C(
 // I believe the memptrs are to the UNCLIPPED rects...
 //
 inline void _Blit_HM_VM_C(
-							UCHAR* pSrc,long lSrcP,short sSrcW,short sSrcH,
-							UCHAR* pDst,long lDstP,short sDstW,short sDstH,
-							short sClipL,short sClipT,short sClipR,short sClipB,
-							short sMirrorH,short sMirrorV)
+							uint8_t* pSrc,int32_t lSrcP,int16_t sSrcW,int16_t sSrcH,
+							uint8_t* pDst,int32_t lDstP,int16_t sDstW,int16_t sDstH,
+							int16_t sClipL,int16_t sClipT,int16_t sClipR,int16_t sClipB,
+							int16_t sMirrorH,int16_t sMirrorV)
 	{
 	//-------------------------------------------------------------------------
 	// Set up vertical variables:
 	//
-	UCHAR*	pSrcLine = pSrc,*pDstLine = pDst;
-	short	sNumY,sClipH;
+	uint8_t*	pSrcLine = pSrc,*pDstLine = pDst;
+	int16_t	sNumY,sClipH;
 
 	if (sMirrorV == -1) lDstP = -lDstP; // make sure pDst is correctly positioned
 	
@@ -206,13 +206,13 @@ inline void _Blit_HM_VM_C(
 	//-------------------------------------------------------------------------
 	// Set up horizontal variables:
 	//
-	short	sNumX,sClipW,sShowW;
+	int16_t	sNumX,sClipW,sShowW;
 	// ASSUME ENLARGING FOR NOW:
 	INIT_PROPER_FRACTION(sDstW,sNumX) // sDstW is the denominator
 	sClipW = sDstW - sClipR; // right clip...
 	sShowW = sClipW - sClipL;
 
-	short i;
+	int16_t i;
 	//-------------------------------------------------------------------------
 	// Do vertical clipping:
 	if (sClipT)
@@ -231,13 +231,13 @@ inline void _Blit_HM_VM_C(
 			{
 			pSrc = pSrcLine; pDst = pDstLine; // synch position:
 			sNumX = (sDstW>>1);
-			UCHAR ucPix;
+			uint8_t ucPix;
 			i = sClipW;
 
 			while (i--)
 				{
 				if (i < sShowW)
-					SET_PIX_CLEAR(pSrc,pDst,UCHAR(0),ucPix)
+					SET_PIX_CLEAR(pSrc,pDst,uint8_t(0),ucPix)
 				INC_PFRAC_H(pSrc,sSrcW,sNumX,sDstW)
 				pDst += sMirrorH;
 				}
@@ -253,11 +253,11 @@ inline void _Blit_HM_VM_C(
 			pSrc = pSrcLine; pDst = pDstLine; // synch position:
 			sNumX = (sDstW>>1);
 			i = sClipW;
-			UCHAR ucPix;
+			uint8_t ucPix;
 
 			while (i--)
 				{
-				SET_PIX_CLEAR(pSrc,pDst,UCHAR(0),ucPix)
+				SET_PIX_CLEAR(pSrc,pDst,uint8_t(0),ucPix)
 				INC_PFRAC_H(pSrc,sSrcW,sNumX,sDstW)
 				pDst += sMirrorH;
 				}
@@ -275,16 +275,16 @@ inline void _Blit_HM_VM_C(
 // I believe the memptrs are to the UNCLIPPED rects...
 //
 inline void _Blit_HS_VM_C(
-							UCHAR* pSrc,long lSrcP,short sSrcW,short sSrcH,
-							UCHAR* pDst,long lDstP,short sDstW,short sDstH,
-							short sClipL,short sClipT,short sClipR,short sClipB,
-							short sMirrorH,short sMirrorV)
+							uint8_t* pSrc,int32_t lSrcP,int16_t sSrcW,int16_t sSrcH,
+							uint8_t* pDst,int32_t lDstP,int16_t sDstW,int16_t sDstH,
+							int16_t sClipL,int16_t sClipT,int16_t sClipR,int16_t sClipB,
+							int16_t sMirrorH,int16_t sMirrorV)
 	{
 	//-------------------------------------------------------------------------
 	// Set up vertical variables:
 	//
-	UCHAR*	pSrcLine = pSrc,*pDstLine = pDst;
-	short	sNumY,sClipH;
+	uint8_t*	pSrcLine = pSrc,*pDstLine = pDst;
+	int16_t	sNumY,sClipH;
 
 	if (sMirrorV == -1) lDstP = -lDstP; // make sure pDst is correctly positioned
 	
@@ -295,13 +295,13 @@ inline void _Blit_HS_VM_C(
 	//-------------------------------------------------------------------------
 	// Set up horizontal variables:
 	//
-	short	sDelX,sIncX,sNumX,sClipW,sShowW;
+	int16_t	sDelX,sIncX,sNumX,sClipW,sShowW;
 	// ASSUME SHRINKING FOR NOW:
 	INIT_IMPROPER_FRACTION_H(sDstW,sSrcW,sDelX,sIncX,sNumX) // sDstW is the numerator
 	sClipW = sDstW - sClipR; // right clip...
 	sShowW = sClipW - sClipL;
 
-	short i;
+	int16_t i;
 	//-------------------------------------------------------------------------
 	// Do vertical clipping:
 	if (sClipT)
@@ -320,13 +320,13 @@ inline void _Blit_HS_VM_C(
 			{
 			pSrc = pSrcLine; pDst = pDstLine; // synch position:
 			sNumX = (sDstW>>1);
-			UCHAR ucPix;
+			uint8_t ucPix;
 			i = sClipW;
 
 			while (i--)
 				{
 				if (i < sShowW)
-					SET_PIX_CLEAR(pSrc,pDst,UCHAR(0),ucPix)
+					SET_PIX_CLEAR(pSrc,pDst,uint8_t(0),ucPix)
 				INC_FRAC_H(pSrc,sDelX,sIncX,sNumX,sDstW)
 				pDst += sMirrorH;
 				}
@@ -342,11 +342,11 @@ inline void _Blit_HS_VM_C(
 			pSrc = pSrcLine; pDst = pDstLine; // synch position:
 			sNumX = (sDstW>>1);
 			i = sClipW;
-			UCHAR ucPix;
+			uint8_t ucPix;
 
 			while (i--)
 				{
-				SET_PIX_CLEAR(pSrc,pDst,UCHAR(0),ucPix)
+				SET_PIX_CLEAR(pSrc,pDst,uint8_t(0),ucPix)
 				INC_FRAC_H(pSrc,sDelX,sIncX,sNumX,sDstW)
 				pDst += sMirrorH;
 				}
@@ -364,17 +364,17 @@ inline void _Blit_HS_VM_C(
 // I believe the memptrs are to the UNCLIPPED rects...
 //
 inline void _Blit_HM_VS_C(
-							UCHAR* pSrc,long lSrcP,short sSrcW,short sSrcH,
-							UCHAR* pDst,long lDstP,short sDstW,short sDstH,
-							short sClipL,short sClipT,short sClipR,short sClipB,
-							short sMirrorH,short sMirrorV)
+							uint8_t* pSrc,int32_t lSrcP,int16_t sSrcW,int16_t sSrcH,
+							uint8_t* pDst,int32_t lDstP,int16_t sDstW,int16_t sDstH,
+							int16_t sClipL,int16_t sClipT,int16_t sClipR,int16_t sClipB,
+							int16_t sMirrorH,int16_t sMirrorV)
 	{
 	//-------------------------------------------------------------------------
 	// Set up vertical variables:
 	//
-	UCHAR*	pSrcLine = pSrc,*pDstLine = pDst;
-	long	lDelMemY;
-	short	sIncY,sNumY,sClipH;
+	uint8_t*	pSrcLine = pSrc,*pDstLine = pDst;
+	int32_t	lDelMemY;
+	int16_t	sIncY,sNumY,sClipH;
 
 	if (sMirrorV == -1) lDstP = -lDstP; // make sure pDst is correctly positioned
 	
@@ -385,13 +385,13 @@ inline void _Blit_HM_VS_C(
 	//-------------------------------------------------------------------------
 	// Set up horizontal variables:
 	//
-	short	sNumX,sClipW,sShowW;
+	int16_t	sNumX,sClipW,sShowW;
 	// ASSUME ENLARGING FOR NOW:
 	INIT_PROPER_FRACTION(sDstW,sNumX) // sDstW is the denominator
 	sClipW = sDstW - sClipR; // right clip...
 	sShowW = sClipW - sClipL;
 
-	short i;
+	int16_t i;
 	//-------------------------------------------------------------------------
 	// Do vertical clipping:
 	if (sClipT)
@@ -409,13 +409,13 @@ inline void _Blit_HM_VS_C(
 			{
 			pSrc = pSrcLine; pDst = pDstLine; // synch position:
 			sNumX = (sDstW>>1);
-			UCHAR ucPix;
+			uint8_t ucPix;
 			i = sClipW;
 
 			while (i--)
 				{
 				if (i < sShowW)
-					SET_PIX_CLEAR(pSrc,pDst,UCHAR(0),ucPix)
+					SET_PIX_CLEAR(pSrc,pDst,uint8_t(0),ucPix)
 				INC_PFRAC_H(pSrc,sSrcW,sNumX,sDstW)
 				pDst += sMirrorH;
 				}
@@ -431,11 +431,11 @@ inline void _Blit_HM_VS_C(
 			pSrc = pSrcLine; pDst = pDstLine; // synch position:
 			sNumX = (sDstW>>1);
 			i = sClipW;
-			UCHAR ucPix;
+			uint8_t ucPix;
 
 			while (i--)
 				{
-				SET_PIX_CLEAR(pSrc,pDst,UCHAR(0),ucPix)
+				SET_PIX_CLEAR(pSrc,pDst,uint8_t(0),ucPix)
 				INC_PFRAC_H(pSrc,sSrcW,sNumX,sDstW)
 				pDst += sMirrorH;
 				}
@@ -462,8 +462,8 @@ typedef S32 CHOOSE_TRANSPARENT;
 
 // at the internal level, assume all values have been verified..
 //
-inline short	_rspBlit(UCHAR* pSrc,long lSrcP,short sSrcW,short sSrcH,
-								UCHAR* pDst,long lDstP,short sDstW,short sDstH)
+inline int16_t	_rspBlit(uint8_t* pSrc,int32_t lSrcP,int16_t sSrcW,int16_t sSrcH,
+								uint8_t* pDst,int32_t lDstP,int16_t sDstW,int16_t sDstH)
 	{
 	return 0;
 	}
@@ -472,7 +472,7 @@ inline short	_rspBlit(UCHAR* pSrc,long lSrcP,short sSrcW,short sSrcH,
 // (long version... overload shorter version...)
 // FOR THE DEMO, do ONLY shrinking, and do clipping AFTER shrinking.....
 //
-short rspBlitT(RImage* pimSrc,RImage* pimDst,RRect* prSrc,const RRect* prDst,
+int16_t rspBlitT(RImage* pimSrc,RImage* pimDst,RRect* prSrc,const RRect* prDst,
 				  const RRect* prDstClip,const RRect* prSrcClip)
 	{
 
@@ -514,7 +514,7 @@ short rspBlitT(RImage* pimSrc,RImage* pimDst,RRect* prSrc,const RRect* prDst,
 	//------------------------------------------------------------------------------
 	// NOTE THAT THESE ARE THE WIDTH AND HEIGHT WHICH ARE ACTUALLY SCALED
 	//
-	short sSrcX = prSrc->sX, sSrcY = prSrc->sY, sSrcW = prSrc->sW, sSrcH = prSrc->sH;
+	int16_t sSrcX = prSrc->sX, sSrcY = prSrc->sY, sSrcW = prSrc->sW, sSrcH = prSrc->sH;
 
 	// TOO complex for now as it drastically alters the scaling...
 
@@ -532,11 +532,11 @@ short rspBlitT(RImage* pimSrc,RImage* pimDst,RRect* prSrc,const RRect* prDst,
 	// NOTE: effective destination clipping done at a lower level.
 	// Only source clipping would effect this...
 	//
-	short sDstClipX = 0, sDstClipY = 0;
-	short	sDstClipW = pimDst->m_sWidth, sDstClipH = pimDst->m_sHeight;
+	int16_t sDstClipX = 0, sDstClipY = 0;
+	int16_t	sDstClipW = pimDst->m_sWidth, sDstClipH = pimDst->m_sHeight;
 
 	// NOT FOR CLIPPING PURPOSES -> FIXED UINPUT VALUES!
-	short sDstX = prDst->sX, sDstY = prDst->sY, sDstW = prDst->sW, sDstH = prDst->sH;
+	int16_t sDstX = prDst->sX, sDstY = prDst->sY, sDstW = prDst->sW, sDstH = prDst->sH;
 
 	if (prDstClip)
 		{
@@ -547,7 +547,7 @@ short rspBlitT(RImage* pimSrc,RImage* pimDst,RRect* prSrc,const RRect* prDst,
 		}
 
 	//********************* MIRROR PART I => PRE CLIP:
-	short sMirrorH = 1,sMirrorV = 1;
+	int16_t sMirrorH = 1,sMirrorV = 1;
 
 	if (sDstW < 0)
 		{
@@ -565,7 +565,7 @@ short rspBlitT(RImage* pimSrc,RImage* pimDst,RRect* prSrc,const RRect* prDst,
 	//*********************
 
 	//-------- Do the clipping:
-	short sClipL,sClipR,sClipT,sClipB; // positive = clipped
+	int16_t sClipL,sClipR,sClipT,sClipB; // positive = clipped
 
 	sClipL = sDstClipX - sDstX; if (sClipL < 0) sClipL = 0;
 	sClipT = sDstClipY - sDstY; if (sClipT < 0) sClipT = 0;
@@ -596,8 +596,8 @@ short rspBlitT(RImage* pimSrc,RImage* pimDst,RRect* prSrc,const RRect* prDst,
 	//------------------------------------------------------------------------------
 	// set up IC
 	//------------------------------------------------------------------------------
-	UCHAR*	pDst = pimDst->m_pData + pimDst->m_lPitch * sDstY + sDstX;
-	UCHAR*	pSrc = pimSrc->m_pData + pimSrc->m_lPitch * sSrcY + sSrcX;
+	uint8_t*	pDst = pimDst->m_pData + pimDst->m_lPitch * sDstY + sDstX;
+	uint8_t*	pSrc = pimSrc->m_pData + pimSrc->m_lPitch * sSrcY + sSrcX;
 
 	if ((sDstW <= sSrcW) && (sDstH <= sSrcH))
 		_Blit_HS_VS_C(pSrc,pimSrc->m_lPitch,sSrcW,sSrcH,
@@ -629,8 +629,8 @@ short rspBlitT(RImage* pimSrc,RImage* pimDst,RRect* prSrc,const RRect* prDst,
 #else
 	extern
 #endif
-short rspBlitT(RImage* pimSrc,RImage* pimDst,short sDstX,short sDstY,
-					short sDstW,short sDstH,const RRect* prDstClip)
+int16_t rspBlitT(RImage* pimSrc,RImage* pimDst,int16_t sDstX,int16_t sDstY,
+					int16_t sDstW,int16_t sDstH,const RRect* prDstClip)
 	{
 	RRect rSrc,rDst;
 
@@ -663,7 +663,7 @@ short rspBlitT(RImage* pimSrc,RImage* pimDst,short sDstX,short sDstY,
 #else
 	extern
 #endif
-short rspBlitT(RImage* pimSrc,RImage* pimDst,short sDstX,short sDstY,
+int16_t rspBlitT(RImage* pimSrc,RImage* pimDst,int16_t sDstX,int16_t sDstY,
 							 double dRatW,double dRatH,const RRect* prDstClip)
 	{
 #ifdef _DEBUG
@@ -676,6 +676,6 @@ short rspBlitT(RImage* pimSrc,RImage* pimDst,short sDstX,short sDstY,
 
 #endif
 
-	return rspBlitT(pimSrc,pimDst,sDstX,sDstY,(short)(dRatW * pimSrc->m_sWidth),
-		(short)(dRatH * pimSrc->m_sHeight),prDstClip);
+	return rspBlitT(pimSrc,pimDst,sDstX,sDstY,(int16_t)(dRatW * pimSrc->m_sWidth),
+		(int16_t)(dRatH * pimSrc->m_sHeight),prDstClip);
 	}

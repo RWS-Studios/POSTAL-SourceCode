@@ -36,16 +36,16 @@
 // Associates all icon style buttons that are children of pdlg with the icon
 // specified by the window text of that button.
 // Returns 0 on success.
-extern short Iconize(CDialog* pdlg);
+extern int16_t Iconize(CDialog* pdlg);
 
 // Store position of this window in the module's INI.
 // Returns 0 on success.
-extern short StorePosition(CWnd* pwnd);
+extern int16_t StorePosition(CWnd* pwnd);
 
 // Restore position of this window from the module's INI.  No change if no 
 // settings stored.
 // Returns 0 on success.
-extern short RestorePosition(CWnd* pwnd);
+extern int16_t RestorePosition(CWnd* pwnd);
 
 ///////////////////////////////////////////////////////////////////////////////
 // EOF

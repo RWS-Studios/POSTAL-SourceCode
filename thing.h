@@ -357,7 +357,7 @@ class CThing
 	public:
 
 		// Typedefs for static functions that all derived classes should have
-		typedef short (*FuncConstruct)(CRealm* pRealm, CThing** ppNew);
+		typedef int16_t (*FuncConstruct)(CRealm* pRealm, CThing** ppNew);
 		typedef short (*FuncPreload)(CRealm* pRealm);
 		typedef short (*FuncDestroy)(void);
 
@@ -375,7 +375,7 @@ class CThing
 
 		// Typedef for class ID's, required because we want specify the type,
 		// whereas the compiler always uses type int for enums.
-		typedef unsigned char ClassIDType;
+		typedef uint8_t ClassIDType;
 
 		// Class ID's for all derived classes that need to be loaded/saved.  If
 		// these numbers change, it will completely invalidate any world files
@@ -462,7 +462,7 @@ class CThing
 		// the typical problems involving C++ initialization order, it doesn't really
 		// make sense to create CGameObj's as global/static objects since they are
 		// supposed to be created/destroyed dynamically as worlds are loaded.
-		static short ms_sDetectStaticInits;
+		static int16_t ms_sDetectStaticInits;
 
 		// This is used by DoGui() to perform GUI processing.
 		static RProcessGui	ms_pgDoGui;
@@ -483,14 +483,14 @@ class CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			ClassIDType id,										// In:  Class ID
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
  			CThing** ppNew);										// Out: Pointer to new object
 
 		// Construct object and assign it an ID from the Realm's ID bank,
 		// if it does not already have one.
-		static short ConstructWithID(							// Returns 0 if successfull, non-zero otherwise
+		static int16_t ConstructWithID(							// Returns 0 if successfull, non-zero otherwise
 			ClassIDType id,										// In:  Class ID
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
  			CThing** ppNew);										// Out: Pointer to new object
@@ -500,7 +500,7 @@ class CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Prioritized Message queue for Things to use to communicate with each other
-		RPQueue <GameMessage, short> m_MessageQueue;
+		RPQueue <GameMessage, int16_t> m_MessageQueue;
 
 		// Pointer to the realm this object belongs to
 		CRealm* m_pRealm;
@@ -511,10 +511,10 @@ class CThing
 
 	protected:
 		// Flag indicating whether object wants it's Startup() to be called
-		short m_sCallStartup;
+		int16_t m_sCallStartup;
 
 		// Flag indicating whether object wants it's Shutdown() to be called
-		short m_sCallShutdown;
+		int16_t m_sCallShutdown;
 
 /*
 		// Iterator that specifies this object's position in the realm's container
@@ -586,7 +586,7 @@ class CThing
 		// Processing involves using queued RSPiX user input via
 		// rspGetNextInputEvent().
 		static							// Static for your usage pleasure.
-		long DoGui(						// Returns ID of item that terminated looping.
+		int32_t DoGui(						// Returns ID of item that terminated looping.
 											// Returns 0 if rspGetQuitStatus() is nonzero.
 											// Returns negative on error.
 			RGuiItem*	pguiRoot);	// Root of GUI items to process through user.
@@ -600,31 +600,31 @@ class CThing
 
 		// Callback from ms_pgDoGui for system update.
 		static								// Static for use as a callback.
-		long SysUpdate(					// Returns a non-zero ID to abort or zero
+		int32_t SysUpdate(					// Returns a non-zero ID to abort or zero
 												// to continue.                          
 			RInputEvent*	pie);			// Out: Next input event to process.     
 
-		short SendThingMessage(pGameMessage pMessage, U16 u16ID)
+		int16_t SendThingMessage(pGameMessage pMessage, U16 u16ID)
 			{
 				return SendThingMessage(pMessage, pMessage->msg_Generic.sPriority, u16ID);
 			}
 
-		short SendThingMessage(pGameMessage pMessage, CThing* pThing)
+		int16_t SendThingMessage(pGameMessage pMessage, CThing* pThing)
 			{
 				return SendThingMessage(pMessage, pMessage->msg_Generic.sPriority, pThing);
 			}
 
-		short SendThingMessage(pGameMessage pMessage, short sPriority, U16 u16ID);
+		int16_t SendThingMessage(pGameMessage pMessage, int16_t sPriority, U16 u16ID);
 
-		short SendThingMessage(pGameMessage pMessage, short sPriority, CThing* pThing);
+		int16_t SendThingMessage(pGameMessage pMessage, int16_t sPriority, CThing* pThing);
 
 		// Maps a 3D coordinate onto the viewing plane.
 		void Map3Dto2D(		// Returns nothing.
-			short sX,			// In.
-			short	sY,			// In.
-			short	sZ,			// In.
-			short* psX,			// Out.
-			short* psY);		// Out.
+			int16_t sX,			// In.
+			int16_t	sY,			// In.
+			int16_t	sZ,			// In.
+			int16_t* psX,			// Out.
+			int16_t* psY);		// Out.
 
 		// Maps a 3D coordinate onto the viewing plane.
 		void Map3Dto2D(		// Returns nothing.
@@ -640,16 +640,16 @@ class CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		virtual short Load(										// Returns 0 if successfull, non-zero otherwise
+		virtual int16_t Load(										// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  File version being loaded.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  File version being loaded.
 
 		// Save object (should call base class version!)
-		virtual short Save(										// Returns 0 if successfull, non-zero otherwise
+		virtual int16_t Save(										// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short /*sFileCount*/)								// In:  File count (unique per file, never 0)
+			int16_t /*sFileCount*/)								// In:  File count (unique per file, never 0)
 			{
 			// Save this thing's ID.  The ID is unique to this 'thing' within its realm
 			// (i.e., no other CThing or derived class has this same ID within this realm).
@@ -660,13 +660,13 @@ class CThing
 			}
 
 		// Startup object
-		virtual short Startup(void)							// Returns 0 if successfull, non-zero otherwise
+		virtual int16_t Startup(void)							// Returns 0 if successfull, non-zero otherwise
 			{
 			return 0;
 			}
 
 		// Shutdown object
-		virtual short Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+		virtual int16_t Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 			{
 			return 0;
 			}
@@ -692,25 +692,25 @@ class CThing
 			}
 
 		// Called by editor to init new object at specified position
-		virtual short EditNew(									// Returns 0 if successfull, non-zero otherwise
-			short /*sX*/,											// In:  New x coord
-			short /*sY*/,											// In:  New y coord
-			short /*sZ*/)											// In:  New z coord
+		virtual int16_t EditNew(									// Returns 0 if successfull, non-zero otherwise
+			int16_t /*sX*/,											// In:  New x coord
+			int16_t /*sY*/,											// In:  New y coord
+			int16_t /*sZ*/)											// In:  New z coord
 			{
 			return 0;
 			}
 
 		// Called by editor to modify object
-		virtual short EditModify(void)						// Returns 0 if successfull, non-zero otherwise
+		virtual int16_t EditModify(void)						// Returns 0 if successfull, non-zero otherwise
 			{
 			return 0;
 			}
 
 		// Called by editor to move object to specified position
-		virtual short EditMove(									// Returns 0 if successfull, non-zero otherwise
-			short /*sX*/,											// In:  New x coord
-			short /*sY*/,											// In:  New y coord
-			short /*sZ*/)											// In:  New z coord
+		virtual int16_t EditMove(									// Returns 0 if successfull, non-zero otherwise
+			int16_t /*sX*/,											// In:  New x coord
+			int16_t /*sY*/,											// In:  New y coord
+			int16_t /*sZ*/)											// In:  New z coord
 			{
 			return 0;
 			}
@@ -730,9 +730,9 @@ class CThing
 		// Called by editor to get the hotspot of an object in 2D.
 		virtual	// If you override this, do NOT call this base class.
 		void EditHotSpot(			// Returns nothiing.
-			short*	psX,			// Out: X coord of 2D hotspot relative to
+			int16_t*	psX,			// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-			short*	psY)			// Out: Y coord of 2D hotspot relative to
+			int16_t*	psY)			// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 			{
 			// Default implementation puts hotspot in upper left corner of
@@ -803,14 +803,14 @@ class CThing
 			return false;
 			}
 
-		long rspGetMilliseconds(void)
+		int32_t rspGetMilliseconds(void)
 			{
 			ASSERT(0);
 			return 0;
 			}
 		
-		long rspGetMicroseconds(
-			short /*sReset	= FALSE*/)
+		int32_t rspGetMicroseconds(
+			int16_t /*sReset	= FALSE*/)
 			{
 			ASSERT(0);
 			return 0;

@@ -62,10 +62,10 @@ class CCtrlBuf
 	// Variables
 	//------------------------------------------------------------------------------
 	private:
-		long m_lNumCtrls;
-		long m_lOldestSeq;
+		int32_t m_lNumCtrls;
+		int32_t m_lOldestSeq;
 
-		long m_alBuf[MaxBufEntries];
+		int32_t m_alBuf[MaxBufEntries];
 
 	//------------------------------------------------------------------------------
 	// Functions
@@ -101,17 +101,17 @@ class CCtrlBuf
 		////////////////////////////////////////////////////////////////////////////////
 		// Add new ctrl to buffer
 		////////////////////////////////////////////////////////////////////////////////
-		short Add(
-			long lSeq,
-			long lNum,
-			long* plCtrls,
-			long* plNumAdded)
+		int16_t Add(
+			int32_t lSeq,
+			int32_t lNum,
+			int32_t* plCtrls,
+			int32_t* plNumAdded)
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 
 			// This can and should be optimized!
 			*plNumAdded = 0;
-			for (long l = 0; l < lNum; l++)
+			for (int32_t l = 0; l < lNum; l++)
 				{
 				sResult = Add(lSeq++, *plCtrls++);
 				if (sResult == 0)
@@ -123,11 +123,11 @@ class CCtrlBuf
 			return sResult;
 			}
 
-		short Add(
-			long lSeq,
-			long lCtrl)
+		int16_t Add(
+			int32_t lSeq,
+			int32_t lCtrl)
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 
 			// This needs to deal with the fact that the ctrls don't always come
 			// sequentially, and there will often be gaps between ctrl values that
@@ -143,7 +143,7 @@ class CCtrlBuf
 			else
 				{
 				// Calculate index in array based on sequence number
-				long lIndex = lSeq - m_lOldestSeq;
+				int32_t lIndex = lSeq - m_lOldestSeq;
 
 				// Make sure it isn't older than our oldest value.  This can happen if
 				// we receive an older data packet.  If it does happen, we quietly
@@ -160,7 +160,7 @@ class CCtrlBuf
 						if (lIndex >= m_lNumCtrls)
 							{
 							// Invalidate any unused ctrls (there may not be any)
-							for (long l = m_lNumCtrls; l < lIndex; l++)
+							for (int32_t l = m_lNumCtrls; l < lIndex; l++)
 								m_alBuf[l] = InvalidEntry;
 
 							// Set new number of entries (last index + 1)
@@ -182,12 +182,12 @@ class CCtrlBuf
 		// Get specified entry.  If the returned value is 'InvalidEntry', then that
 		// entry was not available.
 		////////////////////////////////////////////////////////////////////////////////
-		long GetAt(
-			long lSeq)
+		int32_t GetAt(
+			int32_t lSeq)
 			{
 			if (m_lNumCtrls > 0)
 				{
-				long lIndex = lSeq - m_lOldestSeq;
+				int32_t lIndex = lSeq - m_lOldestSeq;
 				if ((lIndex >= 0) && (lIndex < m_lNumCtrls))
 					return m_alBuf[lIndex];
 				}
@@ -199,12 +199,12 @@ class CCtrlBuf
 		// Get pointer to specified entry.  If the returned value is 0 (NULL), then
 		// that entry was not available.
 		////////////////////////////////////////////////////////////////////////////////
-		long* GetPtrTo(
-			long lSeq)
+		int32_t* GetPtrTo(
+			int32_t lSeq)
 			{
 			if (m_lNumCtrls > 0)
 				{
-				long lIndex = lSeq - m_lOldestSeq;
+				int32_t lIndex = lSeq - m_lOldestSeq;
 				if ((lIndex >= 0) && (lIndex < m_lNumCtrls))
 					return &(m_alBuf[lIndex]);
 				}
@@ -216,14 +216,14 @@ class CCtrlBuf
 		// Discard all ctrls up to the specified sequence number
 		////////////////////////////////////////////////////////////////////////////////
 		void DiscardThrough(
-			long lSeq)
+			int32_t lSeq)
 			{
 			if (m_lNumCtrls > 0)
 				{
 				if (lSeq >= m_lOldestSeq)
 					{
 					// Calculate index of first ctrl that will be KEPT
-					long lKeepIndex = (lSeq - m_lOldestSeq) + 1;
+					int32_t lKeepIndex = (lSeq - m_lOldestSeq) + 1;
 
 					// If index is less than number of ctrls, then there's something to be moved.
 					// Otherwise, the entire array has been discarded.
@@ -265,7 +265,7 @@ class CCtrlBuf
 		////////////////////////////////////////////////////////////////////////////////
 		// Get oldest sequence (not valid if buffer is empty!)
 		////////////////////////////////////////////////////////////////////////////////
-		long GetOldestSeq(void)
+		int32_t GetOldestSeq(void)
 			{
 			return m_lOldestSeq;
 			}
@@ -274,7 +274,7 @@ class CCtrlBuf
 		////////////////////////////////////////////////////////////////////////////////
 		// Get newest sequence (not valid if buffer is empty!)
 		////////////////////////////////////////////////////////////////////////////////
-		long GetNewestSeq(void)
+		int32_t GetNewestSeq(void)
 			{
 			return m_lOldestSeq + (m_lNumCtrls - 1);
 			}

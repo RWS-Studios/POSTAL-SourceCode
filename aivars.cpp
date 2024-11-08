@@ -81,12 +81,12 @@ class CLogTabVar_GetAction : CLogTabVar<CPerson*>
 			m_papszStrings = CDoofus::ms_apszActionNames;
 			}
 
-		short GetVal(CPerson* pPerson)
+		int16_t GetVal(CPerson* pPerson)
 			{
 			return pPerson->m_eCurrentAction;
 			}
 
-		void SetVal(CPerson* pPerson, short sVal)
+		void SetVal(CPerson* pPerson, int16_t sVal)
 			{
 			}
 	} givename_getaction;
@@ -107,12 +107,12 @@ class CLogTabVar_SetAction : CLogTabVar<CPerson*>
 			m_papszStrings = CDoofus::ms_apszActionNames;
 			}
 
-		short GetVal(CPerson* pPerson)
+		int16_t GetVal(CPerson* pPerson)
 			{
 			return pPerson->m_eSuggestedAction;
 			}
 
-		void SetVal(CPerson* pPerson, short sVal)
+		void SetVal(CPerson* pPerson, int16_t sVal)
 			{
 			pPerson->m_eSuggestedAction = (CDoofus::Action) sVal;
 			}
@@ -138,7 +138,7 @@ class CLogTabVar_TargetDist : CLogTabVar<CPerson*>
 			m_papszStrings = ms_sz;
 			}
 
-		short GetVal(CPerson* pPerson)
+		int16_t GetVal(CPerson* pPerson)
 			{
 			// Define local arguements which may become inputs:
 			// (They are the squared distances...)
@@ -167,7 +167,7 @@ class CLogTabVar_TargetDist : CLogTabVar<CPerson*>
 				return 0; 
 			}
 
-		void SetVal(CPerson* pPerson, short sVal)
+		void SetVal(CPerson* pPerson, int16_t sVal)
 			{
 			}
 	} givename_targetdist;
@@ -189,13 +189,13 @@ class CLogTabVar_PopoutAvailable : CLogTabVar<CPerson*>
 			m_papszStrings = ms_sz;
 			}
 
-		short GetVal(CPerson* pPerson)
+		int16_t GetVal(CPerson* pPerson)
 			{
 			pPerson->Logic_PylonDetect();
 			return pPerson->m_bPylonPopoutAvailable;
 			}
 
-		void SetVal(CPerson* pPerson, short sVal)
+		void SetVal(CPerson* pPerson, int16_t sVal)
 			{
 			}
 	} givename_popoutavailable;
@@ -217,13 +217,13 @@ class CLogTabVar_RunShootAvailable : CLogTabVar<CPerson*>
 			m_papszStrings = ms_sz;
 			}
 
-		short GetVal(CPerson* pPerson)
+		int16_t GetVal(CPerson* pPerson)
 			{
 			pPerson->Logic_PylonDetect();
 			return pPerson->m_bPylonRunShootAvailable;
 			}
 
-		void SetVal(CPerson* pPerson, short sVal)
+		void SetVal(CPerson* pPerson, int16_t sVal)
 			{
 			}
 	} givename_runshootavailable;
@@ -246,13 +246,13 @@ class CLogTabVar_SafetyAvailable : CLogTabVar<CPerson*>
 			m_papszStrings = ms_sz;
 			}
 
-		short GetVal(CPerson* pPerson)
+		int16_t GetVal(CPerson* pPerson)
 			{
 			pPerson->Logic_PylonDetect();
 			return pPerson->m_bPylonSafeAvailable;
 			}
 
-		void SetVal(CPerson* pPerson, short sVal)
+		void SetVal(CPerson* pPerson, int16_t sVal)
 			{
 			}
 	} givename_safetyavailable;
@@ -275,9 +275,9 @@ class CLogTabVar_PylonAvailable : CLogTabVar<CPerson*>
 			m_papszStrings = ms_sz;
 			}
 
-		short GetVal(CPerson* pPerson)
+		int16_t GetVal(CPerson* pPerson)
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			pPerson->Logic_PylonDetect();
 			if (pPerson->m_bPylonPopoutAvailable)
 			{
@@ -299,7 +299,7 @@ class CLogTabVar_PylonAvailable : CLogTabVar<CPerson*>
 			return sResult;
 			}
 
-		void SetVal(CPerson* pPerson, short sVal)
+		void SetVal(CPerson* pPerson, int16_t sVal)
 			{
 			}
 	} givename_pylonavailable;
@@ -321,12 +321,12 @@ class CLogTabVar_MyHealth : CLogTabVar<CPerson*>
 			m_papszStrings = ms_sz;
 			}
 
-		short GetVal(CPerson* pPerson)
+		int16_t GetVal(CPerson* pPerson)
 			{
 			return pPerson->m_stockpile.m_sHitPoints / 34;
 			}
 
-		void SetVal(CPerson* pPerson, short sVal)
+		void SetVal(CPerson* pPerson, int16_t sVal)
 			{
 			}
 	} givename_myhealth;
@@ -349,16 +349,16 @@ class CLogTabVar_DudeHealth : CLogTabVar<CPerson*>
 			m_papszStrings = ms_sz;
 			}
 
-		short GetVal(CPerson* pPerson)
+		int16_t GetVal(CPerson* pPerson)
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 
 			if (pPerson->SelectDude() == SUCCESS)
 			{
 				CDude*	pdude;
 				if (pPerson->m_pRealm->m_idbank.GetThingByID((CThing**)&pdude, pPerson->m_idDude) == 0)
 				{
-					short sHitPoints = pdude->GetHealth();
+					int16_t sHitPoints = pdude->GetHealth();
 					if (sHitPoints > 80)
 					{
 						sResult = 3;
@@ -376,7 +376,7 @@ class CLogTabVar_DudeHealth : CLogTabVar<CPerson*>
 			return sResult;
 			}
 
-		void SetVal(CPerson* pPerson, short sVal)
+		void SetVal(CPerson* pPerson, int16_t sVal)
 			{
 			}
 	} givename_dudehealth;
@@ -399,12 +399,12 @@ class CLogTabVar_IsTriggered : CLogTabVar<CPerson*>
 			m_papszStrings = ms_sz;
 			}
 
-		short GetVal(CPerson* pPerson)
+		int16_t GetVal(CPerson* pPerson)
 			{
 			return (pPerson->m_pPylonStart != NULL && pPerson->m_pPylonStart->Triggered());
 			}
 
-		void SetVal(CPerson* pPerson, short sVal)
+		void SetVal(CPerson* pPerson, int16_t sVal)
 			{
 			}
 	} givename_istriggered;
@@ -427,12 +427,12 @@ class CLogTabVar_UserState1 : CLogTabVar<CPerson*>
 			m_papszStrings = ms_sz;
 			}
 
-		short GetVal(CPerson* pPerson)
+		int16_t GetVal(CPerson* pPerson)
 			{
 			return pPerson->m_sUserState1;
 			}
 
-		void SetVal(CPerson* pPerson, short sVal)
+		void SetVal(CPerson* pPerson, int16_t sVal)
 			{
 			pPerson->m_sUserState1 = sVal;
 			}
@@ -455,12 +455,12 @@ class CLogTabVar_RecentlyShot : CLogTabVar<CPerson*>
 			m_papszStrings = ms_sz;
 			}
 
-		short GetVal(CPerson* pPerson)
+		int16_t GetVal(CPerson* pPerson)
 			{
 			return (pPerson->m_pRealm->m_time.GetGameTime() < pPerson->m_lShotTimeout);
 			}
 
-		void SetVal(CPerson* pPerson, short sVal)
+		void SetVal(CPerson* pPerson, int16_t sVal)
 			{
 			}
 	} givename_recentlyshot;
@@ -482,12 +482,12 @@ class CLogTabVar_RecentlyStuck : CLogTabVar<CPerson*>
 			 m_papszStrings = ms_sz;
 			}
 
-		short GetVal(CPerson* pPerson)
+		int16_t GetVal(CPerson* pPerson)
 			{
 			return (pPerson->m_pRealm->m_time.GetGameTime() < pPerson->m_lStuckTimeout);
 			}
 
-		void SetVal(CPerson* pPerson, short sVal)
+		void SetVal(CPerson* pPerson, int16_t sVal)
 			{
 			// Set to false
 			if (sVal == 0)
@@ -516,12 +516,12 @@ class CLogTabVar_IsPanic : CLogTabVar<CPerson*>
 			m_papszStrings = ms_sz;
 			}
 
-		short GetVal(CPerson* pPerson)
+		int16_t GetVal(CPerson* pPerson)
 			{
 			return pPerson->m_bPanic;
 			}
 
-		void SetVal(CPerson* pPerson, short sVal)
+		void SetVal(CPerson* pPerson, int16_t sVal)
 			{
 			}
 	} givename_ispanic;
@@ -543,7 +543,7 @@ class CLogTabVar_HelpCall : CLogTabVar<CPerson*>
 			m_papszStrings = ms_sz;
 			}
 
-		short GetVal(CPerson* pPerson)
+		int16_t GetVal(CPerson* pPerson)
 			{
 			if (pPerson->m_pRealm->m_time.GetGameTime() < pPerson->m_lLastHelpCallTime + pPerson->ms_lHelpTimeout && pPerson->m_lLastHelpCallTime > 0)
 				return 1;
@@ -551,7 +551,7 @@ class CLogTabVar_HelpCall : CLogTabVar<CPerson*>
 				return 0;
 			}
 
-		void SetVal(CPerson* pPerson, short sVal)
+		void SetVal(CPerson* pPerson, int16_t sVal)
 			{
 			}
 	} givename_helpcall;
@@ -575,12 +575,12 @@ class CLogTabVar_UserGlobal : CLogTabVar<CPerson*>
 			m_papszStrings = ms_sz;
 			}
 
-		short GetVal(CPerson* pPerson)
+		int16_t GetVal(CPerson* pPerson)
 			{
 			return pPerson->ms_sLogTabUserGlobal;
 			}
 
-		void SetVal(CPerson* pPerson, short sVal)
+		void SetVal(CPerson* pPerson, int16_t sVal)
 			{
 			pPerson->ms_sLogTabUserGlobal = sVal;
 			}

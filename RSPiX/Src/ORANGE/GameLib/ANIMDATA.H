@@ -35,10 +35,10 @@
 // the hotspot to the edges of the rectangle.
 typedef struct tag_ZONE
 	{
-	short sLeft;		// Offset from hotspot to left edge of zone
-	short sTop;			// Offset from hotspot to top edge of zone
-	short sRight;		// Offset from hotspot to right edge of zone
-	short sBottom;		// Offset from hotspot to bottom edge of zone
+	int16_t sLeft;		// Offset from hotspot to left edge of zone
+	int16_t sTop;			// Offset from hotspot to top edge of zone
+	int16_t sRight;		// Offset from hotspot to right edge of zone
+	int16_t sBottom;		// Offset from hotspot to bottom edge of zone
 	} ZONE;
 
 
@@ -46,7 +46,7 @@ typedef struct tag_ZONE
 // a single ZONE is used, but complex shapes may require multiple ZONEs.
 typedef struct tag_ZONELIST
 	{
-	short sNumZones;	// Number of zones in array
+	int16_t sNumZones;	// Number of zones in array
 	ZONE aZones[];		// ZONE's (variable sized array!)
 	} ZONELIST;
 
@@ -68,14 +68,14 @@ typedef struct tag_ZONESET
 // Multiple frames will likely refer to the same image
 typedef struct tag_IMAGE
 	{
-	short ucType;		// Image type
-	short sWidth;		// Image width (bounding rectangle)
-	short sHeight;		// Image height (bounding rectangle)
+	int16_t ucType;		// Image type
+	int16_t sWidth;		// Image width (bounding rectangle)
+	int16_t sHeight;		// Image height (bounding rectangle)
 	// The next part is dependant on the image type.  Perhaps
 	// we should use a UNION to define whatever parts of the
 	// various image types we can.
 	// For now, I just declare it as generic data bytes.
-	UCHAR abData[];		// Image data (as per type)
+	uint8_t abData[];		// Image data (as per type)
 	} IMAGE;
 
 
@@ -89,11 +89,11 @@ typedef struct tag_IMAGE
 // associated with this frame.
 typedef struct tag_FRAME
 	{
-	short sOffsetX;
-	short sOffsetY;
-	short	sOffsetZ;
-	short sHold;
-	short sRepeat;			// Bit 15 could be used to mark key frames
+	int16_t sOffsetX;
+	int16_t sOffsetY;
+	int16_t	sOffsetZ;
+	int16_t sHold;
+	int16_t sRepeat;			// Bit 15 could be used to mark key frames
 								// If bit is set on frame 0, it would mean that
 								// the animation uses inter-frame deltas.
 	IMAGE* pImage;
@@ -107,7 +107,7 @@ typedef struct tag_FRAME
 // total size of this structure.
 typedef struct tag_ANIM
 	{
-	short sNumFrames;			// Number of frames
+	int16_t sNumFrames;			// Number of frames
 	FRAME aFrames[1];			// FRAME's (variable sized array!)
 	} ANIM;
 
@@ -124,7 +124,7 @@ typedef struct tag_ANIM
 
 typedef struct tag_ANIMSET
 {
- 	long lNumAnims;
+ 	int32_t lNumAnims;
 	ANIM* apAnims[1];
 } ANIMSET;
 

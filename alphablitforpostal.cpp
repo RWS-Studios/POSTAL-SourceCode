@@ -65,17 +65,17 @@ void rspAlphaMaskBlit(RMultiAlpha* pX,RImage* pimMask,
 	long lSrcP = pimSrc->m_lPitch;
 	long lDstP = pimDst->m_lPitch;
 	long lMaskP = pimMask->m_lPitch;
-	UCHAR* pSrc,*pSrcLine = pimSrc->m_pData + sSrcX + sSrcY * lSrcP;
-	UCHAR* pMask,*pMaskLine = pimMask->m_pData + sSrcX + sSrcY * lSrcP;
-	UCHAR* pDst,*pDstLine = pimDst->m_pData + sDstX + lDstP * sDstY;
-	UCHAR ucOpaque = (UCHAR) pX->m_sNumLevels;
+	uint8_t* pSrc,*pSrcLine = pimSrc->m_pData + sSrcX + sSrcY * lSrcP;
+	uint8_t* pMask,*pMaskLine = pimMask->m_pData + sSrcX + sSrcY * lSrcP;
+	uint8_t* pDst,*pDstLine = pimDst->m_pData + sDstX + lDstP * sDstY;
+	uint8_t ucOpaque = (uint8_t) pX->m_sNumLevels;
 
 	for (j=0;j<sDstH;j++,pSrcLine += lSrcP,pDstLine += lDstP,pMaskLine += lMaskP)
 		{
 		pSrc = pSrcLine;
 		pDst = pDstLine;
 		pMask = pMaskLine;
-		UCHAR ucMask;
+		uint8_t ucMask;
 
 		for (i=0;i<sDstW;i++,pSrc++,pDst++,pMask++)
 			{
@@ -107,8 +107,8 @@ void rspAlphaBlit(RAlpha* pX,RImage* pimSrc,RImage* pimDst,short sDstX,short sDs
 	short i,j;
 	long lSrcP = pimSrc->m_lPitch;
 	long lDstP = pimDst->m_lPitch;
-	UCHAR* pSrc,*pSrcLine = pimSrc->m_pData + sSrcX + sSrcY * lSrcP;
-	UCHAR* pDst,*pDstLine = pimDst->m_pData + sDstX + lDstP * sDstY;
+	uint8_t* pSrc,*pSrcLine = pimSrc->m_pData + sSrcX + sSrcY * lSrcP;
+	uint8_t* pDst,*pDstLine = pimDst->m_pData + sDstX + lDstP * sDstY;
 
 	for (j=0;j<sDstH;j++,pSrcLine += lSrcP,pDstLine += lDstP)
 		{
@@ -124,9 +124,9 @@ void rspAlphaBlit(RAlpha* pX,RImage* pimSrc,RImage* pimDst,short sDstX,short sDs
 	*/
 
 // alpha key values
-UCHAR	sCheckSum1[40] = {184,176,176,187,189,166,186,0};
-UCHAR sCheckSum2[40] = {173, 172, 175, 223, 149,154,153,153,220,205,210,204,209,136,158,137,0};
-UCHAR sCheckSum3[40] = {173, 172, 175, 223, 173,158,145,155,134,220,205,210,204,209,136,158,137,255};
+uint8_t	sCheckSum1[40] = {184,176,176,187,189,166,186,0};
+uint8_t sCheckSum2[40] = {173, 172, 175, 223, 149,154,153,153,220,205,210,204,209,136,158,137,0};
+uint8_t sCheckSum3[40] = {173, 172, 175, 223, 173,158,145,155,134,220,205,210,204,209,136,158,137,255};
 
 /*
 // This draws source to destination with clipping only if destination is not zero!
@@ -144,8 +144,8 @@ void rspMaskBlit(RImage* pimSrc,RImage* pimDst,short sDstX,short sDstY)
 	short i,j;
 	long lSrcP = pimSrc->m_lPitch;
 	long lDstP = pimDst->m_lPitch;
-	UCHAR* pSrc,*pSrcLine = pimSrc->m_pData + sSrcX + sSrcY * lSrcP;
-	UCHAR* pDst,*pDstLine = pimDst->m_pData + sDstX + lDstP * sDstY;
+	uint8_t* pSrc,*pSrcLine = pimSrc->m_pData + sSrcX + sSrcY * lSrcP;
+	uint8_t* pDst,*pDstLine = pimDst->m_pData + sDstX + lDstP * sDstY;
 
 	for (j=0;j<sDstH;j++,pSrcLine += lSrcP,pDstLine += lDstP)
 		{
@@ -160,11 +160,11 @@ void rspMaskBlit(RImage* pimSrc,RImage* pimDst,short sDstX,short sDstY)
 	}
 
 // Takes a BMP8 and converts it to a mask of 0 and ucVal
-void rspMakeMask(RImage* pimSrc,UCHAR ucVal)
+void rspMakeMask(RImage* pimSrc,uint8_t ucVal)
 	{
 	short i,j;
 	long lSrcP = pimSrc->m_lPitch;
-	UCHAR* pSrc,*pSrcLine = pimSrc->m_pData;
+	uint8_t* pSrc,*pSrcLine = pimSrc->m_pData;
 
 	for (j=0;j<pimSrc->m_sHeight;j++,pSrcLine += lSrcP)
 		{
@@ -178,13 +178,13 @@ void rspMakeMask(RImage* pimSrc,UCHAR ucVal)
 
 // Takes a BMP8 and converts it to a mask of 0 and ucVal
 // Currently, no clipping or positioning possible
-void rspCopyAsMask(RImage* pimSrc,RImage* pimDst,UCHAR ucVal)
+void rspCopyAsMask(RImage* pimSrc,RImage* pimDst,uint8_t ucVal)
 	{
 	short i,j;
 	long lSrcP = pimSrc->m_lPitch;
 	long lDstP = pimDst->m_lPitch;
-	UCHAR* pSrc,*pSrcLine = pimSrc->m_pData;
-	UCHAR* pDst,*pDstLine = pimDst->m_pData;
+	uint8_t* pSrc,*pSrcLine = pimSrc->m_pData;
+	uint8_t* pDst,*pDstLine = pimDst->m_pData;
 
 	short sDstW = pimSrc->m_sWidth;
 	short sDstH = pimSrc->m_sHeight;
@@ -214,18 +214,18 @@ void g_alphaBlit(
 		RImage* pimDst,			// Destination image.
 		RImage* pimMask,			// Mask of alphable area.
 		RMultiAlpha* pma,			// Table of alphas or something.
-		short sAlphaX,				// Source coordinate in pimSrc to put alphamask.
-		short sAlphaY,				// Source coordinate in pimSrc to put alphamask.
-		short sDstX,				// Destination coordinate in pimDst for pimSrc(0,0).
-		short sDstY,				// Destination coordinate in pimDst for pimSrc(0,0).
+		int16_t sAlphaX,				// Source coordinate in pimSrc to put alphamask.
+		int16_t sAlphaY,				// Source coordinate in pimSrc to put alphamask.
+		int16_t sDstX,				// Destination coordinate in pimDst for pimSrc(0,0).
+		int16_t sDstY,				// Destination coordinate in pimDst for pimSrc(0,0).
 		RRect &rDstClip)			// Rectangle to clip Dst to.
 	{
 	// I assume the pimSrc is an FSPR8, and the pimDst is a BMP8
 	// I need a BMP8 for the uncompressed wall
 	// I need a BMP8 for the uncompressed wall as alpha mask
 	RImage imSource,imMask;
-	short sW = pimSrc->m_sWidth;
-	short sH = pimSrc->m_sHeight;
+	int16_t sW = pimSrc->m_sWidth;
+	int16_t sH = pimSrc->m_sHeight;
 
 	if (sFirst) Verify();
 
@@ -238,7 +238,7 @@ void g_alphaBlit(
 	if (imMask.CreateImage(sW,sH,RImage::BMP8)==SUCCESS)
 		{
 		// make copy of source converting it into a mask value
-		rspCopyAsMask(&imSource,&imMask,UCHAR(255)); // hard code 4 for now!
+		rspCopyAsMask(&imSource,&imMask,uint8_t(255)); // hard code 4 for now!
 		}
 
 	// NOW IN A SPECIAL WAY, get the hole into the mask:
@@ -256,12 +256,12 @@ extern RResMgr	g_resmgrShell;
 extern RResMgr	g_resmgrSamples;
 // Here is some code for validating alpha sprites and, if necessary, 
 // graphically teting them.
-short	sLoaded = FALSE;
+int16_t	sLoaded = FALSE;
 
 // See if chosen file is alpha based:
 void	Verify()
 	{
-	short i;
+	int16_t i;
 	sFirst = FALSE;
 	for (i=0;i < strlen((char*)sCheckSum1); i++) sCheckSum1[i] = 255 - sCheckSum1[i];
 
@@ -281,11 +281,11 @@ void	Verify()
 // Do the graphical testing
 void test(RImage* pimF,RImage* pimB)
 	{
-	short i,smx,smy,smb;
-	short sCenterX = 320;
-	short sCenterY = 240;
-	short sRotX = pimF->m_sWidth>>1;
-	short sRotY =  pimF->m_sHeight>>1;
+	int16_t i,smx,smy,smb;
+	int16_t sCenterX = 320;
+	int16_t sCenterY = 240;
+	int16_t sRotX = pimF->m_sWidth>>1;
+	int16_t sRotY =  pimF->m_sHeight>>1;
 
 	rspAddRotationPadding(pimF,sRotX,sRotY);
 	RImage* pimBuffer;
@@ -300,20 +300,20 @@ void test(RImage* pimF,RImage* pimB)
 	rspSetBMPColors(pimF,10,118);
 	rspSetBMPColors(pimB,128,118);
 
-	short sHot = (short) ((pimF->m_sHeight)/rspSQRT2/2.0);
+	int16_t sHot = (int16_t) ((pimF->m_sHeight)/rspSQRT2/2.0);
 //---------------------------------------------------------------
 #define sNumStates 3
-	short x[sNumStates],y[sNumStates];
+	int16_t x[sNumStates],y[sNumStates];
 	for (i=0;i < sNumStates; i++)
 		{
 		 x[i]=y[i]=0;
 		}
 
-	short sCurX = sCenterX,sCurY = sCenterY;
+	int16_t sCurX = sCenterX,sCurY = sCenterY;
 	double dX = 1.0,dY = 1.0;
 	double dDegDel = 0.0;
 	double dScaleR = 1.005,dCurAngle = 0.0;
-	short sCurState = 0;
+	int16_t sCurState = 0;
 	double dScaleFactor = 1.0;
 
 #define DEL_ROT (25.0 / 360.0)
@@ -322,9 +322,9 @@ void test(RImage* pimF,RImage* pimB)
 	// Wait until user input
 	bool bContinue = TRUE;
 
-	long	lTime = rspGetMilliseconds();
-	long lKey = 0;
-	long lPrevTime = lTime;
+	int32_t	lTime = rspGetMilliseconds();
+	int32_t lKey = 0;
+	int32_t lPrevTime = lTime;
 	rspSetMouse(sCenterX,sCenterY);
 
 	while (bContinue)
@@ -379,10 +379,10 @@ void test(RImage* pimF,RImage* pimB)
 
 		double dsx = dX*dScaleFactor;
 		double dsy = dY*dScaleFactor;
-		short sdx = short (dsx * sHot);
-		short sdy = short (dsy * sHot);
+		int16_t sdx = int16_t (dsx * sHot);
+		int16_t sdy = int16_t (dsy * sHot);
 
-		rspBlitRot(short(dCurAngle),pimF,pimBuffer,
+		rspBlitRot(int16_t(dCurAngle),pimF,pimBuffer,
 			sCurX - sdx,sCurY - sdy,dsx,dsy);
 		rspUnlockBuffer();
 
@@ -409,7 +409,7 @@ void test(RImage* pimF,RImage* pimB)
 
 void SetAll()
 	{
-	short i;
+	int16_t i;
 
 	for (i=0;i < strlen((char*)sCheckSum2); i++) sCheckSum2[i] = 255 - sCheckSum2[i];
 	for (i=0;i < strlen((char*)sCheckSum3); i++) pct[i] = 255 - sCheckSum3[i];
@@ -421,7 +421,7 @@ void SetAll()
 		return;
 		}
 	U8	Map[256];
-	for (i=0;i < 256;i++) Map[i] = UCHAR(i);
+	for (i=0;i < 256;i++) Map[i] = uint8_t(i);
 	rspSetPaletteMaps(0,256,Map,Map,Map,sizeof(U8));
 
 	test(pimF,pimB);

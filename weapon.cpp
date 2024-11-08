@@ -63,19 +63,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // Let this auto-init to 0
-short CWeapon::ms_sFileCount;
+int16_t CWeapon::ms_sFileCount;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CWeapon::Load(										// Returns 0 if successfull, non-zero otherwise
+int16_t CWeapon::Load(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Call the CThing base class load to get the instance ID
 	sResult	= CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
@@ -144,9 +144,9 @@ short CWeapon::Load(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CWeapon::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CWeapon::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 	{
 	// Call the base class save to save the u16InstanceID
 	CThing::Save(pFile, sFileCount);
@@ -175,7 +175,7 @@ short CWeapon::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CWeapon::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+int16_t CWeapon::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 	{
 
 	// Init other stuff
@@ -189,7 +189,7 @@ short CWeapon::Startup(void)								// Returns 0 if successfull, non-zero otherw
 // Setup object
 ////////////////////////////////////////////////////////////////////////////////
 
-short CWeapon::Setup(short sX, short sY, short sZ)
+int16_t CWeapon::Setup(int16_t sX, int16_t sY, int16_t sZ)
 	{
 	m_dX = sX;
 	m_dY = sY;
@@ -200,7 +200,7 @@ short CWeapon::Setup(short sX, short sY, short sZ)
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-short CWeapon::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CWeapon::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 	{
 	return 0;
 	}
@@ -249,7 +249,7 @@ void CWeapon::Render(void)
 	if (m_spriteShadow.m_pImage && (pSprite->m_sInFlags & CSprite::InHidden) == 0)
 	{
 		// Get the height of the terrain from the attribute map
-		short sY = m_pRealm->GetHeight((short) m_dX, (short) m_dZ);
+		int16_t sY = m_pRealm->GetHeight((int16_t) m_dX, (int16_t) m_dZ);
 		// Map from 3d to 2d coords
 		Map3Dto2D(m_dX, (double) sY, m_dZ, &(m_spriteShadow.m_sX2), &(m_spriteShadow.m_sY2) );
 		// Offset hotspot to center of image.
@@ -263,7 +263,7 @@ void CWeapon::Render(void)
 		m_spriteShadow.m_sLayer = pSprite->m_sLayer;
 
 		// Set the alpha level based on the height difference
-		m_spriteShadow.m_sAlphaLevel = 200 - ((short) m_dY - sY);
+		m_spriteShadow.m_sAlphaLevel = 200 - ((int16_t) m_dY - sY);
 		// Check bounds . . .
 		if (m_spriteShadow.m_sAlphaLevel < 0)
 			{
@@ -275,7 +275,7 @@ void CWeapon::Render(void)
 			}
 
 		// If the main sprite is on the ground, then hide the shadow.
-		if ((short) m_dY - sY == 0)
+		if ((int16_t) m_dY - sY == 0)
 			m_spriteShadow.m_sInFlags |= CSprite::InHidden;
 		else
 			m_spriteShadow.m_sInFlags &= ~CSprite::InHidden;
@@ -293,12 +293,12 @@ void CWeapon::Render(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CWeapon::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CWeapon::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -312,7 +312,7 @@ short CWeapon::EditNew(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-short CWeapon::EditModify(void)
+int16_t CWeapon::EditModify(void)
 	{
 	return 0;
 	}
@@ -321,10 +321,10 @@ short CWeapon::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CWeapon::EditMove(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CWeapon::EditMove(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
 	m_dX = (double)sX;
 	m_dY = (double)sY;
@@ -357,7 +357,7 @@ void CWeapon::EditRender(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CWeapon::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CWeapon::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
 	return 0;
 	}
@@ -366,7 +366,7 @@ short CWeapon::GetResources(void)						// Returns 0 if successfull, non-zero oth
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CWeapon::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CWeapon::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
 	return 0;
 	}
@@ -377,8 +377,8 @@ short CWeapon::FreeResources(void)						// Returns 0 if successfull, non-zero ot
 
 double CWeapon::BounceAngle(double dRot)
 {
-	short sRot = (short) dRot;
-	short sBounceAngle = (((((sRot / 90) + 1) * 180) - sRot) % 360);
+	int16_t sRot = (int16_t) dRot;
+	int16_t sBounceAngle = (((((sRot / 90) + 1) * 180) - sRot) % 360);
 	return (double) sBounceAngle;
 }
 
@@ -483,9 +483,9 @@ void CWeapon::OnTriggerMsg(			// Returns nothing
 // PrepareShadow
 ////////////////////////////////////////////////////////////////////////////////
 
-short CWeapon::PrepareShadow(void)
+int16_t CWeapon::PrepareShadow(void)
 {
-	short sResult = SUCCESS;
+	int16_t sResult = SUCCESS;
 
 	// If the shadow doesn't have resource loaded yet, load the default
 	if (m_spriteShadow.m_pImage == NULL)

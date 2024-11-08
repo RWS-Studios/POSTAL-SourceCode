@@ -36,17 +36,17 @@ I AM OLD.  REPLACE ME WITH "FSPR8.CPP" IN YOUR PROJECT
 
 // Will convert from any 8bpp format.
 //
-short   ConvertToFSPR8(RImage* pImage);
+int16_t   ConvertToFSPR8(RImage* pImage);
 
 // Will convert back to type BMP8
 //
-short   ConvertFromFSPR8(RImage* pImage);
+int16_t   ConvertFromFSPR8(RImage* pImage);
 
 // Will delete pSpecial
 //
-short		DeleteFSPR8(RImage* pImage);
-short		LoadFSPR8(RImage* pImage, RFile* pcf);
-short		SaveFSPR8(RImage* pImage, RFile* pcf);
+int16_t		DeleteFSPR8(RImage* pImage);
+int16_t		LoadFSPR8(RImage* pImage, RFile* pcf);
+int16_t		SaveFSPR8(RImage* pImage, RFile* pcf);
 
 IMAGELINKLATE(FSPR8,ConvertToFSPR8,ConvertFromFSPR8,LoadFSPR8,SaveFSPR8,NULL,DeleteFSPR8);
 
@@ -54,16 +54,16 @@ IMAGELINKLATE(FSPR8,ConvertToFSPR8,ConvertFromFSPR8,LoadFSPR8,SaveFSPR8,NULL,Del
 class RCompressedImageData
 	{
 public:
-	USHORT	usCompType;	// = FSPR8 image type
-	ULONG		m_lBufSize;		// Size of the pixel data
-	ULONG		m_lCodeSize;	// Size of the control block
-	USHORT	usSourceType;	// uncompressed Image pre-compressed type
-	UCHAR*	pCBuf;		// Start of compressed picture data, 128-aligned, NULL for monochrome
-	UCHAR*	pCMem;
-	UCHAR* pControlBlock;// 32-aligned run length code for compressed BLiT
-	UCHAR** pLineArry;	// 32-aligned, arry of ptrs to pCBuf scanlines, 32-bit align assumed
+	uint16_t	usCompType;	// = FSPR8 image type
+	uint32_t		m_lBufSize;		// Size of the pixel data
+	uint32_t		m_lCodeSize;	// Size of the control block
+	uint16_t	usSourceType;	// uncompressed Image pre-compressed type
+	uint8_t*	pCBuf;		// Start of compressed picture data, 128-aligned, NULL for monochrome
+	uint8_t*	pCMem;
+	uint8_t* pControlBlock;// 32-aligned run length code for compressed BLiT
+	uint8_t** pLineArry;	// 32-aligned, arry of ptrs to pCBuf scanlines, 32-bit align assumed
 								// (long)->pLineArry[sH] = size of compressed buffer.
-	UCHAR** pCtlArry;		// 32-aligned, arry of offset ptrs into CtlBlock
+	uint8_t** pCtlArry;		// 32-aligned, arry of offset ptrs into CtlBlock
 
 	RCompressedImageData()
 		{
@@ -84,7 +84,7 @@ public:
 
 // SAVES ONLY the pSpecial information!
 //
-short		SaveFSPR8(RImage* pImage, RFile* pcf)
+int16_t		SaveFSPR8(RImage* pImage, RFile* pcf)
 	{
 	// Assume valid pImage and cnfile:
 	RCompressedImageData* pSpec = (RCompressedImageData*) pImage->m_pSpecialMem;
@@ -123,7 +123,7 @@ short		SaveFSPR8(RImage* pImage, RFile* pcf)
 
 	// Write the Line Array and Control array as 32-bit offsets:
 	// Both are (H+1) long:
-	short i;
+	int16_t i;
 	U32	lOffset;
 	// Do pointers into pixel data:
 	for (i=0;i <= pImage->m_sHeight;i++)
@@ -145,7 +145,7 @@ short		SaveFSPR8(RImage* pImage, RFile* pcf)
 // Assumes all of the FSPR1 has successfully been
 // loaded EXCEPT for pSpecial[Mem]
 //
-short		LoadFSPR8(RImage* pImage, RFile* pcf)
+int16_t		LoadFSPR8(RImage* pImage, RFile* pcf)
 	{
 	//------------------
 	// Initial Security:
@@ -175,7 +175,7 @@ short		LoadFSPR8(RImage* pImage, RFile* pcf)
 	//------------------
 
 	RCompressedImageData* pSpec = new RCompressedImageData;
-	pImage->m_pSpecialMem = pImage->m_pSpecial = (UCHAR*)pSpec;
+	pImage->m_pSpecialMem = pImage->m_pSpecial = (uint8_t*)pSpec;
 
 	pcf->Read((U16*)(&pSpec->usSourceType));
 	pcf->Read(&pSpec->m_lBufSize);
@@ -183,10 +183,10 @@ short		LoadFSPR8(RImage* pImage, RFile* pcf)
 
 	//-------- ALLOCATE THE FIELDS!!!
 	// No alignment needed for 8-bit:
-	pSpec->pCMem = pSpec->pCBuf = (UCHAR*)malloc(pSpec->m_lBufSize);
-	pSpec->pControlBlock = (UCHAR*)malloc(pSpec->m_lCodeSize);
-	pSpec->pLineArry = (UCHAR**)malloc(sizeof(UCHAR*) * (pImage->m_sHeight+1));
-	pSpec->pCtlArry = (UCHAR**)malloc(sizeof(UCHAR*) * (pImage->m_sHeight+1));
+	pSpec->pCMem = pSpec->pCBuf = (uint8_t*)malloc(pSpec->m_lBufSize);
+	pSpec->pControlBlock = (uint8_t*)malloc(pSpec->m_lCodeSize);
+	pSpec->pLineArry = (uint8_t**)malloc(sizeof(uint8_t*) * (pImage->m_sHeight+1));
+	pSpec->pCtlArry = (uint8_t**)malloc(sizeof(uint8_t*) * (pImage->m_sHeight+1));
 
 	//------------------
 	// Reserved Space
@@ -205,7 +205,7 @@ short		LoadFSPR8(RImage* pImage, RFile* pcf)
 
 	// Now restore the pointer list by adding them as offsets!
 	// (Pre ALLOCATED!)
-	short i;
+	int16_t i;
 	U32	lOffset;
 	// Do pointers into pixel data:
 	for (i=0;i <= pImage->m_sHeight;i++)
@@ -227,7 +227,7 @@ short		LoadFSPR8(RImage* pImage, RFile* pcf)
 
 // Just deletes pSpecial...
 //
-short		DeleteFSPR8(RImage* pImage)
+int16_t		DeleteFSPR8(RImage* pImage)
 	{
 	if (pImage->m_pSpecial != NULL)
 		{
@@ -240,7 +240,7 @@ short		DeleteFSPR8(RImage* pImage)
 // Returns NOT_SUPPORTED if conversion is not possible:
 // Destroys the image's buffer (officially) and sets it to NULL
 //
-short   ConvertToFSPR8(RImage*  pImage)
+int16_t   ConvertToFSPR8(RImage*  pImage)
 	{
 	// Convert to BKD8:
 #ifdef	_DEBUG
@@ -268,7 +268,7 @@ short   ConvertToFSPR8(RImage*  pImage)
 	//*********************  DO THE CONVERSION  ************************
 	RCompressedImageData* pHeader = new RCompressedImageData;
 	pHeader->usCompType = RImage::FSPR8;
-	pHeader->usSourceType = (USHORT) pImage->m_type;
+	pHeader->usSourceType = (uint16_t) pImage->m_type;
 
 	//************ RUN LENGTH COMPRESSION -> 8-bit Aligned **********
 
@@ -292,10 +292,10 @@ short   ConvertToFSPR8(RImage*  pImage)
 
 	//===== The pCtlArry ... points to the start of each line in the control block.
 
-	short x,y;  // For now, clear = 0, but this can be EASILY changed.
-	long i;
-	short	sCount;
-	UCHAR *pucOldMem,*pucOldBuf; // For shrinking the buffer while maintaining alignment
+	int16_t x,y;  // For now, clear = 0, but this can be EASILY changed.
+	int32_t i;
+	int16_t	sCount;
+	uint8_t *pucOldMem,*pucOldBuf; // For shrinking the buffer while maintaining alignment
 
 	//********* MALLOC all elements to maximum possible length, then shrink them. (realloc)
 	//********* for now, assume MALLOC returns 32-bit aligned ptr arrays.
@@ -310,28 +310,28 @@ short   ConvertToFSPR8(RImage*  pImage)
 	// Adjustment... for saving and retrieval, I am storing the total buffer sizes
 	// as the last elements in the random access arrays.
 	//
-	pHeader->pCtlArry = (UCHAR**)calloc(pImage->m_sHeight+1,sizeof(UCHAR*));
-	pHeader->pLineArry = (UCHAR**)calloc(pImage->m_sHeight+1,sizeof(UCHAR*));
+	pHeader->pCtlArry = (uint8_t**)calloc(pImage->m_sHeight+1,sizeof(uint8_t*));
+	pHeader->pLineArry = (uint8_t**)calloc(pImage->m_sHeight+1,sizeof(uint8_t*));
 
 	//************** For now, set these to an optimisitically large size: 1:1 compression (could be 2:1 worst case)
-	long	lSizeEstimate = ((long)(pImage->m_sHeight+1))*pImage->m_sWidth*2 + 15;
-	pHeader->pCMem = (UCHAR*)malloc((size_t)pImage->m_sHeight*(size_t)pImage->m_sWidth+15);
+	int32_t	lSizeEstimate = ((int32_t)(pImage->m_sHeight+1))*pImage->m_sWidth*2 + 15;
+	pHeader->pCMem = (uint8_t*)malloc((size_t)pImage->m_sHeight*(size_t)pImage->m_sWidth+15);
 
-	pHeader->pCBuf = (UCHAR*)(( (long)(pHeader->pCMem) + 15) & ~ 15); // align it 128!
-	pHeader->pControlBlock = (UCHAR*)malloc((size_t)lSizeEstimate);
+	pHeader->pCBuf = (uint8_t*)(( (int32_t)(pHeader->pCMem) + 15) & ~ 15); // align it 128!
+	pHeader->pControlBlock = (uint8_t*)malloc((size_t)lSizeEstimate);
 
 	//******** For convenience, generate the Compressed Buffer immediately:
-	UCHAR*	pucCPos = pHeader->pCBuf;
-	UCHAR*	pucBPos = pImage->m_pData; // read the actual buffer
-	short	sW = pImage->m_sWidth;
-	short	sH = pImage->m_sHeight;
-	short	sP = pImage->m_lPitch;
+	uint8_t*	pucCPos = pHeader->pCBuf;
+	uint8_t*	pucBPos = pImage->m_pData; // read the actual buffer
+	int16_t	sW = pImage->m_sWidth;
+	int16_t	sH = pImage->m_sHeight;
+	int16_t	sP = pImage->m_lPitch;
 
 	// WARNING:  THIS IS HARD CODED 8-bit PIXEL SIZE STUFF!
 	for (y=0;y<sH;y++)
 	{
-	pHeader->pLineArry[y] = (UCHAR*)(pucCPos - pHeader->pCBuf); // set line pointer
-	for (x=0,pucBPos = pImage->m_pData + (long)sP * (long)y; x<sW; x++)
+	pHeader->pLineArry[y] = (uint8_t*)(pucCPos - pHeader->pCBuf); // set line pointer
+	for (x=0,pucBPos = pImage->m_pData + (int32_t)sP * (int32_t)y; x<sW; x++)
 		{
 		if (*pucBPos != 0) *(pucCPos++) = *pucBPos;
 		pucBPos++;
@@ -342,7 +342,7 @@ short   ConvertToFSPR8(RImage*  pImage)
 	ASSERT( ((pucCPos - pHeader->pCBuf)) < 2*1024*1024); // just in case something flakey happens!
 	ASSERT( ((pucCPos - pHeader->pCBuf)) > 0); // just in case something flakey happens!
 	// NOTE THE SIZE:
-	pHeader->m_lBufSize = ULONG(pucCPos - pHeader->pCBuf);
+	pHeader->m_lBufSize = uint32_t(pucCPos - pHeader->pCBuf);
 		
 	// Shrink the Compressed buffer:
 	if (pucCPos == pHeader->pCBuf)
@@ -360,11 +360,11 @@ short   ConvertToFSPR8(RImage*  pImage)
 	pucOldBuf = pHeader->pCBuf;
 	// create a new buffer of the appropriate size:
 	// NOTE: pucCPos is an open stack!
-	pHeader->pCMem = (UCHAR*)calloc(1,(size_t)(pucCPos - pHeader->pCBuf + 15));
+	pHeader->pCMem = (uint8_t*)calloc(1,(size_t)(pucCPos - pHeader->pCBuf + 15));
 	// And align it:
-	pHeader->pCBuf = (UCHAR*)(( (long)(pHeader->pCMem) +15)&~15);
+	pHeader->pCBuf = (uint8_t*)(( (int32_t)(pHeader->pCMem) +15)&~15);
 	// Store the size of the Compressed Buffer:
-	pHeader->pLineArry[sH] = (UCHAR*)(size_t)(pucCPos - pHeader->pCBuf);
+	pHeader->pLineArry[sH] = (uint8_t*)(size_t)(pucCPos - pHeader->pCBuf);
 
 
 	// Now copy the old into the new aligned and free it:
@@ -372,16 +372,16 @@ short   ConvertToFSPR8(RImage*  pImage)
 	free(pucOldMem);
 	
 	// Now update the indexes (pLineArry) which point into PCBuf:
-	for (y=0;y<sH;y++) pHeader->pLineArry[y] += (long)(pHeader->pCBuf);
+	for (y=0;y<sH;y++) pHeader->pLineArry[y] += (int32_t)(pHeader->pCBuf);
 
 	//******** NOW, the challange... Create the Control Block!
 	pucBPos = pImage->m_pData;
-	UCHAR*	pucConBlk = pHeader->pControlBlock;
+	uint8_t*	pucConBlk = pHeader->pControlBlock;
 
 	for (y=0;y<sH;y++)
 		{
-		pHeader->pCtlArry[y] = (UCHAR*)(pucConBlk - pHeader->pControlBlock); // set Block pointer
-		pucBPos = pImage->m_pData + (long)sP * (long)y;
+		pHeader->pCtlArry[y] = (uint8_t*)(pucConBlk - pHeader->pControlBlock); // set Block pointer
+		pucBPos = pImage->m_pData + (int32_t)sP * (int32_t)y;
 		x=0;
 
 		NextRun:
@@ -405,7 +405,7 @@ short   ConvertToFSPR8(RImage*  pImage)
 			}	
 
 		// 3) place count into control block:
-		*(pucConBlk++)=(UCHAR)sCount;  // The Clear Run
+		*(pucConBlk++)=(uint8_t)sCount;  // The Clear Run
 
 		// B> The OPAQUE RUN
 
@@ -422,7 +422,7 @@ short   ConvertToFSPR8(RImage*  pImage)
 			}	
 
 		// 3) place opaque count into control block:
-		*(pucConBlk++)=(UCHAR)sCount;  // The Clear Run
+		*(pucConBlk++)=(uint8_t)sCount;  // The Clear Run
 
 		if (x == sW)	// you are at the end of the line!
 			{
@@ -434,16 +434,16 @@ short   ConvertToFSPR8(RImage*  pImage)
 		}
 
 	// Store the size of the Control Block Buffer:
-	pHeader->pCtlArry[sH] = (UCHAR*)(size_t)(pucConBlk - pHeader->pControlBlock);
+	pHeader->pCtlArry[sH] = (uint8_t*)(size_t)(pucConBlk - pHeader->pControlBlock);
 	// NOTE THE SIZE:
-	pHeader->m_lCodeSize = ULONG(pucConBlk - pHeader->pControlBlock);
+	pHeader->m_lCodeSize = uint32_t(pucConBlk - pHeader->pControlBlock);
 
 	// Shrink the Control Block buffer:
-	pHeader->pControlBlock = (UCHAR*)realloc((void*)pHeader->pControlBlock,
+	pHeader->pControlBlock = (uint8_t*)realloc((void*)pHeader->pControlBlock,
 										(size_t)(pucConBlk - pHeader->pControlBlock));	
 
 	// Move the indexes in (pCtlArry)
-	for (y=0;y<sH;y++) pHeader->pCtlArry[y] += (long)(pHeader->pControlBlock);
+	for (y=0;y<sH;y++) pHeader->pCtlArry[y] += (int32_t)(pHeader->pControlBlock);
 
 	//******************************************************************
 
@@ -453,7 +453,7 @@ short   ConvertToFSPR8(RImage*  pImage)
 	// Kill the old buffer in an Image-Safe way:
 	pImage->DestroyData(); 
 
-	pImage->m_pSpecial = (UCHAR*) pHeader;  // Put the data in special.
+	pImage->m_pSpecial = (uint8_t*) pHeader;  // Put the data in special.
 	pImage->m_pSpecialMem = pImage->m_pSpecial; // So that our delete may be called!
 	pImage->m_type = RImage::FSPR8;
 	pImage->m_ulSize = 0;	// BLiT needs to deal with copying, etc....
@@ -463,7 +463,7 @@ short   ConvertToFSPR8(RImage*  pImage)
 
 // Returns to previous *8 screen format:
 //
-short   ConvertFromFSPR8(RImage*        pImage)
+int16_t   ConvertFromFSPR8(RImage*        pImage)
 	{
 
 	// Assume it is of the correct format:
@@ -477,15 +477,15 @@ short   ConvertFromFSPR8(RImage*        pImage)
 	pImage->CreateData(pImage->m_lPitch * pImage->m_sHeight); // should be blank
 
 	// BLiT Into the buffer!
-	UCHAR*	pDstLine = pImage->m_pData; // centered at 0,0
-	UCHAR*	pDst;
+	uint8_t*	pDstLine = pImage->m_pData; // centered at 0,0
+	uint8_t*	pDst;
 
-	short	sY=0;
+	int16_t	sY=0;
 	RCompressedImageData* pInfo = (RCompressedImageData*) pImage->m_pSpecial;
 
-	UCHAR		ucCode;
-	UCHAR*	pSrc;
-	UCHAR*	pCB;
+	uint8_t		ucCode;
+	uint8_t*	pSrc;
+	uint8_t*	pCB;
 
 	for (sY = 0; sY < pImage->m_sHeight; sY++,pDstLine += pImage->m_lPitch)
 		{
@@ -520,17 +520,17 @@ short   ConvertFromFSPR8(RImage*        pImage)
 	delete (RCompressedImageData*) pImage->m_pSpecial;
 	pImage->m_pSpecial = pImage->m_pSpecialMem = NULL;
 
-	return (short)pImage->m_type;
+	return (int16_t)pImage->m_type;
 	}
 
 //*****************************  THE FSPRITE BLiT  ******************************
 // currently 8-bit, but soon to be full color.
 // Must deal with screen locking.
 //
-short	rspBlit(RImage* pimSrc,RImage* pimDst,short sDstX,short sDstY,const RRect* prDst)
+int16_t	rspBlit(RImage* pimSrc,RImage* pimDst,int16_t sDstX,int16_t sDstY,const RRect* prDst)
 	{
 	
-	short sClip;
+	int16_t sClip;
 
 	// 1) preliminary parameter validation:
 #ifdef _DEBUG
@@ -563,11 +563,11 @@ short	rspBlit(RImage* pimSrc,RImage* pimDst,short sDstX,short sDstY,const RRect*
 #endif
 
 	// 2) Destination Clipping is hard here:
-	short sClipL=0,sClipR=0,sClipT=0,sClipB=0;
-	short sSrcX = 0,sSrcY = 0; // clippng parameters...
-	short sW = pimSrc->m_sWidth; // clippng parameters...
-	short sH = pimSrc->m_sHeight; // clippng parameters...
-	long	lDstP = pimDst->m_lPitch;
+	int16_t sClipL=0,sClipR=0,sClipT=0,sClipB=0;
+	int16_t sSrcX = 0,sSrcY = 0; // clippng parameters...
+	int16_t sW = pimSrc->m_sWidth; // clippng parameters...
+	int16_t sH = pimSrc->m_sHeight; // clippng parameters...
+	int32_t	lDstP = pimDst->m_lPitch;
 
 	if (prDst)
 		{
@@ -599,9 +599,9 @@ short	rspBlit(RImage* pimSrc,RImage* pimDst,short sDstX,short sDstY,const RRect*
 		//**************  INSERT BUFFER HOOKS HERE!  ************************
 
 	// do OS based copying!
-	short sNeedToUnlock = 0; // will be the name of a buffer to unlock.
+	int16_t sNeedToUnlock = 0; // will be the name of a buffer to unlock.
 
-	short sBlitTypeDst = 0; // normal image:
+	int16_t sBlitTypeDst = 0; // normal image:
 
 	// IN RELEASE MODE, GIVE THE USER A CHANCE:
 #ifndef _DEBUG
@@ -614,7 +614,7 @@ short	rspBlit(RImage* pimSrc,RImage* pimDst,short sDstX,short sDstY,const RRect*
 	// must record which UNLOCK (if any) needs to be done AFTER the BLiT
 	// has completed. (Lord help me if a blit gets interrupted)
 	// NOT NECESSARY!!! THe SOURCE WILL ALWAYS BE A BUFFER!
-	if (pimDst->m_type == RImage::IMAGE_STUB) sBlitTypeDst = (short)pimDst->m_pSpecial;
+	if (pimDst->m_type == RImage::IMAGE_STUB) sBlitTypeDst = (int16_t)pimDst->m_pSpecial;
 
 	switch (sBlitTypeDst) // 0 = normal image
 		{
@@ -679,16 +679,16 @@ short	rspBlit(RImage* pimSrc,RImage* pimDst,short sDstX,short sDstY,const RRect*
 	// 8-bit biased!
 
 	// Right now, pDst refers to the CLIPPED start of the scanline:
-	UCHAR*	pDstLine = pimDst->m_pData + sDstX + sDstY * pimDst->m_lPitch;
-	UCHAR*	pDst;
+	uint8_t*	pDstLine = pimDst->m_pData + sDstX + sDstY * pimDst->m_lPitch;
+	uint8_t*	pDst;
 
-	short	sY=0;
+	int16_t	sY=0;
 	RCompressedImageData* pInfo = (RCompressedImageData*) pimSrc->m_pSpecial;
 
-	UCHAR	ucCode;
-	UCHAR*	pSrc;
-	UCHAR*	pCB;
-	short sClipWidth;
+	uint8_t	ucCode;
+	uint8_t*	pSrc;
+	uint8_t*	pCB;
+	int16_t sClipWidth;
 
 	// Current algorithms CAN'T clip BOTH sides of the FSPR!
 	//
@@ -782,7 +782,7 @@ short	rspBlit(RImage* pimSrc,RImage* pimDst,short sDstX,short sDstY,const RRect*
 				ucCode = *(pCB++);		// Get run length
 				if (ucCode > sClipWidth) // a Contracted Run
 					{
-					ucCode = (UCHAR)sClipWidth;
+					ucCode = (uint8_t)sClipWidth;
 					sClipWidth = 0;
 					}
 				else	sClipWidth -= ucCode; // a full opaque run
@@ -858,5 +858,3 @@ short	rspBlit(RImage* pimSrc,RImage* pimDst,short sDstX,short sDstY,const RRect*
 //BLIT_DONTUNLOCK:	
 	return 0;
 	}
-
-

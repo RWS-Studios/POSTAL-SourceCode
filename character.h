@@ -156,7 +156,7 @@ class CCharacter : public CThing3d
 		CThing::ClassIDType m_eWeaponType;	// Type of weapon to be shot
 		CBulletFest	m_bullets;					// Generic bullet interface.
 
-		long	m_lCharacterTimer;				// This timer is intended for use by
+		int32_t	m_lCharacterTimer;				// This timer is intended for use by
 														// CCharacter's On/While* functions.
 		U16	m_u16KillerId;						// ID of the person who killed you
 		// Used to track the current channel
@@ -165,7 +165,7 @@ class CCharacter : public CThing3d
 		SampleMaster::SoundInstance	m_siLastWeaponPlayInstance;
 		// Set time that sound should be stopped (as long as we keep updating
 		// this, it won't get stopped).
-		long	m_lStopLoopingWeaponSoundTime;
+		int32_t	m_lStopLoopingWeaponSoundTime;
 
 
 
@@ -205,16 +205,16 @@ class CCharacter : public CThing3d
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Render object
 		virtual														// Overridden here.
@@ -353,7 +353,7 @@ class CCharacter : public CThing3d
 		void OnWeaponDestroyed(void);
 
 		// Preload - cache the anims that may be used.
-		static short Preload(
+		static int16_t Preload(
 			CRealm* prealm);				// In:  Calling realm.
 
 	//---------------------------------------------------------------------------
@@ -363,10 +363,10 @@ class CCharacter : public CThing3d
 
 		// Creates blood splat and pool animations.
 		void MakeBloody(
-			short sDamage,			// In:  Damage to base carnage on.
-			short	sDamageAngle,	// In:  Angle in which (NOT from which) damage was
+			int16_t sDamage,			// In:  Damage to base carnage on.
+			int16_t	sDamageAngle,	// In:  Angle in which (NOT from which) damage was
 										// applied.
-			short	sSwayRange);	// In:  Random amount chunks can sway from the
+			int16_t	sSwayRange);	// In:  Random amount chunks can sway from the
 										// sDamageAngle (If 360, there'll be no noticeable
 										// damage direction for the chunks).
 
@@ -375,8 +375,8 @@ class CCharacter : public CThing3d
 
 		// Draws last frame of blood pool into background.
 		void BloodToBackground(
-			short	sAnimX2d,			// Position of animation in 2d.
-			short	sAnimY2d);			// Position of animation in 2d.
+			int16_t	sAnimX2d,			// Position of animation in 2d.
+			int16_t	sAnimY2d);			// Position of animation in 2d.
 
 		// Prepare current weapon (ammo).
 		// This should be done when the character starts its shoot animation.
@@ -403,8 +403,8 @@ class CCharacter : public CThing3d
 		// Fire a bullet.
 		bool FireBullets(							// Returns true, if we hit someone/thing.
 			RP3d*				ppt3d,				// In:  Launch pt in Postal units.
-			short				sNumShots,			// In:  Number of shots to fire.
-			short				sRange,				// In:  Bullet range.
+			int16_t				sNumShots,			// In:  Number of shots to fire.
+			int16_t				sRange,				// In:  Bullet range.
 			SampleMasterID	smidAmmo,			// In:  Ammo noise.
 			CSmash::Bits	bitsInclude	= 0,	// In:  Optional bits we can hit
 			CSmash::Bits	bitsDontcare = 0,	// In:  Optional bits for don't care
@@ -415,25 +415,25 @@ class CCharacter : public CThing3d
 		bool IsPathClear(					// Returns true, if the entire path is clear.
 												// Returns false, if only a portion of the path is clear.
 												// (see *psX, *psY, *psZ).
-			short sX,						// In:  Starting X.
-			short	sY,						// In:  Starting Y.
-			short sZ,						// In:  Starting Z.
-			short sRotY,					// In:  Rotation around y axis (direction on X/Z plane).
-			short sCrawlRate,				// In:  Rate at which to scan ('crawl') path in pixels per
+			int16_t sX,						// In:  Starting X.
+			int16_t	sY,						// In:  Starting Y.
+			int16_t sZ,						// In:  Starting Z.
+			int16_t sRotY,					// In:  Rotation around y axis (direction on X/Z plane).
+			int16_t sCrawlRate,				// In:  Rate at which to scan ('crawl') path in pixels per
 												// iteration.
 												// NOTE: We scan terrain using GetFloorAttributes()
 												// so small values of sCrawl are not necessary.
 												// NOTE: We could change this to a speed in pixels per second
 												// where we'd assume a certain frame rate.
-			short	sRangeXZ,				// In:  Range on X/Z plane.
-			short sRadius,					// In:  Radius of path traverser.
-			short sVerticalTolerance,	// In:  Max traverser can step up.
+			int16_t	sRangeXZ,				// In:  Range on X/Z plane.
+			int16_t sRadius,					// In:  Radius of path traverser.
+			int16_t sVerticalTolerance,	// In:  Max traverser can step up.
 			CSmash::Bits bitsInclude,	// In:  Mask of CSmash bits that would terminate path.
 			CSmash::Bits bitsDontCare,	// In:  Mask of CSmash bits that would not affect path.
 			CSmash::Bits bitsExclude,	// In:  Mask of CSmash bits that cannot affect path.
-			short* psX,						// Out: Last clear point on path.
-			short* psY,						// Out: Last clear point on path.
-			short* psZ,						// Out: Last clear point on path.
+			int16_t* psX,						// Out: Last clear point on path.
+			int16_t* psY,						// Out: Last clear point on path.
+			int16_t* psZ,						// Out: Last clear point on path.
 			CThing** ppthing,				// Out: Thing that intercepted us or NULL, if none.
 			CSmash*	psmashExclude = NULL);// In:  Optional CSmash to exclude or NULL, if none.
 
@@ -442,12 +442,12 @@ class CCharacter : public CThing3d
 			// in aiming.  Looks for targets in range in the aiming direction but does not
 			// check terrain to see if it is a clear shot.
 		bool IlluminateTarget(			// Returns true if there is a target
-			short sX,						// In:  Starting x position
-			short sY,						// In:  Starting y position
-			short sZ,						// In:  Starting z position
-			short sRotY,					// In:  Aiming direction (rotation around y axis)
-			short sRangeXZ,				// In:  Range on X/Z plane
-			short sRadius,					// In:  Radius of path traverser.
+			int16_t sX,						// In:  Starting x position
+			int16_t sY,						// In:  Starting y position
+			int16_t sZ,						// In:  Starting z position
+			int16_t sRotY,					// In:  Aiming direction (rotation around y axis)
+			int16_t sRangeXZ,				// In:  Range on X/Z plane
+			int16_t sRadius,					// In:  Radius of path traverser.
 			CSmash::Bits bitsInclude,	// In:  Mask of CSmash bits that would count as a hit
 			CSmash::Bits bitsDontCare,	// In:  Mask of CSmash bits that would not affect path
 			CSmash::Bits bitsExclude,	// In:  Mask of CSmash bits that cannot affect path
@@ -455,7 +455,7 @@ class CCharacter : public CThing3d
 			CSmash* psmashExclude = NULL);// In: Optional CSmash to exclude or NULL, if none. 
 
 		// Give the angle from yourself to this x,z position
-		inline short FindAngleTo(double dX, double dZ)
+		inline int16_t FindAngleTo(double dX, double dZ)
 		{
 			return rspATan((m_dZ - dZ), (dX - m_dX));	
 		}

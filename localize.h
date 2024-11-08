@@ -105,6 +105,9 @@
 //
 //
 ////////////////////////////////////////////////////////////////////////////////
+
+#include "CompileOptions.h"
+
 #ifndef LOCALIZE_H
 #define LOCALIZE_H
 
@@ -226,6 +229,9 @@ extern char g_pszOptionsMenu_Multiplayer[];
 extern char g_pszOptionsMenu_Performance[];
 extern char g_pszOptionsMenu_Difficulty[];
 extern char g_pszOptionsMenu_Crosshair[];
+#ifdef KID_FRIENDLY_OPTION
+extern char g_pszOptionsMenu_KidMode[];
+#endif
 
 extern char g_pszDifficultyMenu_Title[];
 extern char g_pszDifficultyMenu_SetDifficulty[];
@@ -240,6 +246,10 @@ extern char g_pszOrganMenu_Exit[];
 extern char g_pszAudioMenu_Title[];
 extern char g_pszAudioMenu_Mixer[];
 extern char g_pszAudioMenu_SoundTest[];
+extern char g_pszAudioMenu_Language[];
+extern char g_pszAudioMenu_PainFrequency[];
+extern char g_pszAudioMenu_English[];
+extern char g_pszAudioMenu_Japanese[];
 
 extern char g_pszVideoMenu_Title[];
 extern char g_pszVideoMenu_Gamma[];
@@ -250,6 +260,7 @@ extern char g_pszControlsMenu_MouseSetup[];
 extern char g_pszControlsMenu_JoystickSetup[];
 extern char g_pszControlsMenu_TurningSpeeds[];
 extern char g_pszControlsMenu_UseMouse[];
+extern char g_pszControlsMenu_ClassicMouse[];
 extern char g_pszControlsMenu_HorizMouseSensitivity[];
 extern char g_pszControlsMenu_VertMouseSensitivity[];
 
@@ -283,8 +294,13 @@ extern char g_pszStartGameMenu_Multiplayer[];
 extern char g_pszStartGameMenu_Demo[];
 
 extern char g_pszStartSinglePlayerMenu_Title[];
+extern char g_pszStartSinglePlayerMenu_NewCampaign[];
 extern char g_pszStartSinglePlayerMenu_New[];
 extern char g_pszStartSinglePlayerMenu_AddOn[];
+#if TARGET == POSTAL_2015
+extern char g_pszStartSinglePlayerMenu_AddOn2[];
+extern char g_pszStartSinglePlayerMenu_AllLevels[];
+#endif
 extern char g_pszStartSinglePlayerMenu_LoadLevel[];
 extern char g_pszStartSinglePlayerMenu_LoadGame[];
 extern char g_pszStartSinglePlayerMenu_Challenge[];
@@ -313,6 +329,9 @@ extern char g_pszStartDemoMenu_Title[];
 extern char g_pszStartDemoMenu_Browse[];
 extern char g_pszStartDemoMenu_Play[];
 extern char g_pszStartDemoMenu_Record[];
+extern char g_pszStartDemoMenu_ConSite[];
+extern char g_pszStartDemoMenu_Home[];
+extern char g_pszStartDemoMenu_Bridge[];
 
 extern char g_pszMultiplayerSetupMenu_Title[];
 extern char g_pszMultiplayerSetupMenu_Name[];

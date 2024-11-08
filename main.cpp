@@ -175,12 +175,12 @@ int wideScreenWidth;
 ////////////////////////////////////////////////////////////////////////////////
 // Set up video for the game.
 ////////////////////////////////////////////////////////////////////////////////
-static short SetupVideo(					// Returns 0 on success.
-	short	sUseCurrentDeviceDimensions,	// In:  1 to use current video area.
-	short	sDeviceWidth,						// In:  Desired video hardware width.
-	short	sDeviceHeight)						// In:  Desired video hardware height.
+static int16_t SetupVideo(					// Returns 0 on success.
+	int16_t	sUseCurrentDeviceDimensions,	// In:  1 to use current video area.
+	int16_t	sDeviceWidth,						// In:  Desired video hardware width.
+	int16_t	sDeviceHeight)						// In:  Desired video hardware height.
 	{
-	short	sResult	= 0;
+	int16_t	sResult	= 0;
 
 #ifdef MOBILE
 	wideScreenWidth = 850;
@@ -190,7 +190,7 @@ static short SetupVideo(					// Returns 0 on success.
 	//wideScreenWidth = 640;
 
 	// Attempt to grab desired resolution from desktop
-	short sDepth, sWidth, sHeight;
+	int16_t sDepth, sWidth, sHeight;
 	rspQueryVideoModeReset();
 	while (!rspQueryVideoMode(&sDepth, &sWidth, &sHeight));
 	TRACE("rspQueryVideoMode result: %ix%ix%i\n", sWidth, sHeight, sDepth);
@@ -219,18 +219,18 @@ static short SetupVideo(					// Returns 0 on success.
 
 		// Create description of video mode for error messages
 		char acVideoMode[100];
-		sprintf(acVideoMode, "%hd by %hd Pixels", (short)MAIN_WINDOW_WIDTH, (short)MAIN_WINDOW_HEIGHT);
+		sprintf(acVideoMode, "%hd by %hd Pixels", (int16_t)MAIN_WINDOW_WIDTH, (int16_t)MAIN_WINDOW_HEIGHT);
 		if (MAIN_SCREEN_DEPTH <= 16)
-			sprintf(&(acVideoMode[strlen(acVideoMode)]), ", %hd Colors", (short)pow(2.0, (double)MAIN_SCREEN_DEPTH));
+			sprintf(&(acVideoMode[strlen(acVideoMode)]), ", %hd Colors", (int16_t)pow(2.0, (double)MAIN_SCREEN_DEPTH));
 		else if (MAIN_SCREEN_DEPTH == 24)
 			sprintf(&(acVideoMode[strlen(acVideoMode)]), ", True Color (24 bit)");
 		else
 			sprintf(&(acVideoMode[strlen(acVideoMode)]), ", True Color (32 bit)");
 		if (MAIN_SCREEN_PAGES > 1)
-			sprintf(&(acVideoMode[strlen(acVideoMode)]), ", %hd Pages", (short)MAIN_SCREEN_PAGES);
+			sprintf(&(acVideoMode[strlen(acVideoMode)]), ", %hd Pages", (int16_t)MAIN_SCREEN_PAGES);
 
 		// Get current device depth (before we try changing it)
-		short sCurrentDeviceDepth;
+		int16_t sCurrentDeviceDepth;
 		rspGetVideoMode(&sCurrentDeviceDepth);
 
 		// Find closest available device size for the settings we need.  This function knows about
@@ -292,8 +292,8 @@ static short SetupVideo(					// Returns 0 on success.
 
 			// Look for mode with the requested depth.  If there isn't one, depth is the problem.
 			rspQueryVideoModeReset();
-			short sDeviceDepth;
-			short sDevicePages;
+			int16_t sDeviceDepth;
+			int16_t sDevicePages;
 			do	{
 				sResult = rspQueryVideoMode(
 					&sDeviceDepth,
@@ -338,7 +338,7 @@ static short SetupVideo(					// Returns 0 on success.
 					{
 					sResult = -1;
 					TRACE("SetupVideo(): No %hd-bit video modes go up to %hdx%hd resolution!\n",
-						(short)MAIN_SCREEN_DEPTH, (short)MAIN_WINDOW_WIDTH, (short)MAIN_WINDOW_HEIGHT);
+						(int16_t)MAIN_SCREEN_DEPTH, (int16_t)MAIN_WINDOW_WIDTH, (int16_t)MAIN_WINDOW_HEIGHT);
 					rspMsgBox(
 						RSP_MB_ICN_STOP | RSP_MB_BUT_OK,
 						g_pszCriticalErrorTitle,
@@ -350,7 +350,7 @@ static short SetupVideo(					// Returns 0 on success.
 				{
 				sResult = -1;
 				TRACE("SetupVideo(): No %hd-bit video modes are available!\n",
-					(short)MAIN_SCREEN_DEPTH);
+					(int16_t)MAIN_SCREEN_DEPTH);
 				rspMsgBox(
 					RSP_MB_ICN_STOP | RSP_MB_BUT_OK,
 					g_pszCriticalErrorTitle,
@@ -370,7 +370,7 @@ static short SetupVideo(					// Returns 0 on success.
 static char* CreateChunk(	// Returns the memory ptr that will hold the chunk
 									// in place.  Needs to be freed with free() when done
 									// with the chunk.
-	long lChunkSize)			// In:  Size of chunk to create.
+	int32_t lChunkSize)			// In:  Size of chunk to create.
 	{
 	char*	pcOrig		= (char*)malloc(lChunkSize);
 	char* pcReAlloc	= (char*)realloc(pcOrig, 1024);
@@ -415,7 +415,7 @@ static void assert_types_are_sane(void)
 int _argc = 0;
 char **_argv = NULL;
 
-long playthroughMS = 0;
+int32_t playthroughMS = 0;
 
 #if WITH_STEAMWORKS
 bool WaitingForInitialSteamStats = true;
@@ -534,7 +534,7 @@ static bool touchFile(const char *fname, const int64 stamp)
         return false;
 
     ULARGE_INTEGER val;
-    val.QuadPart = (ULONGLONG) stamp;
+    val.QuadPart = (uint64_t) stamp;
     val.QuadPart += 11644473600LL;  // epoch difference. Ignoring leap seconds, oh well.
     val.QuadPart *= 10000000LL;  // convert to nanoseconds.
     FILETIME ft;
@@ -752,7 +752,7 @@ void RunSteamworksUpkeep()
 
 int main(int argc, char **argv)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
     _argc = argc;
     _argv = argv;
@@ -779,18 +779,18 @@ int main(int argc, char **argv)
 	if (prefs.Open(g_pszPrefFileName, "rt") == 0)
 		{
 		// Get video preferences
-		short sDeviceWidth;
-		short sDeviceHeight;
-		short	sUseCurrentDeviceDimensions;
+		int16_t sDeviceWidth;
+		int16_t sDeviceHeight;
+		int16_t	sUseCurrentDeviceDimensions;
 		prefs.GetVal("Video", "DeviceWidth", MAIN_SCREEN_MIN_WIDTH, &sDeviceWidth);
 		prefs.GetVal("Video", "DeviceHeight", MAIN_SCREEN_MIN_HEIGHT, &sDeviceHeight);
 		prefs.GetVal("Video", "UseCurrentDeviceDimensions", 1, &sUseCurrentDeviceDimensions);
 
 		// Get audio preferences
-		short	sAudioSamplesPerSec;
-		short	sDeviceBitsPerSample;
-		short	sBufTime;
-		short	sMixBitsPerSample;
+		int16_t	sAudioSamplesPerSec;
+		int16_t	sDeviceBitsPerSample;
+		int16_t	sBufTime;
+		int16_t	sMixBitsPerSample;
 		prefs.GetVal("Audio", "DeviceRate", MAIN_AUDIO_RATE, &sAudioSamplesPerSec);
 		prefs.GetVal("Audio", "DeviceBits", MAIN_AUDIO_BITS, &sDeviceBitsPerSample);
 		prefs.GetVal("Audio", "DeviceBufTime", MAIN_AUDIO_BUFTIME, &sBufTime);
@@ -863,7 +863,7 @@ rspSetProfileOutput("profile.out");
 					while (bRetry)
 						{
 						// Keep trying until it works or time runs out, whichever comes first
-						long	lTime = rspGetMilliseconds();
+						int32_t	lTime = rspGetMilliseconds();
 						bool	bDone	= false;
 						do	{
 							// Try to set mode
@@ -920,12 +920,12 @@ rspSetProfileOutput("profile.out");
 							char buf[100];
 							sprintf(buf, "%.3f kHz, %hd Bit, %s",
 								(float)sAudioSamplesPerSec/(float)1000,
-								(short)sDeviceBitsPerSample,
+								(int16_t)sDeviceBitsPerSample,
 								(MAIN_AUDIO_CHANNELS == 1) ? "Mono" : "Stereo");
 							
 							// Default to generic error.
 							char*	pszMsg;
-							USHORT usFlags; 
+							uint16_t usFlags; 
 							// Try to find a better one, though, based on the return value.
 							switch (sResult)
 								{
@@ -966,7 +966,7 @@ rspSetProfileOutput("profile.out");
 									break;
 								}
 
-							short sButton = rspMsgBox(
+							int16_t sButton = rspMsgBox(
 								usFlags,
 								g_pszCriticalErrorTitle,
 								pszMsg,

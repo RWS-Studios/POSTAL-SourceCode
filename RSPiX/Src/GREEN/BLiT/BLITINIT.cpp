@@ -82,7 +82,7 @@ class RInitBLiT
 public:
 	RInitBLiT();
 	~RInitBLiT();
-	short sLastDitchEffortToTellWhatIsHappening;
+	int16_t sLastDitchEffortToTellWhatIsHappening;
 	
 	static	RImage*	pimScreenBuffer;
 	static	RImage*  pimScreenVisible;
@@ -90,12 +90,12 @@ public:
 	};
 
 extern RInitBLiT	RStartBlitting;	// only included once, of course!
-extern short   ConvertFromFSPR8(RImage* pImage);
-extern short   ConvertToFSPR8(RImage* pImage);
-extern short   DeleteFSPR8(RImage* pImage);
-extern short   ConvertFromFSPR1(RImage* pImage);
-extern short   ConvertToFSPR1(RImage* pImage);
-extern short   DeleteFSPR1(RImage* pImage);
+extern int16_t   ConvertFromFSPR8(RImage* pImage);
+extern int16_t   ConvertToFSPR8(RImage* pImage);
+extern int16_t   DeleteFSPR8(RImage* pImage);
+extern int16_t   ConvertFromFSPR1(RImage* pImage);
+extern int16_t   ConvertToFSPR1(RImage* pImage);
+extern int16_t   DeleteFSPR1(RImage* pImage);
 
 void	LinkImage();
 void	LinkImage()
@@ -117,7 +117,7 @@ RInitBLiT::RInitBLiT()
 	pimScreenBackPlane = new RImage;
 
 	// trick the compiler into instantiating the BLiT Image types...
-	if (((long)pimScreenBuffer + (long)pimScreenVisible + (long)pimScreenBackPlane) == 0)
+	if (((S64)pimScreenBuffer + (S64)pimScreenVisible + (S64)pimScreenBackPlane) == 0)
 		{
 		LinkImage(); // NEVER Really do this!
 		}
@@ -128,9 +128,9 @@ RInitBLiT::RInitBLiT()
 	pimScreenVisible->CreateImage(0,0,RImage::IMAGE_STUB,0,0);	
 	pimScreenBackPlane->CreateImage(0,0,RImage::IMAGE_STUB,0,0);	
 
-	pimScreenBuffer->m_pSpecial = (UCHAR*) BUF_MEMORY;
-	pimScreenVisible->m_pSpecial = (UCHAR*) BUF_VRAM;
-	pimScreenBackPlane->m_pSpecial = (UCHAR*) BUF_VRAM2;
+	pimScreenBuffer->m_pSpecial = (uint8_t*) BUF_MEMORY;
+	pimScreenVisible->m_pSpecial = (uint8_t*) BUF_VRAM;
+	pimScreenBackPlane->m_pSpecial = (uint8_t*) BUF_VRAM2;
 
 #ifdef WIN32
 	TRACE("BLiT has initialized\n");
@@ -138,8 +138,8 @@ RInitBLiT::RInitBLiT()
 	}
 
 // Be very careful (and precise) about this stuff:
-short gsScreenLocked = 0;	// begin unlocked!
-short gsBufferLocked = 0;	// begin unlocked!
+int16_t gsScreenLocked = 0;	// begin unlocked!
+int16_t gsBufferLocked = 0;	// begin unlocked!
 
 
 // BLiT Kill
@@ -165,7 +165,7 @@ RImage*	RInitBLiT::pimScreenBackPlane = NULL;
 void rspNameBuffers(RImage** ppimMemBuf,RImage** ppimVidBuf,RImage** ppimBackBuf)
 	{
 	// Set aliases to the buffers and get the most current values possible.
-	short sVidW,sVidH,sVidD,sMemW,sMemH;
+	int16_t sVidW,sVidH,sVidD,sMemW,sMemH;
 	rspGetVideoMode(&sVidD,&sVidW,&sVidH,NULL,&sMemW,&sMemH);
 
 	if (ppimMemBuf != NULL) 
@@ -254,7 +254,7 @@ RInitBLiT	RStartBlittingForFun;	// only included once, of course!
 //
 //#include ".h"	// need the macro
 
-short rspSetWindowColors()
+int16_t rspSetWindowColors()
 	{
 #ifdef _DEBUG
 
@@ -267,9 +267,9 @@ short rspSetWindowColors()
 
 
 // waits for any click!
-void rspWaitForClick(short sWait)
+void rspWaitForClick(int16_t sWait)
 	{
-	short sDummy,sB;
+	int16_t sDummy,sB;
 	if (sWait == 0) return;
 
 	TRACE("Please click %s mouse button.\n",
@@ -298,13 +298,13 @@ void rspWaitForClick(short sWait)
 class RCompressedImageData
 	{
 public:
-	USHORT	usCompType;	// = FSPR8 image type
-	USHORT	usSourceType;	// uncompressed Image pre-compressed type
-	UCHAR*	pCBuf;		// Start of compressed picture data, 128-aligned, NULL for monochrome
-	UCHAR*	pCMem;
-	UCHAR* pControlBlock;// 32-aligned run length code for compressed BLiT
-	UCHAR** pLineArry;	// 32-aligned, arry of ptrs to pCBuf scanlines, 32-bit align assumed
-	UCHAR** pCtlArry;		// 32-aligned, arry of offset ptrs into CtlBlock
+	uint16_t	usCompType;	// = FSPR8 image type
+	uint16_t	usSourceType;	// uncompressed Image pre-compressed type
+	uint8_t*	pCBuf;		// Start of compressed picture data, 128-aligned, NULL for monochrome
+	uint8_t*	pCMem;
+	uint8_t* pControlBlock;// 32-aligned run length code for compressed BLiT
+	uint8_t** pLineArry;	// 32-aligned, arry of ptrs to pCBuf scanlines, 32-bit align assumed
+	uint8_t** pCtlArry;		// 32-aligned, arry of offset ptrs into CtlBlock
 
 	RCompressedImageData()
 		{
@@ -323,7 +323,7 @@ public:
 	}; 
 
 // for your convenience:
-void	rspSetBMPColors(RImage* pim,short sStartIndex,short sNum)
+void	rspSetBMPColors(RImage* pim,int16_t sStartIndex,int16_t sNum)
 	{
 #ifdef	_DEBUG
 
@@ -331,7 +331,7 @@ void	rspSetBMPColors(RImage* pim,short sStartIndex,short sNum)
 	// Actually, we ONLY need to worry about type FSPR8
 	if (pim->m_type == RImage::FSPR8)
 		{
-		if ( ((RCompressedImageData*)pim->m_pSpecial)->usSourceType != (USHORT)RImage::BMP8)
+		if ( ((RCompressedImageData*)pim->m_pSpecial)->usSourceType != (uint16_t)RImage::BMP8)
 			{
 			TRACE("rspSetBMPColors:  Palette not type BMP8\n");
 			return;
@@ -348,10 +348,10 @@ void	rspSetBMPColors(RImage* pim,short sStartIndex,short sNum)
 
 	typedef	struct
 		{
-		UCHAR	b;
-		UCHAR g;
-		UCHAR r;
-		UCHAR a;
+		uint8_t	b;
+		uint8_t g;
+		uint8_t r;
+		uint8_t a;
 		}	RGB;
 
 	RGB*	pPal = (RGB*)pim->m_pPalette->m_pData;
@@ -363,7 +363,7 @@ void	rspSetBMPColors(RImage* pim,short sStartIndex,short sNum)
 	}
 
 // This is the official composite buffer of the OS
-short	rspLockBuffer()
+int16_t	rspLockBuffer()
 	{
 
 	if (!gsBufferLocked) // we haven't actually locked it yet!
@@ -378,7 +378,7 @@ short	rspLockBuffer()
 		else
 			{
 			// Get the up to date dimensions as well!
-			short sVidW,sVidH,sVidD,sMemW,sMemH;
+			int16_t sVidW,sVidH,sVidD,sMemW,sMemH;
 			rspGetVideoMode(&sVidD,&sVidW,&sVidH,NULL,&sMemW,&sMemH);
 
 			RInitBLiT::pimScreenBuffer->m_sWidth = sMemW;	// assume same  for all...
@@ -392,7 +392,7 @@ short	rspLockBuffer()
 	}
 
 // This is the official OS composite buffer
-short	rspUnlockBuffer()
+int16_t	rspUnlockBuffer()
 	{
 	gsBufferLocked--;
 
@@ -418,7 +418,7 @@ short	rspUnlockBuffer()
 	}
 
 // This is the hardware video screen
-short	rspLockScreen()
+int16_t	rspLockScreen()
 	{
 	if (!gsScreenLocked) // we haven't actually locked it yet!
 		{
@@ -432,7 +432,7 @@ short	rspLockScreen()
 		else
 			{
 			// Set aliases to the buffers and get the most current values possible.
-			short sVidW,sVidH,sVidD,sMemW,sMemH;
+			int16_t sVidW,sVidH,sVidD,sMemW,sMemH;
 			rspGetVideoMode(&sVidD,&sVidW,&sVidH,NULL,&sMemW,&sMemH);
 
 			// Get up to date dimensions:
@@ -446,7 +446,7 @@ short	rspLockScreen()
 	return 0;
 	}
 
-short	rspUnlockScreen()
+int16_t	rspUnlockScreen()
 	{
 
 	gsScreenLocked--;
@@ -480,14 +480,14 @@ short	rspUnlockScreen()
 
 // This locks the required buffer.
 // NOTE: will NOT be appropriate for an rspUpdateDisplay scenario!
-short	rspGeneralLock(RImage* pimDst)
+int16_t	rspGeneralLock(RImage* pimDst)
 	{
 	ASSERT(pimDst);
 
 	// If it is a stub . . .
 	if (pimDst->m_type == RImage::IMAGE_STUB)
 		{
-		switch (((short)(((long)pimDst->m_pSpecial)))) // 0 = normal image
+		switch (((int16_t)(((S64)pimDst->m_pSpecial)))) // 0 = normal image
 			{
 			case 0:	// it's YOUR IMAGE!
 				return SUCCESS;
@@ -515,14 +515,14 @@ short	rspGeneralLock(RImage* pimDst)
 
 // This locks the required buffer.
 // NOTE: will NOT be appropriate for an rspUpdateDisplay scenario!
-short	rspGeneralUnlock(RImage* pimDst)
+int16_t	rspGeneralUnlock(RImage* pimDst)
 	{
 	ASSERT(pimDst);
 
 	// If it is a stub . . .
 	if (pimDst->m_type == RImage::IMAGE_STUB)
 		{
-		switch (((short)(((long)pimDst->m_pSpecial)))) // 0 = normal image
+		switch (((int16_t)(((S64)pimDst->m_pSpecial)))) // 0 = normal image
 			{
 			case 0:	// it's YOUR IMAGE!
 				return SUCCESS;
@@ -548,4 +548,3 @@ short	rspGeneralUnlock(RImage* pimDst)
 
 	return SUCCESS;
 	}
-

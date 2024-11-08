@@ -150,7 +150,7 @@ void CRtPlay::Set(void)
 	{
 	// Set data handler (where we get direction from the RT file).
 	m_dispatch.SetDataHandler(	RT_TYPE_RTFINFO, RtInfoCallStatic);
-	m_dispatch.SetUserVal(RT_TYPE_RTFINFO, (long)this);
+	m_dispatch.SetUserVal(RT_TYPE_RTFINFO, (int32_t)this);
 	
 	// Let resource know who the dispatcher is.
 	m_res.SetDispatcher(&m_dispatch);
@@ -158,13 +158,13 @@ void CRtPlay::Set(void)
 	// Let dispatcher know who the filter is.
 	m_dispatch.SetFilter(&m_filter);
 	// Let dispatcher know what time base to use.
-	m_dispatch.SetTimeFunc(CRtTime::GetTime, (long)&m_rttime);
+	m_dispatch.SetTimeFunc(CRtTime::GetTime, (int32_t)&m_rttime);
 
 	// Let filter know who the file window is.
 	m_filter.SetFileWin(&m_filewin);
 
 	// Let file win know what time base to use.
-	m_filewin.SetTimeFunc(CRtTime::GetTime, (long)&m_rttime);
+	m_filewin.SetTimeFunc(CRtTime::GetTime, (int32_t)&m_rttime);
 
 	m_usState	= RT_STATE_STOPPED;
 	}
@@ -186,12 +186,12 @@ void CRtPlay::Reset(void)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CRtPlay::CreateCmd(USHORT usCmd, long lTime, long lParm1, long lParm2)
+int16_t CRtPlay::CreateCmd(uint16_t usCmd, int32_t lTime, int32_t lParm1, int32_t lParm2)
 	{
-	short	sRes	= 0;	// Assume success.
-	long	lSize	= sizeof(usCmd) + sizeof(lParm1) + sizeof(lParm2);
+	int16_t	sRes	= 0;	// Assume success.
+	int32_t	lSize	= sizeof(usCmd) + sizeof(lParm1) + sizeof(lParm2);
 
-	UCHAR*	puc	= (UCHAR*)malloc(lSize);
+	uint8_t*	puc	= (uint8_t*)malloc(lSize);
 
 	// If successful . . .
 	if (puc != NULL)
@@ -237,10 +237,10 @@ short CRtPlay::CreateCmd(USHORT usCmd, long lTime, long lParm1, long lParm2)
 // Returns RET_FREE if puc should be freed and RET_DONTFREE, otherwise.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CRtPlay::RtInfoCall(	UCHAR* puc, long lSize, USHORT usType, UCHAR ucFlags,
-									long lTime)
+int16_t CRtPlay::RtInfoCall(	uint8_t* puc, int32_t lSize, uint16_t usType, uint8_t ucFlags,
+									int32_t lTime)
 	{
-	short	sError	= 0;
+	int16_t	sError	= 0;
 
 	// If this is the init/first chunk . . .
 	if (ucFlags & RT_FLAG_INIT)
@@ -268,10 +268,10 @@ short CRtPlay::RtInfoCall(	UCHAR* puc, long lSize, USHORT usType, UCHAR ucFlags,
 
 	if (file.Open(puc, lSize, ENDIAN_BIG) == 0)
 		{
-		USHORT	usCmd;
-		ULONG		ulChannels;
-		long		lTimeVal;
-		long		lVal;
+		uint16_t	usCmd;
+		uint32_t		ulChannels;
+		int32_t		lTimeVal;
+		int32_t		lVal;
 
 		// Get type of info.
 		file.Read(&usCmd);
@@ -394,8 +394,8 @@ short CRtPlay::RtInfoCall(	UCHAR* puc, long lSize, USHORT usType, UCHAR ucFlags,
 // (static)
 //
 //////////////////////////////////////////////////////////////////////////////
-short CRtPlay::RtInfoCallStatic(	UCHAR* puc, long lSize, USHORT usType, 
-											UCHAR ucFlags, long lTime, long l_pRtPlay)
+int16_t CRtPlay::RtInfoCallStatic(	uint8_t* puc, int32_t lSize, uint16_t usType, 
+											uint8_t ucFlags, int32_t lTime, int32_t l_pRtPlay)
 	{
 	return ((CRtPlay*)l_pRtPlay)->RtInfoCall(puc, lSize, usType, ucFlags, lTime);
 	}
@@ -407,9 +407,9 @@ short CRtPlay::RtInfoCallStatic(	UCHAR* puc, long lSize, USHORT usType,
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CRtPlay::SetState(USHORT usState)
+int16_t CRtPlay::SetState(uint16_t usState)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// If new state . . .
 	if (m_usState != usState)
@@ -420,8 +420,8 @@ short CRtPlay::SetState(USHORT usState)
 		// this should be updated.  Of course, if you simply change the
 		// macros, you'll never see this until you figure out that there's
 		// a problem.
-		USHORT	usMsg	= usState;
-		short		sNum	= m_dispatch.SendHandlerMessage(usMsg);
+		uint16_t	usMsg	= usState;
+		int16_t		sNum	= m_dispatch.SendHandlerMessage(usMsg);
 
 		if (sNum == 0)
 			{
@@ -456,7 +456,7 @@ short CRtPlay::SetState(USHORT usState)
 //////////////////////////////////////////////////////////////////////////////
 void CRtPlay::Critical(void)
 	{
-	short	sError	= 0;
+	int16_t	sError	= 0;
 
 	switch (m_usState)
 		{
@@ -535,9 +535,9 @@ void CRtPlay::Critical(void)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CRtPlay::Open(char* pszFileName)
+int16_t CRtPlay::Open(char* pszFileName)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	if (Close() == 0)
 		{
@@ -585,9 +585,9 @@ short CRtPlay::Open(char* pszFileName)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CRtPlay::Close(void)
+int16_t CRtPlay::Close(void)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// If stopped . . .
 	if (m_usState == RT_STATE_STOPPED)
@@ -619,9 +619,9 @@ short CRtPlay::Close(void)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CRtPlay::Play(void)
+int16_t CRtPlay::Play(void)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// If stopped . . .
 	if (m_usState == RT_STATE_STOPPED)
@@ -638,7 +638,7 @@ short CRtPlay::Play(void)
 			if (m_dispatch.Start() == 0)
 				{
 				// Attempt to start critical handler . . .
-				if (Blu_AddCritical(CriticalStatic, (long)this) == 0)
+				if (Blu_AddCritical(CriticalStatic, (int32_t)this) == 0)
 					{
 					if (SetState(RT_STATE_STARTING) == 0)
 						{
@@ -707,9 +707,9 @@ short CRtPlay::Play(void)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CRtPlay::Abort(void)
+int16_t CRtPlay::Abort(void)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// If not stopped . . .
 	if (m_usState != RT_STATE_STOPPED)
@@ -765,9 +765,9 @@ short CRtPlay::Abort(void)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CRtPlay::Pause(void)
+int16_t CRtPlay::Pause(void)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// If playing . . .
 	if (m_usState == RT_STATE_PLAYING)
@@ -805,9 +805,9 @@ short CRtPlay::Pause(void)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CRtPlay::Resume(void)
+int16_t CRtPlay::Resume(void)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	if (m_usState == RT_STATE_PAUSE)
 		{

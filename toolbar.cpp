@@ -99,7 +99,7 @@ extern int wideScreenWidth;
 
 extern RFont g_fontBig;	// I hope this one is OK....
 
-typedef	struct { UCHAR r; UCHAR g; UCHAR b; } MatchColor;
+typedef	struct { uint8_t r; uint8_t g; uint8_t b; } MatchColor;
 
 MatchColor	gmcSmallFont = { 255,255,0 };	// yellow
 MatchColor	gmcLargeFont = { 255,255,0 };	// yellow
@@ -115,10 +115,10 @@ MatchColor	gmcShadowScore = { 138,123,65 };	// saturated yellow
 //MatchColor	gmcShadowScore = { 255,0,0 };	// saturated yellow
 
 //------------------ So Score can access these:
-short gsStatusFontForeIndex	=	251;
-short gsStatusFontBackIndex	=	0;
-short gsStatusFontShadowIndex	=	0;
-short gsStatusFontForeDeadIndex = 252;
+int16_t gsStatusFontForeIndex	=	251;
+int16_t gsStatusFontBackIndex	=	0;
+int16_t gsStatusFontShadowIndex	=	0;
+int16_t gsStatusFontForeDeadIndex = 252;
 
 //=====================================================================
 //===========  INTERNAL VISUAL STOCKPILE CONTROLS  ====================
@@ -180,7 +180,7 @@ public:
 	bool	m_bExists;		// bar or full?
 	bool	m_bSelected;	// selected or not?
 	bool	m_bTreasure;	// found in a power up
-	long	m_lMilli;		// relative time in milliseconds for timing stuff
+	int32_t	m_lMilli;		// relative time in milliseconds for timing stuff
 	State	m_eState;		// short cut for applying state
 	State	m_ePrevState;	// Stored for event triggering
 	double	m_dValue;	// if ammo
@@ -202,14 +202,14 @@ public:
 	static CToolItem* ms_aAmmo; //[NumberOfAmmos];
 	static	RFont*	ms_pfntTool;		// General font and print
 	static	RPrint	ms_pntTool;
-	static	short		ms_sSmallFontColor;	// color index
-	static	short		ms_sLargeFontColor;
-	static	short		ms_sWarningColor;
-	static	short		ms_sAmmoGoneColor;
-	static	short		ms_sAttentionColor;
+	static	int16_t		ms_sSmallFontColor;	// color index
+	static	int16_t		ms_sLargeFontColor;
+	static	int16_t		ms_sWarningColor;
+	static	int16_t		ms_sAmmoGoneColor;
+	static	int16_t		ms_sAttentionColor;
 	static	RImage*	ms_pimCompositeBuffer;
 	static	RImage*	ms_pimCompositeBufferScaled;
-	static	long		ms_lLastTime;
+	static	int32_t		ms_lLastTime;
 	//----------------------------------------------------------------------
 	CToolItem()
 		{
@@ -257,8 +257,8 @@ public:
 		ToolAmmoType eType,
 		CDude::WeaponType eStock,
 		const RRect &prImage,
-		short sTextX,
-		short sTextY,
+		int16_t sTextX,
+		int16_t sTextY,
 		CToolItem*	pWeapon,
 		Size		eSize = Small)
 		{
@@ -275,7 +275,7 @@ public:
 		}
 
 	//=======================================================================
-	static short	Init(CHood* pHood)	// do color matching & asset loading
+	static int16_t	Init(CHood* pHood)	// do color matching & asset loading
 		{
 		// Use the current hood palette to color match the text indicies
 		ms_sSmallFontColor = rspMatchColorRGB(
@@ -376,10 +376,10 @@ public:
 		}
 
 	// Assume the entire bar needs to be redrawn.
-	static void	RenderBar(CHood* pHood,RImage* pimDst,short sDstX,short sDstY)
+	static void	RenderBar(CHood* pHood,RImage* pimDst,int16_t sDstX,int16_t sDstY)
 		{
 		// First Draw all the weapons...
-		short i;
+		int16_t i;
 		RImage*	pimPlane = NULL;
 
 		// Set up the bar to a neutral background:
@@ -432,8 +432,8 @@ public:
 		// Finally, print all the values...
 		for (i = NotAmmo + 1; i < NumberOfAmmos; i++)
 			{
-			short sFontSize;
-			short	sFontColor;
+			int16_t sFontSize;
+			int16_t	sFontColor;
 
 			// choose the correct font.
 			if (ms_aAmmo[i].m_eFontType == Small)
@@ -471,7 +471,7 @@ public:
 			if (i != Bullets)	// nolonger print the amount of bullets...
 				{
 				ms_pntTool.print(ms_aAmmo[i].m_rText.sX,ms_aAmmo[i].m_rText.sY,
-					"%3ld",long(ms_aAmmo[i].m_dValue));
+					"%3ld",int32_t(ms_aAmmo[i].m_dValue));
 				}
 			}
 
@@ -484,8 +484,8 @@ public:
 			{
 				for (int x=0;x<ms_pimCompositeBufferScaled->m_sWidth;x++)
 				{
-					UCHAR* dest = ms_pimCompositeBufferScaled->m_pData + n * ms_pimCompositeBufferScaled->m_lPitch + x;
-					UCHAR* src = ms_pimCompositeBuffer->m_pData + n * ms_pimCompositeBuffer->m_lPitch + (int)((float)x * widthScale);
+					uint8_t* dest = ms_pimCompositeBufferScaled->m_pData + n * ms_pimCompositeBufferScaled->m_lPitch + x;
+					uint8_t* src = ms_pimCompositeBuffer->m_pData + n * ms_pimCompositeBuffer->m_lPitch + (int)((float)x * widthScale);
 					*dest = *src;
 				}
 				//memcpy(ms_pimCompositeBufferScaled->m_pData + n * ms_pimCompositeBufferScaled->m_lPitch,
@@ -511,7 +511,7 @@ public:
 		{
 		// Fist, try to get all the status possible from the CDude:
 		// Use the stockpile for most:
-		short i;
+		int16_t i;
 
 		// Get the current values from the stockpile:
 		// Because GetWeaponInfo goes by weapon to recieve ammo,
@@ -747,14 +747,14 @@ CToolItem* CToolItem::ms_aWeapons = NULL;
 CToolItem* CToolItem::ms_aAmmo = NULL;
 RFont*	CToolItem::ms_pfntTool = NULL;		// General font and print
 RPrint	CToolItem::ms_pntTool;
-short		CToolItem::ms_sSmallFontColor	=	255;	// color index
-short		CToolItem::ms_sLargeFontColor =	255;
-short		CToolItem::ms_sWarningColor	=	255;
-short		CToolItem::ms_sAmmoGoneColor	=	255;
-short		CToolItem::ms_sAttentionColor	=	255;
+int16_t		CToolItem::ms_sSmallFontColor	=	255;	// color index
+int16_t		CToolItem::ms_sLargeFontColor =	255;
+int16_t		CToolItem::ms_sWarningColor	=	255;
+int16_t		CToolItem::ms_sAmmoGoneColor	=	255;
+int16_t		CToolItem::ms_sAttentionColor	=	255;
 RImage*	    CToolItem::ms_pimCompositeBuffer  = NULL;
 RImage*	    CToolItem::ms_pimCompositeBufferScaled  = NULL;
-long		CToolItem::ms_lLastTime = 0;
+int32_t		CToolItem::ms_lLastTime = 0;
 
 
 // Time to arrange the basic bar relationhips:
@@ -899,7 +899,7 @@ public:
 			CToolItem::Small);
 		
 		// Now, factor out the bar location from all the coordinates:
-		short i;
+		int16_t i;
 
 		for (i = NotWeapon + 1; i < NumberOfWeapons; i++)
 			{
@@ -945,12 +945,12 @@ public:
 /////////////////////////////////////////
 // aliased functions "for her pleasure."
 /////////////////////////////////////////
-short	ToolBarInit(CHood* pHood)
+int16_t	ToolBarInit(CHood* pHood)
 	{
 	return CToolItem::Init(pHood);
 	}
 
-bool	ToolBarRender(CHood* pHood,RImage* pimDst,short sDstX,short sDstY,
+bool	ToolBarRender(CHood* pHood,RImage* pimDst,int16_t sDstX,int16_t sDstY,
 						  CDude* pDude,bool bForceRender)
 	{
 	bool bRender = true;
@@ -990,4 +990,3 @@ bool	ToolBarRender(CHood* pHood,RImage* pimDst,short sDstX,short sDstY,
 ////////////////////////////////////////////////
 // Use events which change the state of the bar
 ////////////////////////////////////////////////
-

@@ -131,13 +131,13 @@ class RProps
 	public:
 
 		// Adds a new property.
-		short AddProp(		// Returns 0 on success.
+		int16_t AddProp(		// Returns 0 on success.
 								// Returns 1 if key already exists.
 								// Returns -1 if error.
 			KeyType	key,	// Key to identify item.
 			ItemType	item)	// Item to add.
 			{
-			short	sRes	= 0;	// Assume success.
+			int16_t	sRes	= 0;	// Assume success.
 
 			// Verify key does not exist . . .
 			if (Find(&key) == NULL)
@@ -189,19 +189,19 @@ class RProps
 	///////////////////////////////////////////////////////////////////////////
 	public:
 		// Does the specified prop key exist?
-		short IsProp(				// Returns TRUE if item exists, FALSE otherwise.
+		int16_t IsProp(				// Returns TRUE if item exists, FALSE otherwise.
 			KeyType		key)		// Key of item to query.
 			{
-			return (short)(Find(&key) != NULL);
+			return (int16_t)(Find(&key) != NULL);
 			}
 
 		// Get a property.
-		short GetProp(				// Returns 0 on success.
+		int16_t GetProp(				// Returns 0 on success.
 										// Returns 1 if no item with specified key.
 			KeyType		key,		// Key of item to get.
 			ItemType*	pitem)	// Where to put item.
 			{
-			short	sRes	= 0;	// Assume success.
+			int16_t	sRes	= 0;	// Assume success.
 
 			// Find node by key . . .
 			Node*	pnode	= Find(&key);
@@ -241,12 +241,12 @@ class RProps
 			}
 
 		// Add a node, as specified by the supplied item and key.
-		short Add(			// Returns 0 on success.
+		int16_t Add(			// Returns 0 on success.
 								// Returns -1 if error.
 			KeyType	key,	// Key to identify item.
 			ItemType	item)	// Item to add.
 			{
-			short	sRes	= 0;	// Assume success.
+			int16_t	sRes	= 0;	// Assume success.
 
 			// Allocate node to add . . .
 			Node*	pn	= new Node;
@@ -280,11 +280,11 @@ class RProps
 			}
 
 		// Remove the node identified by the supplied key.
-		short Remove(		// Returns 0 on success.
+		int16_t Remove(		// Returns 0 on success.
 								// Returns -1 if error.
 			KeyType	key)	// Key to identify item to remove.
 			{
-			short	sRes	= 0;	// Assume success.
+			int16_t	sRes	= 0;	// Assume success.
 
 			Node*	pn	= Find(&key);
 			if (pn != NULL)

@@ -41,32 +41,32 @@
 
 // Sets the ucKey as the key representing usState on sJoy joystick.
 // Returns 0 on success.
-extern short Joy_SetKey(short sJoy, UCHAR ucKey, USHORT usState);
+extern int16_t Joy_SetKey(int16_t sJoy, uint8_t ucKey, uint16_t usState);
 
 // Updates joystick sJoy's current state and makes the current state the 
 // previous.
 // Returns 0 on success.
-extern short Joy_Update(short sJoy);
+extern int16_t Joy_Update(int16_t sJoy);
 
 // Puts the coordinates of joystick sJoy's position in your longs.
 // Returns nothing.
-extern void Joy_GetPos(short sJoy, long *px, long *py, long *pz);
+extern void Joy_GetPos(int16_t sJoy, int32_t *px, int32_t *py, int32_t *pz);
 
 // Puts the coordinates of the previous joystick sJoy's position in your longs.
 // Returns nothing.
-extern void Joy_GetPrevPos(short sJoy, long *px, long *py, long *pz);
+extern void Joy_GetPrevPos(int16_t sJoy, int32_t *px, int32_t *py, int32_t *pz);
 
 // Returns the current joystick sJoy's state.
-extern USHORT Joy_GetState(short sJoy);
+extern uint16_t Joy_GetState(int16_t sJoy);
 
 // Places the current joystick sJoy's state.
-extern void Joy_GetState(short sJoy, PJOYSTATE pjs);
+extern void Joy_GetState(int16_t sJoy, PJOYSTATE pjs);
 
 // Returns the previous joystick sJoy's state.
-extern USHORT Joy_GetPrevState(short sJoy);
+extern uint16_t Joy_GetPrevState(int16_t sJoy);
 
 // Places the previous joystick sJoy's state.
-extern void Joy_GetPrevState(short sJoy, PJOYSTATE pjs);
+extern void Joy_GetPrevState(int16_t sJoy, PJOYSTATE pjs);
 
 #endif // JOY_H
 //////////////////////////////////////////////////////////////////////////////

@@ -104,12 +104,12 @@ public:
 	//  User members:
 	//////////////////////////////////////////////////////////////////////
 
-	short	m_sWidth;	// With compression, you might get huge objects!
-	short	m_sHeight;
-	short	m_sGridW;
-	short m_sGridH;
-	short m_sTileW;
-	short m_sTileH;
+	int16_t	m_sWidth;	// With compression, you might get huge objects!
+	int16_t	m_sHeight;
+	int16_t	m_sGridW;
+	int16_t m_sGridH;
+	int16_t m_sTileW;
+	int16_t m_sTileH;
 
 	//////////////////////////////////////////////////////////////////////
 	//  User methods:
@@ -117,20 +117,20 @@ public:
 
 	// Due to the planar nature of the indirection, all values
 	// may be present at the same time.  Currently, you supply a
-	// UCHAR array that is at least m_sMaxPlanes+1 in size.  You
+	// uint8_t array that is at least m_sMaxPlanes+1 in size.  You
 	// will recieve a NULL terminated string of dereferenced
 	// palette hits for that point.
 	//
-	short	GetVal(UCHAR*	pszResult,short sX, short sY,char ucClipVal = -1)
+	int16_t	GetVal(uint8_t*	pszResult,int16_t sX, int16_t sY,char ucClipVal = -1)
 		{
 		//-----------------------------------------------------------------
 		ASSERT(m_pmg);
 		ASSERT(m_pucPalette);
 		ASSERT(m_pmg->m_sIsCompressed);
 		// 1) Get the set of index planes:
-		USHORT usList = USHORT(m_pmg->GetVal(sX,sY,-1));
+		uint16_t usList = uint16_t(m_pmg->GetVal(sX,sY,-1));
 		// Check each plane individually
-		for (short i=0;i < m_sMaxPlanes;i++)
+		for (int16_t i=0;i < m_sMaxPlanes;i++)
 			{
 			if (usList & ms_asColorToPlane[i]) 
 				*pszResult++ = *(GetPalette(sX,sY)+i); // look into clipping:
@@ -142,12 +142,12 @@ public:
 
 	// Load a compressed data set from disk
 	//
-	short Load(RFile* prFile);
+	int16_t Load(RFile* prFile);
 	//////////////////////////////////////////////////////////////////////
 
 	// Save a compressed data set to disk
 	//
-	short Save(RFile* prFile);
+	int16_t Save(RFile* prFile);
 	
 	//////////////////////////////////////////////////////////////////////
 	// These user methods are for initially creating the 2d data
@@ -156,7 +156,7 @@ public:
 	// Returns SUCCESS or FAILURE
 	// Sets up the UNCOMPRESSED data
 	//
-	short	Alloc(short sW, short sH, short sMaxPlanes, short sTileW, short sTileH);
+	int16_t	Alloc(int16_t sW, int16_t sH, int16_t sMaxPlanes, int16_t sTileW, int16_t sTileH);
 
 	//////////////////////////////////////////////////////////////////////
 	//	GetPalette (entire palette for that tile)
@@ -164,7 +164,7 @@ public:
 	// Low level palette access
 	// Just get the current byte array of MGI_MAX_PLANES size:
 	//
-	UCHAR*	GetPalette(short sX,short sY, UCHAR* pucOnError = NULL)
+	uint8_t*	GetPalette(int16_t sX,int16_t sY, uint8_t* pucOnError = NULL)
 		{
 		ASSERT(m_pucPalette);
 
@@ -177,10 +177,10 @@ public:
 		}
 
 	// This gives you the number of taken palette entries in a tile:
-	short	NumPalEntries(short sX,short sY)
+	int16_t	NumPalEntries(int16_t sX,int16_t sY)
 		{
-		short sNumEntries = m_sMaxPlanes; // A Full Palette
-		UCHAR*	pPal = GetPalette(sX,sY) + m_sMaxPlanes;
+		int16_t sNumEntries = m_sMaxPlanes; // A Full Palette
+		uint8_t*	pPal = GetPalette(sX,sY) + m_sMaxPlanes;
 
 		while (sNumEntries && (!*--pPal)) sNumEntries--;
 
@@ -191,7 +191,7 @@ public:
 	//  "Install" the RMultiGrid which holds the index data:
 	// (This must not be compressed until it is done being written to)
 	//////////////////////////////////////////////////////////////////////
-	short	InstallMultiGrid(RMultiGrid* pmg)
+	int16_t	InstallMultiGrid(RMultiGrid* pmg)
 		{
 		ASSERT(!m_pmg);
 		ASSERT(pmg);
@@ -209,7 +209,7 @@ public:
 	// Low level palette access
 	// Just set the current byte palette entry
 	//
-	short	SetPalette(short sX,short sY,short sEntry,UCHAR ucVal)
+	int16_t	SetPalette(int16_t sX,int16_t sY,int16_t sEntry,uint8_t ucVal)
 		{
 		ASSERT(m_pucPalette);
 
@@ -226,8 +226,8 @@ public:
 
 	// A visual Debug View: (Uncompressed)
 	//
-	void	DumpPalette(RImage* pimDst,short sSrcX,short sSrcY,short sDstX,short sDstY,
-					short sW,short sH);
+	void	DumpPalette(RImage* pimDst,int16_t sSrcX,int16_t sSrcY,int16_t sDstX,int16_t sDstY,
+					int16_t sW,int16_t sH);
 
 	//////////////////////////////////////////////////////////////////////
 	//  Internal methods:
@@ -276,7 +276,7 @@ public:
 
 	// This clear the temp tile buffer first to allow the possibility of
 	// source clipping:  (It does an opaque copy)
-	void	CacheTile(RImage* pimSrc,short sSrcX,short sSrcY)
+	void	CacheTile(RImage* pimSrc,int16_t sSrcX,int16_t sSrcY)
 		{
 		// 1) clear buffer tile:
 		memset(m_pimTempTile->m_pData,0,m_lTileLen);
@@ -287,10 +287,10 @@ public:
 		}
 
 	// This is a linear check to see if you have a null cache:
-	short	Contains(UCHAR ucColor)
+	int16_t	Contains(uint8_t ucColor)
 		{
-		UCHAR *pTile = m_pimTempTile->m_pData;
-		for (short i=0; i < m_lTileLen; i++,pTile++)
+		uint8_t *pTile = m_pimTempTile->m_pData;
+		for (int16_t i=0; i < m_lTileLen; i++,pTile++)
 			if (*pTile == ucColor) return TRUE;
 		return FALSE;
 		}
@@ -300,13 +300,13 @@ public:
 	// destination key:
 	// It will only do RIGHT AND BOTTOM CLIPPING!
 	//
-	void	TileOR(UCHAR ucKey,USHORT usValueOR,short sDstX,short sDstY,
-		short sClip = 0); // you can turn off the half clipping:
+	void	TileOR(uint8_t ucKey,uint16_t usValueOR,int16_t sDstX,int16_t sDstY,
+		int16_t sClip = 0); // you can turn off the half clipping:
 
 	// Drop an FSPR1 into the Attribute map:
 	//
-	short AddFSPR1(RImage* pimSrc,short sX,short sY,UCHAR ucVal,
-					short sMaxW=0,short sMaxH=0);
+	int16_t AddFSPR1(RImage* pimSrc,int16_t sX,int16_t sY,uint8_t ucVal,
+					int16_t sMaxW=0,int16_t sMaxH=0);
 
 
 public:
@@ -314,14 +314,14 @@ public:
 	//  Data Structures
 	//////////////////////////////////////////////////////////////////////
 	RMultiGrid*	m_pmg;		// The MultiGrid inherent under the system
-	UCHAR*	m_pucPalette;	// Data holding the palette entries
-	UCHAR**	m_ppucAccessY;	// Array of (GridH) pointers into the Palette
-	ULONG*	m_plAccessX;	// Array of offsets into the Palette
-	short	m_sMaxPlanes;		// Can be custom tailored to save memory
+	uint8_t*	m_pucPalette;	// Data holding the palette entries
+	uint8_t**	m_ppucAccessY;	// Array of (GridH) pointers into the Palette
+	uint32_t*	m_plAccessX;	// Array of offsets into the Palette
+	int16_t	m_sMaxPlanes;		// Can be custom tailored to save memory
 	RImage*	m_pimTempTile;	// For construction & easy writing.
 	RImage*	m_pimBuffer;	// Large conversion buffer
-	long	m_lTileLen;			// For linear operations
-	static short	ms_asColorToPlane[MGI_MAX_PLANES];
+	int32_t	m_lTileLen;			// For linear operations
+	static int16_t	ms_asColorToPlane[MGI_MAX_PLANES];
 	};
 
 
@@ -330,4 +330,3 @@ public:
 //////////////////////////////////////////////////////////////////////
 // EOF
 //////////////////////////////////////////////////////////////////////
-

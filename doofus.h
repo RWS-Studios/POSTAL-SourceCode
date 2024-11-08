@@ -296,21 +296,21 @@ class CDoofus : public CCharacter
 		// Navigation Net control
 		CNavigationNet* m_pNavNet;			// The network I should use
 		U16 m_u16NavNetID;					// My network's ID				
-		UCHAR m_ucDestBouyID;				// Destination bouy
-		UCHAR m_ucNextBouyID;				// Next bouy to go to
-		UCHAR m_ucSpecialBouy0ID;			// Starting bouy for special cases like marching
-		UCHAR m_ucSpecialBouy1ID;			// Ending bouy for special cases like marching
+		uint8_t m_ucDestBouyID;				// Destination bouy
+		uint8_t m_ucNextBouyID;				// Next bouy to go to
+		uint8_t m_ucSpecialBouy0ID;			// Starting bouy for special cases like marching
+		uint8_t m_ucSpecialBouy1ID;			// Ending bouy for special cases like marching
 		CBouy* m_pNextBouy;					// pointer to next bouy to go to.
-		short m_sNextX;						// Position of next Bouy
-		short m_sNextZ;						// Position of next Bouy
-		short m_sRotateDir;					// Direction to rotate when avoiding obstacles
-		long	m_lAlignTimer;					// Recheck position to bouy every so often
-		long	m_lEvalTimer;					// Reevaluate state every so often
-		long	m_lShotTimeout;				// Only do Shot animation every so often
-		long	m_lStuckTimeout;				// time given to recovery from stuck state
-		long	m_lShootTimer;					// Limit number of shots from a gun.
-		long	m_lCommentTimer;				// Time between random comments
-		short	m_usCommentCounter;			// Number of comments
+		int16_t m_sNextX;						// Position of next Bouy
+		int16_t m_sNextZ;						// Position of next Bouy
+		int16_t m_sRotateDir;					// Direction to rotate when avoiding obstacles
+		int32_t	m_lAlignTimer;					// Recheck position to bouy every so often
+		int32_t	m_lEvalTimer;					// Reevaluate state every so often
+		int32_t	m_lShotTimeout;				// Only do Shot animation every so often
+		int32_t	m_lStuckTimeout;				// time given to recovery from stuck state
+		int32_t	m_lShootTimer;					// Limit number of shots from a gun.
+		int32_t	m_lCommentTimer;				// Time between random comments
+		int16_t	m_usCommentCounter;			// Number of comments
 		CDoofus::Action m_eSuggestedAction;	// Suggested logic action
 		CDoofus::Action m_eCurrentAction;	// Currently running action
 		CCharacter::State m_eDestinationState; // Final state you wish to achieve
@@ -329,7 +329,7 @@ class CDoofus : public CCharacter
 		CSmash			m_smashAvoid;		// Smash used to avoid fire
 		CPylon*			m_pPylonStart;		// Starting pylon for popout or run/shoot
 		CPylon*			m_pPylonEnd;		// Ending pylon for popout or run/shoot
-		short				m_sDistRemaining;	// Distance to new position for fighting.
+		int16_t				m_sDistRemaining;	// Distance to new position for fighting.
 		bool				m_bPylonSafeAvailable;
 		bool				m_bPylonPopoutAvailable;
 		bool				m_bPylonRunShootAvailable;
@@ -338,29 +338,29 @@ class CDoofus : public CCharacter
 													// in one direction while moving in another direction.
 		double			m_dShootAngle;
 
-		long				m_lIdleTimer;		// Timer for idle animations.
+		int32_t				m_lIdleTimer;		// Timer for idle animations.
 		bool				m_bAnimUp;			// Run animation up or down for idle animation. (crouch)
 
-		long				m_lSampleTimeIsPlaying; // Expected time for this sample
+		int32_t				m_lSampleTimeIsPlaying; // Expected time for this sample
 		bool				m_bRecentlyStuck;			// Flag for when you get stuck on a wall.		
 		bool				m_bCivilian;				// Flag for civilian/hostile
 		bool				m_bRegisteredBirth;		// true, once we've registered our birth with the realm.
 
-		long				m_lGuardTimeout;			// Tunable personatorium value with doofus default
-		long				m_lShootTimeout;			// Tunable time between shots - based on difficulty level
-		long				m_lRunShootInterval;		// Tunable personatorium value with doofus default.
-		long				m_lShotReactionTimeout;	// Tunable personatorium value with doofus default
-		long				m_lLastHelpCallTime;	// Last time someone called for help
+		int32_t				m_lGuardTimeout;			// Tunable personatorium value with doofus default
+		int32_t				m_lShootTimeout;			// Tunable time between shots - based on difficulty level
+		int32_t				m_lRunShootInterval;		// Tunable personatorium value with doofus default.
+		int32_t				m_lShotReactionTimeout;	// Tunable personatorium value with doofus default
+		int32_t				m_lLastHelpCallTime;	// Last time someone called for help
 
 		CSprite3			m_spriteWeapon;			// Sprite for weapon.
 		ClassIDType		m_eFallbackWeaponType;	// Fallback weapon type or TotalIDs for none.
-		short				m_sStuckCounter;			// Number of times he tried to move in the current state
-		USHORT			m_usBloodCounter;			// Counter to limit the blood pools.
+		int16_t				m_sStuckCounter;			// Number of times he tried to move in the current state
+		uint16_t			m_usBloodCounter;			// Counter to limit the blood pools.
 		SampleMaster::SoundInstance m_siPlaying;	// Sound instance that is playing - in case it needs to be stopped
 
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
+		static int16_t ms_sFileCount;
 
 		// "Constant" values that we want to be able to tune using the editor
 		static double ms_dAccUser;			// Acceleration due to user
@@ -380,31 +380,31 @@ class CDoofus : public CCharacter
 		static double ms_dMedFightDistanceSQ;
 		static double ms_dMaxFightDistanceSQ;
 		static double ms_dMarchVelocity;	// How fast to walk when marching.
-		static long ms_lDefaultAlignTime;// How often to recalibrate angle to bouy
-		static long ms_lGuardTimeoutMin;	// How often to check for CDudes proximity
-		static long ms_lGuardTimeoutInc;	// Amount of time between for each level of difficulty
-		static long ms_lShootTimeoutMin;	// How often to wait between shots, min
-		static long ms_lShootTimeoutInc;	// Variance between shot times based on difficulty level
-		static long ms_lDetectionRadius;	// Radius of detection sphere
-		static long ms_lRunShootInterval;// Time to run between shooting
-		static long ms_lReseekTime;		// Time to go before seeking the dude's position again
-		static long ms_lShotTimeout;		// Time to go before doing full shot anim when shot
+		static int32_t ms_lDefaultAlignTime;// How often to recalibrate angle to bouy
+		static int32_t ms_lGuardTimeoutMin;	// How often to check for CDudes proximity
+		static int32_t ms_lGuardTimeoutInc;	// Amount of time between for each level of difficulty
+		static int32_t ms_lShootTimeoutMin;	// How often to wait between shots, min
+		static int32_t ms_lShootTimeoutInc;	// Variance between shot times based on difficulty level
+		static int32_t ms_lDetectionRadius;	// Radius of detection sphere
+		static int32_t ms_lRunShootInterval;// Time to run between shooting
+		static int32_t ms_lReseekTime;		// Time to go before seeking the dude's position again
+		static int32_t ms_lShotTimeout;		// Time to go before doing full shot anim when shot
 													// this will give him time to escape.
-		static long ms_lAvoidRadius;		// Radius of fire avoidance smash
-		static long ms_lYellRadius;		// Radius of alerting smash
-		static long ms_lHelpTimeout;		// Time to react to a call for help.
-		static long ms_lDelayShootTimeout;//time before shooting
-		static long ms_lHelpingTimeout;	// time before shooting when helping
-		static long ms_lStuckRecoveryTime;//time to allow recovery from stuck position
+		static int32_t ms_lAvoidRadius;		// Radius of fire avoidance smash
+		static int32_t ms_lYellRadius;		// Radius of alerting smash
+		static int32_t ms_lHelpTimeout;		// Time to react to a call for help.
+		static int32_t ms_lDelayShootTimeout;//time before shooting
+		static int32_t ms_lHelpingTimeout;	// time before shooting when helping
+		static int32_t ms_lStuckRecoveryTime;//time to allow recovery from stuck position
 
 		static U32 ms_u32CollideBitsInclude;	// Default weapon collision bits
 		static U32 ms_u32CollideBitsDontcare;	// Default weapon collision bits
 		static U32 ms_u32CollideBitsExclude;	// Default weapon collision bits
 
-		static short ms_sStuckLimit;				// Number of retrys before changing states to get unstuck
+		static int16_t ms_sStuckLimit;				// Number of retrys before changing states to get unstuck
 
 		static CAnim3D			ms_aanimWeapons[NumWeaponTypes];	// Weapon animations.
-		static long				ms_lWeaponResRefCount;				// Current ref count on ms_aanimWeapons[].
+		static int32_t				ms_lWeaponResRefCount;				// Current ref count on ms_aanimWeapons[].
 		static WeaponDetails	ms_awdWeapons[NumWeaponTypes];	// Weapon details (descriptions,
 																				// res names, etc.).
 		static WeaponType		ms_awtId2Type[TotalIDs];			// Maps a CThing ID to a WeaponType enum.
@@ -428,7 +428,7 @@ class CDoofus : public CCharacter
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
@@ -440,25 +440,25 @@ class CDoofus : public CCharacter
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		virtual short Load(										// Returns 0 if successfull, non-zero otherwise
+		virtual int16_t Load(										// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		virtual short Save(													// Returns 0 if successfull, non-zero otherwise
+		virtual int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		virtual short Startup(void);							// Returns 0 if successfull, non-zero otherwise
+		virtual int16_t Startup(void);							// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to init new object at specified position
-		virtual short EditNew(									// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		virtual int16_t EditNew(									// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to render object
 		virtual void EditRender(void);
@@ -599,7 +599,7 @@ class CDoofus : public CCharacter
 
 		// Function to choose and play the writhing sound effect
 		virtual SampleMaster::SoundInstance PlaySoundWrithing(
-			long* plDuration)					// Out:  Duration of sample, if not NULL.
+			int32_t* plDuration)					// Out:  Duration of sample, if not NULL.
 			{
 			if (plDuration != NULL)
 				{
@@ -655,17 +655,17 @@ class CDoofus : public CCharacter
 	//---------------------------------------------------------------------------
 	protected:
 		// Get the bouy that the CDude is closest to
-		short SelectDudeBouy(void);					// Returns 0 if successful, non-zero otherwise
+		int16_t SelectDudeBouy(void);					// Returns 0 if successful, non-zero otherwise
 
 		// Return a valid random bouy or 0 if no bouys exist.
-		UCHAR SelectRandomBouy(void);
+		uint8_t SelectRandomBouy(void);
 
 		// Set a pointer to the CDude you are tracking for other CDude related
 		// functions like FindDirection and SQDistanceToDude
-		short SelectDude(void);				// Returns 0 if successful, non-zero if no Dudes found
+		int16_t SelectDude(void);				// Returns 0 if successful, non-zero if no Dudes found
 
 		// Find the angle to the selected CDude
-		short FindDirection(void);
+		int16_t FindDirection(void);
 
 		// If Alignment timer is up, recalc the direction to the bouy.
 		void AlignToBouy(void);
@@ -674,11 +674,11 @@ class CDoofus : public CCharacter
 		double SQDistanceToDude(void);
 
 		// Attempt 3 paths
-		bool TryClearDirection(double* pdRot, short sVariance);
+		bool TryClearDirection(double* pdRot, int16_t sVariance);
 
 		// Check shooting angle before firing to make sure no
 		// walls are in the way.
-		bool TryClearShot(double dRot, short sVariance);
+		bool TryClearShot(double dRot, int16_t sVariance);
 
 		// Check for fire in your path and change to a safe state rather
 		// than blindly running into the fire.
@@ -805,7 +805,7 @@ class CDoofus : public CCharacter
 		// A way for the base class to get resources.  If you are going to use
 		// any of this class's resources (e.g., ms_aanimWeapons[]), call this
 		// when getting your resources.
-		short GetResources(void);
+		int16_t GetResources(void);
 
 		// A way for the base class to release resources.  If you are going to use
 		// any of this class's resources (e.g., ms_aanimWeapons[]), call this

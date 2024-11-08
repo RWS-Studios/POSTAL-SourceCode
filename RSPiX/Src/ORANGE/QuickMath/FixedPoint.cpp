@@ -23,7 +23,7 @@ RFixedS32 fpSINQ[csNumRotSteps],fpCOSQ[csNumRotSteps];
 
 void InitTrigFP() // fixed point	
 	{
-	short i;
+	int16_t i;
 	double rad;
 
 	const double cdStepsToRad = 
@@ -40,14 +40,13 @@ void InitTrigFP() // fixed point
 // Auto init:
 RQuickTrig	dummyRQuickTrig;
 
-long RInitNum::OneOver[NUM_ONEOVER_FP32];
+int32_t RInitNum::OneOver[NUM_ONEOVER_FP32];
 RInitNum::RInitNum()
 	{
 	// Populate the oneOver array:
-	OneOver[0] = long(2147483647); // error, signed infinity!
-	OneOver[1] = long(65535); // full numbers!
-	for (short i=2;i<NUM_ONEOVER_FP32;i++) OneOver[i] = long(65536)/i;
+	OneOver[0] = int32_t(2147483647); // error, signed infinity!
+	OneOver[1] = int32_t(65535); // full numbers!
+	for (int16_t i=2;i<NUM_ONEOVER_FP32;i++) OneOver[i] = int32_t(65536)/i;
 	}
 
 RInitNum dummyRInitNum;
-

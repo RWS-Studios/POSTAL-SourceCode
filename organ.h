@@ -32,7 +32,7 @@
 // Choice callback from menu.
 extern bool Organ_MenuChoice(	// Returns true to accept choice, false to deny.
 	Menu*	pmenuCurrent,			// Current menu.
-	short	sMenuItem);				// Item chosen.
+	int16_t	sMenuItem);				// Item chosen.
 
 //////////////////////////////////////////////////////////////////////////////
 // EOF

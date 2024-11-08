@@ -55,7 +55,7 @@ class RSocket
 	public:
 
 		// Blocking callback
-		typedef short (*BLOCK_CALLBACK) (void);
+		typedef int16_t (*BLOCK_CALLBACK) (void);
 
 		// Supported protocols
 		typedef enum
@@ -94,7 +94,7 @@ class RSocket
 			{
 			public:
 				ProtoType	prototype;						// Type of protocol
-				long			lAddressLen;					// Actual address length (depends on protocol, always <= MaxAddressSize)
+				int32_t			lAddressLen;					// Actual address length (depends on protocol, always <= MaxAddressSize)
 				char			address[MaxAddressSize];	// Raw address (interpretation depends on protocol type)
 
 				// Note: operator== is defined at global scope, outside this class definition,
@@ -173,29 +173,29 @@ class RSocket
 				// Open a new connection.
 				// A return value of RSocket::errNotSupported means this protocol is
 				// not supported.
-				virtual short Open(										// Returns 0 if connection was opened
-					unsigned short usPort,								// In:  Port number on which to make a connection
-					short sType,											// In:  Any one RSocket::typ* enum
-					short sOptionFlags,									// In:  Any combo of RSocket::opt* enums
+				virtual int16_t Open(										// Returns 0 if connection was opened
+					uint16_t usPort,								// In:  Port number on which to make a connection
+					int16_t sType,											// In:  Any one RSocket::typ* enum
+					int16_t sOptionFlags,									// In:  Any combo of RSocket::opt* enums
 					BLOCK_CALLBACK callback = NULL)					// In:  Blocking callback (or NULL to keep current callback)
 					= 0;
 
 				// Close a connection
-				virtual short Close(										// Returns 0 if successfull, non-zero otherwise
+				virtual int16_t Close(										// Returns 0 if successfull, non-zero otherwise
 					bool bForceNow = true)								// In:  'true' means do it now, false follows normal rules
 					= 0;
 
 				// Set socket to broadcast mode
-				virtual short Broadcast(void)							// Returns 0 if successfull, non-zero otherwise
+				virtual int16_t Broadcast(void)							// Returns 0 if successfull, non-zero otherwise
 					= 0;
 
 				// Listen for connection requests
-				virtual short Listen(									// Returns 0 if listen port established
-					short sMaxQueued)										// In:  Maximum number of queueued connection requests 
+				virtual int16_t Listen(									// Returns 0 if listen port established
+					int16_t sMaxQueued)										// In:  Maximum number of queueued connection requests 
 					= 0;
 
 				// Accept request for connection
-				virtual short Accept(									// Returns 0 if accepted
+				virtual int16_t Accept(									// Returns 0 if accepted
 					RProtocol* pProtocol,								// Out: Client's protocol
 					Address* paddress)									// Out: Client's address returned here
 					= 0;
@@ -208,37 +208,37 @@ class RSocket
 				// an actual error message other than RSocket::errWouldBlock, which would
 				// indicate that the connection attempt has failed, or 0, which indicates
 				// that it has actually connected successfully.
-				virtual short Connect(									// Returns 0 if connected
+				virtual int16_t Connect(									// Returns 0 if connected
 					Address* paddress)									// In:  Remote address to connect to
 					= 0;
 
 				// Send data - only valid with connected sockets
-				virtual short Send(										// Returns 0 if data was sent
+				virtual int16_t Send(										// Returns 0 if data was sent
 					void * pBuf,											// In:  Pointer to data buffer
-					long lNumBytes,										// In:  Number of bytes to send
-					long *plActualBytes)									// Out: Acutal number of bytes sent
+					int32_t lNumBytes,										// In:  Number of bytes to send
+					int32_t *plActualBytes)									// Out: Acutal number of bytes sent
 					= 0;
 
 				// SendTo - send data to specified address - for unconnected sockets
-				virtual short SendTo(									// Returns 0 if data was sent
+				virtual int16_t SendTo(									// Returns 0 if data was sent
 					void* pBuf,												// In:  Pointer to data buffer
-					long lNumBytes,										// In:  Number of bytes to send
-					long* plActualBytes,									// Out: Actual number of bytes sent
+					int32_t lNumBytes,										// In:  Number of bytes to send
+					int32_t* plActualBytes,									// Out: Actual number of bytes sent
 					Address* paddress)									// In:  Address to send to
 					= 0;
 
 				// Receive data - only valid for connected sockets
-				virtual short Receive(									// Returns 0 if data was received
+				virtual int16_t Receive(									// Returns 0 if data was received
 					void* pBuf,												// In:  Pointer to data buffer
-					long lMaxBytes,										// In:  Maximum number of bytes that fit in the buffer
-					long* plActualBytes)									// Out: Actual number of bytes received into buffer
+					int32_t lMaxBytes,										// In:  Maximum number of bytes that fit in the buffer
+					int32_t* plActualBytes)									// Out: Actual number of bytes received into buffer
 					= 0;
 
 				// RecieveFrom - receive data from given address
-				virtual short ReceiveFrom(								// Returns 0 if data was received
+				virtual int16_t ReceiveFrom(								// Returns 0 if data was received
 					void* pBuf,												// In:  Pointer to data buffer
-					long lMaxBytes,										// In:  Maximum bytes that can fit in buffer
-					long* plActualBytes,									// Out:  Actual number of bytes received into buffer
+					int32_t lMaxBytes,										// In:  Maximum bytes that can fit in buffer
+					int32_t* plActualBytes,									// Out:  Actual number of bytes received into buffer
 					Address* paddress)									// Out: Source address returned here
 					= 0;
 
@@ -247,7 +247,7 @@ class RSocket
 				virtual bool CanAcceptWithoutBlocking(void) = 0;
 				virtual bool CanSendWithoutBlocking(void) = 0;
 				virtual bool CanReceiveWithoutBlocking(void) = 0;
-				virtual long CheckReceivableBytes(void) = 0;
+				virtual int32_t CheckReceivableBytes(void) = 0;
 
 				// Set callback function
 				virtual void SetCallback(BLOCK_CALLBACK callback) = 0;
@@ -278,7 +278,7 @@ class RSocket
 	protected:
 		static bool						ms_bDidStartup;		// Whether Startup() was called successfully
 		static bool						ms_bAutoShutdown;		// Whether to call Shutdown() automatically
-		static short					ms_sNumSockets;		// Number of sockets in existance
+		static int16_t					ms_sNumSockets;		// Number of sockets in existance
 		static RSocket::ProtoType	ms_prototype;			// Current protocol (can only be one "current" protocol)
 		static char*					ms_apszProtoNames[];	// String names corresponding to RSocket::ProtoType values
 
@@ -309,17 +309,17 @@ class RSocket
 		// If the current protocol is not supported, this function returns the value
 		// RSocket::errNotSupported.
 		////////////////////////////////////////////////////////////////////////////////
-		short Open(													// Returns 0 if successfull, non-zero otherwise
-			unsigned short usPort,								// In:  Port number or 0 for any port
-			short sType,											// In:  Any one RSocket::typ* enum
-			short sOptionFlags,									// In:  Any combo of RSocket::opt* enums
+		int16_t Open(													// Returns 0 if successfull, non-zero otherwise
+			uint16_t usPort,								// In:  Port number or 0 for any port
+			int16_t sType,											// In:  Any one RSocket::typ* enum
+			int16_t sOptionFlags,									// In:  Any combo of RSocket::opt* enums
 			BLOCK_CALLBACK callback = NULL);					// In:  Blocking callback (or NULL to keep current callback)
 
 
 		////////////////////////////////////////////////////////////////////////////////
 		// Close socket
 		////////////////////////////////////////////////////////////////////////////////
-		short Close(												// Returns 0 if successfull, non-zero otherwise
+		int16_t Close(												// Returns 0 if successfull, non-zero otherwise
 			bool bForceNow = false);							// In:  'true' means do it now, false follows normal rules
 
 
@@ -328,7 +328,7 @@ class RSocket
 		//
 		// Most protocols only allow broadcasting on a datagram-style socket.
 		////////////////////////////////////////////////////////////////////////////////
-		short Broadcast(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Broadcast(void);									// Returns 0 if successfull, non-zero otherwise
 
 		////////////////////////////////////////////////////////////////////////////////
 		// Set socket to listen for connection requests
@@ -337,8 +337,8 @@ class RSocket
 		// For instance, WinSock only allows for 5.  Requesting more than 5 queued
 		// connections will cause this function to return an error.
 		////////////////////////////////////////////////////////////////////////////////
-		short Listen(												// Returns 0 if successfull, non-zero otherwise
-			short sMaxQueued = 5);								// In:  Maximum number of queued connection requests
+		int16_t Listen(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sMaxQueued = 5);								// In:  Maximum number of queued connection requests
 
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -348,7 +348,7 @@ class RSocket
 		// been modified, but any such changes must not be relied upon!!!  What can be
 		// relied upon is that the client socket will be in a "closed" state.
 		////////////////////////////////////////////////////////////////////////////////
-		short Accept(												// Returns 0 if successfull, non-zero otherwise
+		int16_t Accept(												// Returns 0 if successfull, non-zero otherwise
 			RSocket* psocketClient,								// Out: Client socket returned here
 			Address* paddressClient)							// Out: Client's address returned here (unless this is NULL)
 			const;
@@ -364,7 +364,7 @@ class RSocket
 		// indicate that the connection attempt has failed, or 0, which indicates
 		// that it has actually connected successfully.
 		////////////////////////////////////////////////////////////////////////////////
-		short Connect(												// Returns 0 if successfull, non-zero otherwise
+		int16_t Connect(												// Returns 0 if successfull, non-zero otherwise
 			Address* paddress);									// In:  Remote address to connect to
 
 
@@ -381,20 +381,20 @@ class RSocket
 		// and multiple sends can be coalesced into a single recieve.  There is no
 		// limitation on the amount of data being sent.
 		////////////////////////////////////////////////////////////////////////////////
-		short Send(													// Return 0 if successfull, non-zero otherwise
+		int16_t Send(													// Return 0 if successfull, non-zero otherwise
 			void* pBuf,												// In:  Pointer to data buffer
-			long lNumBytes,										//	In:  Number of bytes to send
-			long* plActualBytes);								// Out: Actual number of bytes sent
+			int32_t lNumBytes,										//	In:  Number of bytes to send
+			int32_t* plActualBytes);								// Out: Actual number of bytes sent
 
 
 		////////////////////////////////////////////////////////////////////////////////
 		// Send data to specified address.  For connected sockets, address is ignored.
 		// See Send() for more information.
 		////////////////////////////////////////////////////////////////////////////////
-		short SendTo(												// Return 0 if successfull, non-zero otherwise
+		int16_t SendTo(												// Return 0 if successfull, non-zero otherwise
 			void* pBuf,												// In:  Pointer to data buffer
-			long lNumBytes,										//	In:  Number of bytes to send
-			long* plActualBytes,									// Out: Actual number of bytes sent
+			int32_t lNumBytes,										//	In:  Number of bytes to send
+			int32_t* plActualBytes,									// Out: Actual number of bytes sent
 			Address* paddress);									// In:  Address to send to
 
 
@@ -417,19 +417,19 @@ class RSocket
 		// In all cases, if the connection was abortively disconnected, an error will
 		// be returned.
 		////////////////////////////////////////////////////////////////////////////////
-		short Receive(												// Returns 0 if successfull, non-zero otherwise
+		int16_t Receive(												// Returns 0 if successfull, non-zero otherwise
 			void* pBuf,												// In:  Pointer to data buffer
-			long lMaxBytes,										// In:  Maximum bytes that can fit in buffer
-			long* plActualBytes);								// Out: Actual number of bytes received into buffer
+			int32_t lMaxBytes,										// In:  Maximum bytes that can fit in buffer
+			int32_t* plActualBytes);								// Out: Actual number of bytes received into buffer
 
 
 		////////////////////////////////////////////////////////////////////////////////
 		// Receive data and get source address.  See Receive() for more information.
 		////////////////////////////////////////////////////////////////////////////////
-		short ReceiveFrom(										// Returns 0 if successfull, non-zero otherwise
+		int16_t ReceiveFrom(										// Returns 0 if successfull, non-zero otherwise
 			void* pBuf,												// In:  Pointer to data buffer
-			long lMaxBytes,										// In:  Maximum bytes that can fit in buffer
-			long* plActualBytes,									// Out: Actual number of bytes received into buffer
+			int32_t lMaxBytes,										// In:  Maximum bytes that can fit in buffer
+			int32_t* plActualBytes,									// Out: Actual number of bytes received into buffer
 			Address* paddress);									// Out: Source address returned here (unless this is NULL)
 
 
@@ -456,7 +456,7 @@ class RSocket
 
 		bool CanReceiveWithoutBlocking(void);
 
-		long CheckReceivableBytes(void);
+		int32_t CheckReceivableBytes(void);
 
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -488,7 +488,7 @@ class RSocket
 		// static member functions may be called.
 		////////////////////////////////////////////////////////////////////////////////
 		static
-		short Startup(												// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(												// Returns 0 if successfull, non-zero otherwise
 			RSocket::ProtoType prototype,						// In:  Protocol type
 			bool bAutoShutdown);									// In:  Whether to perform auto Shutdown()
 
@@ -508,8 +508,8 @@ class RSocket
 		// A value of 0 indicates that there is no limitation on size.
 		////////////////////////////////////////////////////////////////////////////////
 		static
-		short GetMaxDatagramSize(								// Returns 0 if successfull, non-zero otherwise
-			long* plSize);											// Out: Maximum datagram size (in bytes)
+		int16_t GetMaxDatagramSize(								// Returns 0 if successfull, non-zero otherwise
+			int32_t* plSize);											// Out: Maximum datagram size (in bytes)
 
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -518,17 +518,17 @@ class RSocket
 		// to this application may be lower than the returned value.
 		////////////////////////////////////////////////////////////////////////////////
 		static
-		short GetMaxSockets(										// Returns 0 if successfull, non-zero otherwise
-			long* plNum);											// Out: Maximum number of sockets
+		int16_t GetMaxSockets(										// Returns 0 if successfull, non-zero otherwise
+			int32_t* plNum);											// Out: Maximum number of sockets
 
 
 		////////////////////////////////////////////////////////////////////////////////
 		// Get address of specified host
 		////////////////////////////////////////////////////////////////////////////////
 		static
-		short GetAddress(											// Returns 0 if successfull, non-zero otherwise
+		int16_t GetAddress(											// Returns 0 if successfull, non-zero otherwise
 			char* pszName,											// In:  Host's name or dotted address (x.x.x.x)
-			USHORT usPort,											// In:  Host's port number
+			uint16_t usPort,											// In:  Host's port number
 			Address* paddress);									// Out: Address
 
 
@@ -536,7 +536,7 @@ class RSocket
 		// Create broadcast address using specified port
 		////////////////////////////////////////////////////////////////////////////////
 		static void CreateBroadcastAddress(
-			unsigned short usPort,								// In:  Port to broadcast to
+			uint16_t usPort,								// In:  Port to broadcast to
 			RSocket::Address* paddress);						// Out: Broadcast address returned here
 
 
@@ -544,7 +544,7 @@ class RSocket
 		// Get the port of an existing (valid) address
 		////////////////////////////////////////////////////////////////////////////////
 		static
-		unsigned short GetAddressPort(						// Returns port number
+		uint16_t GetAddressPort(						// Returns port number
 			Address* paddress);									// In:  Address to get port from
 
 
@@ -553,7 +553,7 @@ class RSocket
 		////////////////////////////////////////////////////////////////////////////////
 		static
 		void SetAddressPort(
-			USHORT usPort,											// In:  New port number
+			uint16_t usPort,											// In:  New port number
 			Address* paddress);									// I/O: Address whose port is to be set
 
 

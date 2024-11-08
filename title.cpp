@@ -209,15 +209,15 @@
 // Variables/data
 ////////////////////////////////////////////////////////////////////////////////
 
-long m_lTotalUnits;
-long m_lCummUnits;		// I will brace myself for an onslaught of jokes.
+int32_t m_lTotalUnits;
+int32_t m_lCummUnits;		// I will brace myself for an onslaught of jokes.
 double m_adTitlePercent[MAX_TITLES+1];
-static short	m_sValid			= FALSE;
+static int16_t	m_sValid			= FALSE;
 
-static long		ms_lTitleRFileCallbackTime = 0;
+static int32_t		ms_lTitleRFileCallbackTime = 0;
 
 // Indicates the currently displayed image.
-static short	ms_sImageNum		= 0;
+static int16_t	ms_sImageNum		= 0;
 
 // The instance of the title musak sample.
 static SampleMaster::SoundInstance	ms_siMusak;
@@ -253,9 +253,9 @@ static char*	ms_apszFiles[]	=
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-static void TitleRFileCallback(long lBytes)
+static void TitleRFileCallback(int32_t lBytes)
 {
-	long lCurrentTime = rspGetMilliseconds();
+	int32_t lCurrentTime = rspGetMilliseconds();
 	if ((lCurrentTime - ms_lTitleRFileCallbackTime) > TITLE_SOUND_UPDATE_INTERVAL)
 	{
 		UpdateSystem();
@@ -299,7 +299,7 @@ static bool IsInList(	// Returns true if in list.  false otherwise.
 ////////////////////////////////////////////////////////////////////////////////
 // Loads, displays, and disgards image from specified file.
 ////////////////////////////////////////////////////////////////////////////////
-static short DisplayImage(	// Returns nothing.
+static int16_t DisplayImage(	// Returns nothing.
 	char*	pszImageFile)		// Filename of image (relative path).
 	{
 	// Store the original callback.
@@ -310,12 +310,23 @@ static short DisplayImage(	// Returns nothing.
 	ms_lTitleRFileCallbackTime = rspGetMilliseconds();
 
 	RImage*	pimTitle;
-	short sResult = rspGetResource(&g_resmgrShell, pszImageFile, &pimTitle);
+	int16_t sResult;
+	
+	#ifdef KID_FRIENDLY_OPTION
+	if (g_GameSettings.m_sKidMode == TRUE && strcmp(pszImageFile, "Title/Postal.bmp") == 0)
+	{
+		sResult = rspGetResource(&g_resmgrShell, "res/unicorn/postal.bmp", &pimTitle);
+	} else {
+	#endif
+		sResult = rspGetResource(&g_resmgrShell, pszImageFile, &pimTitle);
+	#ifdef KID_FRIENDLY_OPTION
+	}
+	#endif
 	if (sResult == 0)
 		{
 		// Determine position for new image.
-		short	sX	= g_pimScreenBuf->m_sWidth / 2 - pimTitle->m_sWidth / 2;
-		short	sY	= g_pimScreenBuf->m_sHeight / 2 - pimTitle->m_sHeight / 2;
+		int16_t	sX	= g_pimScreenBuf->m_sWidth / 2 - pimTitle->m_sWidth / 2;
+		int16_t	sY	= g_pimScreenBuf->m_sHeight / 2 - pimTitle->m_sHeight / 2;
 
 		// Set palette
 		ASSERT(pimTitle->m_pPalette != NULL);
@@ -326,9 +337,9 @@ static short DisplayImage(	// Returns nothing.
 		U8*	pu8NewGreen	= pimTitle->m_pPalette->Green(0);
 		U8*	pu8NewBlue	= pimTitle->m_pPalette->Blue(0);
 
-		short	sStartIndex	= pimTitle->m_pPalette->m_sStartIndex;
-		short	sNumEntries	= pimTitle->m_pPalette->m_sNumEntries;
-		short	sEntrySize	= pimTitle->m_pPalette->m_sPalEntrySize;
+		int16_t	sStartIndex	= pimTitle->m_pPalette->m_sStartIndex;
+		int16_t	sNumEntries	= pimTitle->m_pPalette->m_sNumEntries;
+		int16_t	sEntrySize	= pimTitle->m_pPalette->m_sPalEntrySize;
 
 		// Get the current palette.
 		U8		au8CurRed[256];
@@ -344,7 +355,7 @@ static short DisplayImage(	// Returns nothing.
 
 		// Compare.
 		bool	bSetPalette	= false;	// true to set new palette.
-		short	i;
+		int16_t	i;
 		U8*	pu8NewRedEntry		= pu8NewRed;
 		U8*	pu8NewGreenEntry	= pu8NewGreen;
 		U8*	pu8NewBlueEntry	= pu8NewBlue;
@@ -434,10 +445,10 @@ static short DisplayImage(	// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 // Loads, displays, and disgards image from file specified via image num.
 ////////////////////////////////////////////////////////////////////////////////
-static short DisplayImageNum(	// Returns nothing.
-	short	sImageNum)				// In:  Image Num to show [1..n].
+static int16_t DisplayImageNum(	// Returns nothing.
+	int16_t	sImageNum)				// In:  Image Num to show [1..n].
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 	
 	// Switch to array indexing mode.
 	sImageNum--;
@@ -469,17 +480,17 @@ static short DisplayImageNum(	// Returns nothing.
 // this module is concerned, these units are completely abstract.
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern short StartTitle(							// Returns 0 if successfull, non-zero otherwise
-	short	sStartImage /*= 1*/,						// In:  Image to start with.  Values less
+extern int16_t StartTitle(							// Returns 0 if successfull, non-zero otherwise
+	int16_t	sStartImage /*= 1*/,						// In:  Image to start with.  Values less
 															// than 1 indicate a page relative to the
 															// end.
 	bool	bPlayMusak /*= false*/,					// In:  true to play title musak.
 	SampleMaster::SoundInstance* psi /*= 0*/)	// Out:  Sound instance of musak.
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Save total units and reset other stuff
-	short i;
+	int16_t i;
 	m_lTotalUnits = 0;
 	for (i = 0; i < NUM_ELEMENTS(ms_apszFiles); i++)
 		m_lTotalUnits += g_GameSettings.m_alTitleDurations[i];
@@ -558,7 +569,7 @@ extern short StartTitle(							// Returns 0 if successfull, non-zero otherwise
 // TitleGetNumTitles - give the number of title screens in use
 ////////////////////////////////////////////////////////////////////////////////
 
-extern short TitleGetNumTitles(void)
+extern int16_t TitleGetNumTitles(void)
 	{
 	return NUM_ELEMENTS(ms_apszFiles);
 	}
@@ -570,10 +581,10 @@ extern short TitleGetNumTitles(void)
 // StartTitle() determines the new position of the progress meter.
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern short DoTitle(						// Returns 0 if successfull, non-zero otherwise
-	long lUnits)								// In:  Additional progess units
+extern int16_t DoTitle(						// Returns 0 if successfull, non-zero otherwise
+	int32_t lUnits)								// In:  Additional progess units
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Can't call this if StartTitle() didn't work
 	if (m_sValid)
@@ -624,9 +635,9 @@ extern short DoTitle(						// Returns 0 if successfull, non-zero otherwise
 // due to an overestimated lTotalUnits) and allows all resources to be freed.
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern short EndTitle(void)				// Returns 0 if successfull, non-zero otherwise
+extern int16_t EndTitle(void)				// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// It's okay to call this even if StartTitle() didn't work
 	if (m_sValid)
@@ -678,11 +689,11 @@ extern short EndTitle(void)				// Returns 0 if successfull, non-zero otherwise
 
 void Title_GameEndSequence(void)
 {
-	long lDisplayTime = 0;
-	long lTotalTime = 0;
-	long lSectionTime = 0;
-	long lCurrentTime;
-	long lUpdateTime;
+	int32_t lDisplayTime = 0;
+	int32_t lTotalTime = 0;
+	int32_t lSectionTime = 0;
+	int32_t lCurrentTime;
+	int32_t lUpdateTime;
 	TRACE("So this is the big end of game sequence eh?\n");
 
 	// Play the sound

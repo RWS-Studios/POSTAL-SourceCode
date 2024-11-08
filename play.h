@@ -62,6 +62,8 @@
 //							Play_GetRealmSectionAndEntry() calls.  Added bAddOn
 //							flag to Play() call.  
 //
+//		01/14/17 SCHH	Made bAddOn a short Now
+//
 ////////////////////////////////////////////////////////////////////////////////
 #ifndef PLAY_H
 #define PLAY_H
@@ -82,22 +84,22 @@
 // Play game using specified settings.
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern short Play(										// Returns 0 if successfull, non-zero otherwise
+extern int16_t Play(										// Returns 0 if successfull, non-zero otherwise
 	CNetClient*	pclient,									// In:  Client object or NULL if not network game
 	CNetServer*	pserver,									// In:  Server object or NULL if not server or not network game
 	INPUT_MODE inputMode,								// In:  Input mode
-	const short sRealmNum,								// In:  Realm number to start on or -1 to use specified realm file
+	const int16_t sRealmNum,								// In:  Realm number to start on or -1 to use specified realm file
 	const char*	pszRealmFile,							// In:  Realm file to play (ignored if sRealmNum >= 0)
 	const bool bJustOneRealm,							// In:  Play just this one realm (ignored if sRealmNum < 0)
 	const bool bGauntlet,								// In:  Play challenge levels gauntlet - as selected on menu
-	const bool bAddOn,									// In:  Play Add On levels
-	const short sDifficulty,							// In:  Difficulty level
+	const int16_t bAddOn,									// In:  Play Add On levels
+	const int16_t sDifficulty,							// In:  Difficulty level
 	const bool bRejuvenate,								// In:  Whether to allow players to rejuvenate (MP only)
-	const short sTimeLimit,								// In:  Time limit for MP games (0 or negative if none)
-	const short sKillLimit,								// In:  Kill limit for MP games (0 or negative if none)
-	const	short	sCoopLevels,							// In:  Zero for deathmatch levels, non-zero for cooperative levels.
-	const	short	sCoopMode,								// In:  Zero for deathmatch mode, non-zero for cooperative mode.
-	const short sFrameTime,								// In:  Milliseconds per frame (MP only)
+	const int16_t sTimeLimit,								// In:  Time limit for MP games (0 or negative if none)
+	const int16_t sKillLimit,								// In:  Kill limit for MP games (0 or negative if none)
+	const	int16_t	sCoopLevels,							// In:  Zero for deathmatch levels, non-zero for cooperative levels.
+	const	int16_t	sCoopMode,								// In:  Zero for deathmatch mode, non-zero for cooperative mode.
+	const int16_t sFrameTime,								// In:  Milliseconds per frame (MP only)
 	RFile* pfileDemoModeDebugMovie);					// In:  File for loading/saving demo mode debug movie
 
 
@@ -106,17 +108,17 @@ extern short Play(										// Returns 0 if successfull, non-zero otherwise
 // Get info about specified realm
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern short Play_GetRealmInfo(						// Returns 0 if successfull, 1 if no such realm, negative on error
+extern int16_t Play_GetRealmInfo(						// Returns 0 if successfull, 1 if no such realm, negative on error
 	bool	bNetwork,										// In:  true if network game, false otherwise
 	bool	bCoop,											// In:  true if coop net game, false otherwise -- no effect if bNetwork is false.
 	bool  bGauntlet,										// In:  true if playing multiple challenge levels.
-	bool  bAddOn,											// In:  true if playing new Add on levels
-	short sRealmNum,										// In:  Realm number
-	short	sDifficulty,									// In:  Realm difficulty.
+	int16_t  bAddOn,											// In:  true if playing new Add on levels
+	int16_t sRealmNum,										// In:  Realm number
+	int16_t	sDifficulty,									// In:  Realm difficulty.
 	char* pszFile,											// Out: Realm's file name
-	short sMaxFileLen,									// In:  Max length of returned file name, including terminating null
+	int16_t sMaxFileLen,									// In:  Max length of returned file name, including terminating null
 	char* pszTitle = 0,									// Out: Realm's title
-	short sMaxTitleLen = NULL);						// In:  Max length of returned title, including terminating null
+	int16_t sMaxTitleLen = NULL);						// In:  Max length of returned title, including terminating null
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -129,9 +131,9 @@ extern void Play_GetRealmSectionAndEntry(
 	bool	bNetwork,										// In:  true if network game, false otherwise
 	bool	bCoop,											// In:  true if coop net game, false otherwise -- no effect if bNetwork is false.
 	bool  bGauntlet,										// In:  true if playing challenge mode
-	bool  bAddOn,											// In:  true if playing new add on levels
-	short sRealmNum,										// In:  Realm number
-	short	sDifficulty,									// In:  Realm difficulty.
+	int16_t  bAddOn,											// In:  true if playing new add on levels
+	int16_t sRealmNum,										// In:  Realm number
+	int16_t	sDifficulty,									// In:  Realm difficulty.
 	RString* pstrSection,								// Out: Section is returned here
 	RString* pstrEntry);									// Out: Entry is returned here
 
@@ -143,7 +145,7 @@ extern void Play_GetRealmSectionAndEntry(
 ////////////////////////////////////////////////////////////////////////////////
 extern bool Play_VerifyQuitMenuChoice(				// Returns true to accept, false to deny choice.
 	Menu*	pmenuCurrent,									// In:  Current menu.
-	short	sMenuItem);										// In:  Item chosen or -1 for change of focus.
+	int16_t	sMenuItem);										// In:  Item chosen or -1 for change of focus.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -162,8 +164,14 @@ extern void Play_SnapPicture(void);
 ////////////////////////////////////////////////////////////////////////////////
 extern void Play_GetApplicationDescriptor(		// Returns nothing.
 	char* pszText,											// Out: Text descriptor.
-	short	sMaxBytes);										// In:  Amount of writable 
+	int16_t	sMaxBytes);										// In:  Amount of writable 
 																// memory pointed to by pszText.
+
+//////////////////////////////////////////////////////////////////////////////
+// Called to setup a level select
+//////////////////////////////////////////////////////////////////////////////
+extern int16_t Play_InitLevelSelectMenu(	// Returns 0 on success.
+	Menu* pmenu);
 
 #ifdef SALES_DEMO
 	// When true, one can advance to the next level without meeting the goal.

@@ -203,7 +203,7 @@ char* RString::ms_pszEmpty = "";
 // or equal to the specified size, then this will have no effect.  Otherwise,
 // the buffer is grown to the specified size.  The string is unaffected.
 ////////////////////////////////////////////////////////////////////////////////
-void RString::Grow(long lMinimumSize)
+void RString::Grow(int32_t lMinimumSize)
 	{
 	// New size must be greater than current size (which might be 0)
 	// (This comparison also filters out negative sizes, which are stupid)
@@ -240,7 +240,7 @@ void RString::Grow(long lMinimumSize)
 // new terminating null is written.  Note that a size of 1 will result in an
 // empty string since there will only be room for the terminating null.
 ////////////////////////////////////////////////////////////////////////////////
-void RString::Shrink(long lMaximumSize)
+void RString::Shrink(int32_t lMaximumSize)
 	{
 	// Guard against stupid values
 	if (lMaximumSize >= 0)
@@ -315,9 +315,9 @@ void RString::Compact(void)
 // Returns number of characters written, or -1 if an error occurred (this is
 // basically the value returned by vsprintf.)
 ////////////////////////////////////////////////////////////////////////////////
-long RString::Format(long lMinimumSize, char* format, ...)
+int32_t RString::Format(int32_t lMinimumSize, char* format, ...)
 	{
-	long lWritten = 0;
+	int32_t lWritten = 0;
 	if (lMinimumSize >= 0)
 		{
 		// Grow buffer
@@ -362,7 +362,7 @@ long RString::Format(long lMinimumSize, char* format, ...)
 // lLen is negative, the returned string will be empty.  Otherwise, the returned
 // string's length will be lLen or this string's length, whichever is less.
 ////////////////////////////////////////////////////////////////////////////////
-RString RString::Left(long lLen) const
+RString RString::Left(int32_t lLen) const
 	{
 	RString str;
 	if ((lLen > 0) && (m_lStrLen > 0))
@@ -383,7 +383,7 @@ RString RString::Left(long lLen) const
 // is negative, the returned string will be empty.  Otherwise, the returned
 // string's length will be lLen or this string's length, whichever is less.
 ////////////////////////////////////////////////////////////////////////////////
-RString RString::Right(long lLen) const
+RString RString::Right(int32_t lLen) const
 	{
 	RString str;
 	if ((lLen > 0) && (m_lStrLen > 0))
@@ -406,7 +406,7 @@ RString RString::Right(long lLen) const
 // specified lLen will be clipped if necessary to avoid going past the end
 // of this string.
 ////////////////////////////////////////////////////////////////////////////////
-RString RString::Mid(long lPos, long lLen) const
+RString RString::Mid(int32_t lPos, int32_t lLen) const
 	{
 	RString str;
 	if ((lPos >= 0) && (lPos < m_lStrLen) && (lLen > 0)) // implies m_lStrLen > 0
@@ -428,14 +428,14 @@ RString RString::Mid(long lPos, long lLen) const
 // The positions are clipped if they are past the end of this string.  lPos1
 // must be less than or equal to lPos2.
 ////////////////////////////////////////////////////////////////////////////////
-RString RString::Range(long lPos1, long lPos2) const
+RString RString::Range(int32_t lPos1, int32_t lPos2) const
 	{
 	RString str;
 	if ((lPos1 >= 0) && (lPos1 <= lPos2) && (lPos1 < m_lStrLen)) // implies m_lStrLen > 0
 		{
 		if (lPos2 >= m_lStrLen)
 			lPos2 = m_lStrLen - 1;
-		long lLen = (lPos2 - lPos1) + 1;
+		int32_t lLen = (lPos2 - lPos1) + 1;
 		str.Grow(lLen + 1); // size is always > 0, so this will always return with a valid buffer
 		memcpy(str.m_pBuf, m_pBuf + lPos1, lLen);
 		str.m_pBuf[lLen] = 0;
@@ -456,7 +456,7 @@ RString RString::Range(long lPos1, long lPos2) const
 // position is negative or greater than the string length, then this function
 // will do nothing.
 ////////////////////////////////////////////////////////////////////////////////
-void RString::Insert(long lPos, const RString& str)
+void RString::Insert(int32_t lPos, const RString& str)
 	{
 	if ((lPos >= 0) && (lPos <= m_lStrLen) && (str.m_lStrLen > 0))
 		{
@@ -469,9 +469,9 @@ void RString::Insert(long lPos, const RString& str)
 		}
 	}
 
-void RString::Insert(long lPos, const char* psz)
+void RString::Insert(int32_t lPos, const char* psz)
 	{
-	long lLen = strlen(psz);
+	int32_t lLen = strlen(psz);
 	if ((lPos >= 0) && (lPos <= m_lStrLen) && (lLen > 0))
 		{
 		Grow(m_lStrLen + lLen + 1);
@@ -483,7 +483,7 @@ void RString::Insert(long lPos, const char* psz)
 		}
 	}
 
-void RString::Insert(long lPos, char c)
+void RString::Insert(int32_t lPos, char c)
 	{
 	if ((lPos >= 0) && (lPos <= m_lStrLen))
 		{
@@ -501,7 +501,7 @@ void RString::Insert(long lPos, char c)
 // Delete the specified number of characters starting at the specified position.
 // If the position or length are negative, the string is left unmodified.
 ////////////////////////////////////////////////////////////////////////////////
-void RString::Delete(long lPos, long lLen)
+void RString::Delete(int32_t lPos, int32_t lLen)
 	{
 	if ((lPos >= 0) && (lPos < m_lStrLen) && (lLen > 0)) // implies m_lStrLen > 0
 		{
@@ -519,7 +519,7 @@ void RString::Delete(long lPos, long lLen)
 ////////////////////////////////////////////////////////////////////////////////
 void RString::ToUpper(void)
 	{
-	long lLen = m_lStrLen;
+	int32_t lLen = m_lStrLen;
 	char* p = m_pBuf;
 	if (lLen > 0)
 		{
@@ -536,7 +536,7 @@ void RString::ToUpper(void)
 ////////////////////////////////////////////////////////////////////////////////
 void RString::ToLower(void)
 	{
-	long lLen = m_lStrLen;
+	int32_t lLen = m_lStrLen;
 	char* p = m_pBuf;
 	if (lLen > 0)
 		{
@@ -552,12 +552,12 @@ void RString::ToLower(void)
 // Load a previously saved string from the specified RFile.  Calls Clear() if
 // an error occurs while loading.  Returns 0 if successfull, non-zero otherwise.
 ////////////////////////////////////////////////////////////////////////////////
-short RString::Load(RFile* pFile)
+int16_t RString::Load(RFile* pFile)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Read length to separate var to avoid corrupting real one in case of read error
-	long lLen;
+	int32_t lLen;
 	if (pFile->Read(&lLen) == 1)
 		{
 		// Check if there's more to read
@@ -598,7 +598,7 @@ short RString::Load(RFile* pFile)
 // Save this string to the specified RFile.  This RString is not modified by the
 // save, even if an error occurs.  Returns 0 if successfull, non-zero otherwise.
 ////////////////////////////////////////////////////////////////////////////////
-short RString::Save(RFile* pFile) const
+int16_t RString::Save(RFile* pFile) const
 	{
 	// Save string length
 	pFile->Write(m_lStrLen);

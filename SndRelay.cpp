@@ -63,18 +63,18 @@
 // Class statics.
 ////////////////////////////////////////////////////////////////////////////////
 
-short	CSndRelay::ms_sFileCount			= 0;	// File count.         
+int16_t	CSndRelay::ms_sFileCount			= 0;	// File count.         
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CSndRelay::Load(								// Returns 0 if successfull, non-zero otherwise
+int16_t CSndRelay::Load(								// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 	{
-	short sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	if (sResult == 0)
 		{
 		// If new file . . . 
@@ -136,7 +136,7 @@ short CSndRelay::Load(								// Returns 0 if successfull, non-zero otherwise
 				pFile->Read(&m_dY);
 				pFile->Read(&m_dZ);
 
-				long	lBool;
+				int32_t	lBool;
 				pFile->Read(&lBool);
 				m_bInitiallyEnabled	= lBool ? true : false;
 
@@ -164,17 +164,17 @@ short CSndRelay::Load(								// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CSndRelay::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CSndRelay::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 	{
-	short	sResult	= CThing::Save(pFile, sFileCount);
+	int16_t	sResult	= CThing::Save(pFile, sFileCount);
 	if (sResult == 0)
 		{
 		pFile->Write(m_dX);
 		pFile->Write(m_dY);
 		pFile->Write(m_dZ);
-		pFile->Write((long)m_bInitiallyEnabled);
+		pFile->Write((int32_t)m_bInitiallyEnabled);
 		pFile->Write(m_idParent);
 
 		// Make sure there were no file errors
@@ -188,7 +188,7 @@ short CSndRelay::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CSndRelay::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+int16_t CSndRelay::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 	{
 	return 0;
 	}
@@ -197,7 +197,7 @@ short CSndRelay::Startup(void)								// Returns 0 if successfull, non-zero othe
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-short CSndRelay::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CSndRelay::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 	{
 	return 0;
 	}
@@ -277,12 +277,12 @@ void CSndRelay::Render(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CSndRelay::EditNew(								// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CSndRelay::EditNew(								// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -299,8 +299,8 @@ short CSndRelay::EditNew(								// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 inline void SetGuiItemVal(	// Returns nothing.
 	RGuiItem*	pguiRoot,	// In:  GUI Root.
-	long			lId,			// In:  ID of item whose text we'll change.
-	long			lVal)			// In:  New value.
+	int32_t			lId,			// In:  ID of item whose text we'll change.
+	int32_t			lVal)			// In:  New value.
 	{
 	RGuiItem*	pgui	= pguiRoot->GetItemFromId(lId);
 	if (pgui)
@@ -322,7 +322,7 @@ static void CheckEnableGuiCall(	// Returns nothing.
 	RMultiBtn*	pmb	= (RMultiBtn*)pgui_pmb;
 
 	// Show based on value stored in GUI.
-	short	sVisible	= pmb->m_ulUserData;
+	int16_t	sVisible	= pmb->m_ulUserData;
 	// If unchecked . . .
 	if (pmb->m_sState == 1)
 		{
@@ -340,9 +340,9 @@ static void CheckEnableGuiCall(	// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-short CSndRelay::EditModify(void)
+int16_t CSndRelay::EditModify(void)
 	{
-	short	sResult	= 0;
+	int16_t	sResult	= 0;
 
 	// Load gui dialog
 	RGuiItem* pgui = RGuiItem::LoadInstantiate(FullPathVD(GUI_FILE_NAME));
@@ -405,10 +405,10 @@ short CSndRelay::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CSndRelay::EditMove(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CSndRelay::EditMove(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
 	m_dX = (double)sX;
 	m_dY = (double)sY;
@@ -449,9 +449,9 @@ void CSndRelay::EditRect(	// Returns nothiing.
 // (virtual	(Overridden here)).
 ////////////////////////////////////////////////////////////////////////////////
 void CSndRelay::EditHotSpot(	// Returns nothiing.
-	short*	psX,					// Out: X coord of 2D hotspot relative to
+	int16_t*	psX,					// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-	short*	psY)					// Out: Y coord of 2D hotspot relative to
+	int16_t*	psY)					// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 	{
 	*psX	= 5;	// Safety.
@@ -494,7 +494,7 @@ void CSndRelay::EditRender(void)
 	m_sprite.m_sX2	-= m_sprite.m_pImage->m_sWidth / 2;
 	m_sprite.m_sY2	-= m_sprite.m_pImage->m_sHeight;
 
-	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 	// Update sprite in scene
 	m_pRealm->m_scene.UpdateSprite(&m_sprite);
@@ -504,9 +504,9 @@ void CSndRelay::EditRender(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Init object
 ////////////////////////////////////////////////////////////////////////////////
-short CSndRelay::Init(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CSndRelay::Init(void)							// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	Kill();
 
@@ -534,7 +534,7 @@ short CSndRelay::Init(void)							// Returns 0 if successfull, non-zero otherwis
 ////////////////////////////////////////////////////////////////////////////////
 // Kill object
 ////////////////////////////////////////////////////////////////////////////////
-short CSndRelay::Kill(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CSndRelay::Kill(void)							// Returns 0 if successfull, non-zero otherwise
 	{
 	if (m_sprite.m_pImage != 0)
 		rspReleaseResource(&g_resmgrGame, &m_sprite.m_pImage);

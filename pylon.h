@@ -67,7 +67,7 @@ class CPylon : public CThing
 	// Variables
 	//---------------------------------------------------------------------------
 	public:
-		UCHAR	m_ucID;								// Pylon ID
+		uint8_t	m_ucID;								// Pylon ID
 		GameMessage m_msg;						// Place for storing hint messages
 		U16	m_u16TargetDudeID;				// ID of dude you are supposed to attack;
 
@@ -80,10 +80,10 @@ class CPylon : public CThing
 		CSprite2 m_sprite;						// Sprite (replace with CSprite3, soon)
 		CSmash	m_smash;							// Collision region
 
-		short m_sSuspend;							// Suspend flag
+		int16_t m_sSuspend;							// Suspend flag
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
+		static int16_t ms_sFileCount;
 
 		// "Constant" values that we want to be able to tune using the editor
 
@@ -130,11 +130,11 @@ class CPylon : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 
 			if (pRealm->m_sNumPylons < PYLON_MAX_PYLONS)
 			{
@@ -168,22 +168,22 @@ class CPylon : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -198,19 +198,19 @@ class CPylon : public CThing
 		void Render(void);
 
 		// Called by editor to init new object at specified position
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
-		short EditMove(											// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditMove(											// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to update object
 		void EditUpdate(void);
@@ -223,9 +223,9 @@ class CPylon : public CThing
 
 		// Called by editor to get the hotspot of an object in 2D.
 		void EditHotSpot(			// Returns nothiing.
-			short*	psX,			// Out: X coord of 2D hotspot relative to
+			int16_t*	psX,			// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-			short*	psY);			// Out: Y coord of 2D hotspot relative to
+			int16_t*	psY);			// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 
 		// Get the coordinates of this thing.
@@ -239,11 +239,11 @@ class CPylon : public CThing
 		double GetZ(void)	{ return m_dZ; }
 
 		// Search the list of pylons and return a pointer to the one with the given ID
-		CPylon* GetPylon(UCHAR ucPylonID);
+		CPylon* GetPylon(uint8_t ucPylonID);
 
 		// Search the list of pylons and return the instance ID of the one with
 		// the given pylon id.
-		U16 GetPylonUniqueID(UCHAR ucPylonID);
+		U16 GetPylonUniqueID(uint8_t ucPylonID);
 
 		// Return true if the pylon was triggered in the last interation
 		inline bool Triggered(void)
@@ -269,13 +269,13 @@ class CPylon : public CThing
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 
 		// GetFreePylonID - get the next ID that is not in use
-		UCHAR GetFreePylonID(void);
+		uint8_t GetFreePylonID(void);
 		
 		// Process Messages - look for DudeTrigger message
 		void ProcessMessages(void);

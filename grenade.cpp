@@ -194,10 +194,10 @@ double CGrenade::ms_dThrowVertVel = 30;				// Throw up at this velocity
 double CGrenade::ms_dThrowHorizVel = 200;				// Throw out at this velocity
 double CGrenade::ms_dMinBounceVel = 40.0;				// Will bounce up if more than this
 double CGrenade::ms_dBounceTransferFract = -0.2;	// Amount of bounce velocity transferred.
-long CGrenade::ms_lRandomAvoidTime = 200;				// Time to wander before looking again
-long CGrenade::ms_lReseekTime = 1000;					// Do a 'find' again 
-long CGrenade::ms_lGrenadeFuseTime = 1500;			// Time from throw to blow
-long CGrenade::ms_lSmokeInterval		= 100;			// Time between smokes.
+int32_t CGrenade::ms_lRandomAvoidTime = 200;				// Time to wander before looking again
+int32_t CGrenade::ms_lReseekTime = 1000;					// Do a 'find' again 
+int32_t CGrenade::ms_lGrenadeFuseTime = 1500;			// Time from throw to blow
+int32_t CGrenade::ms_lSmokeInterval		= 100;			// Time between smokes.
 
 char*	CGrenade::ms_apszResNames[CGrenade::NumStyles]	= // Res names indexed Style.
 	{
@@ -220,18 +220,18 @@ double	CGrenade::ms_adBounceDimisher[NumStyles]	=
 	};
 
 // Let this auto-init to 0
-short CGrenade::ms_sFileCount;
+int16_t CGrenade::ms_sFileCount;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CGrenade::Load(				// Returns 0 if successfull, non-zero otherwise
+int16_t CGrenade::Load(				// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,						// In:  File to load from
 	bool bEditMode,					// In:  True for edit mode, false otherwise
-	short sFileCount,					// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)				// In:  Version of file format to load.
+	int16_t sFileCount,					// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)				// In:  Version of file format to load.
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	sResult = CWeapon::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	if (sResult == SUCCESS)
@@ -283,9 +283,9 @@ short CGrenade::Load(				// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CGrenade::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CGrenade::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 	{
 	// In most cases, the base class Save() should be called.  In this case it
 	// isn't because the base class doesn't have a Save()!
@@ -316,8 +316,8 @@ short CGrenade::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 void CGrenade::Update(void)
 	{
-	USHORT usAttrib;
-	short sHeight = m_sPrevHeight;
+	uint16_t usAttrib;
+	int16_t sHeight = m_sPrevHeight;
 	double dPrevVertVel;
 	double dNewX;
 	double dNewY;
@@ -326,7 +326,7 @@ void CGrenade::Update(void)
 	if (!m_sSuspend)
 		{
 		// Get new time
-		long lThisTime = m_pRealm->m_time.GetGameTime(); 
+		int32_t lThisTime = m_pRealm->m_time.GetGameTime(); 
 
 		ProcessMessages();
 		if (m_eState == State_Deleted)
@@ -349,8 +349,8 @@ void CGrenade::Update(void)
 				break;
 
 			case CWeapon::State_Fire:
-				sHeight = m_pRealm->GetHeight((short) m_dX, (short) m_dZ);
-				usAttrib = m_pRealm->GetFloorAttribute((short) m_dX, (short) m_dZ);
+				sHeight = m_pRealm->GetHeight((int16_t) m_dX, (int16_t) m_dZ);
+				usAttrib = m_pRealm->GetFloorAttribute((int16_t) m_dX, (int16_t) m_dZ);
 				// If it starts at an invalid position like inside a wall, kill it
 				if (m_dY < sHeight)
 				{
@@ -367,14 +367,14 @@ void CGrenade::Update(void)
 //-----------------------------------------------------------------------
 			case CWeapon::State_Go:
 				// Do horizontal velocity
-				dNewX = m_dX + COSQ[(short)m_dRot] * (m_dHorizVel * dSeconds);
-				dNewZ = m_dZ - SINQ[(short)m_dRot] * (m_dHorizVel * dSeconds);
+				dNewX = m_dX + COSQ[(int16_t)m_dRot] * (m_dHorizVel * dSeconds);
+				dNewZ = m_dZ - SINQ[(int16_t)m_dRot] * (m_dHorizVel * dSeconds);
 				// Do vertical velocity
 				dNewY = m_dY;
 				dPrevVertVel = m_dVertVel;
 				AdjustPosVel(&dNewY, &m_dVertVel, dSeconds/*, dAccelerationDueToGravity*/);
 				// Check the height to see if it hit the ground
-				sHeight = m_pRealm->GetHeight((short) dNewX, (short) dNewZ);
+				sHeight = m_pRealm->GetHeight((int16_t) dNewX, (int16_t) dNewZ);
 
 				// Adjust apparent rotation.
 				m_dAnimRotY	= rspMod360(m_dAnimRotY + m_dAnimRotVelY * dSeconds); 
@@ -491,11 +491,11 @@ void CGrenade::Update(void)
 				if (m_dHorizVel == 0)
 					m_eState = CWeapon::State_Explode;
 
-				dNewX = m_dX + COSQ[(short)m_dRot] * (m_dHorizVel * dSeconds);
-				dNewZ = m_dZ - SINQ[(short)m_dRot] * (m_dHorizVel * dSeconds);
+				dNewX = m_dX + COSQ[(int16_t)m_dRot] * (m_dHorizVel * dSeconds);
+				dNewZ = m_dZ - SINQ[(int16_t)m_dRot] * (m_dHorizVel * dSeconds);
 				// Check for obstacles
-				usAttrib = m_pRealm->GetFloorAttribute((short) dNewX, (short) dNewZ);
-				sHeight = m_pRealm->GetHeight((short) dNewX, (short) dNewZ);
+				usAttrib = m_pRealm->GetFloorAttribute((int16_t) dNewX, (int16_t) dNewZ);
+				sHeight = m_pRealm->GetHeight((int16_t) dNewX, (int16_t) dNewZ);
 
 				// If it hit any obstacles, make it bounce off
 				if (usAttrib & REALM_ATTR_NOT_WALKABLE || sHeight > m_dY)
@@ -508,7 +508,7 @@ void CGrenade::Update(void)
 				}
 				// See if it fell off of something, make it go back to the
 				// airborne state.
-				if (sHeight < (short) m_dY)
+				if (sHeight < (int16_t) m_dY)
 				{
 					m_dVertVel = 0;
 					m_eState = State_Go;					
@@ -543,7 +543,7 @@ void CGrenade::Update(void)
 							DistanceToVolume(m_dX, m_dY, m_dZ, ExplosionSndHalfLife) );	// In:  Initial Sound Volume (0 - 255)
 					}
 
-					short a;
+					int16_t a;
 					CFire* pSmoke;
 					for (a = 0; a < 4; a++)
 					{
@@ -575,7 +575,7 @@ void CGrenade::Update(void)
 void CGrenade::Render(void)
 	{
 	// Animate.
-	long	lCurTime			= m_pRealm->m_time.GetGameTime();
+	int32_t	lCurTime			= m_pRealm->m_time.GetGameTime();
 
 	m_sprite.m_pmesh		= (RMesh*)		m_anim.m_pmeshes->GetAtTime(		lCurTime % m_anim.m_pmeshes->TotalTime());
 	m_sprite.m_psop		= (RSop*)		m_anim.m_psops->GetAtTime(			lCurTime % m_anim.m_psops->TotalTime());
@@ -595,13 +595,13 @@ void CGrenade::Render(void)
 	if (m_idParent == CIdBank::IdNil)
 		{
 		// Map from 3d to 2d coords
-		Map3Dto2D((short) m_dX, (short) m_dY, (short) m_dZ, &m_sprite.m_sX2, &m_sprite.m_sY2);
+		Map3Dto2D((int16_t) m_dX, (int16_t) m_dY, (int16_t) m_dZ, &m_sprite.m_sX2, &m_sprite.m_sY2);
 
 		// Priority is based on bottom edge of sprite
 		m_sprite.m_sPriority = m_dZ;
 
 		// Layer should be based on info we get from attribute map.
-		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 		// Adjust transformation based current rotations.
 		m_trans.Make1();
@@ -627,14 +627,14 @@ void CGrenade::Render(void)
 // Setup new object - called by object that created this object
 ////////////////////////////////////////////////////////////////////////////////
 
-short CGrenade::Setup(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ/*,												// In:  New z coord
+int16_t CGrenade::Setup(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ/*,												// In:  New z coord
 	double dHorizVelocity,								// In:  Horiz Vel (has a default)
 	double dVertVelocity*/)								// In:  Vertical velocity (has a default)
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -663,9 +663,9 @@ short CGrenade::Setup(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-short CGrenade::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CGrenade::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	sResult	= m_anim.Get(ms_apszResNames[m_style], NULL, NULL, NULL, RChannel_LoopAtStart | RChannel_LoopAtEnd);
 	if (sResult == 0)
@@ -692,9 +692,9 @@ short CGrenade::GetResources(void)						// Returns 0 if successfull, non-zero ot
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-short CGrenade::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+int16_t CGrenade::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	// Release resources for animation.
 	m_anim.Release();
@@ -708,15 +708,15 @@ short CGrenade::FreeResources(void)						// Returns 0 if successfull, non-zero o
 //				 created.
 ////////////////////////////////////////////////////////////////////////////////
 
-short CGrenade::Preload(
+int16_t CGrenade::Preload(
 	CRealm* prealm)				// In:  Calling realm.
 	{
-	short	sResult	= 0;
+	int16_t	sResult	= 0;
 
 	CAnim3D anim;
 	RImage* pimage;
 
-	short	sStyle;
+	int16_t	sStyle;
 	for (sStyle = 0; sStyle < NumStyles; sStyle++)
 		{
 		if (anim.Get(ms_apszResNames[sStyle], NULL, NULL, NULL, RChannel_LoopAtStart | RChannel_LoopAtEnd) == 0)
@@ -769,7 +769,7 @@ void CGrenade::Smoke(void)
 	{
 	if (m_style == Dynamite)
 		{
-		long	lCurTime	= m_pRealm->m_time.GetGameTime();
+		int32_t	lCurTime	= m_pRealm->m_time.GetGameTime();
 
 		// If the timer has expired . . .
 		if (lCurTime > m_lNextSmokeTime)

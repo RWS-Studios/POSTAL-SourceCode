@@ -135,19 +135,19 @@
 // Class statics.
 ////////////////////////////////////////////////////////////////////////////////
 
-short	CSoundThing::ms_sFileCount			= 0;	// File count.         
-long	CSoundThing::ms_lGetRandomSeed	= 0;	// Seed for get random.
+int16_t	CSoundThing::ms_sFileCount			= 0;	// File count.         
+int32_t	CSoundThing::ms_lGetRandomSeed	= 0;	// Seed for get random.
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CSoundThing::Load(								// Returns 0 if successfull, non-zero otherwise
+int16_t CSoundThing::Load(								// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	short sFileCount,										// In:  File count (unique per file, never 0)
-	ULONG	ulFileVersion)									// In:  Version of file format to load.
+	int16_t sFileCount,										// In:  File count (unique per file, never 0)
+	uint32_t	ulFileVersion)									// In:  Version of file format to load.
 	{
-	short sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	int16_t sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	if (sResult == 0)
 		{
 		// If new file . . . 
@@ -216,7 +216,7 @@ short CSoundThing::Load(								// Returns 0 if successfull, non-zero otherwise
 			case 3:
 			case 2:
 			case 1:
-				long	lBool;
+				int32_t	lBool;
 				pFile->Read(&lBool);
 				m_bInitiallyEnabled	= lBool ? true : false;
 				pFile->Read(&lBool);
@@ -246,11 +246,11 @@ short CSoundThing::Load(								// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-short CSoundThing::Save(										// Returns 0 if successfull, non-zero otherwise
+int16_t CSoundThing::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	short sFileCount)										// In:  File count (unique per file, never 0)
+	int16_t sFileCount)										// In:  File count (unique per file, never 0)
 	{
-	short	sResult	= CThing::Save(pFile, sFileCount);
+	int16_t	sResult	= CThing::Save(pFile, sFileCount);
 	if (sResult == 0)
 		{
 		pFile->Write(m_sAmbient);
@@ -264,8 +264,8 @@ short CSoundThing::Save(										// Returns 0 if successfull, non-zero otherwis
 		pFile->Write(m_dY);
 		pFile->Write(m_dZ);
 		pFile->Write(m_lVolumeHalfLife);
-		pFile->Write((long)m_bInitiallyEnabled);
-		pFile->Write((long)m_bInitiallyRepeats);
+		pFile->Write((int32_t)m_bInitiallyEnabled);
+		pFile->Write((int32_t)m_bInitiallyRepeats);
 		pFile->Write(m_lMinTime, 2);
 		pFile->Write(m_lRndTime, 2);
 		pFile->Write(m_szResName);
@@ -281,7 +281,7 @@ short CSoundThing::Save(										// Returns 0 if successfull, non-zero otherwis
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-short CSoundThing::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+int16_t CSoundThing::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 	{
 	// Set the collective volume to zero to start.
 	m_lCollectiveVolume	= 0;
@@ -293,7 +293,7 @@ short CSoundThing::Startup(void)								// Returns 0 if successfull, non-zero ot
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-short CSoundThing::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CSoundThing::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 	{
 	return 0;
 	}
@@ -332,7 +332,7 @@ void CSoundThing::Update(void)
 	if (!m_sSuspend)
 		{
 		// Get current time
-		long lCurTime = m_pRealm->m_time.GetGameTime();
+		int32_t lCurTime = m_pRealm->m_time.GetGameTime();
 
 		// If enabled and (non-ambient or ambients allowed) . . .
 		if (m_bEnabled == true && (m_sAmbient == FALSE || g_GameSettings.m_sPlayAmbientSounds) )
@@ -340,9 +340,9 @@ void CSoundThing::Update(void)
 			// If current time hits next starting time (or if we're in the init state)
 			if ((lCurTime >= m_lNextStartTime) || (m_sWhichTime < 0))
 				{
-				long	lSampleDuration	= 0;
-				long	lLoopStartTime;
-				long	lLoopEndTime	= m_lLoopBackFrom;
+				int32_t	lSampleDuration	= 0;
+				int32_t	lLoopStartTime;
+				int32_t	lLoopEndTime	= m_lLoopBackFrom;
 				if (m_sUseLooping)
 					{
 					lLoopStartTime	= m_lLoopBackTo;
@@ -443,9 +443,9 @@ void CSoundThing::Update(void)
 
 
 				// Pick random time between 0 and specified random time
-				long	lRnd = (long)(((float)GetRand() / (float)RAND_MAX) * (float)m_lRndTime[m_sWhichTime]);
+				int32_t	lRnd = (int32_t)(((float)GetRand() / (float)RAND_MAX) * (float)m_lRndTime[m_sWhichTime]);
 				// Make sure this at least the length of the sample.
-				long	lWaitDuration	= MAX(long(m_lMinTime[m_sWhichTime] + lRnd), lSampleDuration);
+				int32_t	lWaitDuration	= MAX(int32_t(m_lMinTime[m_sWhichTime] + lRnd), lSampleDuration);
 				// Calculate next starting time
 				m_lNextStartTime = m_lLastStartTime + lWaitDuration;
 				}
@@ -492,7 +492,7 @@ void CSoundThing::Render(void)
 	//	here.
 
 	// Adjust volume of last play instance.  Clip just in case.
-	SetInstanceVolume(m_siChannel, MIN(255L, m_lCollectiveVolume) );
+	SetInstanceVolume(m_siChannel, MIN((int32_t)255L, m_lCollectiveVolume) );
 
 	// Reset volume.
 	m_lCollectiveVolume	= 0;
@@ -502,12 +502,12 @@ void CSoundThing::Render(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CSoundThing::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CSoundThing::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -524,8 +524,8 @@ short CSoundThing::EditNew(									// Returns 0 if successfull, non-zero otherw
 ////////////////////////////////////////////////////////////////////////////////
 inline void SetGuiItemVal(	// Returns nothing.
 	RGuiItem*	pguiRoot,	// In:  GUI Root.
-	long			lId,			// In:  ID of item whose text we'll change.
-	long			lVal)			// In:  New value.
+	int32_t			lId,			// In:  ID of item whose text we'll change.
+	int32_t			lVal)			// In:  New value.
 	{
 	RGuiItem*	pgui	= pguiRoot->GetItemFromId(lId);
 	if (pgui)
@@ -547,7 +547,7 @@ static void CheckEnableGuiCall(	// Returns nothing.
 	RMultiBtn*	pmb	= (RMultiBtn*)pgui_pmb;
 
 	// Show based on value stored in GUI.
-	short	sVisible	= pmb->m_ulUserData;
+	int16_t	sVisible	= pmb->m_ulUserData;
 	// If unchecked . . .
 	if (pmb->m_sState == 1)
 		{
@@ -587,7 +587,7 @@ static void BrowseCall(		// Returns nothing.
 
 		strcpy(szSystemPath, FullPathCustom(pszSakpath, pguiName->m_szText) );
 
-		short	sResult;
+		int16_t	sResult;
 		do {
 			sResult	= SubPathOpenBox(			// Returns 0 on success, negative on error, 1 if 
 														// not subpathable (i.e., returned path is full path).
@@ -624,9 +624,9 @@ static void BrowseCall(		// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-short CSoundThing::EditModify(void)
+int16_t CSoundThing::EditModify(void)
 	{
-	short	sResult	= 0;
+	int16_t	sResult	= 0;
 
 	// Load gui dialog
 	RGuiItem* pgui = RGuiItem::LoadInstantiate(FullPathVD(GUI_FILE_NAME));
@@ -800,10 +800,10 @@ short CSoundThing::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-short CSoundThing::EditMove(									// Returns 0 if successfull, non-zero otherwise
-	short sX,												// In:  New x coord
-	short sY,												// In:  New y coord
-	short sZ)												// In:  New z coord
+int16_t CSoundThing::EditMove(									// Returns 0 if successfull, non-zero otherwise
+	int16_t sX,												// In:  New x coord
+	int16_t sY,												// In:  New y coord
+	int16_t sZ)												// In:  New z coord
 	{
 	m_dX = (double)sX;
 	m_dY = (double)sY;
@@ -844,9 +844,9 @@ void CSoundThing::EditRect(	// Returns nothiing.
 // (virtual	(Overridden here)).
 ////////////////////////////////////////////////////////////////////////////////
 void CSoundThing::EditHotSpot(	// Returns nothiing.
-	short*	psX,					// Out: X coord of 2D hotspot relative to
+	int16_t*	psX,					// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-	short*	psY)					// Out: Y coord of 2D hotspot relative to
+	int16_t*	psY)					// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 	{
 	*psX	= 5;	// Safety.
@@ -889,7 +889,7 @@ void CSoundThing::EditRender(void)
 	m_sprite.m_sX2	-= m_pImage->m_sWidth / 2;
 	m_sprite.m_sY2	-= m_pImage->m_sHeight;
 
-	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
+	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
 
 	m_sprite.m_pImage = m_pImage;
 
@@ -901,9 +901,9 @@ void CSoundThing::EditRender(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Init object
 ////////////////////////////////////////////////////////////////////////////////
-short CSoundThing::Init(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CSoundThing::Init(void)							// Returns 0 if successfull, non-zero otherwise
 	{
-	short sResult = 0;
+	int16_t sResult = 0;
 
 	Kill();
 
@@ -938,7 +938,7 @@ short CSoundThing::Init(void)							// Returns 0 if successfull, non-zero otherw
 ////////////////////////////////////////////////////////////////////////////////
 // Kill object
 ////////////////////////////////////////////////////////////////////////////////
-short CSoundThing::Kill(void)							// Returns 0 if successfull, non-zero otherwise
+int16_t CSoundThing::Kill(void)							// Returns 0 if successfull, non-zero otherwise
 	{
 	if (m_pImage != 0)
 		rspReleaseResource(&g_resmgrGame, &m_pImage);
@@ -981,7 +981,7 @@ void CSoundThing::ProcessMessages(void)
 // Don't call this from outside of CSoundThing.  It should affect only
 // CSoundThing stuff.
 ////////////////////////////////////////////////////////////////////////////////
-long CSoundThing::GetRandom(void)
+int32_t CSoundThing::GetRandom(void)
 	{
 	return (((ms_lGetRandomSeed = ms_lGetRandomSeed * 214013L + 2531011L) >> 16) & 0x7fff);
 	}
@@ -990,7 +990,7 @@ long CSoundThing::GetRandom(void)
 // Relay the volume to add to this CSoundThing's collective volume.
 ////////////////////////////////////////////////////////////////////////////////
 void CSoundThing::RelayVolume(	// Returns nothing.
-	long lVolume)						// In:  Volume to relay.
+	int32_t lVolume)						// In:  Volume to relay.
 	{
 	m_lCollectiveVolume	+= lVolume;
 	}

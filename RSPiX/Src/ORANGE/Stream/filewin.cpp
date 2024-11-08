@@ -138,12 +138,12 @@ void CFileWin::Reset(void)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CFileWin::Alloc(long lSize)
+int16_t CFileWin::Alloc(int32_t lSize)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// Allocate new window . . .
-	m_pucWindow	= (UCHAR*)malloc(lSize);
+	m_pucWindow	= (uint8_t*)malloc(lSize);
 	if (m_pucWindow != NULL)
 		{
 		m_paneUser.puc		= m_pucWindow;
@@ -185,9 +185,9 @@ void CFileWin::Free(void)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CFileWin::NextIOPane(void)
+int16_t CFileWin::NextIOPane(void)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// If next pane complete . . .
 	if (IsNextInputPaneReady() == TRUE)
@@ -306,12 +306,12 @@ void CFileWin::CriticalStatic(CFileWin* pfw)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CFileWin::Open(char* pszFile)
+int16_t CFileWin::Open(char* pszFile)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// Attempt to open file . . .
-	// Endianness doesn't matter (only UCHAR reads).
+	// Endianness doesn't matter (only uint8_t reads).
 	if (m_file.Open(pszFile, "rb", ENDIAN_BIG) == 0)
 		{
 		}
@@ -330,9 +330,9 @@ short CFileWin::Open(char* pszFile)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CFileWin::Close(void)
+int16_t CFileWin::Close(void)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// If file is open . . .
 	if (m_file.IsOpen() == TRUE)
@@ -366,9 +366,9 @@ short CFileWin::Close(void)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CFileWin::SetSize(long lWinSize, long lIOPaneSize, long lUserPaneSize)
+int16_t CFileWin::SetSize(int32_t lWinSize, int32_t lIOPaneSize, int32_t lUserPaneSize)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	ASSERT(m_file.IsOpen() == TRUE);
 	ASSERT(lWinSize % lIOPaneSize == 0);
@@ -384,7 +384,7 @@ short CFileWin::SetSize(long lWinSize, long lIOPaneSize, long lUserPaneSize)
 
 		// Store current file position.  Changing the buffer size of a stream
 		// requires a seek.
-		long	lPos	= m_file.Tell();
+		int32_t	lPos	= m_file.Tell();
 		
 		// Attempt to set file buffer size . . .
 		if (m_file.SetBufferSize(lIOPaneSize) == 0)
@@ -429,9 +429,9 @@ short CFileWin::SetSize(long lWinSize, long lIOPaneSize, long lUserPaneSize)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CFileWin::NextPane(void)
+int16_t CFileWin::NextPane(void)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// If next pane complete . . .
 	if (IsNextPaneReady() == TRUE)
@@ -455,15 +455,15 @@ short CFileWin::NextPane(void)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CFileWin::Start(void)
+int16_t CFileWin::Start(void)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 	
 	if (--m_sSuspend == 0)
 		{
 		if (m_sActive == FALSE)
 			{
-			if (Blu_AddCritical((CRITICALL)CriticalStatic, (ULONG)this) == 0)
+			if (Blu_AddCritical((CRITICALL)CriticalStatic, (uint32_t)this) == 0)
 				{
 				// Pick up where we left off.
 				m_lNextTime	= GetTime() + m_lNextTime;
@@ -486,9 +486,9 @@ short CFileWin::Start(void)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CFileWin::Suspend(void)
+int16_t CFileWin::Suspend(void)
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	m_sSuspend++;
 
@@ -515,9 +515,9 @@ short CFileWin::Suspend(void)
 // Returns TRUE if next user pane is ready; FALSE otherwise.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CFileWin::IsNextPaneReady(void)
+int16_t CFileWin::IsNextPaneReady(void)
 	{
-	short	sRes	= TRUE;	// Assume ready.
+	int16_t	sRes	= TRUE;	// Assume ready.
 	
 	// If next pane is where the next read is going to occur . . .
 	if (m_paneUser.lPos + m_paneUser.lSize * 2L > m_paneIn.lPos + m_paneIn.lSize)
@@ -533,15 +533,15 @@ short CFileWin::IsNextPaneReady(void)
 // Returns TRUE if next input pane is ready; FALSE otherwise.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CFileWin::IsNextInputPaneReady(void)
+int16_t CFileWin::IsNextInputPaneReady(void)
 	{
-	short	sRes	= TRUE;	// Assume ready.
+	int16_t	sRes	= TRUE;	// Assume ready.
 
-	long	lNextInputPaneStart	= WINDOWINDEX(m_paneIn.lPos + m_paneIn.lSize);
-	long	lNextInputPaneEnd		= WINDOWINDEX(m_paneIn.lPos + m_paneIn.lSize * 2L);
+	int32_t	lNextInputPaneStart	= WINDOWINDEX(m_paneIn.lPos + m_paneIn.lSize);
+	int32_t	lNextInputPaneEnd		= WINDOWINDEX(m_paneIn.lPos + m_paneIn.lSize * 2L);
 
-	long	lCurUserPaneStart		= WINDOWINDEX(m_paneUser.lPos);
-	long	lCurUserPaneEnd		= WINDOWINDEX(m_paneUser.lPos + m_paneUser.lSize);
+	int32_t	lCurUserPaneStart		= WINDOWINDEX(m_paneUser.lPos);
+	int32_t	lCurUserPaneEnd		= WINDOWINDEX(m_paneUser.lPos + m_paneUser.lSize);
 
 	// If the next input pane intersects the current user pane . . .
 	if (	lNextInputPaneStart	< lCurUserPaneEnd 

@@ -115,7 +115,7 @@
 // Message Types
 ////////////////////////////////////////////////////////////////////////////////
 
-typedef unsigned char MessageType;
+typedef uint8_t MessageType;
 
 enum
 {
@@ -156,105 +156,105 @@ enum
 typedef struct tag_MESSAGE_GENERIC
 {
 	MessageType eType; // = typeGeneric
-	short			sPriority;
+	int16_t			sPriority;
 } Generic_Message, *pGeneric_Message;
 
 typedef struct tag_MESSAGE_SHOT
 {
 	MessageType eType;// = typeShot;
-	short			sPriority;
-	short			sDamage;
-	short			sAngle;
+	int16_t			sPriority;
+	int16_t			sDamage;
+	int16_t			sAngle;
 	U16			u16ShooterID; // Instance ID of the shooter (for scoring)
 } Shot_Message, *pShot_Message;
 
 typedef struct tag_MESSAGE_EXPLOSION
 {
 	MessageType eType; // = typeExplosion;
-	short			sPriority;
-	short			sDamage;
-	short			sX;			// Center of explosion
-	short			sY;			// Center of explosion
-	short			sZ;			// Center of explosion
-	short			sVelocity;	// Relative size of explosion 
+	int16_t			sPriority;
+	int16_t			sDamage;
+	int16_t			sX;			// Center of explosion
+	int16_t			sY;			// Center of explosion
+	int16_t			sZ;			// Center of explosion
+	int16_t			sVelocity;	// Relative size of explosion 
 	U16			u16ShooterID;// Instance ID of the shooter
 } Explosion_Message, *pExplosion_Message;
 
 typedef struct tag_MESSAGE_BURN
 {
 	MessageType eType; // = typeBurn;
-	short			sPriority;
-	short			sDamage;
+	int16_t			sPriority;
+	int16_t			sDamage;
 	U16			u16ShooterID;	// Instance ID of the shooter
 } Burn_Message, *pBurn_Message;
 
 typedef struct tag_MESSAGE_OBJECTDELETE
 {
 	MessageType eType; // = typeObjectDelete
-	short			sPriority;
+	int16_t			sPriority;
 } ObjectDelete_Message, *pObjectDelte_Message;
 
 typedef struct tag_MESSAGE_POPOUT
 {
 	MessageType eType; // = typePopout
-	short			sPriority;
-	UCHAR			ucIDNext;			// Next Pylon to run to
+	int16_t			sPriority;
+	uint8_t			ucIDNext;			// Next Pylon to run to
 	U16			u16UniqueDudeID;	// Dude to target
 	U16			u16UniquePylonID;	// Easier way to get to pylon data
-	short			sNextPylonX;		// Next pylon X position
-	short			sNextPylonZ;		// Next pylon Z position
+	int16_t			sNextPylonX;		// Next pylon X position
+	int16_t			sNextPylonZ;		// Next pylon Z position
 } Popout_Message, *pPopout_Message;
 
 typedef struct tag_MESSAGE_SHOOTCYCLE
 {
 	MessageType eType; // = typeShootCycle
-	short			sPriority;
-	UCHAR			ucIDNext;			// ID of next bouy in cycle
+	int16_t			sPriority;
+	uint8_t			ucIDNext;			// ID of next bouy in cycle
 	U16			u16UniqueDudeID;	// Dude to target
 	U16			u16UniquePylonID;	// Easier way to get to pylon data
-	short			sNextPylonX;		// Next pylon X position
-	short			sNextPylonZ;		// Next pylon Z position
+	int16_t			sNextPylonX;		// Next pylon X position
+	int16_t			sNextPylonZ;		// Next pylon Z position
 } ShootCycle_Message, *pShootCycle_Message;
 
 typedef struct tag_MESSAGE_SAFESPOT
 {
 	MessageType eType; // = typeSafeSpot
-	short			sPriority;
+	int16_t			sPriority;
 } SafeSpot_Message, *pSafeSpot_Message;
 
 typedef struct tag_MESSAGE_PANIC
 {
 	MessageType eType;	//typePanic
-	short			sPriority;
-	short			sX;		// Center of panic
-	short			sY;		// Center of panic
-	short			sZ;		// Center of panic
+	int16_t			sPriority;
+	int16_t			sX;		// Center of panic
+	int16_t			sY;		// Center of panic
+	int16_t			sZ;		// Center of panic
 } Panic_Message, *pPanic_Message;
 
 typedef struct
 {
 	MessageType	eType;	// = typeDrawBlood
-	short			sPriority;
-	short			s2dX;		// 2D X position on background to draw blood.
-	short			s2dY;		// 2D Y position on background to draw blood.
+	int16_t			sPriority;
+	int16_t			s2dX;		// 2D X position on background to draw blood.
+	int16_t			s2dY;		// 2D Y position on background to draw blood.
 } DrawBlood_Message;
 
 typedef struct
 {
 	MessageType	eType;	// = typeSuicide
-	short			sPriority;
+	int16_t			sPriority;
 } Suicide_Message;
 
 typedef struct tag_MESSAGE_TRIGGER
 {
 	MessageType eType;	// = typeTrigger
-	short			sPriority;
+	int16_t			sPriority;
 } Trigger_Message;
 
 typedef struct tag_MESSAGE_DUDETRIGGER
 {
 	MessageType eType; // = typeDudeTrigger
-	short		   sPriority;
+	int16_t		   sPriority;
 	U16			u16DudeUniqueID;
 	double		dX;
 	double		dZ;
@@ -263,45 +263,45 @@ typedef struct tag_MESSAGE_DUDETRIGGER
 typedef struct tag_MESSAGE_WEAPONSELECT
 {
 	MessageType	eType; // = typeWeaponSelect
-	short			sPriority;
-	short			sWeapon; //CDude::WeaponType eWeapon;
+	int16_t			sPriority;
+	int16_t			sWeapon; //CDude::WeaponType eWeapon;
 } WeaponSelect_Message;
 
 typedef struct tag_MESSAGE_WEAPONFIRE
 {
 	MessageType	eType; // = typeWeaponFire
-	short			sPriority;
-	short			sWeapon; //CDude::WeaponType	eWeapon;
+	int16_t			sPriority;
+	int16_t			sWeapon; //CDude::WeaponType	eWeapon;
 } WeaponFire_Message;
 
 typedef struct tag_MESSAGE_WRITHING
 {
 	MessageType	eType; // = typeWrithing
-	short			sPriority;	
+	int16_t			sPriority;	
 } Writhing_Message;
 
 typedef struct tag_MESSAGE_DEATH
 {
 	MessageType	eType; // = typeDeath
-	short			sPriority;
+	int16_t			sPriority;
 } Death_Message;
 
 typedef struct tag_MESSAGE_CHEATER
 {
 	MessageType eType;// = typeCheater
-	short			sPriority;
+	int16_t			sPriority;
 } Cheater_Message;
 
 typedef struct tag_MESSAGE_HELP
 {
 	MessageType eType; // = typeHelp
-	short			sPriority;
+	int16_t			sPriority;
 } Help_Message;
 
 typedef struct tag_MESSAGE_PUTMEDOWN
 {
 	MessageType eType;// = typePutMeDown
-	short			sPriority;
+	int16_t			sPriority;
 	U16			u16FlagInstanceID;
 } PutMeDown_Message;
 
@@ -333,9 +333,9 @@ union
 	};
 
 	// Function to save whatever type of message this is.
-	short Save(RFile* pFile)
+	int16_t Save(RFile* pFile)
 	{
-		short sResult = 0;
+		int16_t sResult = 0;
 
 		if (pFile && pFile->IsOpen())
 		{
@@ -414,9 +414,9 @@ union
 	}
 
 	// Function to load whatever type of message was saved
-	short Load(RFile* pFile)
+	int16_t Load(RFile* pFile)
 	{
-		short sResult = 0;
+		int16_t sResult = 0;
 
 		if (pFile && pFile->IsOpen())
 		{

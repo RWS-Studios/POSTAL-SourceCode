@@ -89,7 +89,7 @@ class RProcessGui
 	// Typedefs, enums, etc.
 	///////////////////////////////////////////////////////////////////////////
 	public:
-		typedef long (*UpdateFunc)(	// Returns a non-zero ID to abort or zero
+		typedef int32_t (*UpdateFunc)(	// Returns a non-zero ID to abort or zero
 												// to continue.
 			RInputEvent*	pie);			// Out: Next input event to process.
 
@@ -119,7 +119,7 @@ class RProcessGui
 		// Prepare to handle a GUI.
 		// This must be called to setup components before DoModeless() is called.
 		// (DoModal() does this automatically).
-		short Prepare(							// Returns 0 on success.
+		int16_t Prepare(							// Returns 0 on success.
 			RGuiItem* pgui,					// In:  GUI to be processed.
 			RGuiItem* pguiOk = NULL,		// In:  If not NULL, specifies GUI 
 													// activated by ENTER key.
@@ -146,7 +146,7 @@ class RProcessGui
 		// it will not return until a GUI pressed callback occurs on a GUI
 		// with an ID other than 0 or the update callback, m_fnUpdate, if any,
 		// returns non-zero.
-		long DoModal(							// Returns ID of pressed GUI that terminated 
+		int32_t DoModal(							// Returns ID of pressed GUI that terminated 
 													// modal loop or value returned from 
 													// m_fnUpdate, if any.
 			RGuiItem* pgui,					// In:  GUI to be processed or NULL.
@@ -163,7 +163,7 @@ class RProcessGui
 
 		// Call this to process a GUI modelessly.  This function processes the
 		// GUI for only one iteration allowing the caller continuous control.
-		long DoModeless(						// Returns ID of pressed GUI or value.
+		int32_t DoModeless(						// Returns ID of pressed GUI or value.
 			RGuiItem* pgui,					// In:  GUI to be processed or NULL.
 			RInputEvent* pie,					// In:  Input event to process.
 			RImage* pimDst = NULL);			// Where to draw dialog and rspBlit from.
@@ -214,7 +214,7 @@ class RProcessGui
 		UpdateFunc	m_fnUpdate;		// Callback to do updates, if not using
 											// default handling.
 
-		short			m_sFlags;		// See Flags.
+		int16_t			m_sFlags;		// See Flags.
 
 	///////////////////////////////////////////////////////////////////////////
 	// Static data.
@@ -222,7 +222,7 @@ class RProcessGui
 	public:
 
 		// ID of last item pressed.
-		static long ms_lPressedId;
+		static int32_t ms_lPressedId;
 	};
 
 #endif	// PROCESSGUI_H

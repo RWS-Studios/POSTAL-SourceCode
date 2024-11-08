@@ -83,7 +83,7 @@
 //////////////////////////////////////////////////////////////////////
 //  Static Members:
 //////////////////////////////////////////////////////////////////////
-short	RMultiGrid::ms_sShiftToMask[16] = 
+int16_t	RMultiGrid::ms_sShiftToMask[16] = 
 	{0,1,3,7,15,31,63,127,255,511,1023,2047,4095,8191,16383};
 
 //////////////////////////////////////////////////////////////////////
@@ -96,10 +96,10 @@ short	RMultiGrid::ms_sShiftToMask[16] =
 //////////////////////////////////////////////////////////////////////
 
 // For Debugging
-void	RMultiGrid::Dump(RImage* pimDst,short sSrcX,short sSrcY,short sDstX,short sDstY,
-					short sW,short sH)
+void	RMultiGrid::Dump(RImage* pimDst,int16_t sSrcX,int16_t sSrcY,int16_t sDstX,int16_t sDstY,
+					int16_t sW,int16_t sH)
 	{
-	short i,j;
+	int16_t i,j;
 
 	ASSERT(pimDst);
 	ASSERT(m_psGrid);
@@ -108,8 +108,8 @@ void	RMultiGrid::Dump(RImage* pimDst,short sSrcX,short sSrcY,short sDstX,short s
 	for (j=0;j < sH; j++)
 		for (i=0;i< sW;i++)
 			{
-			short sValue = m_psGrid[i + sSrcX + (j + sSrcY)*long(m_sWidth)];
-			*(pimDst->m_pData + 2*(i + sDstX) + (j + sDstY)*pimDst->m_lPitch) = USHORT(sValue)>>8;
+			int16_t sValue = m_psGrid[i + sSrcX + (j + sSrcY)*int32_t(m_sWidth)];
+			*(pimDst->m_pData + 2*(i + sDstX) + (j + sDstY)*pimDst->m_lPitch) = uint16_t(sValue)>>8;
 			*(pimDst->m_pData + 2*(i + sDstX) + (j + sDstY)*pimDst->m_lPitch+1) = sValue&0xff;
 			}
 	}
@@ -117,23 +117,23 @@ void	RMultiGrid::Dump(RImage* pimDst,short sSrcX,short sSrcY,short sDstX,short s
 // For Debugging
 void	RMultiGrid::DumpGrid(RImage* pimDst)
 	{
-	short i,j;
+	int16_t i,j;
 
 	ASSERT(pimDst);
 	ASSERT(m_psGrid);
 	ASSERT(m_sIsCompressed);
 
-	short sGridW;
-	short sGridH;
+	int16_t sGridW;
+	int16_t sGridH;
 
 	GetGridDimensions(&sGridW,&sGridH);
 
 	for (j=0; j < sGridH; j++)
 		for (i=0; i < sGridW; i++)
 			{
-			short sValue = *(m_ppsGridLines[j * (m_sMaskY + 1)] + i);
+			int16_t sValue = *(m_ppsGridLines[j * (m_sMaskY + 1)] + i);
 
-			*(pimDst->m_pData + 2*(i) + (j)*pimDst->m_lPitch) = USHORT(sValue)>>8;
+			*(pimDst->m_pData + 2*(i) + (j)*pimDst->m_lPitch) = uint16_t(sValue)>>8;
 			*(pimDst->m_pData + 2*(i) + (j)*pimDst->m_lPitch+1) = sValue&0xff;
 			}
 	}
@@ -141,7 +141,7 @@ void	RMultiGrid::DumpGrid(RImage* pimDst)
 // For Debugging:
 void	RMultiGrid::DumpData(RImage* pimDst)
 	{
-	short i,j;
+	int16_t i,j;
 
 	ASSERT(pimDst);
 	ASSERT(m_psGrid);
@@ -150,27 +150,27 @@ void	RMultiGrid::DumpData(RImage* pimDst)
 	for (j=0;j < m_sHeight; j ++)
 		for (i=0;i< m_sWidth; i++)
 			{
-			short sValue = GetVal(i,j);
+			int16_t sValue = GetVal(i,j);
 
-			*(pimDst->m_pData + 2*(i) + (j)*pimDst->m_lPitch) = USHORT(sValue)>>8;
+			*(pimDst->m_pData + 2*(i) + (j)*pimDst->m_lPitch) = uint16_t(sValue)>>8;
 			*(pimDst->m_pData + 2*(i) + (j)*pimDst->m_lPitch+1) = sValue&0xff;
 			}
 	}
 
 void	RMultiGrid::DumpTiles(RImage* pimDst)
 	{
-	short sNumTiles = 0 ;// scan for the number of tiles:
+	int16_t sNumTiles = 0 ;// scan for the number of tiles:
 
-	short i,j;
-	short sGridW,sGridH;
+	int16_t i,j;
+	int16_t sGridW,sGridH;
 	GetGridDimensions(&sGridW,&sGridH);
 
 	for (j=0;j < sGridH;j++)
 		{
 		for (i=0;i < sGridW;i++)
 			{
-			short sValue = *(m_ppsGridLines[j * (m_sMaskY + 1)] + i);
-			if (sValue < 0) sNumTiles = MAX(sNumTiles,short(-sValue));
+			int16_t sValue = *(m_ppsGridLines[j * (m_sMaskY + 1)] + i);
+			if (sValue < 0) sNumTiles = MAX(sNumTiles,int16_t(-sValue));
 			}
 		}
 
@@ -191,7 +191,7 @@ void	RMultiGrid::DumpTiles(RImage* pimDst)
 //
 //////////////////////////////////////////////////////////////////////
 
-short	RMultiGrid::Alloc(short sW, short sH)
+int16_t	RMultiGrid::Alloc(int16_t sW, int16_t sH)
 	{
 #ifdef	_DEBUG
 	if (m_sIsCompressed)
@@ -201,7 +201,7 @@ short	RMultiGrid::Alloc(short sW, short sH)
 		}
 #endif
 
-	if (!(m_psGrid = (short*) calloc(sizeof(short),long(sW)*sH) )) return FAILURE;
+	if (!(m_psGrid = (int16_t*) calloc(sizeof(int16_t),int32_t(sW)*sH) )) return FAILURE;
 
 	m_sWidth = sW;
 	m_sHeight = sH;
@@ -217,13 +217,13 @@ short	RMultiGrid::Alloc(short sW, short sH)
 //
 //////////////////////////////////////////////////////////////////////
 
-short	RMultiGrid::AllocGrid(short sScaleW, short sScaleH)
+int16_t	RMultiGrid::AllocGrid(int16_t sScaleW, int16_t sScaleH)
 	{
 	// Set the parameters:
 	//--------------------------------------------- Convert Input to log 2
-	short sValue = 16384,sDigit = 14;
-	short sLogW,sLogH;
-	short i,j;
+	int16_t sValue = 16384,sDigit = 14;
+	int16_t sLogW,sLogH;
+	int16_t i,j;
 
 	while (sScaleW > 0)
 		{
@@ -271,43 +271,43 @@ short	RMultiGrid::AllocGrid(short sScaleW, short sScaleH)
 
 
 	//--------------------------------------------- Allocate the coarse grid
-	short sGridW,sGridH;
+	int16_t sGridW,sGridH;
 	GetGridDimensions(&sGridW,&sGridH);
-	short	sFullHeight = sGridH * sScaleH;
+	int16_t	sFullHeight = sGridH * sScaleH;
 
-	short*	psUncompressed = m_psGrid;		// Save old!
+	int16_t*	psUncompressed = m_psGrid;		// Save old!
 
 	//--------------------------------------------- Allocate the Tile Lists:
-	long	lShortTileSize = long(sScaleW) * sScaleH;
-	long	lByteTileSize = lShortTileSize << 1;
-	long	lLongTileSize = lShortTileSize >> 1;
+	int32_t	lShortTileSize = int32_t(sScaleW) * sScaleH;
+	int32_t	lByteTileSize = lShortTileSize << 1;
+	int32_t	lLongTileSize = lShortTileSize >> 1;
 	// Initial Max
-	short		sMaxNumTiles = MIN((long)32767, (long)1 + long(sGridW) * (long)sGridH);
+	int16_t		sMaxNumTiles = MIN((int32_t)32767, (int32_t)1 + int32_t(sGridW) * (int32_t)sGridH);
 
-	if (!(m_psTiles = (short*) calloc(lByteTileSize,sMaxNumTiles ) )) return FAILURE;
+	if (!(m_psTiles = (int16_t*) calloc(lByteTileSize,sMaxNumTiles ) )) return FAILURE;
 
 	//---------------------------------------------Add in the random access:
-	short *psTile = m_psTiles;
-	if (!(m_ppsTileList = (short**) calloc(sizeof(short*),sMaxNumTiles ) )) return FAILURE;
+	int16_t *psTile = m_psTiles;
+	if (!(m_ppsTileList = (int16_t**) calloc(sizeof(int16_t*),sMaxNumTiles ) )) return FAILURE;
 	for (i=0; i < sMaxNumTiles; i++,psTile += lShortTileSize) m_ppsTileList[i] = psTile;
 
-	short sOff = 0;
-	if (!(m_psTileLine = (short*) calloc(sizeof(short),sScaleH ) )) return FAILURE;
+	int16_t sOff = 0;
+	if (!(m_psTileLine = (int16_t*) calloc(sizeof(int16_t),sScaleH ) )) return FAILURE;
 	for (i=0;i < sScaleH;i++,sOff += sScaleW) m_psTileLine[i] = sOff;
 
 	//--------------------------------------------- Allocate the coarse grid
 
-	if (!(m_psGrid = (short*) calloc(sizeof(short),long(sGridW)*sGridH) )) return FAILURE;
+	if (!(m_psGrid = (int16_t*) calloc(sizeof(int16_t),int32_t(sGridW)*sGridH) )) return FAILURE;
 
 	//--------------------------------------------- Add in the random access:
 
-	if (!(m_ppsGridLines = (short**) calloc(sizeof(short*),sFullHeight ) )) return FAILURE;
+	if (!(m_ppsGridLines = (int16_t**) calloc(sizeof(int16_t*),sFullHeight ) )) return FAILURE;
 	for (i=0; i < sFullHeight; i++) m_ppsGridLines[i] = m_psGrid + (i >> m_sShiftY)*sGridW;
 
 	//---------------------------------------------  Populate the coarse grid:
 
-	short	*psSrc,*psSrcLine = psUncompressed;
-	long	lSrcSkip = long(m_sWidth)*sScaleH;
+	int16_t	*psSrc,*psSrcLine = psUncompressed;
+	int32_t	lSrcSkip = int32_t(m_sWidth)*sScaleH;
 
 	for (j=0;j < sFullHeight;j += sScaleH,psSrcLine += lSrcSkip)
 		{
@@ -331,12 +331,12 @@ short	RMultiGrid::AllocGrid(short sScaleW, short sScaleH)
 //
 //////////////////////////////////////////////////////////////////////
 
-short RMultiGrid::Compress(
-	short sTileW,			// Size of tiles to try on this data
-	short sTileH,
-	long* plSize,			// New Data Size (BYTES)
-	long* plNumBlocks,		// Number of unique tiles needed
-	short sMatchSame		// If false, NO TILE WILL BE REUSED
+int16_t RMultiGrid::Compress(
+	int16_t sTileW,			// Size of tiles to try on this data
+	int16_t sTileH,
+	int32_t* plSize,			// New Data Size (BYTES)
+	int32_t* plNumBlocks,		// Number of unique tiles needed
+	int16_t sMatchSame		// If false, NO TILE WILL BE REUSED
 								// which increases the speed of compresion
 	)
 	{
@@ -359,7 +359,7 @@ short RMultiGrid::Compress(
 
 #endif
 
-	short *psUncompressedData = m_psGrid;
+	int16_t *psUncompressedData = m_psGrid;
 
 	if (AllocGrid(sTileW,sTileH) )	// alloc error
 		{
@@ -372,39 +372,39 @@ short RMultiGrid::Compress(
 
 	// Now, attempt to compress things into blocks:
 	// First, do only the integral blocks:
-	short sBlockX,sBlockY,sFullY,i,j;
-	short sGridVal,sVal;
-	short sTileNumber = 1; // cannot use -0 as a valid offset!
+	int16_t sBlockX,sBlockY,sFullY,i,j;
+	int16_t sGridVal,sVal;
+	int16_t sTileNumber = 1; // cannot use -0 as a valid offset!
 
-	short sGridW,sGridH;
+	int16_t sGridW,sGridH;
 	GetGridDimensions(&sGridW,&sGridH);
 
-	short sWholeGridW = sGridW - 1; // guaranteed to be whole.
-	short	sWholeGridH = sGridH - 1;
+	int16_t sWholeGridW = sGridW - 1; // guaranteed to be whole.
+	int16_t	sWholeGridH = sGridH - 1;
 
-	short	sExtraW = m_sWidth - (sWholeGridW << m_sShiftX);
-	short	sExtraH = m_sHeight - (sWholeGridH << m_sShiftY);
+	int16_t	sExtraW = m_sWidth - (sWholeGridW << m_sShiftX);
+	int16_t	sExtraH = m_sHeight - (sWholeGridH << m_sShiftY);
 
-	short sMaxTile = MIN((long)32767, (long)1 + long(sGridW) * (long)sGridH);
-	short	sShortSize = (m_sMaskX+1)*(m_sMaskY+1);
-	short sNumMatches = 0;
+	int16_t sMaxTile = MIN((int32_t)32767, (int32_t)1 + int32_t(sGridW) * (int32_t)sGridH);
+	int16_t	sShortSize = (m_sMaskX+1)*(m_sMaskY+1);
+	int16_t sNumMatches = 0;
 
-	short sScanH = m_sMaskY + 1;
+	int16_t sScanH = m_sMaskY + 1;
 	for (sFullY = 0,sBlockY = 0; sBlockY < sGridH; sBlockY++,sFullY += m_sMaskY + 1)
 		{
 		if (sBlockY == sWholeGridH) sScanH = sExtraH;
 
-		short sScanW = m_sMaskX + 1;
+		int16_t sScanW = m_sMaskX + 1;
 		for (sBlockX = 0; sBlockX < sGridW; sBlockX ++)
 			{
 			if (sBlockX == sWholeGridW) sScanW = sExtraW;
 
 			sGridVal = *(m_ppsGridLines[sFullY] + sBlockX);
-			short* psSrcBlock = psUncompressedData + long(sBlockX) * (m_sMaskX + 1) +
-				long(sFullY) * m_sWidth;
+			int16_t* psSrcBlock = psUncompressedData + int32_t(sBlockX) * (m_sMaskX + 1) +
+				int32_t(sFullY) * m_sWidth;
 
 			//*********************************************** ANALIZE BLOCK
-			short sMatch = 1; // homogeneous block?
+			int16_t sMatch = 1; // homogeneous block?
 
 			// do slow, shameful way for now...
 			// Need to realloc later!
@@ -413,27 +413,27 @@ short RMultiGrid::Compress(
 				for (i = 0; i < sScanW; i++) // only copy what's needed...
 					{
 					// copy into temp block:
-					sVal = psSrcBlock[i + j * long(m_sWidth)];
+					sVal = psSrcBlock[i + j * int32_t(m_sWidth)];
 					*(m_ppsTileList[sTileNumber] + m_psTileLine[ j ] + i) = sVal;
 					if (sVal != sGridVal) sMatch = 0; // was not homogeneous
 					}
 				}
 
-			short sFound = 0;
+			int16_t sFound = 0;
 			if (!sMatch) // store another unique block
 				{
 				// ADD IN SCAN TO SEE IF YOU MATCH ANY EXISTING BLOCKS>
 				if (sMatchSame)
 					{
-					short k;
+					int16_t k;
 
 					if ((sBlockX != sWholeGridW) && (sBlockY != sWholeGridH)) // do a quick compare:
 						{
 						for (k=0;k < sTileNumber;k++)
 							{
-							short sComp = 1;
+							int16_t sComp = 1;
 							// compare last tile to current:
-							for (short l=0;l < sShortSize;l++)
+							for (int16_t l=0;l < sShortSize;l++)
 								{
 								if (*(m_ppsTileList[k] + l) != *(m_ppsTileList[sTileNumber] + l))
 									{
@@ -455,7 +455,7 @@ short RMultiGrid::Compress(
 						{
 						for (k=0;k < sTileNumber;k++)
 							{
-							short sComp = 1;
+							int16_t sComp = 1;
 							for (j = 0; j < sScanH; j++)
 								{
 								for (i = 0; i < sScanW; i++) // only compare what's needed...
@@ -507,10 +507,10 @@ short RMultiGrid::Compress(
 	free(psUncompressedData);	// Lose the uncompressed format
 
 	// Reallocate the list of blocks to the known size:
-	short *psOldBlocks = m_psTiles;
-	long	lLen = sShortSize * sizeof(short) * sTileNumber;
+	int16_t *psOldBlocks = m_psTiles;
+	int32_t	lLen = sShortSize * sizeof(int16_t) * sTileNumber;
 
-	m_psTiles = (short*) malloc(lLen);
+	m_psTiles = (int16_t*) malloc(lLen);
 
 	memcpy(m_psTiles,psOldBlocks,lLen);
 	free(psOldBlocks);
@@ -520,14 +520,14 @@ short RMultiGrid::Compress(
 	for (i=0; i < sTileNumber; i++,psOldBlocks += sShortSize) m_ppsTileList[i] = psOldBlocks;
 
 	if (plNumBlocks) *plNumBlocks = --sTileNumber;
-	if (plSize) *plSize = long(sTileNumber) * (long(sShortSize) * sizeof(short) + sizeof(short*))
-		+ long(sGridH) * (sGridW * sizeof(short) + sizeof(short*) );
+	if (plSize) *plSize = int32_t(sTileNumber) * (int32_t(sShortSize) * sizeof(int16_t) + sizeof(int16_t*))
+		+ int32_t(sGridH) * (sGridW * sizeof(int16_t) + sizeof(int16_t*) );
 
 	return SUCCESS;
 	}
 
 // try again!
-short RMultiGrid::Decompress()
+int16_t RMultiGrid::Decompress()
 	{
 #ifdef _DEBUG
 	if (!m_sIsCompressed)
@@ -537,18 +537,18 @@ short RMultiGrid::Decompress()
 		}
 #endif
 
-	short *psNewGrid = (short*) calloc(sizeof(short),long(m_sWidth)*m_sHeight);
+	int16_t *psNewGrid = (int16_t*) calloc(sizeof(int16_t),int32_t(m_sWidth)*m_sHeight);
 
 	if (!psNewGrid) return -1; // allocation error
 
 	// Draw into the new grid:
-	short i,j;
+	int16_t i,j;
 
 	for (j=0;j < m_sHeight;j++)
 		{
 		for (i=0;i < m_sWidth;i++)
 			{
-			psNewGrid[i + long(j)*m_sWidth ] = GetVal(i,j);
+			psNewGrid[i + int32_t(j)*m_sWidth ] = GetVal(i,j);
 			}
 		}
 
@@ -573,7 +573,7 @@ short RMultiGrid::Decompress()
 //
 //////////////////////////////////////////////////////////////////////
 
-short RMultiGrid::Save(RFile* fp)
+int16_t RMultiGrid::Save(RFile* fp)
 	{
 	ASSERT(fp);
 
@@ -584,38 +584,38 @@ short RMultiGrid::Save(RFile* fp)
 		}
 	
 	fp->Write(MULTIGRID_COOKIE);
-	fp->Write(short(MULTIGRID_CURRENT_VERSION));
+	fp->Write(int16_t(MULTIGRID_CURRENT_VERSION));
 
 	fp->Write(m_sWidth);
 	fp->Write(m_sHeight);
 	fp->Write(m_sIsCompressed); // ASSUME IT IS COMPRESSED!
 	fp->Write(m_sMaskX);
 	fp->Write(m_sMaskY);
-	fp->Write(short(sizeof(short))); // For future expansion!
+	fp->Write(int16_t(sizeof(int16_t))); // For future expansion!
 
-	short sGridW,sGridH;
+	int16_t sGridW,sGridH;
 	GetGridDimensions(&sGridW,&sGridH);
 
 	fp->Write(sGridW);
 	fp->Write(sGridH);
 
-	short sNumTiles = GetNumTiles();
+	int16_t sNumTiles = GetNumTiles();
 	fp->Write(sNumTiles);
 
-	fp->Write(long(0)); // Reserved1
-	fp->Write(long(0)); // Reserved2
-	fp->Write(long(0)); // Reserved3
-	fp->Write(long(0)); // Reserved4
+	fp->Write(int32_t(0)); // Reserved1
+	fp->Write(int32_t(0)); // Reserved2
+	fp->Write(int32_t(0)); // Reserved3
+	fp->Write(int32_t(0)); // Reserved4
 
 	// Write out the grid of shorts:
-	short i,j;
+	int16_t i,j;
 
 	for (j=0;j < sGridH; j++)
 		for (i=0;i<sGridW;i++)
 			fp->Write(*(m_ppsGridLines[j<<m_sShiftY] + i));
 
 	// Write out the tiles, omitting the zeroth black tile.
-	short sTileLen = (m_sMaskX + 1) * (m_sMaskY + 1);
+	int16_t sTileLen = (m_sMaskX + 1) * (m_sMaskY + 1);
 
 	for (i=1;i < sNumTiles;i++)
 		{
@@ -635,7 +635,7 @@ short RMultiGrid::Save(RFile* fp)
 //
 //////////////////////////////////////////////////////////////////////
 
-short RMultiGrid::Load(RFile* fp)
+int16_t RMultiGrid::Load(RFile* fp)
 	{
 	ASSERT(fp);
 
@@ -645,7 +645,7 @@ short RMultiGrid::Load(RFile* fp)
 		return FAILURE;
 		}
 	
-	short sVal;
+	int16_t sVal;
 	char	string[20];
 
 	fp->Read(&string[0]);
@@ -669,50 +669,50 @@ short RMultiGrid::Load(RFile* fp)
 	fp->Read(&m_sMaskX);
 	fp->Read(&m_sMaskY);
 
-	short sCodeSize;
+	int16_t sCodeSize;
 	fp->Read(&sCodeSize); // normally 2 for short.
 
-	short sGridW,sGridH;
+	int16_t sGridW,sGridH;
 
 	fp->Read(&sGridW);
 	fp->Read(&sGridH);
 
 	// ALLOCATE IT
-	m_psGrid = (short*) calloc(sCodeSize,long(sGridW)*sGridH);
+	m_psGrid = (int16_t*) calloc(sCodeSize,int32_t(sGridW)*sGridH);
 	if (!m_psGrid)
 		{
 		TRACE("MultiGrid::Load: Out of Memory!!!!\n");
 		return FAILURE;
 		}
 
-	short sNumTiles;
+	int16_t sNumTiles;
 	fp->Read(&sNumTiles);
-	short sTileLen = (m_sMaskX + 1) * (m_sMaskY + 1);
+	int16_t sTileLen = (m_sMaskX + 1) * (m_sMaskY + 1);
 
 	// Allocate the tiles:
 	// This appears as a memory leak!
-	if (!(m_psTiles = (short*)calloc(sTileLen * sCodeSize,sNumTiles)))
+	if (!(m_psTiles = (int16_t*)calloc(sTileLen * sCodeSize,sNumTiles)))
 		{
 		free(m_psGrid);
 		TRACE("MultiGrid::Load: Out of Memory!!!!\n");
 		return FAILURE;
 		}
 
-	long lVal;
+	int32_t lVal;
 	fp->Read(&lVal); // Reserved1
 	fp->Read(&lVal); // Reserved2
 	fp->Read(&lVal); // Reserved3
 	fp->Read(&lVal); // Reserved4
 
-	short i,j;
+	int16_t i,j;
 
 	// Must generate the shift members to use them now!
 	m_sShiftX = MaskToShift(m_sMaskX);
 	m_sShiftY = MaskToShift(m_sMaskY);
 
 	// Set up random access for grid:
-	short	sFullHeight = sGridH * (m_sMaskY + 1);
-	if (!(m_ppsGridLines = (short**) calloc(sizeof(short*),sFullHeight ) )) return FAILURE;
+	int16_t	sFullHeight = sGridH * (m_sMaskY + 1);
+	if (!(m_ppsGridLines = (int16_t**) calloc(sizeof(int16_t*),sFullHeight ) )) return FAILURE;
 	for (i=0; i < sFullHeight; i++) m_ppsGridLines[i] = m_psGrid + (i >> m_sShiftY)*sGridW;
 
 	// Read in the grid of shorts:
@@ -721,8 +721,8 @@ short RMultiGrid::Load(RFile* fp)
 			fp->Read((m_ppsGridLines[j<<m_sShiftY] + i));
 
 	// Set up random access for tiles:
-	short *psTile = m_psTiles;
-	if (!(m_ppsTileList = (short**) calloc(sizeof(short*),sNumTiles ) )) return FAILURE;
+	int16_t *psTile = m_psTiles;
+	if (!(m_ppsTileList = (int16_t**) calloc(sizeof(int16_t*),sNumTiles ) )) return FAILURE;
 	for (i=0; i < sNumTiles; i++,psTile += sTileLen) m_ppsTileList[i] = psTile;
 
 	// Read in the tiles, omitting the zeroth black tile.
@@ -733,8 +733,8 @@ short RMultiGrid::Load(RFile* fp)
 		}
 
 	// Finish up thae random access:
-	short sOff = 0;
-	if (!(m_psTileLine = (short*) calloc(sCodeSize,m_sMaskY+1 ) )) return FAILURE;
+	int16_t sOff = 0;
+	if (!(m_psTileLine = (int16_t*) calloc(sCodeSize,m_sMaskY+1 ) )) return FAILURE;
 	for (i=0;i < m_sMaskY+1;i++,sOff += m_sMaskX + 1) m_psTileLine[i] = sOff;
 
 	// Set the shift values:

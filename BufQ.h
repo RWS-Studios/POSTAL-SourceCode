@@ -123,8 +123,8 @@ class CBufQ
 	//----------------------------------------------------------------------------
 	public:
 		U8			m_au8Buf[QueueSize];		// Buffer.
-		short		m_sPutPos;					// Current put position in buffer.
-		short		m_sGetPos;					// Current get position in buffer.
+		int16_t		m_sPutPos;					// Current put position in buffer.
+		int16_t		m_sGetPos;					// Current get position in buffer.
 
 	//----------------------------------------------------------------------------
 	// Functions
@@ -184,21 +184,21 @@ class CBufQ
 			}
 
 		// Check how many bytes can be gotten via Get()
-		long CheckGetable(void)
+		int32_t CheckGetable(void)
 			{
 			// Calculate total amount of used space in queue
 			return (m_sGetPos <= m_sPutPos) ? m_sPutPos - m_sGetPos : QueueSize - m_sGetPos + m_sPutPos;
 			}
 
 		// Check how many bytes can be put via Put()
-		long CheckPutable(void)
+		int32_t CheckPutable(void)
 			{
 			// Calculate total amount of free space in queue
 			return (m_sPutPos < m_sGetPos) ? m_sGetPos - (m_sPutPos + 1) : QueueSize - (m_sPutPos + 1) + m_sGetPos;
 			}
 
 		// Check how many bytes can be gotten via LockGetPtr()
-		long CheckLockGetPtr(void)
+		int32_t CheckLockGetPtr(void)
 			{
 			// We need to figure out how many bytes can be gotten from the queue
 			// without wrapping around or hitting the put position.
@@ -206,13 +206,13 @@ class CBufQ
 			}
 
 		// Check how many bytes can be put via LockPutPtr()
-		long CheckLockPutPtr(void)
+		int32_t CheckLockPutPtr(void)
 			{
 			// We need to figure out how many bytes can be put to the queue without
 			// wrapping around or hitting the get position.  A special case exists
 			// when the get position is at 0, because then we can't fill out to the
 			// end of the queue, but must instead stop one byte before the end.
-			long lPutable;
+			int32_t lPutable;
 			if (m_sPutPos < m_sGetPos)
 				lPutable = m_sGetPos - (m_sPutPos + 1);
 			else
@@ -228,10 +228,10 @@ class CBufQ
 		///////////////////////////////////////////////////////////////////////////////
 		// Various flavors of Put()
 		///////////////////////////////////////////////////////////////////////////////
-		long Put(				// Returns 1 if it fit, 0 if not enough room in queue
+		int32_t Put(				// Returns 1 if it fit, 0 if not enough room in queue
 			U8 u8Val)			// In:  Data to enqueue in buffer.
 			{
-			long lResult = 0;
+			int32_t lResult = 0;
 			if (CanPutByte())
 				{
 				*(m_au8Buf + m_sPutPos) = u8Val;
@@ -241,11 +241,11 @@ class CBufQ
 			return lResult;
 			}
 
-		long Put(				// Returns number of items that were put into queue
+		int32_t Put(				// Returns number of items that were put into queue
 			U8* pu8Buf,			// In:  Data to enqueue in buffer.
-			long lNum = 1)		// In:  Number of bytes to put.
+			int32_t lNum = 1)		// In:  Number of bytes to put.
 			{
-			long	lNumPut	= -1;
+			int32_t	lNumPut	= -1;
 			while (++lNumPut < lNum)
 				{
 				if (!Put(*pu8Buf++))
@@ -254,31 +254,31 @@ class CBufQ
 			return lNumPut;
 			}
 
-		long Put(				// Returns 1 if it fit, 0 if not enough room in queue
+		int32_t Put(				// Returns 1 if it fit, 0 if not enough room in queue
 			S8 s8Val)			// In:  Data to enqueue in buffer.
 			{
 			return Put((U8)s8Val);
 			}
 
-		long Put(				// Returns number of items that were put into queue
+		int32_t Put(				// Returns number of items that were put into queue
 			S8* ps8Buf,			// In:  Data to enqueue in buffer.
-			long lNum = 1)		// In:  Number of bytes to put.
+			int32_t lNum = 1)		// In:  Number of bytes to put.
 			{
 			return Put((U8*)ps8Buf, lNum);
 			}
 
-		long Put(				// Returns number of items that were put into queue
+		int32_t Put(				// Returns number of items that were put into queue
 			void* pvBuf,		// In:  Data to enqueue in buffer.
-			long lNum)			// In:  Number of bytes to put.
+			int32_t lNum)			// In:  Number of bytes to put.
 			{
 			return Put((U8*)pvBuf, lNum);
 			}
 
-		long Put(				// Returns number of items that were put into queue
+		int32_t Put(				// Returns number of items that were put into queue
 			U16* pu16Buf,		// In:  Data to enqueue in buffer.
-			long lNum = 1)		// In:  Number of U16s to put.
+			int32_t lNum = 1)		// In:  Number of U16s to put.
 			{
-			long	lNumPut	= -1;
+			int32_t	lNumPut	= -1;
 			U8*	pu8Buf	= (U8*)pu16Buf;
 
 			#ifdef SYS_ENDIAN_BIG
@@ -301,30 +301,30 @@ class CBufQ
 			return lNumPut;
 			}
 									
-		long Put(				// Returns number of items that were put into queue
+		int32_t Put(				// Returns number of items that were put into queue
 			S16* ps16Buf,		// In:  Data to enqueue in buffer.
-			long lNum = 1)		// In:  Number of S16s to put.
+			int32_t lNum = 1)		// In:  Number of S16s to put.
 			{
 			return Put((U16*)ps16Buf, lNum);
 			}
 
-		long Put(				// Returns 1 if it fit, 0 if not enough room in queue
+		int32_t Put(				// Returns 1 if it fit, 0 if not enough room in queue
 			U16 u16Val)			// In:  Data to enqueue in buffer.
 			{
 			return Put(&u16Val);
 			}
 
-		long Put(				// Returns 1 if it fit, 0 if not enough room in queue
+		int32_t Put(				// Returns 1 if it fit, 0 if not enough room in queue
 			S16 s16Val)			// In:  Data to enqueue in buffer.
 			{
 			return Put(&s16Val);
 			}
 
-		long Put(				// Returns number of items that were put into queue
+		int32_t Put(				// Returns number of items that were put into queue
 			U32* pu32Buf,		// In:  Data to enqueue in buffer.
-			long lNum = 1)		// In:  Number of U32s to put.
+			int32_t lNum = 1)		// In:  Number of U32s to put.
 			{
-			long	lNumPut	= -1;
+			int32_t	lNumPut	= -1;
 			U8*	pu8Buf	= (U8*)pu32Buf;
 
 			#ifdef SYS_ENDIAN_BIG
@@ -351,20 +351,20 @@ class CBufQ
 			return lNumPut;
 			}
 									
-		long Put(				// Returns number of items that were put into queue
+		int32_t Put(				// Returns number of items that were put into queue
 			S32* ps32Buf,		// In:  Data to enqueue in buffer.
-			long lNum = 1)		// In:  Number of S32s to put.
+			int32_t lNum = 1)		// In:  Number of S32s to put.
 			{
 			return Put((U32*)ps32Buf, lNum);
 			}
 
-		long Put(				// Returns 1 if it fit, 0 if not enough room in queue
+		int32_t Put(				// Returns 1 if it fit, 0 if not enough room in queue
 			U32 u32Val)			// In:  Data to enqueue in buffer.
 			{
 			return Put(&u32Val);
 			}
 
-		long Put(				// Returns 1 if it fit, 0 if not enough room in queue
+		int32_t Put(				// Returns 1 if it fit, 0 if not enough room in queue
 			S32 s32Val)			// In:  Data to enqueue in buffer.
 			{
 			return Put(&s32Val);
@@ -373,10 +373,10 @@ class CBufQ
 		///////////////////////////////////////////////////////////////////////////////
 		// Various flavors of Get()
 		///////////////////////////////////////////////////////////////////////////////
-		long Get(				// Returns 1 if item was dequeued, 0 otherwise
+		int32_t Get(				// Returns 1 if item was dequeued, 0 otherwise
 			U8* pu8Val)			// Out: Where to dequeue from buffer.
 			{
-			long lNumGot = 0;
+			int32_t lNumGot = 0;
 			if (CanGetByte())
 				{
 				*pu8Val = *(m_au8Buf + m_sGetPos);
@@ -386,11 +386,11 @@ class CBufQ
 			return lNumGot;
 			}
 									
-		long Get(				// Returns number of items dequeued.
+		int32_t Get(				// Returns number of items dequeued.
 			U8* pu8Buf,			// Out: Where to dequeue from buffer.
-			long lNum)			// In:  Number of bytes to get.
+			int32_t lNum)			// In:  Number of bytes to get.
 			{
-			long	lNumGot	= -1;
+			int32_t	lNumGot	= -1;
 			while (++lNumGot < lNum)
 				{
 				if (!Get(pu8Buf++))
@@ -399,25 +399,25 @@ class CBufQ
 			return lNumGot;
 			}
 
-		long Get(				// Returns number of items dequeued.
+		int32_t Get(				// Returns number of items dequeued.
 			S8* ps8Buf,			// Out: Where to dequeue from buffer.
-			long lNum = 1)		// In:  Number of bytes to get.
+			int32_t lNum = 1)		// In:  Number of bytes to get.
 			{
 			return Get((U8*)ps8Buf, lNum);
 			}
 
-		long Get(				// Returns number of items dequeued
+		int32_t Get(				// Returns number of items dequeued
 			void* pvBuf,		// Out: Where to dequeue from buffer.
-			long lNum)			// In:  Number of bytes to get.
+			int32_t lNum)			// In:  Number of bytes to get.
 			{
 			return Get((U8*)pvBuf, lNum);
 			}
 
-		long Get(				// Returns number of items dequeued.
+		int32_t Get(				// Returns number of items dequeued.
 			U16* pu16Buf,		// Out: Where to dequeue from buffer.
-			long lNum = 1)		// In:  Number of U16s to get.
+			int32_t lNum = 1)		// In:  Number of U16s to get.
 			{
-			long	lNumGot	= -1;
+			int32_t	lNumGot	= -1;
 			U8*	pu8Buf	= (U8*)pu16Buf;
 
 			#ifdef SYS_ENDIAN_BIG
@@ -440,18 +440,18 @@ class CBufQ
 			return lNumGot;
 			}
 
-		long Get(				// Returns number of items dequeued.
+		int32_t Get(				// Returns number of items dequeued.
 			S16* ps16Buf,		// Out: Where to dequeue from buffer.
-			long lNum = 1)		// In:  Number of S16s to get.
+			int32_t lNum = 1)		// In:  Number of S16s to get.
 			{
 			return Get((U16*)ps16Buf, lNum);
 			}
 
-		long Get(				// Returns number of items dequeued.
+		int32_t Get(				// Returns number of items dequeued.
 			U32* pu32Buf,		// Out: Where to dequeue from buffer.
-			long lNum = 1)		// In:  Number of U32s to get.
+			int32_t lNum = 1)		// In:  Number of U32s to get.
 			{
-			long	lNumGot	= -1;
+			int32_t	lNumGot	= -1;
 			U8*	pu8Buf	= (U8*)pu32Buf;
 
 			#ifdef SYS_ENDIAN_BIG
@@ -478,9 +478,9 @@ class CBufQ
 			return lNumGot;
 			}
 
-		long Get(				// Returns number of items dequeued.
+		int32_t Get(				// Returns number of items dequeued.
 			S32* ps32Buf,		// Out: Where to dequeue from buffer.
-			long lNum = 1)		// In:  Number of S32s to get.
+			int32_t lNum = 1)		// In:  Number of S32s to get.
 			{
 			return Get((U32*)ps32Buf, lNum);
 			}
@@ -489,9 +489,9 @@ class CBufQ
 		// Un-put a byte.  Can be called repeatedly until all data has been "removed".
 		// Use caution when mixing with other functions, especially UnGet().
 		///////////////////////////////////////////////////////////////////////////////
-		short UnPut(void)								// Returns 1 if able to unput, 0 if nothing to unput
+		int16_t UnPut(void)								// Returns 1 if able to unput, 0 if nothing to unput
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			// Being able to get a byte also happens to indicate that we can unput a byte!
 			// In other words, if we can move the get pointer forward 1 byte, it means we
 			// can instead move the put pointer back 1 byte.  Get it?
@@ -508,9 +508,9 @@ class CBufQ
 		// Un-Get a byte.  Can be called repeatedly until all data has been "restored".
 		// Use caution when mixing with other functions, especially UnPut().
 		///////////////////////////////////////////////////////////////////////////////
-		short UnGet(void)								// Returns 1 if able to unget, 0 if nothing to unget
+		int16_t UnGet(void)								// Returns 1 if able to unget, 0 if nothing to unget
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			// Being able to put a byte also happens to indicate that we can unput a byte!
 			// In other words, if we can move the put pointer forward 1 byte, it means we
 			// can instead move the get pointer back 1 byte.  Get it?
@@ -529,7 +529,7 @@ class CBufQ
 		///////////////////////////////////////////////////////////////////////////////
 		void LockPutPtr(
 			U8** ppu8Put,				// Out: Pointer to which up to *plAmountAvail bytes can be put
-			long* plAvail)				// Out: Number of bytes that can be put to above pointer
+			int32_t* plAvail)				// Out: Number of bytes that can be put to above pointer
 			{
 			*plAvail = CheckLockPutPtr();
 			*ppu8Put = m_au8Buf + m_sPutPos;
@@ -540,7 +540,7 @@ class CBufQ
 		// This function is indiscriminant and will screw you if you lie!
 		///////////////////////////////////////////////////////////////////////////////
 		void ReleasePutPtr(
-			long	lBytes)				// In:  Number of bytes written to locked pointer
+			int32_t	lBytes)				// In:  Number of bytes written to locked pointer
 			{
 			ASSERT(lBytes <= CheckLockPutPtr());
 			m_sPutPos += lBytes;
@@ -554,7 +554,7 @@ class CBufQ
 		///////////////////////////////////////////////////////////////////////////////
 		void LockGetPtr(
 			U8** ppu8Get,				// Out: Pointer from which up to *plAmountAvail bytes can be gotten
-			long* plAvail)				// Out: Number of bytes that can be gotten from above pointer
+			int32_t* plAvail)				// Out: Number of bytes that can be gotten from above pointer
 			{
 			*plAvail = CheckLockGetPtr();
 			*ppu8Get = m_au8Buf + m_sGetPos;
@@ -565,7 +565,7 @@ class CBufQ
 		// This function is indiscriminant and will screw you if you lie!
 		///////////////////////////////////////////////////////////////////////////////
 		void ReleaseGetPtr(
-			long	lBytes)				// In:  Number of bytes that were gotten from locked pointer
+			int32_t	lBytes)				// In:  Number of bytes that were gotten from locked pointer
 			{
 			ASSERT(lBytes <= CheckLockGetPtr());
 			m_sGetPos += lBytes;

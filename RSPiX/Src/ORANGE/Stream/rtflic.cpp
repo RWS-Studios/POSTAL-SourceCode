@@ -110,7 +110,7 @@ CRtFlic::~CRtFlic()
 void CRtFlic::Set(void)
 	{
 	m_pdispatch		= NULL;
-	for (short i = 0; i < MAX_VID_CHANNELS; i++)
+	for (int16_t i = 0; i < MAX_VID_CHANNELS; i++)
 		{
 		m_aflxhdrs[i].sNumFrames		= 0;
 		m_aflxhdrs[i].pImage				= NULL;
@@ -135,11 +135,11 @@ void CRtFlic::Reset(void)
 // Returns RET_FREE if done with data on return, RET_DONTFREE otherwise.
 //
 //////////////////////////////////////////////////////////////////////////////
-short CRtFlic::Use(	UCHAR* puc, long lSize, USHORT usType, UCHAR ucFlags, 
-							long lTime)
+int16_t CRtFlic::Use(	uint8_t* puc, int32_t lSize, uint16_t usType, uint8_t ucFlags, 
+							int32_t lTime)
 	{
-	short	sRes		= RET_FREE;	// Always free.
-	short	sError	= 0;
+	int16_t	sRes		= RET_FREE;	// Always free.
+	int16_t	sError	= 0;
 
 	ASSERT(usType	== RT_TYPE_FLIC);
 	ASSERT(puc		!= NULL);
@@ -150,7 +150,7 @@ short CRtFlic::Use(	UCHAR* puc, long lSize, USHORT usType, UCHAR ucFlags,
 	// Read values common to all chunks.
 
 	// Read flx ID.
-	USHORT	usFlxId;
+	uint16_t	usFlxId;
 	file.Read (&usFlxId);
 	
 	// Make sure we're in range.
@@ -209,7 +209,7 @@ short CRtFlic::Use(	UCHAR* puc, long lSize, USHORT usType, UCHAR ucFlags,
 			ASSERT(pflxhdr->pImage->pPalette->pData != NULL);
 
 
-			short	sDecompress	= TRUE;
+			int16_t	sDecompress	= TRUE;
 			// If we this flx contains no deltas and this is not a key frame . . .
 			if (pflxhdr->sNoDelta == TRUE && (ucFlags & RT_FLAG_TAG == 0))
 				{
@@ -263,8 +263,8 @@ short CRtFlic::Use(	UCHAR* puc, long lSize, USHORT usType, UCHAR ucFlags,
 // (static)
 //
 //////////////////////////////////////////////////////////////////////////////
-short CRtFlic::UseStatic(	UCHAR* puc, long lSize, USHORT usType, 
-									UCHAR ucFlags, long lTime, long l_pRtFlic)
+int16_t CRtFlic::UseStatic(	uint8_t* puc, int32_t lSize, uint16_t usType, 
+									uint8_t ucFlags, int32_t lTime, int32_t l_pRtFlic)
 	{
 	return ((CRtFlic*)l_pRtFlic)->Use(puc, lSize, usType, ucFlags, lTime);
 	}
@@ -291,7 +291,7 @@ void CRtFlic::SetDispatcher(CDispatch* pdispatch)
 	if (m_pdispatch != NULL)
 		{
 		m_pdispatch->SetDataHandler(RT_TYPE_FLIC, UseStatic);
-		m_pdispatch->SetUserVal(RT_TYPE_FLIC, (long)this);
+		m_pdispatch->SetUserVal(RT_TYPE_FLIC, (int32_t)this);
 		}
 	}
 
@@ -302,7 +302,7 @@ void CRtFlic::SetDispatcher(CDispatch* pdispatch)
 //////////////////////////////////////////////////////////////////////////////
 void CRtFlic::SetCallbackHeader(RTFLIC_CALL callback)
 	{
-	for (short i = 0; i < MAX_VID_CHANNELS; i++)
+	for (int16_t i = 0; i < MAX_VID_CHANNELS; i++)
 		{
 		SetCallbackHeader(callback, i);
 		}
@@ -313,7 +313,7 @@ void CRtFlic::SetCallbackHeader(RTFLIC_CALL callback)
 // Sets callback(s) called on channel header receipt.
 //
 //////////////////////////////////////////////////////////////////////////////
-void CRtFlic::SetCallbackHeader(RTFLIC_CALL callback, short sChannel)
+void CRtFlic::SetCallbackHeader(RTFLIC_CALL callback, int16_t sChannel)
 	{
 	m_aflxhdrs[sChannel].callbackHeader	= callback;
 	}
@@ -325,7 +325,7 @@ void CRtFlic::SetCallbackHeader(RTFLIC_CALL callback, short sChannel)
 //////////////////////////////////////////////////////////////////////////////
 void CRtFlic::SetCallbackBefore(RTFLIC_CALL callback)
 	{
-	for (short i = 0; i < MAX_VID_CHANNELS; i++)
+	for (int16_t i = 0; i < MAX_VID_CHANNELS; i++)
 		{
 		SetCallbackBefore(callback, i);
 		}
@@ -336,7 +336,7 @@ void CRtFlic::SetCallbackBefore(RTFLIC_CALL callback)
 // Sets callback(s) called before decompression.
 //
 //////////////////////////////////////////////////////////////////////////////
-void CRtFlic::SetCallbackBefore(RTFLIC_CALL callback, short sChannel)
+void CRtFlic::SetCallbackBefore(RTFLIC_CALL callback, int16_t sChannel)
 	{
 	m_aflxhdrs[sChannel].callbackBefore	= callback;
 	}
@@ -348,7 +348,7 @@ void CRtFlic::SetCallbackBefore(RTFLIC_CALL callback, short sChannel)
 //////////////////////////////////////////////////////////////////////////////
 void CRtFlic::SetCallbackAfter(RTFLIC_CALL callback)
 	{
-	for (short i = 0; i < MAX_VID_CHANNELS; i++)
+	for (int16_t i = 0; i < MAX_VID_CHANNELS; i++)
 		{
 		SetCallbackAfter(callback, i);
 		}
@@ -359,7 +359,7 @@ void CRtFlic::SetCallbackAfter(RTFLIC_CALL callback)
 // Sets callback(s) called after decompression.
 //
 //////////////////////////////////////////////////////////////////////////////
-void CRtFlic::SetCallbackAfter(RTFLIC_CALL callback, short sChannel)
+void CRtFlic::SetCallbackAfter(RTFLIC_CALL callback, int16_t sChannel)
 	{
 	m_aflxhdrs[sChannel].callbackAfter	= callback;
 	}

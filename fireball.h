@@ -91,19 +91,19 @@ class CFireball : public CWeapon
 	//---------------------------------------------------------------------------
 
 	public:
-		short m_sSpreadDir;					// A Random number will determine the spread
+		int16_t m_sSpreadDir;					// A Random number will determine the spread
 													// when it hits a wall.
 
 	protected:
-		long m_lTimer;							// General purpose timer
-		long m_lCollisionTimer;				// Check for collisions when this expires
-		long m_lBurnUntil;					// Burn until this time.
-		long m_lCurrentAlphaTimeout;		// Use current Alpha until this time, then switch
-		long m_lAlphaChannelInterval;		// Show each alpha for this amount of time
-		long m_lTimeToLive;					// Total time to show this animation
-		long m_lTotalFlameTime;				// Total time to show the flame (non adjusted for game time)
-		short m_sCurrentAlphaChannel;		// Use this Alpha channel
-		short m_sTotalAlphaChannels;
+		int32_t m_lTimer;							// General purpose timer
+		int32_t m_lCollisionTimer;				// Check for collisions when this expires
+		int32_t m_lBurnUntil;					// Burn until this time.
+		int32_t m_lCurrentAlphaTimeout;		// Use current Alpha until this time, then switch
+		int32_t m_lAlphaChannelInterval;		// Show each alpha for this amount of time
+		int32_t m_lTimeToLive;					// Total time to show this animation
+		int32_t m_lTotalFlameTime;				// Total time to show the flame (non adjusted for game time)
+		int16_t m_sCurrentAlphaChannel;		// Use this Alpha channel
+		int16_t m_sTotalAlphaChannels;
 		U32	m_u32CollideIncludeBits;	// bits to use for collision checking
 		U32	m_u32CollideDontcareBits;	// bits to use for collision checking
 		U32	m_u32CollideExcludeBits;	// bits to use for collision checking
@@ -111,21 +111,21 @@ class CFireball : public CWeapon
 		bool	m_bSendMessages;				// Whether or not to send messages to other
 													// objects telling them to burn or not.
 		bool	m_bMoving;						// Once it hits a wall it will stop moving
-		long	m_lAnimTime;					// Animation time so anims can be offset frames.
-		long m_lPrevTime;						// Previous update time
+		int32_t	m_lAnimTime;					// Animation time so anims can be offset frames.
+		int32_t m_lPrevTime;						// Previous update time
 
 		CSprite2		m_sprite;				// 2D sprite to render this object.
 
 		ChannelAA*	m_pAnimChannel;		// Alpha animation stored as a channel.
 												
-		short m_sSuspend;						// Suspend flag
+		int16_t m_sSuspend;						// Suspend flag
 
 		CSmash		m_smash;					// Collision class
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
-		static short ms_sSmallRadius;
-		static long  ms_lCollisionTime;	// Check for collisions this often
+		static int16_t ms_sFileCount;
+		static int16_t ms_sSmallRadius;
+		static int32_t  ms_lCollisionTime;	// Check for collisions this often
 		static double ms_dFireVelocity;	// Rate of travel.
 
 		// "Constant" values that we want to be able to tune using the editor
@@ -174,11 +174,11 @@ class CFireball : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CFireball(pRealm);
 			if (*ppNew == 0)
 				{
@@ -194,7 +194,7 @@ class CFireball : public CWeapon
 
 		// Function for this class that is called before play begins to make
 		//	the resource manager cache the resources for this object.
-		static short Preload(
+		static int16_t Preload(
 			CRealm* prealm);				// In:  Calling realm.
 
 	//---------------------------------------------------------------------------
@@ -202,22 +202,22 @@ class CFireball : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -231,20 +231,20 @@ class CFireball : public CWeapon
 		// Render object
 		void Render(void);
 
-		short Setup(												// Returns 0 on success.
-			short sX,												// In: New x coord
-			short sY,												// In: New y coord
-			short sZ,												// In: New z coord
-			short sDir,												// In: Direction of travel
-			long lTimeToLive,										// In: Milliseconds to burn
+		int16_t Setup(												// Returns 0 on success.
+			int16_t sX,												// In: New x coord
+			int16_t sY,												// In: New y coord
+			int16_t sZ,												// In: New z coord
+			int16_t sDir,												// In: Direction of travel
+			int32_t lTimeToLive,										// In: Milliseconds to burn
 			U16 u16ShooterID);									// In: Your ID (the shooter) so it doesn't hit you
 
 		// Override base class Setup().
 		virtual				// Overridden here.
-		short Setup(
-			short sX,												// In: Starting X position
-			short sY,												// In: Starting Y position
-			short sZ)												// In: Starting Z position
+		int16_t Setup(
+			int16_t sX,												// In: Starting X position
+			int16_t sY,												// In: Starting Y position
+			int16_t sZ)												// In: Starting Z position
 			{
 			// Default to 500 ms to live and parent's shooter ID, if there is a parent.
  			return Setup(
@@ -256,19 +256,19 @@ class CFireball : public CWeapon
 			}
 
 		// Called by editor to init new object at specified position
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
-		short EditMove(											// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditMove(											// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to update object
 		void EditUpdate(void);
@@ -312,16 +312,16 @@ class CFireball : public CWeapon
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 
 		// Process Game Messages
 		CFireballState ProcessFireballMessages(void);
 
 		// Initialize the fire for large or small objects
-		short Init(void);
+		int16_t Init(void);
 
 	};
 
@@ -356,16 +356,16 @@ class CFirestream : public CWeapon
 													// when it hits a wall.
 
 	protected:
-		long m_lBurnUntil;					// Burn until this time.
-		long m_lCurrentAlphaTimeout;		// Use current Alpha until this time, then switch
-		long m_lAlphaChannelInterval;		// Show each alpha for this amount of time
-		long m_lTimeToLive;					// Total time to show this animation
-		short m_sCurrentAlphaChannel;		// Use this Alpha channel
-		short m_sTotalAlphaChannels;
+		int32_t m_lBurnUntil;					// Burn until this time.
+		int32_t m_lCurrentAlphaTimeout;		// Use current Alpha until this time, then switch
+		int32_t m_lAlphaChannelInterval;		// Show each alpha for this amount of time
+		int32_t m_lTimeToLive;					// Total time to show this animation
+		int16_t m_sCurrentAlphaChannel;		// Use this Alpha channel
+		int16_t m_sTotalAlphaChannels;
 		U16	m_u16ShooterID;				// shooter's ID so you don't hit him.
 		bool	m_bSendMessages;				// Whether or not to send messages to other
 													// objects telling them to burn or not.
-		long m_lPrevTime;						// Previous update time
+		int32_t m_lPrevTime;						// Previous update time
 
 		CSprite2	m_sprite;					// False sprite for positioning info
 		U16 m_idFireball1;
@@ -373,12 +373,12 @@ class CFirestream : public CWeapon
 		U16 m_idFireball3;
 
 												
-		short m_sSuspend;						// Suspend flag
+		int16_t m_sSuspend;						// Suspend flag
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static short ms_sFileCount;
-		static short ms_sOffset1;		// Offset for 2nd fireball
-		static short ms_sOffset2;		// Offset for 3rd fireball
+		static int16_t ms_sFileCount;
+		static int16_t ms_sOffset1;		// Offset for 2nd fireball
+		static int16_t ms_sOffset2;		// Offset for 3rd fireball
 
 		// "Constant" values that we want to be able to tune using the editor
 
@@ -414,11 +414,11 @@ class CFirestream : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static short Construct(									// Returns 0 if successfull, non-zero otherwise
+		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			short sResult = 0;
+			int16_t sResult = 0;
 			*ppNew = new CFirestream(pRealm);
 			if (*ppNew == 0)
 				{
@@ -434,7 +434,7 @@ class CFirestream : public CWeapon
 
 		// Function for this class that is called before play begins to make
 		//	the resource manager cache the resources for this object.
-		static short Preload(
+		static int16_t Preload(
 			CRealm* prealm);				// In:  Calling realm.
 
 	//---------------------------------------------------------------------------
@@ -442,22 +442,22 @@ class CFirestream : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		short Load(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			short sFileCount,										// In:  File count (unique per file, never 0)
-			ULONG	ulFileVersion);								// In:  Version of file format to load.
+			int16_t sFileCount,										// In:  File count (unique per file, never 0)
+			uint32_t	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		short Save(													// Returns 0 if successfull, non-zero otherwise
+		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			short sFileCount);									// In:  File count (unique per file, never 0)
+			int16_t sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -471,20 +471,20 @@ class CFirestream : public CWeapon
 		// Render object
 		void Render(void);
 
-		short Setup(												// Returns 0 on success.
-			short sX,												// In: New x coord
-			short sY,												// In: New y coord
-			short sZ,												// In: New z coord
-			short sDir,												// In: Direction of travel
-			long lTimeToLive,										// In: Milliseconds to burn
+		int16_t Setup(												// Returns 0 on success.
+			int16_t sX,												// In: New x coord
+			int16_t sY,												// In: New y coord
+			int16_t sZ,												// In: New z coord
+			int16_t sDir,												// In: Direction of travel
+			int32_t lTimeToLive,										// In: Milliseconds to burn
 			U16 u16ShooterID);									// In: Your ID (the shooter) so it doesn't hit you
 
 		// Override base class Setup().
 		virtual				// Overridden here.
-		short Setup(
-			short sX,												// In: Starting X position
-			short sY,												// In: Starting Y position
-			short sZ)												// In: Starting Z position
+		int16_t Setup(
+			int16_t sX,												// In: Starting X position
+			int16_t sY,												// In: Starting Y position
+			int16_t sZ)												// In: Starting Z position
 			{
 			// Default to 500 ms to live and parent's shooter ID, if there is a parent.
 			return Setup(
@@ -496,19 +496,19 @@ class CFirestream : public CWeapon
 			}
 
 		// Called by editor to init new object at specified position
-		short EditNew(												// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
-		short EditMove(											// Returns 0 if successfull, non-zero otherwise
-			short sX,												// In:  New x coord
-			short sY,												// In:  New y coord
-			short sZ);												// In:  New z coord
+		int16_t EditMove(											// Returns 0 if successfull, non-zero otherwise
+			int16_t sX,												// In:  New x coord
+			int16_t sY,												// In:  New y coord
+			int16_t sZ);												// In:  New z coord
 
 		// Called by editor to update object
 		void EditUpdate(void);
@@ -548,7 +548,7 @@ class CFirestream : public CWeapon
 		CFirestreamState ProcessFireballMessages(void);
 
 		// Initialize the fire for large or small objects
-		short Init(void);
+		int16_t Init(void);
 
 	};
 

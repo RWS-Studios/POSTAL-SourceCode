@@ -1,0 +1,12 @@
+--- dude.cpp	
++++ dude.cpp	
+@@ -3477,8 +3477,7 @@
+ 
+ #else
+ 	// Update Velocities ////////////////////////////////////////////////////////
+-	// Bloody hell? As if reading this code wasn't hard enough
+-	// So velocity stuff for twinstick can be ignored just setting it to zero 
++
+ #if defined(ALLOW_TWINSTICK)
+ 	if (!demoCompat && m_dJoyMoveVel != 0)
+ 		UpdateVelocities(dSeconds, dMaxForeVel * m_dJoyMoveVel, dMaxBackVel * m_dJoyMoveVel);

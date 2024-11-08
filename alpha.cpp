@@ -79,21 +79,21 @@ extern	short	rspBlitT(U8 u8Trans, RImage* pimSrc,RImage* pimDst,short sSrcX,shor
 // so that's the comment or something.
 //
 ///////////////////////////////////////////////////////////////////////////
-static short Alpha(	// Returns 0 on success.
+static int16_t Alpha(	// Returns 0 on success.
 	RImage*	pimSrc,	// Source to blit through pimMask.
 	RImage*	pimMask,	// Mask.
 	RImage*	pimDst,	// Destination for masked blit.
-	short		sSrcX,	// X coordinate in source.
-	short		sSrcY,	// Y coordinate in source.
-	short		sDstX,	// X coordinate in dest.
-	short		sDstY,	// Y coordinate in dest.
-	short		sW,		// Width to blt.
-	short		sH)		// Height to blt.
+	int16_t		sSrcX,	// X coordinate in source.
+	int16_t		sSrcY,	// Y coordinate in source.
+	int16_t		sDstX,	// X coordinate in dest.
+	int16_t		sDstY,	// Y coordinate in dest.
+	int16_t		sW,		// Width to blt.
+	int16_t		sH)		// Height to blt.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
-	short	sMaskX	= 0;
-	short	sMaskY	= 0;
+	int16_t	sMaskX	= 0;
+	int16_t	sMaskY	= 0;
 
 	// X/W Clip.
 	if (sSrcX < 0)
@@ -169,7 +169,7 @@ static short Alpha(	// Returns 0 on success.
 		U8*	pu8DstRow	= pimDst->m_pData + sDstX + sDstY * pimDst->m_lPitch;
 		U8*	pu8DstBlt;
 		
-		short	sWidth;
+		int16_t	sWidth;
 
 		while (sH--)
 			{
@@ -204,18 +204,18 @@ static short Alpha(	// Returns 0 on success.
 // 0 in mask indicates opaque.  Other values are punch through.
 //
 ///////////////////////////////////////////////////////////////////////////
-short CAlpha::Blit(	// Returns 0 on success.
+int16_t CAlpha::Blit(	// Returns 0 on success.
 	RImage*	pimSrc,	// Source image.
 	RImage*	pimDst,	// Destination image.
-	short	sSrcX,		// Source coordinate in pimSrc to start effect.  Can
+	int16_t	sSrcX,		// Source coordinate in pimSrc to start effect.  Can
 							// be negative.
-	short	sSrcY,		// Source coordinate in pimSrc to start effect.  Can
+	int16_t	sSrcY,		// Source coordinate in pimSrc to start effect.  Can
 							// be negative.
-	short	sDstX,		// Destination coordinate in pimDst for pimSrc(0,0).
-	short	sDstY,		// Destination coordinate in pimDst for pimSrc(0,0).
+	int16_t	sDstX,		// Destination coordinate in pimDst for pimSrc(0,0).
+	int16_t	sDstY,		// Destination coordinate in pimDst for pimSrc(0,0).
 	RRect*	prc)			// Rectangle to clip Dst to.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 	// If there is any data . . .
 	if (m_imMask.m_pData != NULL || m_imMask.m_pSpecial != NULL)
@@ -274,10 +274,10 @@ short CAlpha::Blit(	// Returns 0 on success.
 // Convert(FSPR1) to prepare the data.
 //
 ///////////////////////////////////////////////////////////////////////////
-short CAlpha::Load(		// Returns 0 on success.
+int16_t CAlpha::Load(		// Returns 0 on success.
 	char*	pszFileName)	// Filename to load.
 	{
-	short	sRes	= 0;	// Assume success.
+	int16_t	sRes	= 0;	// Assume success.
 
 
 	if (m_imMask.Load(pszFileName) == 0)
