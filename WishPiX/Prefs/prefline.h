@@ -40,55 +40,55 @@
 
 #include "Blue.h"
 #ifdef PATHS_IN_INCLUDES
-	#include "ORANGE/CDT/flist.h"
+#include "ORANGE/CDT/flist.h"
 #else
-	#include "flist.h"
+#include "flist.h"
 #endif
 
 class RPrefsLine;
 
 typedef RFList<RPrefsLine*> RPrefsLineList;
 
-
 class RPrefsLine
-	{
-	public:
-		typedef enum ePrefsLineType
-			{
-			Comment,
-			Section,
-			Variable
-			};
+{
+public:
+    // Declare the enum directly without typedef
+    enum ePrefsLineType
+    {
+        Comment,
+        Section,
+        Variable
+    };
 
-	private:
-		ePrefsLineType	m_Type;					// Type of line read from ini file
-		char				*m_pszLine;				// Line read from ini file
+private:
+    ePrefsLineType m_Type;  // Type of line read from ini file
+    char* m_pszLine;        // Line read from ini file
 
-	public:
-		// Constructor.
-		RPrefsLine (ePrefsLineType Type, const char *pszLine);
+public:
+    // Constructor.
+    RPrefsLine(ePrefsLineType Type, const char* pszLine);
 
-		// Destructor
-		~RPrefsLine ();
+    // Destructor
+    ~RPrefsLine();
 
-		// Get a constant pointer to the Line of text.
-		const char*	GetLine (void);
+    // Get a constant pointer to the Line of text.
+    const char* GetLine(void);
 
-		// Get type of line.
-		RPrefsLine::ePrefsLineType GetType();
+    // Get type of line.
+    ePrefsLineType GetType();
 
-		// Get the section name
-		int16_t GetSectionName(char *pszSection);
-		
-		// Get the variable name
-		int16_t GetVariableName(char *pszVariable);
+    // Get the section name
+    int16_t GetSectionName(char* pszSection);
 
-		// Get the value of the variable
-		int16_t GetVariableValue(char *pszValue);
+    // Get the variable name
+    int16_t GetVariableName(char* pszVariable);
 
-		// Set the value of the variable
-		int16_t SetVariableValue(const char *pszValue);
-	};
+    // Get the value of the variable
+    int16_t GetVariableValue(char* pszValue);
 
+    // Set the value of the variable
+    int16_t SetVariableValue(const char* pszValue);
+};
 
-#endif//PREFLINE_H
+#endif // PREFLINE_H
+

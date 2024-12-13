@@ -63,21 +63,21 @@
 extern char* rspPathToSystem(			// Returns pszSystem
 	const char* pszRSPiX,				// In:  RSPiX path
 	char* pszSystem)						// Out: System path
-	{
+{
 	ASSERT(pszRSPiX != NULL);
 	ASSERT(pszSystem != NULL);
 	ASSERT(strlen(pszRSPiX) <= RSP_MAX_PATH);
 
 	// Check for backslashes, which are NOT supposed to be used in RSPiX paths.
-	#ifdef _DEBUG
-		if (strchr(pszRSPiX, '\\') != NULL)
-			TRACE("rspPathToSystem(): Warning: RSPiX path contains '\\' which is not legal: '%s'\n", pszRSPiX);
-	#endif
-	
-    if (pszRSPiX != pszSystem)  // yes, pointer comparison.
-        strcpy(pszSystem, pszRSPiX);
+#ifdef _DEBUG
+	if (strchr(pszRSPiX, '\\') != NULL)
+		TRACE("rspPathToSystem(): Warning: RSPiX path contains '\\' which is not legal: '%s'\n", pszRSPiX);
+#endif
+
+	if (pszRSPiX != pszSystem)  // yes, pointer comparison.
+		strcpy_s(pszSystem, sizeof(pszSystem), pszRSPiX);
 	return pszSystem;
-	}
+}
 	
 	
 ////////////////////////////////////////////////////////////////////////////////
@@ -105,19 +105,19 @@ extern char* rspPathToSystem(			// Returns pointer to system-specific path (stat
 // NOTE: Assumes path lengths are limited to RSP_MAX_PATH.
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern char* rspPathFromSystem(		// Returns pszRSPiX
-	const char* pszSystem,				// In:  System path
-	char* pszRSPiX)						// Out: RSPiX path
-	{
+extern char* rspPathFromSystem(    // Returns pszRSPiX
+	const char* pszSystem,             // In:  System path
+	char* pszRSPiX)                    // Out: RSPiX path
+{
 	ASSERT(pszSystem != NULL);
 	ASSERT(pszRSPiX != NULL);
 	ASSERT(strlen(pszSystem) <= RSP_MAX_PATH);
 
-
-    if (pszRSPiX != pszSystem)  // yes, pointer comparison.
-        strcpy(pszRSPiX, pszSystem);
+	if (pszRSPiX != pszSystem)  // yes, pointer comparison.
+		strcpy_s(pszRSPiX, RSP_MAX_PATH, pszSystem);
 	return pszRSPiX;
-	}
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -150,17 +150,17 @@ extern char* rspPathFromSystem(		// Returns pointer to RSPiX path (static!!!)
 // full path of the folder, such as "Macintosh HD:System Folder:Preferences:".
 //
 ////////////////////////////////////////////////////////////////////////////////
-extern int16_t rspGetTempPath(			// Returns 0 on success, non-zero otherwise
-	char* pszPath,							// Out: Temp path returned here if available.
-	int16_t	sMaxPathLen)					// In:  Max path length (to avoid overwrites)
-	{
+extern int16_t rspGetTempPath(    // Returns 0 on success, non-zero otherwise
+	char* pszPath,                // Out: Temp path returned here if available.
+	int16_t sMaxPathLen)          // In:  Max path length (to avoid overwrites)
+{
 	ASSERT(pszPath != NULL);
 	ASSERT(sMaxPathLen > 0);
 
-    strncpy(pszPath, "/tmp", sMaxPathLen);
-    pszPath[sMaxPathLen-1] = 0;
+	strncpy_s(pszPath, sMaxPathLen, "/tmp", _TRUNCATE);
 	return 0;
-	}
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////

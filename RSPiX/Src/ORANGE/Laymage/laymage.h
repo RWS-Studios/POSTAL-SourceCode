@@ -161,7 +161,7 @@ class RLaymage
 		// Get the name of the specified layer
 		// given the sLayer number, fill in the char buffer
 		// pszNameBuffer with the name of this layer
-		int16_t GetLayerName(int16_t sLayer, char* pszNameBuffer);
+		int16_t GetLayerName(int16_t sLayer, char* pszNameBuffer, size_t bufferSize);
 
 	private:
 		// Array of pointers to images

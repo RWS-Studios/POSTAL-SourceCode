@@ -294,10 +294,11 @@ public:
 	void	StartProfile(char* pszFieldName);
 	void	EndProfile(char* pszFieldName);
 	//----------------------------
-	void	SetOutput(char *pszOutput)
-		{
-		if (pszOutput) strcpy(m_szOutputFile,pszOutput);
-		}
+	void SetOutput(char* pszOutput)
+	{
+		if (pszOutput) strcpy_s(m_szOutputFile, sizeof(m_szOutputFile), pszOutput);
+	}
+
 
 	void ProfilingOn()
 		{

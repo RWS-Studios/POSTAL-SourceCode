@@ -403,35 +403,36 @@ class RString
 
 		// Assign string representation of specified number
 		const RString& operator=(int16_t rhs)
-			{
+		{
 			Grow(MaxShortLen + 1); // size is always > 0, so this will always return with a valid buffer
-			m_lStrLen = sprintf(m_pBuf, "%hd", (int16_t)rhs);
+			m_lStrLen = sprintf_s(m_pBuf, MaxShortLen + 1, "%hd", rhs); // Use sprintf_s
 			return *this;
-			}
+		}
 
 		// Assign string representation of specified number
 		const RString& operator=(uint16_t rhs)
-			{
+		{
 			Grow(MaxUShortLen + 1); // size is always > 0, so this will always return with a valid buffer
-			m_lStrLen = sprintf(m_pBuf, "%hu", (uint16_t)rhs);
+			m_lStrLen = sprintf_s(m_pBuf, MaxUShortLen + 1, "%hu", rhs); // Use sprintf_s
 			return *this;
-			}
+		}
 
 		// Assign string representation of specified number
 		const RString& operator=(int32_t rhs)
-			{
+		{
 			Grow(MaxLongLen + 1); // size is always > 0, so this will always return with a valid buffer
-			m_lStrLen = sprintf(m_pBuf, "%ld", (int32_t)rhs);
+			m_lStrLen = sprintf_s(m_pBuf, MaxLongLen + 1, "%ld", rhs); // Use sprintf_s
 			return *this;
-			}
+		}
 
 		// Assign string representation of specified number
 		const RString& operator=(uint32_t rhs)
-			{
+		{
 			Grow(MaxULongLen + 1); // size is always > 0, so this will always return with a valid buffer
-			m_lStrLen = sprintf(m_pBuf, "%lu", (uint32_t)rhs);
+			m_lStrLen = sprintf_s(m_pBuf, MaxULongLen + 1, "%lu", rhs); // Use sprintf_s
 			return *this;
-			}
+		}
+
 
 	//---------------------------------------------------------------------------
 	// Constructors
@@ -494,35 +495,36 @@ class RString
 
 		// Append string representation of specified number
 		const RString& operator+=(int16_t rhs)
-			{
+		{
 			Grow(m_lStrLen + MaxShortLen + 1); // size is always > 0, so this will always return with a valid buffer
-			m_lStrLen += sprintf(m_pBuf + m_lStrLen, "%hd", (int16_t)rhs);
+			m_lStrLen += sprintf_s(m_pBuf + m_lStrLen, MaxShortLen + 1, "%hd", rhs); // Use sprintf_s
 			return *this;
-			}
+		}
 
 		// Append string representation of specified number
 		const RString& operator+=(uint16_t rhs)
-			{
+		{
 			Grow(m_lStrLen + MaxUShortLen + 1); // size is always > 0, so this will always return with a valid buffer
-			m_lStrLen += sprintf(m_pBuf + m_lStrLen, "%hu", (uint16_t)rhs);
+			m_lStrLen += sprintf_s(m_pBuf + m_lStrLen, MaxUShortLen + 1, "%hu", rhs); // Use sprintf_s
 			return *this;
-			}
+		}
 
 		// Append string representation of specified number
 		const RString& operator+=(int32_t rhs)
-			{
+		{
 			Grow(m_lStrLen + MaxLongLen + 1); // size is always > 0, so this will always return with a valid buffer
-			m_lStrLen += sprintf(m_pBuf + m_lStrLen, "%ld", (int32_t)rhs);
+			m_lStrLen += sprintf_s(m_pBuf + m_lStrLen, MaxLongLen + 1, "%ld", rhs); // Use sprintf_s
 			return *this;
-			}
+		}
 
 		// Append string representation of specified number
 		const RString& operator+=(uint32_t rhs)
-			{
+		{
 			Grow(m_lStrLen + MaxULongLen + 1); // size is always > 0, so this will always return with a valid buffer
-			m_lStrLen += sprintf(m_pBuf + m_lStrLen, "%lu", (uint32_t)rhs);
+			m_lStrLen += sprintf_s(m_pBuf + m_lStrLen, MaxULongLen + 1, "%lu", rhs); // Use sprintf_s
 			return *this;
-			}
+		}
+
 
 	//---------------------------------------------------------------------------
 	// Operator +

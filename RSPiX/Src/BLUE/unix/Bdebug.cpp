@@ -136,25 +136,28 @@ void rspTrace(char *frmt, ... )
 											// a leak.  The system will close it though.
 		// If not yet open . . . 
 		if (fs == NULL)
-			{
+		{
 			// Attempt to open (Note that we never close this -- the system does).
 			// This will probably show up as a leak.
-			fs	= fopen(RSP_TRACE_LOG_NAME, "wt");
-			if (fs)
+			errno_t err = fopen_s(&fs, RSP_TRACE_LOG_NAME, "wt");
+			if (err == 0 && fs)
 			{
 				fprintf(fs, "======== Postal Plus build %s %s ========\n", __DATE__, __TIME__);
 				time_t sysTime = time(NULL);
-				fprintf(fs, "Debug log file initialized: %s\n", ctime(&sysTime));
+				char buffer[26];
+				ctime_s(buffer, sizeof(buffer), &sysTime);
+				fprintf(fs, "Debug log file initialized: %s\n", buffer);
 			}
-			}
+		}
 
 		// If open . . .
 		if (fs)
-			{
+		{
 			char szOutput[512];
-			vsnprintf(szOutput, 512, frmt, varp);
-			fprintf(fs, szOutput);
-			}
+			_vsnprintf_s(szOutput, sizeof(szOutput), _TRUNCATE, frmt, varp);
+			fprintf(fs, "%s", szOutput);
+		}
+
 #endif	// RSP_DEBUG_OUT_FILE
 
 		va_end(varp);

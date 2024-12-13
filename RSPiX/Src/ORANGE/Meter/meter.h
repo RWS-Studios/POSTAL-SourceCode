@@ -185,12 +185,13 @@ class RMeter : public RDlg
 			}
 
 		// Set the unit of measurement for info display.
-		void SetUnit(			// Returns nothing.
-			char* pszUnit)		// Unit string (ex: "Mbytes" or "ms").
-			{
+		void SetUnit(            // Returns nothing.
+			char* pszUnit)        // Unit string (ex: "Mbytes" or "ms").
+		{
 			ASSERT(strlen(pszUnit) < sizeof(m_szUnit));
-			strcpy(m_szUnit, pszUnit);
-			}
+			strcpy_s(m_szUnit, sizeof(m_szUnit), pszUnit);  // Use strcpy_s with buffer size
+		}
+
 
 		// Set the colors.
 		void SetColors(			// Returns nothing.

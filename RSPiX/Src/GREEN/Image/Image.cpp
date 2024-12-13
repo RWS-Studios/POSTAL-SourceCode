@@ -440,35 +440,34 @@ IMAGELINKLATE(NOT_SUPPORTED, ConvertNoSupport, NULL, NULL, NULL, NULL, NULL);
 //
 //////////////////////////////////////////////////////////////////////
 
-int16_t RImage::sCreateMem(void **hMem,U64 ulSize)
+int16_t RImage::sCreateMem(void** hMem, U64 ulSize)
 {
-	//	Make sure the data
-	//	hasn't already been allocated
+	// Make sure the data hasn't already been allocated
 	if (*hMem != NULL)
-	{              
+	{
 		TRACE("RPal::AllocMem() called by CreateData() -- A buffer has already been allocated\n");
 		// Image allocated already
 		return ((int16_t)-1);
 	}
 	else
-	{         
+	{
 		if (ulSize > 0)
-		{               
-			if ((*hMem = calloc(ulSize, 1)) == NULL)
+		{
+			if ((*hMem = calloc(static_cast<size_t>(ulSize), 1)) == NULL)
 			{
 				TRACE("RPal::AllocMem() called by CreateData() -- The buffer could not be allocated\n");
 				// Image buffer couldn't be allocated
 				return ((int16_t)-2);
-			} 
+			}
 			else
-			{        
+			{
 				// Success
 				return ((int16_t)0);
 			}
 		}
 		else
 		{
-		 	TRACE("RPal::AllocMem() called by CreateData() - Warning attempting to allocate 0 bytes, quit screwing around\n");
+			TRACE("RPal::AllocMem() called by CreateData() - Warning attempting to allocate 0 bytes, quit screwing around\n");
 			*hMem = NULL;
 			return 0;
 		}
@@ -512,12 +511,13 @@ int16_t RImage::sCreateAlignedMem(void **hMem, void **hData, U64 ulSize)
 		{
 			// allocate an extra 15 bytes so that the data ponter can be aligned
 			// to the nearest 128-bit boundry for Blit speed reasons
-         if ((*hMem = calloc(ulSize + 15, 1)) == NULL)
+			if ((*hMem = calloc(static_cast<size_t>(ulSize) + 15, 1)) == NULL)
 			{
-			 	TRACE("RImage::AllocMem() called by CreateData() - buffer could not be allocated\n");
+				TRACE("RImage::AllocMem() called by CreateData() - buffer could not be allocated\n");
 				// calloc failed
 				return FAILURE;
 			}
+
 			else
 			{
             // Set Data buffer to 128-bit alignment (now with platform independence!)

@@ -54,121 +54,114 @@ public:
 	int16_t m_sHighFilter;
 	char	m_cStringContext;
 	char	m_cComment;
-//--------------- CONSTRUCTION -------------
-	void	clear() // NOT A RESET! Will hose memory!
-		{
-		m_fp = NULL;
-		m_sNumTokens = m_sCharEOL = m_sLowFilter = m_sHighFilter = 0;
-		m_pszSeparators[0] = '\0';
-		m_pszFileName[0] = '\0';
-		m_pszSpecialCharacters[0] = '\0';
-		m_lCurrentLine = 0;
+    //--------------- CONSTRUCTION -------------
+    void clear() // NOT A RESET! Will hose memory!
+    {
+        m_fp = NULL;
+        m_sNumTokens = m_sCharEOL = m_sLowFilter = m_sHighFilter = 0;
+        m_pszSeparators[0] = '\0';
+        m_pszFileName[0] = '\0';
+        m_pszSpecialCharacters[0] = '\0';
+        m_lCurrentLine = 0;
 
-		for (int16_t i=0; i < SB_MAX_TOKENS; i++)
-			{
-			m_pszTokenList[i][0] = '\0';
-			m_sLinePos[i] = 0;
-			}
+        for (int16_t i = 0; i < SB_MAX_TOKENS; i++)
+        {
+            m_pszTokenList[i][0] = '\0';
+            m_sLinePos[i] = 0;
+        }
 
-		m_sCurToken = -2; // for user convenience!
-		}
+        m_sCurToken = -2; // for user convenience!
+    }
 
-	void init(char* pszFileName,char* pszSeparators = " \t,",char* pszSpecialCharacters=NULL,
-		char	cString = '"',char cComment = '*',int16_t sCharEOL=1,int16_t sLowFilter=32,int16_t sHighFilter=128)
-		{
-		clear();
-		if ((m_fp = fopen(pszFileName,"r")) == NULL)
-			{
-			TRACE("RBatch: file %s not found.\n",pszFileName);
-			return;
-			}
-		
-		strcpy(m_pszFileName,pszFileName);
-		m_sCharEOL = sCharEOL;
-		m_sLowFilter = sLowFilter;
-		m_sHighFilter = sHighFilter;
-		m_cStringContext = cString;
-		m_cComment = cComment;
-		if (pszSpecialCharacters) strcpy(m_pszSpecialCharacters,pszSpecialCharacters);
-		if (pszSeparators) strcpy(m_pszSeparators,pszSeparators);
-		}
+    void init(char* pszFileName, char* pszSeparators = " \t,", char* pszSpecialCharacters = NULL,
+        char cString = '"', char cComment = '*', int16_t sCharEOL = 1, int16_t sLowFilter = 32, int16_t sHighFilter = 128)
+    {
+        clear();
+        if (fopen_s(&m_fp, pszFileName, "r") != 0)
+        {
+            TRACE("RBatch: file %s not found.\n", pszFileName);
+            return;
+        }
 
-	void configure(char* pszSeparators = " \t,",char* pszSpecialCharacters=NULL,
-		char	cString = '"',char cComment = '*',int16_t sCharEOL=1,int16_t sLowFilter=32,int16_t sHighFilter=128)
-		{
-		m_sCharEOL = sCharEOL;
-		m_sLowFilter = sLowFilter;
-		m_sHighFilter = sHighFilter;
-		m_cStringContext = cString;
-		m_cComment = cComment;
+        strcpy_s(m_pszFileName, sizeof(m_pszFileName), pszFileName);
+        m_sCharEOL = sCharEOL;
+        m_sLowFilter = sLowFilter;
+        m_sHighFilter = sHighFilter;
+        m_cStringContext = cString;
+        m_cComment = cComment;
+        if (pszSpecialCharacters) strcpy_s(m_pszSpecialCharacters, sizeof(m_pszSpecialCharacters), pszSpecialCharacters);
+        if (pszSeparators) strcpy_s(m_pszSeparators, sizeof(m_pszSeparators), pszSeparators);
+    }
 
-		if (pszSpecialCharacters) strcpy(m_pszSpecialCharacters,pszSpecialCharacters);
-		if (m_pszSeparators) strcpy(m_pszSeparators,pszSeparators);
-		}
+    void configure(char* pszSeparators = " \t,", char* pszSpecialCharacters = NULL,
+        char cString = '"', char cComment = '*', int16_t sCharEOL = 1, int16_t sLowFilter = 32, int16_t sHighFilter = 128)
+    {
+        m_sCharEOL = sCharEOL;
+        m_sLowFilter = sLowFilter;
+        m_sHighFilter = sHighFilter;
+        m_cStringContext = cString;
+        m_cComment = cComment;
 
-	RBatch() // default, no file
-		{
-		clear();
-		configure();
-		}
+        if (pszSpecialCharacters) strcpy_s(m_pszSpecialCharacters, sizeof(m_pszSpecialCharacters), pszSpecialCharacters);
+        if (pszSeparators) strcpy_s(m_pszSeparators, sizeof(m_pszSeparators), pszSeparators);
+    }
 
-	RBatch(char* pszFileName,char* pszSeparators = " \t,",char* pszSpecialCharacters = NULL,
-		char	cString = '"',char cComment = '*',int16_t sCharEOL=1,int16_t sLowFilter=32,int16_t sHighFilter=128)
-		{
-		init(pszFileName,pszSeparators,pszSpecialCharacters,cString,cComment,sCharEOL,sLowFilter,sHighFilter);
-		}
+    RBatch() // default, no file
+    {
+        clear();
+        configure();
+    }
 
-	int16_t open(char* pszFileName)
-		{
-		if (m_fp == NULL)
-			{
-			if ((m_fp = fopen(pszFileName,"r")) == NULL)
-				{
-				TRACE("RBatch: file %s not found.\n",pszFileName);
-				return -1;
-				}
+    RBatch(char* pszFileName, char* pszSeparators = " \t,", char* pszSpecialCharacters = NULL,
+        char cString = '"', char cComment = '*', int16_t sCharEOL = 1, int16_t sLowFilter = 32, int16_t sHighFilter = 128)
+    {
+        init(pszFileName, pszSeparators, pszSpecialCharacters, cString, cComment, sCharEOL, sLowFilter, sHighFilter);
+    }
 
-			strcpy(m_pszFileName,pszFileName);
-			m_lCurrentLine = 0;
-			m_sNumTokens = 0;
+    int16_t open(char* pszFileName)
+    {
+        if (m_fp == NULL)
+        {
+            if (fopen_s(&m_fp, pszFileName, "r") != 0)
+            {
+                TRACE("RBatch: file %s not found.\n", pszFileName);
+                return -1;
+            }
 
-			return 0;
-			}
-		else 
-			{
-			TRACE("RBatch: file already open!\n");
-			return -1;
-			}
-		}
+            strcpy_s(m_pszFileName, sizeof(m_pszFileName), pszFileName);
+            m_lCurrentLine = 0;
+            m_sNumTokens = 0;
 
-	int16_t close()
-		{
-		if (m_fp != NULL)
-			{
-			fclose(m_fp);
-			m_fp = NULL;
-			return 0;
-			}
-		else
-			{
-			TRACE("RBatch: File already closed.\n");
-			return -1;
-			}
-		}
+            return 0;
+        }
+        else
+        {
+            TRACE("RBatch: file already open!\n");
+            return -1;
+        }
+    }
 
-	~RBatch()
-		{
-		if (m_fp) fclose(m_fp);
-		//if (m_pszSeparators) free(m_pszSeparators);
-		//if (m_pszSpecialCharacters) free (m_pszSpecialCharacters);
-		/*
-		for (short i=0;i<SB_MAX_TOKENS;i++)
-			{
-			if (m_pszTokenList[i]) free(m_pszTokenList[i]);
-			}
-		*/
-		clear();
-		}
+    int16_t close()
+    {
+        if (m_fp != NULL)
+        {
+            fclose(m_fp);
+            m_fp = NULL;
+            return 0;
+        }
+        else
+        {
+            TRACE("RBatch: File already closed.\n");
+            return -1;
+        }
+    }
+
+    ~RBatch()
+    {
+        if (m_fp) fclose(m_fp);
+        clear();
+    }
+
 //--------------- STATIC SPACE -------------
 	static	char	ms_Error[256];
 //--------------- MEMBER FUNCTIONS -------------

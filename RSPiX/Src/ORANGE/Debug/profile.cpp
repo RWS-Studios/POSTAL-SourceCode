@@ -75,8 +75,9 @@ void	RProfile::StartProfile(char* pszFieldName)
 	//*****************************************************************************
 	if (!m_sActive) return; // Do not activate if in error state!
 
-	m_sLastUnaccounted = m_lFastTimeOut - m_lFastTimeIn; // Get last overhead time
+	m_sLastUnaccounted = static_cast<int16_t>(m_lFastTimeOut - m_lFastTimeIn); // Get last overhead time
 	m_lFastTimeIn = i64EntryTime;
+
 
 
 	//------------------------------------------------------
@@ -95,31 +96,32 @@ void	RProfile::StartProfile(char* pszFieldName)
 		}
 	
 	if (!sMatch) // first time!
-		{
+	{
 		//------------------------------------------------------
 		// Create a new field!
 		//------------------------------------------------------
 		if (m_sNumTracked >= PF_MAX_FIELDS)
-			{
+		{
 			// All timing is void in an error scenario!
 			//STRACE("RProfile::StartProfile: out of FIELDS, increase PF_MAX_FIELDS or like it!\n");
 			m_sInternalError = TRUE;
-			ProfilingOff();	// Turn off the whole thing on error, but report it!
+			ProfilingOff(); // Turn off the whole thing on error, but report it!
 
 			return;
-			}
-		
+		}
+
 		// Note the time if it's the first one:
-		if (!m_sNumTracked)	
-			{
+		if (!m_sNumTracked)
+		{
 			m_lFirstTime = i64EntryTime;
 			m_sLastUnaccounted = 0; // Assume previous overhead was zero!
-			}
+		}
 
 		m_aList[m_sNumTracked].Init();
-		strcpy(m_aList[m_sNumTracked].m_szFieldName,pszFieldName);
+		strcpy_s(m_aList[m_sNumTracked].m_szFieldName, sizeof(m_aList[m_sNumTracked].m_szFieldName), pszFieldName);
 		sKey = m_sNumTracked++; // the new handle
-		}
+	}
+
 
 	if (m_aList[sKey].m_eState == Timing)
 		{

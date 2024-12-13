@@ -437,8 +437,9 @@ int16_t RAlpha::CreateAlphaRGB(double dOpacity,int16_t sPalStart, int16_t sPalLe
 
 	// If you use a 256 x 256 table for calculating BYTE * OPACITY = BYTE, you may double
 	// your net speed
-	int16_t lSrc = (int32_t)256 * dOpacity;
+	int16_t lSrc = static_cast<int16_t>(256 * dOpacity);
 	int16_t lDst = 256 - lSrc;
+
 
 	// If you use a 256 x 256 table for calculating BYTE * OPACITY = BYTE, you may double
 	RFixedU16 r,g,b;
@@ -779,80 +780,81 @@ int16_t RMultiAlpha::CreateLayer(int16_t sLayerNumber,
 // This interpolates the general table information
 //
 int16_t RMultiAlpha::Finish(int16_t sGeneral)
-	{
+{
 	int16_t i;
 
 	// At this level, might as well using floating point math for now.
 	if (sGeneral == FALSE) // make a level based identity mapping:
-		{
+	{
 		m_sGeneral = FALSE;
 
 		m_pGeneralAlpha[0] = NULL; // shift things up one.
-		for (i=0;i<m_sNumLevels;i++) // make it look like (m_sNumLevels+2)
-			{
-			m_pSaveLevels[i] = i;
-			// Use NULL as a code for opacity, 0 is hooked as transparent
-			if (m_pLevelOpacity[i] == 255) m_pGeneralAlpha[i+1] = NULL;
-			else
-				m_pGeneralAlpha[i+1] = m_pAlphaList[i]->m_pAlphas;
-			}
-		// make everything off the end opaque
-		m_pSaveLevels[m_sNumLevels] = m_sNumLevels;
-		for (i = m_sNumLevels + 1; i < 256;i++) 
-			{
-			m_pGeneralAlpha[i] = NULL;
-			m_pSaveLevels[i] = m_sNumLevels + 1;
-			}
-		}
-	else // spread out the values from 0 to 255:
+		for (i = 0; i < m_sNumLevels; i++) // make it look like (m_sNumLevels + 2)
 		{
+			m_pSaveLevels[i] = static_cast<uint8_t>(i);
+			// Use NULL as a code for opacity, 0 is hooked as transparent
+			if (m_pLevelOpacity[i] == 255)
+				m_pGeneralAlpha[i + 1] = NULL;
+			else
+				m_pGeneralAlpha[i + 1] = m_pAlphaList[i]->m_pAlphas;
+		}
+		// make everything off the end opaque
+		m_pSaveLevels[m_sNumLevels] = static_cast<uint8_t>(m_sNumLevels);
+		for (i = m_sNumLevels + 1; i < 256; i++)
+		{
+			m_pGeneralAlpha[i] = NULL;
+			m_pSaveLevels[i] = static_cast<uint8_t>(m_sNumLevels + 1);
+		}
+	}
+	else // spread out the values from 0 to 255:
+	{
 		m_sGeneral = TRUE;
 
-		for (i=0;i<256;i++) m_pSaveLevels[i] = uint8_t(0);
+		for (i = 0; i < 256; i++) m_pSaveLevels[i] = static_cast<uint8_t>(0);
 
-		for (i=0;i<m_sNumLevels;i++)
-			{
+		for (i = 0; i < m_sNumLevels; i++)
+		{
 			// Use NULL as a code for opacity, 0 is hooked as transparent
-			m_pSaveLevels[m_pLevelOpacity[i]] = (i+1); // the zeroth level is implied!
-			}
+			m_pSaveLevels[m_pLevelOpacity[i]] = static_cast<uint8_t>(i + 1); // the zeroth level is implied!
+		}
 
 		// set ends as a default:
-		if (m_pSaveLevels[255] == 0) m_pSaveLevels[255] = m_sNumLevels+1;
+		if (m_pSaveLevels[255] == 0) m_pSaveLevels[255] = static_cast<uint8_t>(m_sNumLevels + 1);
 
 		int16_t sIndex = 0;
 		int16_t sBaseIndex = 0;
 		while (sIndex < 256)
-			{
+		{
 			if (m_pSaveLevels[sIndex] != 0)
-				{
-				if (sIndex - sBaseIndex > 1)
-					{
-					// fill in inbetween stuff
-					double dDelta = double(m_pSaveLevels[sIndex] - 
-						m_pSaveLevels[sBaseIndex]) / double(sIndex - sBaseIndex);
-					double dVal = double(m_pSaveLevels[sBaseIndex])+0.5;
-
-					for (int16_t j = sBaseIndex; j< sIndex;j++)
-						{
-						m_pSaveLevels[j] = uint8_t(dVal);
-						dVal += dDelta;
-						}
-					}
-				sBaseIndex = sIndex;
-				}
-			sIndex++;
-			}
-		// Now, link it up!
-		for (i=0;i<256;i++) 
 			{
-			if ((m_pSaveLevels[i]==0) || (m_pSaveLevels[i] > m_sNumLevels)) 
+				if (sIndex - sBaseIndex > 1)
+				{
+					// fill in inbetween stuff
+					double dDelta = double(m_pSaveLevels[sIndex] -
+						m_pSaveLevels[sBaseIndex]) / double(sIndex - sBaseIndex);
+					double dVal = double(m_pSaveLevels[sBaseIndex]) + 0.5;
+
+					for (int16_t j = sBaseIndex; j < sIndex; j++)
+					{
+						m_pSaveLevels[j] = static_cast<uint8_t>(dVal);
+						dVal += dDelta;
+					}
+				}
+				sBaseIndex = sIndex;
+			}
+			sIndex++;
+		}
+		// Now, link it up!
+		for (i = 0; i < 256; i++)
+		{
+			if ((m_pSaveLevels[i] == 0) || (m_pSaveLevels[i] > m_sNumLevels))
 				m_pGeneralAlpha[i] = NULL;
 			else m_pGeneralAlpha[i] = m_pAlphaList[m_pSaveLevels[i] - 1]->m_pAlphas;
-			}
 		}
+	}
 
 	return 0;
-	}
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // This is designed for getting an entire multialpha table into L2 cache.

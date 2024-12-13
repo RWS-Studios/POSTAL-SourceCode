@@ -349,183 +349,190 @@ static void locateCorrectCase(char *buf)
 }
 
 
-extern const char *FindCorrectFile(const char *_pszName, const char *pszMode)
+extern const char* FindCorrectFile(const char* _pszName, const char* pszMode)
 {
-    char *pszName = (char *) alloca(strlen(_pszName) + 1);
-    strcpy(pszName, _pszName);
+	char* pszName = (char*)alloca(strlen(_pszName) + 1);
+	strcpy_s(pszName, strlen(_pszName) + 1, _pszName);
 
-    static bool initialized = false;
-    static bool nohomedir = false;
-    static char prefpath[PATH_MAX];
-    if (!initialized)
-    {
-        TRACE("FindCorrectFile initializing...\n");
-        if (rspCommandLine("nohomedir"))
-        {
-            TRACE("--nohomedir is on the command line.\n");
-            nohomedir = true;
-        }
-        else
-        {
-            #ifdef WIN32
-            /*
-             * Vista and later has a new API for this, but SHGetFolderPath works there,
-             *  and apparently just wraps the new API. This is the new way to do it:
-             *
-             *     SHGetKnownFolderPath(FOLDERID_RoamingAppData, KF_FLAG_CREATE,
-             *                          NULL, &wszPath);
-             */
-            strcpy(prefpath, ".\\");  // a default for failure case.
+	static bool initialized = false;
+	static bool nohomedir = false;
+	static char prefpath[PATH_MAX];
+	if (!initialized)
+	{
+		TRACE("FindCorrectFile initializing...\n");
+		if (rspCommandLine("nohomedir"))
+		{
+			TRACE("--nohomedir is on the command line.\n");
+			nohomedir = true;
+		}
+		else
+		{
+#ifdef WIN32
+			/*
+			 * Vista and later has a new API for this, but SHGetFolderPath works there,
+			 *  and apparently just wraps the new API. This is the new way to do it:
+			 *
+			 *     SHGetKnownFolderPath(FOLDERID_RoamingAppData, KF_FLAG_CREATE,
+			 *                          NULL, &wszPath);
+			 */
+			strcpy_s(prefpath, ".\\");  // a default for failure case.
 
-            HMODULE lib = LoadLibraryA("Shell32.dll");
-            if (lib != NULL)
-            {
-                fnSHGetFolderPathW pSHGetFolderPathW = (fnSHGetFolderPathW) GetProcAddress(lib, "SHGetFolderPathW");
-                if (pSHGetFolderPathW != NULL)
-                {
-        			WCHAR path[MAX_PATH];
-                    if (SUCCEEDED(pSHGetFolderPathW(NULL, 0x001a/*CSIDL_APPDATA*/ | 0x8000/*CSIDL_FLAG_CREATE*/, NULL, 0, path)))
-                    {
-                        // !!! FIXME: screwed if there's a unicode path for now.
-                        snprintf(prefpath, sizeof (prefpath), "%S\\RunningWithScissors", (const wchar_t *) path);
-                        mkdir(prefpath);
-                        snprintf(prefpath, sizeof (prefpath), "%S\\RunningWithScissors\\Postal Plus", (const wchar_t *) path);
-                        mkdir(prefpath);
-                        snprintf(prefpath, sizeof (prefpath), "%S\\RunningWithScissors\\Postal Plus\\", (const wchar_t *) path);
-                    }
-                }
-                FreeLibrary(lib);
-            }
-            #elif defined(PLATFORM_MACOSX)
-            const char *homedir = getenv("HOME");
-            if ( (!homedir) || ((strlen(homedir) + 32) >= sizeof (prefpath)) )
-                homedir = "./";  // oh well.
+			HMODULE lib = LoadLibraryA("Shell32.dll");
+			if (lib != NULL)
+			{
+				fnSHGetFolderPathW pSHGetFolderPathW = (fnSHGetFolderPathW)GetProcAddress(lib, "SHGetFolderPathW");
+				if (pSHGetFolderPathW != NULL)
+				{
+					WCHAR path[MAX_PATH];
+					if (SUCCEEDED(pSHGetFolderPathW(NULL, 0x001a/*CSIDL_APPDATA*/ | 0x8000/*CSIDL_FLAG_CREATE*/, NULL, 0, path)))
+					{
+						// !!! FIXME: screwed if there's a unicode path for now.
+						_snprintf_s(prefpath, sizeof(prefpath), _TRUNCATE, "%S\\RunningWithScissors", (const wchar_t*)path);
+						_mkdir(prefpath);
+						_snprintf_s(prefpath, sizeof(prefpath), _TRUNCATE, "%S\\RunningWithScissors\\Postal Plus", (const wchar_t*)path);
+						_mkdir(prefpath);
+						_snprintf_s(prefpath, sizeof(prefpath), _TRUNCATE, "%S\\RunningWithScissors\\Postal Plus\\", (const wchar_t*)path);
+					}
 
-            strcpy(prefpath, homedir);
-            if (prefpath[strlen(prefpath)-1] != '/') strcat(prefpath, "/");
+				}
+				FreeLibrary(lib);
+			}
+#elif defined(PLATFORM_MACOSX)
+			const char* homedir = getenv("HOME");
+			if ((!homedir) || ((strlen(homedir) + 32) >= sizeof(prefpath)))
+				homedir = "./";  // oh well.
 
-            strcat(prefpath, "Library/Application Support/Postal Plus/");
-            #else
-            const char *homedir = getenv("HOME");
-            const char *xdghomedir = getenv("XDG_DATA_HOME");
-            const char *append = "";
+			strcpy_s(prefpath, homedir);
+			if (prefpath[strlen(prefpath) - 1] != '/') strcat(prefpath, "/");
 
-            if (xdghomedir == NULL)
-            {
-                if (homedir == NULL)
-                    xdghomedir = ".";  // oh well.
-                else
-                {
-                    xdghomedir = homedir;
-                    append = "/.local/share";
-                }
-            }
+			strcat(prefpath, "Library/Application Support/Postal Plus/");
+#else
+			const char* homedir = getenv("HOME");
+			const char* xdghomedir = getenv("XDG_DATA_HOME");
+			const char* append = "";
 
-            snprintf(prefpath, sizeof (prefpath), "%s%s/PostalPlus/", xdghomedir, append);
+			if (xdghomedir == NULL)
+			{
+				if (homedir == NULL)
+					xdghomedir = ".";  // oh well.
+				else
+				{
+					xdghomedir = homedir;
+					append = "/.local/share";
+				}
+			}
 
-            if (homedir != NULL)
-            {
-                char oldpath[PATH_MAX];
-                snprintf(oldpath, sizeof (oldpath), "%s/.postal1", homedir);
-                if (access(oldpath, F_OK) == 0)
-                {
-                    TRACE("using oldschool prefpath at \"%s\"\n", oldpath);
-                    snprintf(prefpath, sizeof (prefpath), "%s/", oldpath);
-                }
-            }
+			snprintf(prefpath, sizeof(prefpath), "%s%s/PostalPlus/", xdghomedir, append);
 
-            // try to make sure the dirs exist...
-            for (char *i = prefpath; *i; i++)
-            {
-                if (*i == '/')
-                {
-                    *i = '\0';
-                    mkdir(prefpath, 0700);
-                    *i = '/';
-                }
-            }
-            mkdir(prefpath, 0700);
-            #endif
+			if (homedir != NULL)
+			{
+				char oldpath[PATH_MAX];
+				snprintf(oldpath, sizeof(oldpath), "%s/.postal1", homedir);
+				if (access(oldpath, F_OK) == 0)
+				{
+					TRACE("using oldschool prefpath at \"%s\"\n", oldpath);
+					snprintf(prefpath, sizeof(prefpath), "%s/", oldpath);
+				}
+			}
 
-            TRACE("prefpath is \"%s\"\n", prefpath);
-        }
-        initialized = true;
-    }
+			// try to make sure the dirs exist...
+			for (char* i = prefpath; *i; i++)
+			{
+				if (*i == '/')
+				{
+					*i = '\0';
+					mkdir(prefpath, 0700);
+					*i = '/';
+				}
+			}
+			mkdir(prefpath, 0700);
+#endif
 
-    static char finalname[PATH_MAX];
-    static bool bail_early = true;
+			TRACE("prefpath is \"%s\"\n", prefpath);
+		}
+		initialized = true;
+	}
 
-    if (nohomedir)
-        strcpy(finalname, pszName);
+	static char finalname[PATH_MAX];
+	static bool bail_early = true;
 
-    else if ((strlen(pszName) + strlen(prefpath)) > sizeof (finalname))
-        strcpy(finalname, pszName); // oh well.
+	if (nohomedir)
+		strcpy_s(finalname, pszName);
 
-    else
-    {
-        bail_early = false;
-        sprintf(finalname, "%s%s", prefpath, pszName);
-    }
+	else if ((strlen(pszName) + strlen(prefpath)) > sizeof(finalname))
+		strcpy_s(finalname, pszName); // oh well.
 
-    locateCorrectCase(finalname);
+	else
+	{
+		bail_early = false;
+		sprintf_s(finalname, "%s%s", prefpath, pszName);
+	}
 
-    if (bail_early)  // don't choose between prefpath and basedir?
-        return(finalname);
+	locateCorrectCase(finalname);
 
-    // writing? Always use prefpath.
-    if (strcspn(pszMode, "aAwW+") < strlen(pszMode))
-    {
-        // build directories...
-        for (char *ptr = finalname; *ptr; ptr++)
-        {
-            if (((*ptr == '/') || (*ptr == '\\')) && (ptr != finalname))
-            {
-                *ptr = '\0';
-                if (access(finalname, F_OK) == -1)
-                {
-                    TRACE("Making directory \"%s\"\n", finalname);
-                    #ifdef WIN32
-                    mkdir(finalname);
-                    #else
-                    mkdir(finalname, S_IRWXU);
-                    #endif
-                }
-                *ptr = '/';
-            }
-        }
+	if (bail_early)  // don't choose between prefpath and basedir?
+		return (finalname);
 
-        // read AND write.  :/   Copy the file if it's not there.
-        if ((strchr(pszMode, '+')) && (access(finalname, F_OK) == -1))
-        {
-            FILE *in = fopen(pszName, "rb");
-            FILE *out = fopen(finalname, "wb");
-            if (in && out)
-            {
-                int ch = 0;
-                while (1)  // !!! FIXME: this is really lame.
-                {
-                    ch = fgetc(in);
-                    if (ch == EOF) break;
-                    fputc(ch, out);
-                }
-            }
-            if (in) fclose(in);
-            if (out) fclose(out);
-        }
+	// writing? Always use prefpath.
+	if (strcspn(pszMode, "aAwW+") < strlen(pszMode))
+	{
+		// build directories...
+		for (char* ptr = finalname; *ptr; ptr++)
+		{
+			if (((*ptr == '/') || (*ptr == '\\')) && (ptr != finalname))
+			{
+				*ptr = '\0';
+				if (_access(finalname, F_OK) == -1)
+				{
+					TRACE("Making directory \"%s\"\n", finalname);
+#ifdef WIN32
+					_mkdir(finalname);
+#else
+					mkdir(finalname, S_IRWXU);
+#endif
+				}
+				*ptr = '/';
+			}
+		}
 
-        return finalname;
-    }
 
-    else  // reading.
-    {
-        if (access(finalname, R_OK) == -1)  // favor prefpath?
-        {
-            strcpy(finalname, pszName); // nope, use original name.
-            locateCorrectCase(finalname);
-        }
-    }
+		// read AND write.  :/   Copy the file if it's not there.
+		if ((strchr(pszMode, '+')) && (_access(finalname, F_OK) == -1))
+		{
+			FILE* in;
+			FILE* out;
+			errno_t err_in = fopen_s(&in, pszName, "rb");
+			errno_t err_out = fopen_s(&out, finalname, "wb");
 
-    return finalname;
+			if (err_in == 0 && err_out == 0 && in && out)
+			{
+				int ch = 0;
+				while (1)  // !!! FIXME: this is really lame.
+				{
+					ch = fgetc(in);
+					if (ch == EOF) break;
+					fputc(ch, out);
+				}
+			}
+			if (in) fclose(in);
+			if (out) fclose(out);
+		}
+
+
+		return finalname;
+	}
+
+	else  // reading.
+	{
+		if (_access(finalname, R_OK) == -1)  // favor prefpath?
+		{
+			strcpy_s(finalname, pszName); // nope, use original name.
+			locateCorrectCase(finalname);
+		}
+	}
+
+
+	return finalname;
 }
 
 
@@ -536,125 +543,126 @@ extern const char *FindCorrectFile(const char *_pszName, const char *pszMode)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RFile::Open(		// Returns 0 on success.
-	const char* pszFileName,	// Filename to open.
-	const char* pszFlags,		// fopen flags to use for opening.
-	Endian endian,			// { BigEndian | LittleEndian | NeutralEndian }.
-	Flags flags)			// See comments in Typedefs & Enums section in .h.
-	{
-	int16_t	sRes	= 0;	// Assume success.
+int16_t RFile::Open(        // Returns 0 on success.
+	const char* pszFileName, // Filename to open.
+	const char* pszFlags,    // fopen flags to use for opening.
+	Endian endian,           // { BigEndian | LittleEndian | NeutralEndian }.
+	Flags flags)             // See comments in Typedefs & Enums section in .h.
+{
+	int16_t sRes = 0;  // Assume success.
 	// If not already open . . .
 	if (m_fs == NULL && m_pucFile == NULL)
-		{
-		int16_t sOpen	= TRUE;
+	{
+		int16_t sOpen = TRUE;
 
 		// Store flags for this file.
 		// Make sure Ascii and Binary are not both specified.
-		ASSERT( (flags & (Ascii | Binary)) != (Ascii | Binary) );
+		ASSERT((flags & (Ascii | Binary)) != (Ascii | Binary));
 		// Make sure either Ascii or Binary is specified.
-		ASSERT( (flags & (Ascii | Binary)) != 0);
+		ASSERT((flags & (Ascii | Binary)) != 0);
 
-		m_flags	= flags;
-		
+		m_flags = flags;
+
 		// If hook defined . . .
 		if (ms_hOpen != NULL)
-			{
+		{
 			// If not re-entered . . .
 			if (m_sOpenSem == 0)
-				{
+			{
 				m_sOpenSem++;
-				
+
 				sOpen = (*ms_hOpen)(this, pszFileName, pszFlags, endian, ms_lOpenUser);
-				
+
 				m_sOpenSem--;
-				}
 			}
+		}
 
 		// If no hook or hook told use to continue as normal . . .
 		if (sOpen == TRUE)
-			{
+		{
 			// Set endian type.
 			SetEndian(endian);
 
 			// Attempt to open file.
-			m_fs	= fopen(FindCorrectFile(pszFileName, pszFlags), pszFlags);
+			errno_t err = fopen_s(&m_fs, FindCorrectFile(pszFileName, pszFlags), pszFlags);
 			// If successful . . .
-			if (m_fs != NULL)
-				{
+			if (err == 0 && m_fs != NULL)
+			{
 				// Attempt to set a better buffer size
 				int setres = 0;
-				#if 0
-					size_t bufsize = BUFSIZ;
-					if (bufsize < 16384)
-						bufsize = (16384 / BUFSIZ) * BUFSIZ;
-					setres = setvbuf(m_fs, NULL, _IOFBF, bufsize);
-				#endif
+#if 0
+				size_t bufsize = BUFSIZ;
+				if (bufsize < 16384)
+					bufsize = (16384 / BUFSIZ) * BUFSIZ;
+				setres = setvbuf(m_fs, NULL, _IOFBF, bufsize);
+#endif
 				if (setres == 0)
-					{
-					// Success.
-					#ifdef ALLOW_RFILE_REOPEN
-						// Store file flags.
-						ASSERT(strlen(pszFlags) < sizeof(m_szFlags));
-						strcpy(m_szFlags, pszFlags);
-						
-						// Store file name.
-						ASSERT(strlen(pszFileName) < sizeof(m_szFileName));
-						strcpy(m_szFileName, pszFileName);
-
-						// Update access.
-						m_lLastAccess		= Blu_GetTime();
-						// Connected.
-						m_sDisconnected	= FALSE;
-
-						// Add to open list.
-						if (ms_listOpen.Add(this) == 0)
-							{
-							}
-						else
-							{
-							TRACE("Open(\"%s\", \"%s\", %s): Unable to add to open list.\n",
-									pszFileName, pszFlags, 
-									ms_apszEndian[endian]);
-							sRes = -3;
-							}
-					#endif // ALLOW_RFILE_REOPEN
-					}
-				else
-					{
-					TRACE("Open(\"%s\", \"%s\", %s): Error returned by setvbuf()!\n",
-							pszFileName, pszFlags, 
-							ms_apszEndian[endian]);
-					sRes = -5; // Is there any REAL sense to these error numbers???
-					}
-
-				// If an error occurrs after fopen . . .
-				if (sRes != 0)
-					{
-					fclose(m_fs);
-					m_fs	= NULL;
-					}
-				}
-			else
 				{
-#ifdef FILE_VERBOSE
-				TRACE("Open(\"%s\", \"%s\", %s): Unable to open file.\n",
-						pszFileName, pszFlags, 
+					// Success.
+#ifdef ALLOW_RFILE_REOPEN
+	// Store file flags.
+					ASSERT(strlen(pszFlags) < sizeof(m_szFlags));
+					strcpy_s(m_szFlags, pszFlags);
+
+					// Store file name.
+					ASSERT(strlen(pszFileName) < sizeof(m_szFileName));
+					strcpy_s(m_szFileName, pszFileName);
+
+					// Update access.
+					m_lLastAccess = Blu_GetTime();
+					// Connected.
+					m_sDisconnected = FALSE;
+
+					// Add to open list.
+					if (ms_listOpen.Add(this) == 0)
+					{
+					}
+					else
+					{
+						TRACE("Open(\"%s\", \"%s\", %s): Unable to add to open list.\n",
+							pszFileName, pszFlags,
+							ms_apszEndian[endian]);
+						sRes = -3;
+					}
+#endif // ALLOW_RFILE_REOPEN
+				}
+				else
+				{
+					TRACE("Open(\"%s\", \"%s\", %s): Error returned by setvbuf()!\n",
+						pszFileName, pszFlags,
 						ms_apszEndian[endian]);
-#endif // FILE_VERBOSE
-				sRes = -1;
+					sRes = -5; // Is there any REAL sense to these error numbers???
+				}
+
+				// If an error occurs after fopen_s . . .
+				if (sRes != 0)
+				{
+					fclose(m_fs);
+					m_fs = NULL;
 				}
 			}
+			else
+			{
+#ifdef FILE_VERBOSE
+				TRACE("Open(\"%s\", \"%s\", %s): Unable to open file.\n",
+					pszFileName, pszFlags,
+					ms_apszEndian[endian]);
+#endif // FILE_VERBOSE
+				sRes = -1;
+			}
 		}
+	}
 	else
-		{
+	{
 		TRACE("Open(\"%s\", \"%s\", %s): File already open.\n",
-				pszFileName, pszFlags,
-				ms_apszEndian[endian]);
+			pszFileName, pszFlags,
+			ms_apszEndian[endian]);
 		sRes = -2;
-		}
+	}
 
 	return sRes;
-	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -1041,50 +1049,50 @@ int32_t RFile::Read(void* pData, int32_t lNum)
 //
 //////////////////////////////////////////////////////////////////////////////
 template <
-	class TYPE>			// Type for storing and overflow checking.
-inline					// Speed.
-int32_t ReadASCII(		// Returns number of complete TYPE items successfully read 
-							// and stored.
-	TYPE*		ptData,	// Out: Pointer to array of TYPE items for read data.
-	int32_t		lNum,		// In:  Number of TYPE items to read.
-	FILE*		pfsIn,	// In:  File stream to use for input.
-	double	dMax)		// In:  Maximum value for this type.
-	{
-	int32_t	lRes	= 0;	// Assume success.
+	class TYPE>            // Type for storing and overflow checking.
+inline                    // Speed.
+int32_t ReadASCII(        // Returns number of complete TYPE items successfully read and stored.
+	TYPE* ptData,     // Out: Pointer to array of TYPE items for read data.
+	int32_t     lNum,       // In:  Number of TYPE items to read.
+	FILE* pfsIn,  // In:  File stream to use for input.
+	double  dMax)       // In:  Maximum value for this type.
+{
+	int32_t lRes = 0;   // Assume success.
 
 	// Temp var to read into.
-	double	dTemp;
+	double dTemp;
 	while (lNum--)
+	{
+		if (fscanf_s(pfsIn, " %le", &dTemp) == 1)
 		{
-		if (fscanf(pfsIn, " %le", &dTemp) == 1)
-			{
 			// Successfully read an item.
-			
+
 			// Check size . . .
 			if (ABS(dTemp) < dMax)
-				{
+			{
 				// Within range.  Store.
-				*ptData++	= (TYPE)dTemp;
+				*ptData++ = (TYPE)dTemp;
 				// Increment number stored.
 				lRes++;
-				}
+			}
 			else
-				{
+			{
 				TRACE("ReadASCII(): Read %le which does not fit into item of size %u bits.\n",
 					dTemp, sizeof(TYPE) * 8);
 				break;
-				}
 			}
+		}
 		else
-			{
+		{
 			TRACE("ReadASCII(): Failed to read numeric of size %u bits.\n",
 				sizeof(TYPE) * 8);
 			break;
-			}
 		}
+	}
 
 	return lRes;
-	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 //

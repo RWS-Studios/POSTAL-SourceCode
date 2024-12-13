@@ -242,23 +242,24 @@ inline bool rspObjCmp(const T* p1, const T* p2, size_t count)
 	}
 
 
-inline char *ltoa(int32_t l, char *buf, int bufsize)
+inline char* ltoa(int32_t l, char* buf, int bufsize)
 {
-    snprintf(buf, bufsize, "%ld", l);
-    return(buf);
+	_snprintf_s(buf, bufsize, _TRUNCATE, "%ld", l);
+	return(buf);
 }
 
-inline char *ltoa(uint32_t l, char *buf, int bufsize)
+inline char* ltoa(uint32_t l, char* buf, int bufsize)
 {
-    snprintf(buf, bufsize, "%ld", l);
-    return(buf);
+	_snprintf_s(buf, bufsize, _TRUNCATE, "%ld", l);
+	return(buf);
 }
 
-inline char *itoa(int l, char *buf, int bufsize)
+inline char* itoa(int l, char* buf, int bufsize)
 {
-    snprintf(buf, bufsize, "%d", l);
-    return(buf);
+	_snprintf_s(buf, bufsize, _TRUNCATE, "%d", l);
+	return(buf);
 }
+
 
 #define strnicmp(x, y, z) strncasecmp(x, y, z)
 #define _ltoa(x, y, z) ltoa(x, y, z)

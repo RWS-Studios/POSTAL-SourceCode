@@ -181,15 +181,16 @@ int16_t MTaskAddFunc(void* pFunction, char* pszFuncName, int16_t sStackSize)
 		plNewStack = (int32_t*) calloc(sLongElements, 4);
 		if (plNewStack)
 		{
-			plNewStack[sLongElements-1] = (int32_t) MTaskReturnCatcher;
-			plNewStack[sLongElements-2] = (int32_t) pFunction;
-			plNewStack[sLongElements-3] = 0; //bp
+			plNewStack[sLongElements - 1] = (int32_t)MTaskReturnCatcher;
+			plNewStack[sLongElements - 2] = (int32_t)pFunction;
+			plNewStack[sLongElements - 3] = 0; //bp
 
 			ptiNewTask->plStackAddress = plNewStack;
-			ptiNewTask->plSP = (plNewStack + (sLongElements-3));
-			ptiNewTask->pszFunctionName = (char*) calloc(sizeof(pszFuncName), 1);
-			strcpy(ptiNewTask->pszFunctionName, pszFuncName);
+			ptiNewTask->plSP = (plNewStack + (sLongElements - 3));
+			ptiNewTask->pszFunctionName = (char*)calloc(strlen(pszFuncName) + 1, 1);
+			strcpy_s(ptiNewTask->pszFunctionName, strlen(pszFuncName) + 1, pszFuncName);
 		}
+
 		else
 		{
 			TRACE("MTaskAdd - Error allocating stack for new task\n");

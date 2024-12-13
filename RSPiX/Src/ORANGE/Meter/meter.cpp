@@ -108,39 +108,35 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 RMeter::RMeter()
-	{
-	m_lCurVal				= 0L;		// Value for next draw.      
-	m_lStartPeriod			= 0L;		// Start period.             
-	strcpy(m_szUnit, "");			// Unit of measurement text. 
-	m_lMin					= 0L;		// Minimum value.            
-	m_lMax					= 100L;	// Maximum value.            
-	m_dtType					= (DisplayType)(rand() % NumDisplayTypes);	// Type of meter display.
-	m_itType					= (InfoType)(rand() % NumInfoTypes);			// Type of meter info.
-	m_u32Meter				= RSP_WHITE_INDEX;	// Meter color.              
-	m_u32Needle				= RSP_BLACK_INDEX;	// Needle, bar, etc. color.  
-	m_u32Overflow			= RSP_BLACK_INDEX;	// Needle color for over/underflow.	
+{
+	m_lCurVal = 0L;           // Value for next draw.      
+	m_lStartPeriod = 0L;      // Start period.             
+	strcpy_s(m_szUnit, sizeof(m_szUnit), "");    // Unit of measurement text. 
+	m_lMin = 0L;              // Minimum value.            
+	m_lMax = 100L;            // Maximum value.            
+	m_dtType = (DisplayType)(rand() % NumDisplayTypes); // Type of meter display.
+	m_itType = (InfoType)(rand() % NumInfoTypes);       // Type of meter info.
+	m_u32Meter = RSP_WHITE_INDEX;    // Meter color.              
+	m_u32Needle = RSP_BLACK_INDEX;   // Needle, bar, etc. color.  
+	m_u32Overflow = RSP_BLACK_INDEX; // Needle color for over/underflow.    
 
-	m_lDuration				= 100;		// Time between updates in milliseconds.
-	m_lNextUpdate			= 0;			// Time of next update in 
-												// milliseconds.
-	m_lCurTotal				= 0;			// Current total.
-	m_lNumValues			= 0;			// Number of values since
-												// total was last cleared.
-	m_lMaxValue				= INIT_MAX;	// Maximum value since
-												// total was last cleared.
-	m_lMinValue				= INIT_MIN;	// Minimum value since
-												// total was last cleared.
+	m_lDuration = 100;        // Time between updates in milliseconds.
+	m_lNextUpdate = 0;        // Time of next update in milliseconds.
+	m_lCurTotal = 0;          // Current total.
+	m_lNumValues = 0;         // Number of values since total was last cleared.
+	m_lMaxValue = INIT_MAX;   // Maximum value since total was last cleared.
+	m_lMinValue = INIT_MIN;   // Minimum value since total was last cleared.
 
-	m_lQIndex				= 0;		// Index for histogram history queue.
+	m_lQIndex = 0;            // Index for histogram history queue.
 	memset(m_asQHistory, 0, sizeof(m_asQHistory));
 
 	// Override RGuiItem's default justification.
-	m_justification		= RGuiItem::Centered;
+	m_justification = RGuiItem::Centered;
 
 	m_guiMeter.SetParent(this);
-	m_guiMeter.m_bcUser				= BtnCall;
-	m_guiMeter.m_ulUserInstance	= (U64)this;
-	}
+	m_guiMeter.m_bcUser = BtnCall;
+	m_guiMeter.m_ulUserInstance = (U64)this;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -324,17 +320,18 @@ int16_t RMeter::Draw(					// Returns 0 on success.
 				int32_t	lVal	= lAvg;
 				char	szExtra[32]	= "";
 				switch (m_itType)
-					{
-					case Value:
-						break;
-					case Percentage:
-						lVal	= ((lVal - m_lMin) * 100) / (m_lMax - m_lMin);
-						strcpy(szExtra, "%");
-						break;
-					default:
-						TRACE("Draw(): Invalid info type.\n");
-						break;
-					}
+				{
+				case Value:
+					break;
+				case Percentage:
+					lVal = ((lVal - m_lMin) * 100) / (m_lMax - m_lMin);
+					strcpy_s(szExtra, sizeof(szExtra), "%");
+					break;
+				default:
+					TRACE("Draw(): Invalid info type.\n");
+					break;
+				}
+
 				
 				// If digital . . .
 				if (m_dtType == Digital)

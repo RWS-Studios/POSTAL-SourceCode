@@ -406,43 +406,43 @@ void	RPrint::DrawText()
 	}
 
 // Attempting to pass on
-char* RPrint::print(char* pszFormat,...)
-	{
+char* RPrint::print(char* pszFormat, ...)
+{
 	//char szInput[4096];
 
 	va_list vararg;
-	
-	va_start(vararg,pszFormat);
-	vsprintf(ms_szInput,pszFormat,vararg);
+
+	va_start(vararg, pszFormat);
+	vsprintf_s(ms_szInput, sizeof(ms_szInput), pszFormat, vararg); // Use vsprintf_s with buffer size
 
 	return printInt(ms_szInput);
-	}
+}
 
 // Attempting to pass on
-char* RPrint::print(int16_t sX,int16_t sY,char* pszFormat,...)
-	{
+char* RPrint::print(int16_t sX, int16_t sY, char* pszFormat, ...)
+{
 	//char szInput[4096];
 
 	va_list vararg;
-	
-	va_start(vararg,pszFormat);
-	vsprintf(ms_szInput,pszFormat,vararg);
+
+	va_start(vararg, pszFormat);
+	vsprintf_s(ms_szInput, sizeof(ms_szInput), pszFormat, vararg); // Use vsprintf_s with buffer size
 
 	m_sCurX = sX;
 	m_sCurY = sY;
 
 	return printInt(ms_szInput);
-	}
+}
 
 // Attempting to pass on
-char* RPrint::print(RImage* pimDst,int16_t sX,int16_t sY,char* pszFormat,...)
-	{
+char* RPrint::print(RImage* pimDst, int16_t sX, int16_t sY, char* pszFormat, ...)
+{
 	//char szInput[4096];
 
 	va_list vararg;
-	
-	va_start(vararg,pszFormat);
-	vsprintf(ms_szInput,pszFormat,vararg);
+
+	va_start(vararg, pszFormat);
+	vsprintf_s(ms_szInput, sizeof(ms_szInput), pszFormat, vararg); // Use vsprintf_s with buffer size
 
 	m_sCurX = sX;
 	m_sCurY = sY;
@@ -450,7 +450,7 @@ char* RPrint::print(RImage* pimDst,int16_t sX,int16_t sY,char* pszFormat,...)
 	SetDestination(pimDst);
 
 	return printInt(ms_szInput);
-	}
+}
 
 // returns null if sucessful.
 // Points to the character to start printing the
