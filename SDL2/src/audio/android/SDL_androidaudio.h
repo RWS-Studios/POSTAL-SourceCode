@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,22 +18,24 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
-#ifndef _SDL_androidaudio_h
-#define _SDL_androidaudio_h
+#ifndef SDL_androidaudio_h_
+#define SDL_androidaudio_h_
 
 #include "../SDL_sysaudio.h"
 
 /* Hidden "this" pointer for the audio functions */
-#define _THIS   SDL_AudioDevice *this
+#define _THIS SDL_AudioDevice *this
 
 struct SDL_PrivateAudioData
 {
+    int unused;
 };
 
-static void AndroidAUD_CloseDevice(_THIS);
+void ANDROIDAUDIO_ResumeDevices(void);
+void ANDROIDAUDIO_PauseDevices(void);
 
-#endif /* _SDL_androidaudio_h */
+#endif /* SDL_androidaudio_h_ */
 
 /* vi: set ts=4 sw=4 expandtab: */

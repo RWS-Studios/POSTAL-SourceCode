@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,9 +18,11 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
-#if SDL_AUDIO_DRIVER_FUSIONSOUND
+#ifdef SDL_AUDIO_DRIVER_FUSIONSOUND
+
+/* !!! FIXME: why is this is SDL_FS_* instead of FUSIONSOUND_*? */
 
 /* Allow access to a raw mixing buffer */
 
@@ -31,7 +33,6 @@
 
 #include "SDL_timer.h"
 #include "SDL_audio.h"
-#include "../SDL_audiomem.h"
 #include "../SDL_audio_c.h"
 #include "SDL_fsaudio.h"
 
@@ -76,23 +77,21 @@ static struct
 
 #undef SDL_FS_SYM
 
-static void
-UnloadFusionSoundLibrary()
+static void UnloadFusionSoundLibrary(void)
 {
-    if (fs_handle != NULL) {
+    if (fs_handle) {
         SDL_UnloadObject(fs_handle);
         fs_handle = NULL;
     }
 }
 
-static int
-LoadFusionSoundLibrary(void)
+static int LoadFusionSoundLibrary(void)
 {
     int i, retval = -1;
 
-    if (fs_handle == NULL) {
+    if (!fs_handle) {
         fs_handle = SDL_LoadObject(fs_library);
-        if (fs_handle != NULL) {
+        if (fs_handle) {
             retval = 0;
             for (i = 0; i < SDL_arraysize(fs_functions); ++i) {
                 *fs_functions[i].func =
@@ -111,14 +110,12 @@ LoadFusionSoundLibrary(void)
 
 #else
 
-static void
-UnloadFusionSoundLibrary()
+static void UnloadFusionSoundLibrary(void)
 {
     return;
 }
 
-static int
-LoadFusionSoundLibrary(void)
+static int LoadFusionSoundLibrary(void)
 {
     return 0;
 }
@@ -126,15 +123,13 @@ LoadFusionSoundLibrary(void)
 #endif /* SDL_AUDIO_DRIVER_FUSIONSOUND_DYNAMIC */
 
 /* This function waits until it is possible to write a full sound buffer */
-static void
-SDL_FS_WaitDevice(_THIS)
+static void SDL_FS_WaitDevice(_THIS)
 {
     this->hidden->stream->Wait(this->hidden->stream,
                                this->hidden->mixsamples);
 }
 
-static void
-SDL_FS_PlayDevice(_THIS)
+static void SDL_FS_PlayDevice(_THIS)
 {
     DirectResult ret;
 
@@ -143,111 +138,81 @@ SDL_FS_PlayDevice(_THIS)
                                       this->hidden->mixsamples);
     /* If we couldn't write, assume fatal error for now */
     if (ret) {
-        this->enabled = 0;
+        SDL_OpenedAudioDeviceDisconnected(this);
     }
 #ifdef DEBUG_AUDIO
     fprintf(stderr, "Wrote %d bytes of audio data\n", this->hidden->mixlen);
 #endif
 }
 
-static void
-SDL_FS_WaitDone(_THIS)
-{
-    this->hidden->stream->Wait(this->hidden->stream,
-                               this->hidden->mixsamples * FUSION_BUFFERS);
-}
 
-
-static Uint8 *
-SDL_FS_GetDeviceBuf(_THIS)
+static Uint8 *SDL_FS_GetDeviceBuf(_THIS)
 {
     return (this->hidden->mixbuf);
 }
 
 
-static void
-SDL_FS_CloseDevice(_THIS)
+static void SDL_FS_CloseDevice(_THIS)
 {
-    if (this->hidden != NULL) {
-        SDL_FreeAudioMem(this->hidden->mixbuf);
-        this->hidden->mixbuf = NULL;
-        if (this->hidden->stream) {
-            this->hidden->stream->Release(this->hidden->stream);
-            this->hidden->stream = NULL;
-        }
-        if (this->hidden->fs) {
-            this->hidden->fs->Release(this->hidden->fs);
-            this->hidden->fs = NULL;
-        }
-        SDL_free(this->hidden);
-        this->hidden = NULL;
+    if (this->hidden->stream) {
+        this->hidden->stream->Release(this->hidden->stream);
     }
+    if (this->hidden->fs) {
+        this->hidden->fs->Release(this->hidden->fs);
+    }
+    SDL_free(this->hidden->mixbuf);
+    SDL_free(this->hidden);
 }
 
 
-static int
-SDL_FS_OpenDevice(_THIS, const char *devname, int iscapture)
+static int SDL_FS_OpenDevice(_THIS, const char *devname)
 {
     int bytes;
-    SDL_AudioFormat test_format = 0, format = 0;
+    SDL_AudioFormat test_format;
     FSSampleFormat fs_format;
     FSStreamDescription desc;
     DirectResult ret;
 
     /* Initialize all variables that we clean on shutdown */
-    this->hidden = (struct SDL_PrivateAudioData *)
-        SDL_malloc((sizeof *this->hidden));
-    if (this->hidden == NULL) {
+    this->hidden = (struct SDL_PrivateAudioData *)SDL_malloc(sizeof(*this->hidden));
+    if (!this->hidden) {
         return SDL_OutOfMemory();
     }
-    SDL_memset(this->hidden, 0, (sizeof *this->hidden));
+    SDL_zerop(this->hidden);
 
     /* Try for a closest match on audio format */
-    for (test_format = SDL_FirstAudioFormat(this->spec.format);
-         !format && test_format;) {
+    for (test_format = SDL_FirstAudioFormat(this->spec.format); test_format; test_format = SDL_NextAudioFormat()) {
 #ifdef DEBUG_AUDIO
         fprintf(stderr, "Trying format 0x%4.4x\n", test_format);
 #endif
         switch (test_format) {
         case AUDIO_U8:
             fs_format = FSSF_U8;
-            bytes = 1;
-            format = 1;
             break;
         case AUDIO_S16SYS:
             fs_format = FSSF_S16;
-            bytes = 2;
-            format = 1;
             break;
         case AUDIO_S32SYS:
             fs_format = FSSF_S32;
-            bytes = 4;
-            format = 1;
             break;
         case AUDIO_F32SYS:
             fs_format = FSSF_FLOAT;
-            bytes = 4;
-            format = 1;
             break;
         default:
-            format = 0;
-            break;
+            continue;
         }
-        if (!format) {
-            test_format = SDL_NextAudioFormat();
-        }
+        break;
     }
 
-    if (format == 0) {
-        SDL_FS_CloseDevice(this);
-        return SDL_SetError("Couldn't find any hardware audio formats");
+    if (!test_format) {
+        return SDL_SetError("%s: Unsupported audio format", "fusionsound");
     }
     this->spec.format = test_format;
+    bytes = SDL_AUDIO_BITSIZE(test_format) / 8;
 
     /* Retrieve the main sound interface. */
     ret = SDL_NAME(FusionSoundCreate) (&this->hidden->fs);
     if (ret) {
-        SDL_FS_CloseDevice(this);
         return SDL_SetError("Unable to initialize FusionSound: %d", ret);
     }
 
@@ -266,7 +231,6 @@ SDL_FS_OpenDevice(_THIS, const char *devname, int iscapture)
         this->hidden->fs->CreateStream(this->hidden->fs, &desc,
                                        &this->hidden->stream);
     if (ret) {
-        SDL_FS_CloseDevice(this);
         return SDL_SetError("Unable to create FusionSoundStream: %d", ret);
     }
 
@@ -285,9 +249,8 @@ SDL_FS_OpenDevice(_THIS, const char *devname, int iscapture)
 
     /* Allocate mixing buffer */
     this->hidden->mixlen = this->spec.size;
-    this->hidden->mixbuf = (Uint8 *) SDL_AllocAudioMem(this->hidden->mixlen);
-    if (this->hidden->mixbuf == NULL) {
-        SDL_FS_CloseDevice(this);
+    this->hidden->mixbuf = (Uint8 *) SDL_malloc(this->hidden->mixlen);
+    if (!this->hidden->mixbuf) {
         return SDL_OutOfMemory();
     }
     SDL_memset(this->hidden->mixbuf, this->spec.silence, this->spec.size);
@@ -297,18 +260,16 @@ SDL_FS_OpenDevice(_THIS, const char *devname, int iscapture)
 }
 
 
-static void
-SDL_FS_Deinitialize(void)
+static void SDL_FS_Deinitialize(void)
 {
     UnloadFusionSoundLibrary();
 }
 
 
-static int
-SDL_FS_Init(SDL_AudioDriverImpl * impl)
+static SDL_bool SDL_FS_Init(SDL_AudioDriverImpl * impl)
 {
     if (LoadFusionSoundLibrary() < 0) {
-        return 0;
+        return SDL_FALSE;
     } else {
         DirectResult ret;
 
@@ -318,7 +279,7 @@ SDL_FS_Init(SDL_AudioDriverImpl * impl)
             SDL_SetError
                 ("FusionSound: SDL_FS_init failed (FusionSoundInit: %d)",
                  ret);
-            return 0;
+            return SDL_FALSE;
         }
     }
 
@@ -328,16 +289,15 @@ SDL_FS_Init(SDL_AudioDriverImpl * impl)
     impl->WaitDevice = SDL_FS_WaitDevice;
     impl->GetDeviceBuf = SDL_FS_GetDeviceBuf;
     impl->CloseDevice = SDL_FS_CloseDevice;
-    impl->WaitDone = SDL_FS_WaitDone;
     impl->Deinitialize = SDL_FS_Deinitialize;
-    impl->OnlyHasDefaultOutputDevice = 1;
+    impl->OnlyHasDefaultOutputDevice = SDL_TRUE;
 
-    return 1;   /* this audio target is available. */
+    return SDL_TRUE;   /* this audio target is available. */
 }
 
 
 AudioBootStrap FUSIONSOUND_bootstrap = {
-    "fusionsound", "FusionSound", SDL_FS_Init, 0
+    "fusionsound", "FusionSound", SDL_FS_Init, SDL_FALSE
 };
 
 #endif /* SDL_AUDIO_DRIVER_FUSIONSOUND */

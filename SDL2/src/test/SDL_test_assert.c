@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -30,39 +30,21 @@
 #include "SDL_test.h"
 
 /* Assert check message format */
-const char *SDLTest_AssertCheckFormat = "Assert '%s': %s";
+#define SDLTEST_ASSERT_CHECK_FORMAT "Assert '%s': %s"
 
 /* Assert summary message format */
-const char *SDLTest_AssertSummaryFormat = "Assert Summary: Total=%d Passed=%d Failed=%d";
+#define SDLTEST_ASSERT_SUMMARY_FORMAT "Assert Summary: Total=%d Passed=%d Failed=%d"
 
 /* ! \brief counts the failed asserts */
-static Uint32 SDLTest_AssertsFailed = 0;
+static int SDLTest_AssertsFailed = 0;
 
 /* ! \brief counts the passed asserts */
-static Uint32 SDLTest_AssertsPassed = 0;
+static int SDLTest_AssertsPassed = 0;
 
 /*
  *  Assert that logs and break execution flow on failures (i.e. for harness errors).
  */
-void SDLTest_Assert(int assertCondition, const char *assertDescription, ...)
-{
-        va_list list;
-    char logMessage[SDLTEST_MAX_LOGMESSAGE_LENGTH];
-
-    /* Print assert description into a buffer */
-    SDL_memset(logMessage, 0, SDLTEST_MAX_LOGMESSAGE_LENGTH);
-    va_start(list, assertDescription);
-    SDL_vsnprintf(logMessage, SDLTEST_MAX_LOGMESSAGE_LENGTH - 1, assertDescription, list);
-    va_end(list);
-
-    /* Log, then assert and break on failure */
-    SDL_assert((SDLTest_AssertCheck(assertCondition, logMessage)));
-}
-
-/*
- * Assert that logs but does not break execution flow on failures (i.e. for test cases).
- */
-int SDLTest_AssertCheck(int assertCondition, const char *assertDescription, ...)
+void SDLTest_Assert(int assertCondition, SDL_PRINTF_FORMAT_STRING const char *assertDescription, ...)
 {
     va_list list;
     char logMessage[SDLTEST_MAX_LOGMESSAGE_LENGTH];
@@ -70,19 +52,34 @@ int SDLTest_AssertCheck(int assertCondition, const char *assertDescription, ...)
     /* Print assert description into a buffer */
     SDL_memset(logMessage, 0, SDLTEST_MAX_LOGMESSAGE_LENGTH);
     va_start(list, assertDescription);
-    SDL_vsnprintf(logMessage, SDLTEST_MAX_LOGMESSAGE_LENGTH - 1, assertDescription, list);
+    (void)SDL_vsnprintf(logMessage, SDLTEST_MAX_LOGMESSAGE_LENGTH - 1, assertDescription, list);
+    va_end(list);
+
+    /* Log, then assert and break on failure */
+    SDL_assert((SDLTest_AssertCheck(assertCondition, "%s", logMessage)));
+}
+
+/*
+ * Assert that logs but does not break execution flow on failures (i.e. for test cases).
+ */
+int SDLTest_AssertCheck(int assertCondition, SDL_PRINTF_FORMAT_STRING const char *assertDescription, ...)
+{
+    va_list list;
+    char logMessage[SDLTEST_MAX_LOGMESSAGE_LENGTH];
+
+    /* Print assert description into a buffer */
+    SDL_memset(logMessage, 0, SDLTEST_MAX_LOGMESSAGE_LENGTH);
+    va_start(list, assertDescription);
+    (void)SDL_vsnprintf(logMessage, SDLTEST_MAX_LOGMESSAGE_LENGTH - 1, assertDescription, list);
     va_end(list);
 
     /* Log pass or fail message */
-    if (assertCondition == ASSERT_FAIL)
-    {
+    if (assertCondition == ASSERT_FAIL) {
         SDLTest_AssertsFailed++;
-        SDLTest_LogError(SDLTest_AssertCheckFormat, logMessage, "Failed");
-    }
-    else
-    {
+        SDLTest_LogError(SDLTEST_ASSERT_CHECK_FORMAT, logMessage, "Failed");
+    } else {
         SDLTest_AssertsPassed++;
-        SDLTest_Log(SDLTest_AssertCheckFormat, logMessage, "Passed");
+        SDLTest_Log(SDLTEST_ASSERT_CHECK_FORMAT, logMessage, "Passed");
     }
 
     return assertCondition;
@@ -91,7 +88,7 @@ int SDLTest_AssertCheck(int assertCondition, const char *assertDescription, ...)
 /*
  * Explicitly passing Assert that logs (i.e. for test cases).
  */
-void SDLTest_AssertPass(const char *assertDescription, ...)
+void SDLTest_AssertPass(SDL_PRINTF_FORMAT_STRING const char *assertDescription, ...)
 {
     va_list list;
     char logMessage[SDLTEST_MAX_LOGMESSAGE_LENGTH];
@@ -99,18 +96,18 @@ void SDLTest_AssertPass(const char *assertDescription, ...)
     /* Print assert description into a buffer */
     SDL_memset(logMessage, 0, SDLTEST_MAX_LOGMESSAGE_LENGTH);
     va_start(list, assertDescription);
-    SDL_vsnprintf(logMessage, SDLTEST_MAX_LOGMESSAGE_LENGTH - 1, assertDescription, list);
+    (void)SDL_vsnprintf(logMessage, SDLTEST_MAX_LOGMESSAGE_LENGTH - 1, assertDescription, list);
     va_end(list);
 
-        /* Log pass message */
+    /* Log pass message */
     SDLTest_AssertsPassed++;
-    SDLTest_Log(SDLTest_AssertCheckFormat, logMessage, "Pass");
+    SDLTest_Log(SDLTEST_ASSERT_CHECK_FORMAT, logMessage, "Passed");
 }
 
 /*
  * Resets the assert summary counters to zero.
  */
-void SDLTest_ResetAssertSummary()
+void SDLTest_ResetAssertSummary(void)
 {
     SDLTest_AssertsPassed = 0;
     SDLTest_AssertsFailed = 0;
@@ -120,23 +117,20 @@ void SDLTest_ResetAssertSummary()
  * Logs summary of all assertions (total, pass, fail) since last reset
  * as INFO (failed==0) or ERROR (failed > 0).
  */
-void SDLTest_LogAssertSummary()
+void SDLTest_LogAssertSummary(void)
 {
-    Uint32 totalAsserts = SDLTest_AssertsPassed + SDLTest_AssertsFailed;
-    if (SDLTest_AssertsFailed == 0)
-    {
-        SDLTest_Log(SDLTest_AssertSummaryFormat, totalAsserts, SDLTest_AssertsPassed, SDLTest_AssertsFailed);
-    }
-    else
-    {
-        SDLTest_LogError(SDLTest_AssertSummaryFormat, totalAsserts, SDLTest_AssertsPassed, SDLTest_AssertsFailed);
+    int totalAsserts = SDLTest_AssertsPassed + SDLTest_AssertsFailed;
+    if (SDLTest_AssertsFailed == 0) {
+        SDLTest_Log(SDLTEST_ASSERT_SUMMARY_FORMAT, totalAsserts, SDLTest_AssertsPassed, SDLTest_AssertsFailed);
+    } else {
+        SDLTest_LogError(SDLTEST_ASSERT_SUMMARY_FORMAT, totalAsserts, SDLTest_AssertsPassed, SDLTest_AssertsFailed);
     }
 }
 
 /*
  * Converts the current assert state into a test result
  */
-int SDLTest_AssertSummaryToTestResult()
+int SDLTest_AssertSummaryToTestResult(void)
 {
     if (SDLTest_AssertsFailed > 0) {
         return TEST_RESULT_FAILED;
@@ -148,3 +142,5 @@ int SDLTest_AssertSummaryToTestResult()
         }
     }
 }
+
+/* vi: set ts=4 sw=4 expandtab: */

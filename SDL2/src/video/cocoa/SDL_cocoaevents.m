@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,48 +18,152 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
-#if SDL_VIDEO_DRIVER_COCOA
+#ifdef SDL_VIDEO_DRIVER_COCOA
+
 #include "SDL_timer.h"
 
 #include "SDL_cocoavideo.h"
 #include "../../events/SDL_events_c.h"
+#include "SDL_hints.h"
 
-#if !defined(UsrActivity) && defined(__LP64__) && !defined(__POWER__)
-/*
- * Workaround for a bug in the 10.5 SDK: By accident, OSService.h does
- * not include Power.h at all when compiling in 64bit mode. This has
- * been fixed in 10.6, but for 10.5, we manually define UsrActivity
- * to ensure compilation works.
- */
-#define UsrActivity 1
+/* This define was added in the 10.9 SDK. */
+#ifndef kIOPMAssertPreventUserIdleDisplaySleep
+#define kIOPMAssertPreventUserIdleDisplaySleep kIOPMAssertionTypePreventUserIdleDisplaySleep
 #endif
+#ifndef NSAppKitVersionNumber10_8
+#define NSAppKitVersionNumber10_8 1187
+#endif
+#ifndef MAC_OS_X_VERSION_10_12
+#define NSEventTypeApplicationDefined NSApplicationDefined
+#endif
+
+static SDL_Window *FindSDLWindowForNSWindow(NSWindow *win)
+{
+    SDL_Window *sdlwindow = NULL;
+    SDL_VideoDevice *device = SDL_GetVideoDevice();
+    if (device && device->windows) {
+        for (sdlwindow = device->windows; sdlwindow; sdlwindow = sdlwindow->next) {
+            NSWindow *nswindow = ((__bridge SDL_WindowData *) sdlwindow->driverdata).nswindow;
+            if (win == nswindow) {
+                return sdlwindow;
+            }
+        }
+    }
+
+    return sdlwindow;
+}
+
+@interface SDLApplication : NSApplication
+
+- (void)terminate:(id)sender;
+- (void)sendEvent:(NSEvent *)theEvent;
+
++ (void)registerUserDefaults;
+
+@end
+
+@implementation SDLApplication
+
+// Override terminate to handle Quit and System Shutdown smoothly.
+- (void)terminate:(id)sender
+{
+    SDL_SendQuit();
+}
+
+static SDL_bool s_bShouldHandleEventsInSDLApplication = SDL_FALSE;
+
+static void Cocoa_DispatchEvent(NSEvent *theEvent)
+{
+    SDL_VideoDevice *_this = SDL_GetVideoDevice();
+
+    switch ([theEvent type]) {
+        case NSEventTypeLeftMouseDown:
+        case NSEventTypeOtherMouseDown:
+        case NSEventTypeRightMouseDown:
+        case NSEventTypeLeftMouseUp:
+        case NSEventTypeOtherMouseUp:
+        case NSEventTypeRightMouseUp:
+        case NSEventTypeLeftMouseDragged:
+        case NSEventTypeRightMouseDragged:
+        case NSEventTypeOtherMouseDragged: /* usually middle mouse dragged */
+        case NSEventTypeMouseMoved:
+        case NSEventTypeScrollWheel:
+            Cocoa_HandleMouseEvent(_this, theEvent);
+            break;
+        case NSEventTypeKeyDown:
+        case NSEventTypeKeyUp:
+        case NSEventTypeFlagsChanged:
+            Cocoa_HandleKeyEvent(_this, theEvent);
+            break;
+        default:
+            break;
+    }
+}
+
+// Dispatch events here so that we can handle events caught by
+// nextEventMatchingMask in SDL, as well as events caught by other
+// processes (such as CEF) that are passed down to NSApp.
+- (void)sendEvent:(NSEvent *)theEvent
+{
+    if (s_bShouldHandleEventsInSDLApplication) {
+        Cocoa_DispatchEvent(theEvent);
+    }
+
+    [super sendEvent:theEvent];
+}
+
++ (void)registerUserDefaults
+{
+    NSDictionary *appDefaults = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                 [NSNumber numberWithBool:NO], @"AppleMomentumScrollSupported",
+                                 [NSNumber numberWithBool:NO], @"ApplePressAndHoldEnabled",
+                                 [NSNumber numberWithBool:YES], @"ApplePersistenceIgnoreState",
+                                 nil];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
+}
+
+@end // SDLApplication
 
 /* setAppleMenu disappeared from the headers in 10.4 */
 @interface NSApplication(NSAppleMenu)
 - (void)setAppleMenu:(NSMenu *)menu;
 @end
 
-@interface SDLAppDelegate : NSObject {
+@interface SDLAppDelegate : NSObject <NSApplicationDelegate> {
 @public
     BOOL seenFirstActivate;
 }
 
 - (id)init;
+- (void)localeDidChange:(NSNotification *)notification;
+- (BOOL)applicationSupportsSecureRestorableState:(NSApplication *)app;
 @end
 
 @implementation SDLAppDelegate : NSObject
 - (id)init
 {
     self = [super init];
-
     if (self) {
+        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+
         seenFirstActivate = NO;
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(focusSomeWindow:)
-                                                     name:NSApplicationDidBecomeActiveNotification
-                                                   object:nil];
+
+        [center addObserver:self
+                   selector:@selector(windowWillClose:)
+                       name:NSWindowWillCloseNotification
+                     object:nil];
+
+        [center addObserver:self
+                   selector:@selector(focusSomeWindow:)
+                       name:NSApplicationDidBecomeActiveNotification
+                     object:nil];
+
+        [center addObserver:self
+                   selector:@selector(localeDidChange:)
+                       name:NSCurrentLocaleDidChangeNotification
+                     object:nil];
     }
 
     return self;
@@ -67,38 +171,92 @@
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [super dealloc];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+
+    [center removeObserver:self name:NSWindowWillCloseNotification object:nil];
+    [center removeObserver:self name:NSApplicationDidBecomeActiveNotification object:nil];
+    [center removeObserver:self name:NSCurrentLocaleDidChangeNotification object:nil];
+
+    /* Remove our URL event handler only if we set it */
+    if ([NSApp delegate] == self) {
+        [[NSAppleEventManager sharedAppleEventManager]
+            removeEventHandlerForEventClass:kInternetEventClass
+                                 andEventID:kAEGetURL];
+    }
 }
 
-- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+- (void)windowWillClose:(NSNotification *)notification;
 {
-    SDL_SendQuit();
-    return NSTerminateCancel;
+    NSWindow *win = (NSWindow*)[notification object];
+
+    if (![win isKeyWindow]) {
+        return;
+    }
+
+    /* Don't do anything if this was not an SDL window that was closed */
+    if (FindSDLWindowForNSWindow(win) == NULL) {
+        return;
+    }
+
+    /* HACK: Make the next window in the z-order key when the key window is
+     * closed. The custom event loop and/or windowing code we have seems to
+     * prevent the normal behavior: https://bugzilla.libsdl.org/show_bug.cgi?id=1825
+     */
+
+    /* +[NSApp orderedWindows] never includes the 'About' window, but we still
+     * want to try its list first since the behavior in other apps is to only
+     * make the 'About' window key if no other windows are on-screen.
+     */
+    for (NSWindow *window in [NSApp orderedWindows]) {
+        if (window != win && [window canBecomeKeyWindow]) {
+            if (![window isOnActiveSpace]) {
+                continue;
+            }
+            [window makeKeyAndOrderFront:self];
+            return;
+        }
+    }
+
+    /* If a window wasn't found above, iterate through all visible windows in
+     * the active Space in z-order (including the 'About' window, if it's shown)
+     * and make the first one key.
+     */
+    for (NSNumber *num in [NSWindow windowNumbersWithOptions:0]) {
+        NSWindow *window = [NSApp windowWithWindowNumber:[num integerValue]];
+        if (window && window != win && [window canBecomeKeyWindow]) {
+            [window makeKeyAndOrderFront:self];
+            return;
+        }
+    }
 }
 
 - (void)focusSomeWindow:(NSNotification *)aNotification
 {
+    SDL_VideoDevice *device;
     /* HACK: Ignore the first call. The application gets a
      * applicationDidBecomeActive: a little bit after the first window is
      * created, and if we don't ignore it, a window that has been created with
-     * SDL_WINDOW_MINIZED will ~immediately be restored.
+     * SDL_WINDOW_MINIMIZED will ~immediately be restored.
      */
     if (!seenFirstActivate) {
         seenFirstActivate = YES;
         return;
     }
 
-    SDL_VideoDevice *device = SDL_GetVideoDevice();
-    if (device && device->windows)
-    {
+    /* Don't do anything if the application already has a key window
+     * that is not an SDL window.
+     */
+    if ([NSApp keyWindow] && FindSDLWindowForNSWindow([NSApp keyWindow]) == NULL) {
+        return;
+    }
+
+    device = SDL_GetVideoDevice();
+    if (device && device->windows) {
         SDL_Window *window = device->windows;
         int i;
-        for (i = 0; i < device->num_displays; ++i)
-        {
+        for (i = 0; i < device->num_displays; ++i) {
             SDL_Window *fullscreen_window = device->displays[i].fullscreen_window;
-            if (fullscreen_window)
-            {
+            if (fullscreen_window) {
                 if (fullscreen_window->flags & SDL_WINDOW_MINIMIZED) {
                     SDL_RestoreWindow(fullscreen_window);
                 }
@@ -114,33 +272,108 @@
     }
 }
 
+- (void)localeDidChange:(NSNotification *)notification;
+{
+    SDL_SendLocaleChangedEvent();
+}
+
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
-    return (BOOL)SDL_SendDropFile([filename UTF8String]);
+    return (BOOL)SDL_SendDropFile(NULL, [filename UTF8String]) && SDL_SendDropComplete(NULL);
 }
+
+- (void)applicationDidFinishLaunching:(NSNotification *)notification
+{
+    /* The menu bar of SDL apps which don't have the typical .app bundle
+     * structure fails to work the first time a window is created (until it's
+     * de-focused and re-focused), if this call is in Cocoa_RegisterApp instead
+     * of here. https://bugzilla.libsdl.org/show_bug.cgi?id=3051
+     */
+    if (!SDL_GetHintBoolean(SDL_HINT_MAC_BACKGROUND_APP, SDL_FALSE)) {
+        /* Get more aggressive for Catalina: activate the Dock first so we definitely reset all activation state. */
+        for (NSRunningApplication *i in [NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.apple.dock"]) {
+            [i activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+            break;
+        }
+        SDL_Delay(300);  /* !!! FIXME: this isn't right. */
+        [NSApp activateIgnoringOtherApps:YES];
+    }
+
+    /* If we call this before NSApp activation, macOS might print a complaint
+     * about ApplePersistenceIgnoreState. */
+    [SDLApplication registerUserDefaults];
+}
+
+- (void)handleURLEvent:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent
+{
+    NSString* path = [[event paramDescriptorForKeyword:keyDirectObject] stringValue];
+    SDL_SendDropFile(NULL, [path UTF8String]);
+    SDL_SendDropComplete(NULL);
+}
+
+- (BOOL)applicationSupportsSecureRestorableState:(NSApplication *)app
+{
+    // This just tells Cocoa that we didn't do any custom save state magic for the app,
+    // so the system is safe to use NSSecureCoding internally, instead of using unencrypted
+    // save states for backwards compatibility. If we don't return YES here, we'll get a
+    // warning on the console at startup:
+    //
+    // ```
+    // WARNING: Secure coding is not enabled for restorable state! Enable secure coding by implementing NSApplicationDelegate.applicationSupportsSecureRestorableState: and returning YES.
+    // ```
+    //
+    // More-detailed explanation:
+    // https://stackoverflow.com/questions/77283578/sonoma-and-nsapplicationdelegate-applicationsupportssecurerestorablestate/77320845#77320845
+    return YES;
+}
+
 @end
 
 static SDLAppDelegate *appDelegate = nil;
 
-static NSString *
-GetApplicationName(void)
+static NSString *GetApplicationName(void)
 {
-    NSDictionary *dict;
-    NSString *appName = 0;
+    NSString *appName;
 
     /* Determine the application name */
-    dict = (NSDictionary *)CFBundleGetInfoDictionary(CFBundleGetMainBundle());
-    if (dict)
-        appName = [dict objectForKey: @"CFBundleName"];
+    appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+    if (!appName) {
+        appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
+    }
 
-    if (![appName length])
+    if (![appName length]) {
         appName = [[NSProcessInfo processInfo] processName];
+    }
 
     return appName;
 }
 
-static void
-CreateApplicationMenus(void)
+static bool LoadMainMenuNibIfAvailable(void)
+{
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1080
+    NSDictionary *infoDict;
+    NSString *mainNibFileName;
+    bool success = false;
+
+    if (floor(NSAppKitVersionNumber) < NSAppKitVersionNumber10_8) {
+        return false;
+    }
+    infoDict = [[NSBundle mainBundle] infoDictionary];
+    if (infoDict) {
+        mainNibFileName = [infoDict valueForKey:@"NSMainNibFile"];
+
+        if (mainNibFileName) {
+            success = [[NSBundle mainBundle] loadNibNamed:mainNibFileName owner:[NSApplication sharedApplication] topLevelObjects:nil];
+        }
+    }
+
+    return success;
+#else
+    return false;
+#endif
+}
+
+static void CreateApplicationMenus(void)
 {
     NSString *appName;
     NSString *title;
@@ -148,13 +381,16 @@ CreateApplicationMenus(void)
     NSMenu *serviceMenu;
     NSMenu *windowMenu;
     NSMenuItem *menuItem;
+    NSMenu *mainMenu;
 
     if (NSApp == nil) {
         return;
     }
-    
+
+    mainMenu = [[NSMenu alloc] init];
+
     /* Create the main menu bar */
-    [NSApp setMainMenu:[[NSMenu alloc] init]];
+    [NSApp setMainMenu:mainMenu];
 
     /* Create the application menu */
     appName = GetApplicationName();
@@ -171,11 +407,10 @@ CreateApplicationMenus(void)
     [appleMenu addItem:[NSMenuItem separatorItem]];
 
     serviceMenu = [[NSMenu alloc] initWithTitle:@""];
-    menuItem = (NSMenuItem *)[appleMenu addItemWithTitle:@"Services" action:nil keyEquivalent:@""];
+    menuItem = [appleMenu addItemWithTitle:@"Services" action:nil keyEquivalent:@""];
     [menuItem setSubmenu:serviceMenu];
 
     [NSApp setServicesMenu:serviceMenu];
-    [serviceMenu release];
 
     [appleMenu addItem:[NSMenuItem separatorItem]];
 
@@ -183,7 +418,7 @@ CreateApplicationMenus(void)
     [appleMenu addItemWithTitle:title action:@selector(hide:) keyEquivalent:@"h"];
 
     menuItem = (NSMenuItem *)[appleMenu addItemWithTitle:@"Hide Others" action:@selector(hideOtherApplications:) keyEquivalent:@"h"];
-    [menuItem setKeyEquivalentModifierMask:(NSAlternateKeyMask|NSCommandKeyMask)];
+    [menuItem setKeyEquivalentModifierMask:(NSEventModifierFlagOption|NSEventModifierFlagCommand)];
 
     [appleMenu addItemWithTitle:@"Show All" action:@selector(unhideAllApplications:) keyEquivalent:@""];
 
@@ -196,55 +431,71 @@ CreateApplicationMenus(void)
     menuItem = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
     [menuItem setSubmenu:appleMenu];
     [[NSApp mainMenu] addItem:menuItem];
-    [menuItem release];
 
     /* Tell the application object that this is now the application menu */
     [NSApp setAppleMenu:appleMenu];
-    [appleMenu release];
-
 
     /* Create the window menu */
     windowMenu = [[NSMenu alloc] initWithTitle:@"Window"];
 
     /* Add menu items */
+    [windowMenu addItemWithTitle:@"Close" action:@selector(performClose:) keyEquivalent:@"w"];
+
     [windowMenu addItemWithTitle:@"Minimize" action:@selector(performMiniaturize:) keyEquivalent:@"m"];
 
     [windowMenu addItemWithTitle:@"Zoom" action:@selector(performZoom:) keyEquivalent:@""];
+
+    /* Add the fullscreen toggle menu option. */
+    /* Cocoa should update the title to Enter or Exit Full Screen automatically.
+     * But if not, then just fallback to Toggle Full Screen.
+     */
+    menuItem = [[NSMenuItem alloc] initWithTitle:@"Toggle Full Screen" action:@selector(toggleFullScreen:) keyEquivalent:@"f"];
+    [menuItem setKeyEquivalentModifierMask:NSEventModifierFlagControl | NSEventModifierFlagCommand];
+    [windowMenu addItem:menuItem];
 
     /* Put menu into the menubar */
     menuItem = [[NSMenuItem alloc] initWithTitle:@"Window" action:nil keyEquivalent:@""];
     [menuItem setSubmenu:windowMenu];
     [[NSApp mainMenu] addItem:menuItem];
-    [menuItem release];
 
     /* Tell the application object that this is now the window menu */
     [NSApp setWindowsMenu:windowMenu];
-    [windowMenu release];
 }
 
-void
-Cocoa_RegisterApp(void)
+void Cocoa_RegisterApp(void)
+{ @autoreleasepool
 {
     /* This can get called more than once! Be careful what you initialize! */
-    ProcessSerialNumber psn;
-    NSAutoreleasePool *pool;
 
-    if (!GetCurrentProcess(&psn)) {
-        TransformProcessType(&psn, kProcessTransformToForegroundApplication);
-        SetFrontProcess(&psn);
-    }
-
-    pool = [[NSAutoreleasePool alloc] init];
     if (NSApp == nil) {
-        [NSApplication sharedApplication];
+        [SDLApplication sharedApplication];
+        SDL_assert(NSApp != nil);
 
+        s_bShouldHandleEventsInSDLApplication = SDL_TRUE;
+
+        if (!SDL_GetHintBoolean(SDL_HINT_MAC_BACKGROUND_APP, SDL_FALSE)) {
+            [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+        }
+
+        /* If there aren't already menus in place, look to see if there's
+         * a nib we should use. If not, then manually create the basic
+         * menus we meed.
+         */
         if ([NSApp mainMenu] == nil) {
-            CreateApplicationMenus();
+            bool nibLoaded;
+
+            nibLoaded = LoadMainMenuNibIfAvailable();
+            if (!nibLoaded) {
+                CreateApplicationMenus();
+            }
         }
         [NSApp finishLaunching];
-        NSDictionary *appDefaults = [NSDictionary dictionaryWithObject:@"NO" forKey:@"AppleMomentumScrollSupported"];
-        [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
-
+        if ([NSApp delegate]) {
+            /* The SDL app delegate calls this in didFinishLaunching if it's
+             * attached to the NSApp, otherwise we need to call it manually.
+             */
+            [SDLApplication registerUserDefaults];
+        }
     }
     if (NSApp && !appDelegate) {
         appDelegate = [[SDLAppDelegate alloc] init];
@@ -253,64 +504,105 @@ Cocoa_RegisterApp(void)
          * termination into SDL_Quit, and we can't handle application:openFile:
          */
         if (![NSApp delegate]) {
-            [NSApp setDelegate:appDelegate];
+            /* Only register the URL event handler if we are being set as the
+             * app delegate to avoid replacing any existing event handler.
+             */
+            [[NSAppleEventManager sharedAppleEventManager]
+                setEventHandler:appDelegate
+                    andSelector:@selector(handleURLEvent:withReplyEvent:)
+                  forEventClass:kInternetEventClass
+                     andEventID:kAEGetURL];
+
+            [(NSApplication *)NSApp setDelegate:appDelegate];
         } else {
             appDelegate->seenFirstActivate = YES;
         }
     }
-    [pool release];
-}
+}}
 
-void
-Cocoa_PumpEvents(_THIS)
+int Cocoa_PumpEventsUntilDate(_THIS, NSDate *expiration, bool accumulate)
 {
-    NSAutoreleasePool *pool;
-
-    /* Update activity every 30 seconds to prevent screensaver */
-    if (_this->suspend_screensaver) {
-        SDL_VideoData *data = (SDL_VideoData *)_this->driverdata;
-        Uint32 now = SDL_GetTicks();
-        if (!data->screensaver_activity ||
-            SDL_TICKS_PASSED(now, data->screensaver_activity + 30000)) {
-            UpdateSystemActivity(UsrActivity);
-            data->screensaver_activity = now;
-        }
-    }
-
-    pool = [[NSAutoreleasePool alloc] init];
     for ( ; ; ) {
-        NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate distantPast] inMode:NSDefaultRunLoopMode dequeue:YES ];
+        NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny untilDate:expiration inMode:NSDefaultRunLoopMode dequeue:YES ];
         if ( event == nil ) {
-            break;
+            return 0;
         }
 
-        switch ([event type]) {
-        case NSLeftMouseDown:
-        case NSOtherMouseDown:
-        case NSRightMouseDown:
-        case NSLeftMouseUp:
-        case NSOtherMouseUp:
-        case NSRightMouseUp:
-        case NSLeftMouseDragged:
-        case NSRightMouseDragged:
-        case NSOtherMouseDragged: /* usually middle mouse dragged */
-        case NSMouseMoved:
-        case NSScrollWheel:
-            Cocoa_HandleMouseEvent(_this, event);
-            break;
-        case NSKeyDown:
-        case NSKeyUp:
-        case NSFlagsChanged:
-            Cocoa_HandleKeyEvent(_this, event);
-            break;
-        default:
+        if (!s_bShouldHandleEventsInSDLApplication) {
+            Cocoa_DispatchEvent(event);
+        }
+
+        // Pass events down to SDLApplication to be handled in sendEvent:
+        [NSApp sendEvent:event];
+        if ( !accumulate) {
             break;
         }
-        /* Pass through to NSApp to make sure everything stays in sync */
-        [NSApp sendEvent:event];
     }
-    [pool release];
+    return 1;
 }
+
+int Cocoa_WaitEventTimeout(_THIS, int timeout)
+{ @autoreleasepool
+{
+    if (timeout > 0) {
+        NSDate *limitDate = [NSDate dateWithTimeIntervalSinceNow: (double) timeout / 1000.0];
+        return Cocoa_PumpEventsUntilDate(_this, limitDate, false);
+    } else if (timeout == 0) {
+        return Cocoa_PumpEventsUntilDate(_this, [NSDate distantPast], false);
+    } else {
+        while (Cocoa_PumpEventsUntilDate(_this, [NSDate distantFuture], false) == 0) {
+        }
+    }
+    return 1;
+}}
+
+void Cocoa_PumpEvents(_THIS)
+{ @autoreleasepool
+{
+    Cocoa_PumpEventsUntilDate(_this, [NSDate distantPast], true);
+}}
+
+void Cocoa_SendWakeupEvent(_THIS, SDL_Window *window)
+{ @autoreleasepool
+{
+    NSEvent* event = [NSEvent otherEventWithType: NSEventTypeApplicationDefined
+                                    location: NSMakePoint(0,0)
+                               modifierFlags: 0
+                                   timestamp: 0.0
+                                windowNumber: ((__bridge SDL_WindowData *) window->driverdata).window_number
+                                     context: nil
+                                     subtype: 0
+                                       data1: 0
+                                       data2: 0];
+
+    [NSApp postEvent: event atStart: YES];
+}}
+
+void Cocoa_SuspendScreenSaver(_THIS)
+{ @autoreleasepool
+{
+    SDL_VideoData *data = (__bridge SDL_VideoData *)_this->driverdata;
+
+    if (data.screensaver_assertion) {
+        IOPMAssertionRelease(data.screensaver_assertion);
+        data.screensaver_assertion = kIOPMNullAssertionID;
+    }
+
+    if (_this->suspend_screensaver) {
+        /* FIXME: this should ideally describe the real reason why the game
+         * called SDL_DisableScreenSaver. Note that the name is only meant to be
+         * seen by OS X power users. there's an additional optional human-readable
+         * (localized) reason parameter which we don't set.
+         */
+        IOPMAssertionID assertion = kIOPMNullAssertionID;
+        NSString *name = [GetApplicationName() stringByAppendingString:@" using SDL_DisableScreenSaver"];
+        IOPMAssertionCreateWithDescription(kIOPMAssertPreventUserIdleDisplaySleep,
+                                           (__bridge CFStringRef) name,
+                                           NULL, NULL, NULL, 0, NULL,
+                                           &assertion);
+        data.screensaver_assertion = assertion;
+    }
+}}
 
 #endif /* SDL_VIDEO_DRIVER_COCOA */
 

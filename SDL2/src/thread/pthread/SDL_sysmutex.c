@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,41 +18,39 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
-#define _GNU_SOURCE
-#include <pthread.h>
 #include <errno.h>
+#include <pthread.h>
 
 #include "SDL_thread.h"
 
-#if !SDL_THREAD_PTHREAD_RECURSIVE_MUTEX && \
-    !SDL_THREAD_PTHREAD_RECURSIVE_MUTEX_NP
-#define FAKE_RECURSIVE_MUTEX 1
+#if !(defined(SDL_THREAD_PTHREAD_RECURSIVE_MUTEX) || \
+    defined(SDL_THREAD_PTHREAD_RECURSIVE_MUTEX_NP))
+#define FAKE_RECURSIVE_MUTEX
 #endif
 
 struct SDL_mutex
 {
     pthread_mutex_t id;
-#if FAKE_RECURSIVE_MUTEX
+#ifdef FAKE_RECURSIVE_MUTEX
     int recursive;
     pthread_t owner;
 #endif
 };
 
-SDL_mutex *
-SDL_CreateMutex(void)
+SDL_mutex *SDL_CreateMutex(void)
 {
     SDL_mutex *mutex;
     pthread_mutexattr_t attr;
 
     /* Allocate the structure */
-    mutex = (SDL_mutex *) SDL_calloc(1, sizeof(*mutex));
+    mutex = (SDL_mutex *)SDL_calloc(1, sizeof(*mutex));
     if (mutex) {
         pthread_mutexattr_init(&attr);
-#if SDL_THREAD_PTHREAD_RECURSIVE_MUTEX
+#ifdef SDL_THREAD_PTHREAD_RECURSIVE_MUTEX
         pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-#elif SDL_THREAD_PTHREAD_RECURSIVE_MUTEX_NP
+#elif defined(SDL_THREAD_PTHREAD_RECURSIVE_MUTEX_NP)
         pthread_mutexattr_setkind_np(&attr, PTHREAD_MUTEX_RECURSIVE_NP);
 #else
         /* No extra attributes necessary */
@@ -65,11 +63,10 @@ SDL_CreateMutex(void)
     } else {
         SDL_OutOfMemory();
     }
-    return (mutex);
+    return mutex;
 }
 
-void
-SDL_DestroyMutex(SDL_mutex * mutex)
+void SDL_DestroyMutex(SDL_mutex *mutex)
 {
     if (mutex) {
         pthread_mutex_destroy(&mutex->id);
@@ -78,18 +75,17 @@ SDL_DestroyMutex(SDL_mutex * mutex)
 }
 
 /* Lock the mutex */
-int
-SDL_LockMutex(SDL_mutex * mutex)
+int SDL_LockMutex(SDL_mutex *mutex) SDL_NO_THREAD_SAFETY_ANALYSIS /* clang doesn't know about NULL mutexes */
 {
-#if FAKE_RECURSIVE_MUTEX
+#ifdef FAKE_RECURSIVE_MUTEX
     pthread_t this_thread;
 #endif
 
     if (mutex == NULL) {
-        return SDL_SetError("Passed a NULL mutex");
+        return 0;
     }
 
-#if FAKE_RECURSIVE_MUTEX
+#ifdef FAKE_RECURSIVE_MUTEX
     this_thread = pthread_self();
     if (mutex->owner == this_thread) {
         ++mutex->recursive;
@@ -106,27 +102,27 @@ SDL_LockMutex(SDL_mutex * mutex)
         }
     }
 #else
-    if (pthread_mutex_lock(&mutex->id) < 0) {
+    if (pthread_mutex_lock(&mutex->id) != 0) {
         return SDL_SetError("pthread_mutex_lock() failed");
     }
 #endif
     return 0;
 }
 
-int
-SDL_TryLockMutex(SDL_mutex * mutex)
+int SDL_TryLockMutex(SDL_mutex *mutex)
 {
     int retval;
-#if FAKE_RECURSIVE_MUTEX
+    int result;
+#ifdef FAKE_RECURSIVE_MUTEX
     pthread_t this_thread;
 #endif
 
-    if (mutex == NULL) {
-        return SDL_SetError("Passed a NULL mutex");
+    if (!mutex) {
+        return 0;
     }
 
     retval = 0;
-#if FAKE_RECURSIVE_MUTEX
+#ifdef FAKE_RECURSIVE_MUTEX
     this_thread = pthread_self();
     if (mutex->owner == this_thread) {
         ++mutex->recursive;
@@ -135,18 +131,20 @@ SDL_TryLockMutex(SDL_mutex * mutex)
          We set the locking thread id after we obtain the lock
          so unlocks from other threads will fail.
          */
-        if (pthread_mutex_lock(&mutex->id) == 0) {
+        result = pthread_mutex_trylock(&mutex->id);
+        if (result == 0) {
             mutex->owner = this_thread;
             mutex->recursive = 0;
-        } else if (errno == EBUSY) {
+        } else if (result == EBUSY) {
             retval = SDL_MUTEX_TIMEDOUT;
         } else {
             retval = SDL_SetError("pthread_mutex_trylock() failed");
         }
     }
 #else
-    if (pthread_mutex_trylock(&mutex->id) != 0) {
-        if (errno == EBUSY) {
+    result = pthread_mutex_trylock(&mutex->id);
+    if (result != 0) {
+        if (result == EBUSY) {
             retval = SDL_MUTEX_TIMEDOUT;
         } else {
             retval = SDL_SetError("pthread_mutex_trylock() failed");
@@ -156,14 +154,13 @@ SDL_TryLockMutex(SDL_mutex * mutex)
     return retval;
 }
 
-int
-SDL_UnlockMutex(SDL_mutex * mutex)
+int SDL_UnlockMutex(SDL_mutex *mutex) SDL_NO_THREAD_SAFETY_ANALYSIS /* clang doesn't know about NULL mutexes */
 {
     if (mutex == NULL) {
-        return SDL_SetError("Passed a NULL mutex");
+        return 0;
     }
 
-#if FAKE_RECURSIVE_MUTEX
+#ifdef FAKE_RECURSIVE_MUTEX
     /* We can only unlock the mutex if we own it */
     if (pthread_self() == mutex->owner) {
         if (mutex->recursive) {
@@ -182,7 +179,7 @@ SDL_UnlockMutex(SDL_mutex * mutex)
     }
 
 #else
-    if (pthread_mutex_unlock(&mutex->id) < 0) {
+    if (pthread_mutex_unlock(&mutex->id) != 0) {
         return SDL_SetError("pthread_mutex_unlock() failed");
     }
 #endif /* FAKE_RECURSIVE_MUTEX */
