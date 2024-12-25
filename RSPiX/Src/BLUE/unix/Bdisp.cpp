@@ -248,14 +248,14 @@ extern void Disp_Init(void)	// Returns nothing.
         }
     }
 
-	// Initialize maps to indentities.
-	int16_t i;
-	for (i = 0; i < 256; i++)
-		{
-		au8MapRed[i]	= i;
-		au8MapGreen[i]	= i;
-		au8MapBlue[i]	= i;
-		}
+	// Initialize maps to identities.
+	for (int16_t i = 0; i < 256; i++)
+	{
+		au8MapRed[i] = static_cast<U8>(i);
+		au8MapGreen[i] = static_cast<U8>(i);
+		au8MapBlue[i] = static_cast<U8>(i);
+	}
+
 
 	// Never ever ever unlock these.
 	asPalEntryLocks[0]	= TRUE;

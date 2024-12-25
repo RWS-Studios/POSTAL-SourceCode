@@ -90,7 +90,7 @@ class CStockPile
 	public:
 
 		// Use this to enumerate the stockpile through GetItem().
-		typedef enum
+		    enum
 			{
 			Bullets,
 			Grenades,

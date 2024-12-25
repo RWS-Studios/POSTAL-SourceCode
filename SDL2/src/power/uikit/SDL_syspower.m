@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,24 +18,23 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
 #ifndef SDL_POWER_DISABLED
-#if SDL_POWER_UIKIT
+#ifdef SDL_POWER_UIKIT
 
 #import <UIKit/UIKit.h>
 
 #include "SDL_power.h"
 #include "SDL_timer.h"
-#include "SDL_assert.h"
 #include "SDL_syspower.h"
 
+#if !TARGET_OS_TV
 /* turn off the battery monitor if it's been more than X ms since last check. */
 static const int BATTERY_MONITORING_TIMEOUT = 3000;
 static Uint32 SDL_UIKitLastPowerInfoQuery = 0;
 
-void
-SDL_UIKit_UpdateBatteryMonitoring(void)
+void SDL_UIKit_UpdateBatteryMonitoring(void)
 {
     if (SDL_UIKitLastPowerInfoQuery) {
         if (SDL_TICKS_PASSED(SDL_GetTicks(), SDL_UIKitLastPowerInfoQuery + BATTERY_MONITORING_TIMEOUT)) {
@@ -46,28 +45,39 @@ SDL_UIKit_UpdateBatteryMonitoring(void)
         }
     }
 }
-
-SDL_bool
-SDL_GetPowerInfo_UIKit(SDL_PowerState * state, int *seconds, int *percent)
+#else
+void SDL_UIKit_UpdateBatteryMonitoring(void)
 {
-    UIDevice *uidev = [UIDevice currentDevice];
+    /* Do nothing. */
+}
+#endif /* !TARGET_OS_TV */
 
-    if (!SDL_UIKitLastPowerInfoQuery) {
-        SDL_assert([uidev isBatteryMonitoringEnabled] == NO);
-        [uidev setBatteryMonitoringEnabled:YES];
-    }
+SDL_bool SDL_GetPowerInfo_UIKit(SDL_PowerState *state, int *seconds, int *percent)
+{
+#if TARGET_OS_TV
+    *state = SDL_POWERSTATE_NO_BATTERY;
+    *seconds = -1;
+    *percent = -1;
+#else  /* TARGET_OS_TV */
+    @autoreleasepool {
+        UIDevice *uidev = [UIDevice currentDevice];
+        const float level = uidev.batteryLevel;
 
-    /* UIKit_GL_SwapWindow() (etc) will check this and disable the battery
-     *  monitoring if the app hasn't queried it in the last X seconds.
-     *  Apparently monitoring the battery burns battery life.  :)
-     *  Apple's docs say not to monitor the battery unless you need it.
-     */
-    SDL_UIKitLastPowerInfoQuery = SDL_GetTicks();
+        if (!SDL_UIKitLastPowerInfoQuery) {
+            SDL_assert(uidev.isBatteryMonitoringEnabled == NO);
+            uidev.batteryMonitoringEnabled = YES;
+        }
 
-    *seconds = -1;   /* no API to estimate this in UIKit. */
+        /* UIKit_GL_SwapWindow() (etc) will check this and disable the battery
+         *  monitoring if the app hasn't queried it in the last X seconds.
+         *  Apparently monitoring the battery burns battery life.  :)
+         *  Apple's docs say not to monitor the battery unless you need it.
+         */
+        SDL_UIKitLastPowerInfoQuery = SDL_GetTicks();
 
-    switch ([uidev batteryState])
-    {
+        *seconds = -1; /* no API to estimate this in UIKit. */
+
+        switch (uidev.batteryState) {
         case UIDeviceBatteryStateCharging:
             *state = SDL_POWERSTATE_CHARGING;
             break;
@@ -84,11 +94,13 @@ SDL_GetPowerInfo_UIKit(SDL_PowerState * state, int *seconds, int *percent)
         default:
             *state = SDL_POWERSTATE_UNKNOWN;
             break;
-    }
+        }
 
-    const float level = [uidev batteryLevel];
-    *percent = ( (level < 0.0f) ? -1 : (((int) (level + 0.5f)) * 100) );
-    return SDL_TRUE;            /* always the definitive answer on iPhoneOS. */
+        *percent = ((level < 0.0f) ? -1 : ((int)((level * 100) + 0.5f)));
+    }
+#endif /* TARGET_OS_TV */
+
+    return SDL_TRUE; /* always the definitive answer on iOS. */
 }
 
 #endif /* SDL_POWER_UIKIT */

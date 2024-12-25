@@ -381,7 +381,7 @@ class CThing
 		// these numbers change, it will completely invalidate any world files
 		// that were created prior to the change!  Add new ID's after existing
 		// ID's so the existing ones don't change.
-		typedef enum
+		    enum
 			{
 			// First entry should start at 0!
 			CHoodID = 0,

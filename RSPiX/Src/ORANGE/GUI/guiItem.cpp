@@ -971,42 +971,46 @@ void RGuiItem::Erase(	// Returns nothing.
 // Set the text that represents this item.
 //
 ////////////////////////////////////////////////////////////////////////
-void RGuiItem::SetText(	
-	char* pszFrmt,	// sprintf formatted format string.
-	...)				// Corresponding good stuff.
-	{
+void RGuiItem::SetText(
+	char* pszFrmt,   // sprintf formatted format string.
+	...)             // Corresponding good stuff.
+{
 	va_list val;
-	va_start(val, pszFrmt);    
-	  
-	vsprintf(m_szText, pszFrmt, val);
-	}
+	va_start(val, pszFrmt);
+
+	vsprintf_s(m_szText, sizeof(m_szText), pszFrmt, val);
+	va_end(val);
+}
+
 
 ////////////////////////////////////////////////////////////////////////
 // Set the text that represents the specified child item.
 ////////////////////////////////////////////////////////////////////////
-int16_t RGuiItem::SetText(	// Returns 0 if item found, non-zero otherwise.
-	int32_t	lId,					// Child item ID (can identify this item).
-	char* pszFrmt,				// sprintf formatted format string.
-	...)							// Corresponding good stuff.
-	{
-	int16_t	sRes	= 0;	// Assume success.
+int16_t RGuiItem::SetText(    // Returns 0 if item found, non-zero otherwise.
+	int32_t lId,              // Child item ID (can identify this item).
+	char* pszFrmt,            // sprintf formatted format string.
+	...)                      // Corresponding good stuff.
+{
+	int16_t sRes = 0;  // Assume success.
 
-	RGuiItem*	pgui	= GetItemFromId(lId);
+	RGuiItem* pgui = GetItemFromId(lId);
 	if (pgui != NULL)
-		{
-		va_list	val;
-		va_start	(val, pszFrmt);
+	{
+		va_list val;
+		va_start(val, pszFrmt);
 
-		vsprintf(pgui->m_szText, pszFrmt, val);
-		}
+		vsprintf_s(pgui->m_szText, sizeof(pgui->m_szText), pszFrmt, val);
+		va_end(val);
+	}
 	else
-		{
+	{
 		TRACE("SetText(): No such ID %ld.\n", lId);
-		sRes	= -1;
-		}
+		sRes = -1;
+	}
 
 	return sRes;
-	}
+}
+
 
 ////////////////////////////////////////////////////////////////////////
 // Sets up the current text effects on m_pprint to match this
@@ -2547,25 +2551,26 @@ int16_t RGuiItem::IsDynamic(void)	// Returns TRUE if this item was allocated wit
 // Get the text that represents this item.
 //
 ////////////////////////////////////////////////////////////////////////
-int16_t RGuiItem::GetText(	// Returns 0 on success.
-	char* pszText,				// Location to copy text to.
-	int16_t sMax)					// Total memory pointed to by pszText.
-	{
-	int16_t	sRes	= 0;	// Assume success.
+int16_t RGuiItem::GetText(    // Returns 0 on success.
+	char* pszText,            // Location to copy text to.
+	int16_t sMax)             // Total memory pointed to by pszText.
+{
+	int16_t sRes = 0;  // Assume success.
 
 	if ((int16_t)strlen(m_szText) < sMax)
-		{
-		strcpy(pszText, m_szText);
-		}
+	{
+		strcpy_s(pszText, sMax, m_szText);
+	}
 	else
-		{
+	{
 		TRACE("GetText(): Not enough room to copy text (provided: %d, "
-				"needed: %d).\n", sMax, strlen(m_szText) + 1);
+			"needed: %d).\n", sMax, strlen(m_szText) + 1);
 		sRes = -1;
-		}
+	}
 
 	return sRes;
-	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 //

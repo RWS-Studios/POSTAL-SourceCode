@@ -500,7 +500,7 @@ class CRealm
 
 		// Scoring modes
 		typedef uint16_t ScoringMode;
-		typedef enum
+		    enum
 			{
 			Standard = 0,		// Standard single player showing population, hostiles, kills and kill %
 			Timed,				// Score as many kills as possible in set amount of time

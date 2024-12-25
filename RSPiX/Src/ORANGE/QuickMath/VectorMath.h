@@ -82,26 +82,30 @@ RTransform
 // conversions each time!
 
 // This is an aggregate type used with RTransform
-typedef union
-	{
+typedef union RP3d
+{
 	// 06/30/97 MJR - For the metrowerks compiler, initializations don't
 	// seem to work right unless the array comes before the struct!
 	REAL v[4];
 	struct
-		{
+	{
 		REAL x;
 		REAL y;
 		REAL z;
 		REAL w;
-		};
+	};
 
 	int16_t Load(RFile* pfile)
-		{ return pfile->Read(v, 4) != 4; }
+	{
+		return pfile->Read(v, 4) != 4;
+	}
 
 	int16_t Save(RFile* pfile)
-		{ return pfile->Write(v, 4) != 4; }
+	{
+		return pfile->Write(v, 4) != 4;
+	}
 
-	} RP3d; // This is a 3d point.
+} RP3d; // This is a 3d point.
 
 inline int operator==(const RP3d& lhs, const RP3d& rhs)
 	{
@@ -132,19 +136,20 @@ inline void rspMakeHom(RP3d& p)
 // Can be useful:
 // adjusts the length of a vector, ignoring w component
 inline void rspMakeUnit(RP3d& p)
-	{
-	REAL l = sqrt(SQR(p.x)+SQR(p.y)+SQR(p.z));
+{
+	REAL l = static_cast<REAL>(sqrt(SQR(p.x) + SQR(p.y) + SQR(p.z))); // Explicit cast to REAL
 #ifdef _DEBUG
-	if (l == 0.0)
-		{
+	if (l == 0.0f) // Use 0.0f to indicate a float literal
+	{
 		TRACE("FATAL ERROR - NULL VECTOR!");
 		return;
-		}
+	}
 #endif
 	p.x /= l;
 	p.y /= l;
 	p.z /= l;
-	}
+}
+
 
 // returns a dot b
 inline REAL rspDot(RP3d& a,RP3d& b)

@@ -457,8 +457,12 @@ class CCharacter : public CThing3d
 		// Give the angle from yourself to this x,z position
 		inline int16_t FindAngleTo(double dX, double dZ)
 		{
-			return rspATan((m_dZ - dZ), (dX - m_dX));	
+			// Compute the angle as a double
+			double angle = rspATan((m_dZ - dZ), (dX - m_dX));
+			// Cast to int16_t
+			return static_cast<int16_t>(angle);
 		}
+
 
 		// Called by destructor.
 		void Kill(void);

@@ -224,33 +224,33 @@ RTexture::Unmap(
 // Muddy or brighten or darken.  Applies the specified brightness value
 // to every nth color (where n == lInc).
 ////////////////////////////////////////////////////////////////////////////////
-void
-RTexture::Adjust(
-	float fAdjustment,	// In:  Adjustment factor (1.0 == same, < 1 == dimmer, > 1 == brighter).
-	int32_t lInc)				// In:  Number of colors to skip.
-	{
+void RTexture::Adjust(
+	float fAdjustment, // In:  Adjustment factor (1.0 == same, < 1 == dimmer, > 1 == brighter).
+	int32_t lInc)       // In:  Number of colors to skip.
+{
 	ASSERT(m_pColors);
 	ASSERT(fAdjustment >= 0.0f);
 
-#define CLAMP255(u8Color, fColor)	( (u8Color) = ( (fColor) < 255) ? (fColor) + 0.5f : 255)
+#define CLAMP255(u8Color, fColor)  ( (u8Color) = ( (fColor) < 255) ? static_cast<U8>((fColor) + 0.5f) : 255)
 
-	RPixel32*	ppix	= m_pColors;
-	int16_t	sCount		= m_sNum / lInc;
-	float	fColor;
+	RPixel32* ppix = m_pColors;
+	int16_t sCount = m_sNum / lInc;
+	float fColor;
 	while (sCount--)
-		{
-		fColor	= ppix->u8Red		* fAdjustment;
+	{
+		fColor = ppix->u8Red * fAdjustment;
 		CLAMP255(ppix->u8Red, fColor);
 
-		fColor	= ppix->u8Green	* fAdjustment;
+		fColor = ppix->u8Green * fAdjustment;
 		CLAMP255(ppix->u8Green, fColor);
 
-		fColor	= ppix->u8Blue		* fAdjustment;
+		fColor = ppix->u8Blue * fAdjustment;
 		CLAMP255(ppix->u8Blue, fColor);
 
 		ppix += lInc;
-		}
 	}
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // RMesh Functions

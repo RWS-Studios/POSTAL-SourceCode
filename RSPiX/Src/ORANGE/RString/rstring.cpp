@@ -319,40 +319,41 @@ int32_t RString::Format(int32_t lMinimumSize, char* format, ...)
 	{
 	int32_t lWritten = 0;
 	if (lMinimumSize >= 0)
-		{
+	{
 		// Grow buffer
 		Grow(lMinimumSize);
 		// Since minimum size might be 0, we have to make sure buffer exists
 		if (m_lBufSize > 0)
-			{
+		{
 			va_list varp;
 			va_start(varp, format);
-			#ifdef _MSC_VER
-				lWritten = _vsnprintf(m_pBuf, m_lBufSize - 1, format, varp);
-			#else
-				lWritten = vsprintf(m_pBuf, format, varp);
-				#ifdef _DEBUG
-					if ((lWritten >= 0) && ((lWritten + 1) > m_lBufSize))
-						{
-						TRACE("RString::Format(): String buffer was overwritten!  String will be cleared!\n");
-						Clear();
-						ASSERT(0); // memory has been corrupted!
-						}
-				#endif
-			#endif
+#ifdef _MSC_VER
+			lWritten = _vsnprintf_s(m_pBuf, m_lBufSize, _TRUNCATE, format, varp);
+#else
+			lWritten = vsprintf(m_pBuf, format, varp);
+#ifdef _DEBUG
+			if ((lWritten >= 0) && ((lWritten + 1) > m_lBufSize))
+			{
+				TRACE("RString::Format(): String buffer was overwritten!  String will be cleared!\n");
+				Clear();
+				ASSERT(0); // memory has been corrupted!
+			}
+#endif
+#endif
 			va_end(varp);
 
 			if (lWritten >= 0)
-				{
+			{
 				m_lStrLen = lWritten;
-				}
+			}
 			else
-				{
+			{
 				TRACE("RString::Format(): Error returned by vsprintf()! String will be cleared!\n");
 				Clear();
-				}
 			}
 		}
+	}
+
 	return lWritten;
 	}
 

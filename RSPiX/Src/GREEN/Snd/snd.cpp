@@ -624,8 +624,9 @@ void* RSnd::StreamCall(RMix::Msg	msg,
 		}
 
 	// Get current Sound from internal members
-	if (pucVolume) *pucVolume = m_sChannelVolume;
-	if (pucVol2) *pucVol2 = m_sTypeVolume;
+	if (pucVolume) *pucVolume = static_cast<uint8_t>(m_sChannelVolume);
+	if (pucVol2) *pucVol2 = static_cast<uint8_t>(m_sTypeVolume);
+
 
 	// Return next buffer to play.
 	return pData;
@@ -771,8 +772,9 @@ void* RSnd::PlayCall(RMix::Msg	msg,
 		}
 
 	// Get current Sound from internal members
-	if (pucVolume) *pucVolume = m_sChannelVolume;
-	if (pucVol2) *pucVol2 = m_sTypeVolume;
+		if (pucVolume) *pucVolume = static_cast<uint8_t>(m_sChannelVolume);
+		if (pucVol2) *pucVol2 = static_cast<uint8_t>(m_sTypeVolume);
+
 
 	// Return next buffer to play.
 	return pData;

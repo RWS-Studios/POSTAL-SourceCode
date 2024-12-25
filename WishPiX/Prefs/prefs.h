@@ -44,7 +44,7 @@
 class RPrefs
 	{
 	public:
-		typedef enum ePrefs
+		 enum ePrefs
 			{
 			MaxStrLen = 512
 			};

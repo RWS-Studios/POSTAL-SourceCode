@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -19,18 +19,18 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
-#if SDL_VIDEO_DRIVER_RPI
+#ifdef SDL_VIDEO_DRIVER_RPI
 
-#include "../../events/SDL_sysevents.h"
 #include "../../events/SDL_events_c.h"
 #include "../../events/SDL_keyboard_c.h"
+#include "../SDL_sysvideo.h"
 #include "SDL_rpivideo.h"
 #include "SDL_rpievents_c.h"
 
 #ifdef SDL_INPUT_LINUXEV
-#include "../../input/evdev/SDL_evdev.h"
+#include "../../core/linux/SDL_evdev.h"
 #endif
 
 void RPI_PumpEvents(_THIS)
@@ -38,8 +38,6 @@ void RPI_PumpEvents(_THIS)
 #ifdef SDL_INPUT_LINUXEV
     SDL_EVDEV_Poll();
 #endif
-    
 }
 
 #endif /* SDL_VIDEO_DRIVER_RPI */
-

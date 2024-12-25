@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -19,12 +19,12 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
-#ifndef _SDL_udev_h
-#define _SDL_udev_h
+#ifndef SDL_udev_h_
+#define SDL_udev_h_
 
-#if HAVE_LIBUDEV_H
+#if defined(HAVE_LIBUDEV_H) && defined(HAVE_LINUX_INPUT_H)
 
 #ifndef SDL_USE_LIBUDEV
 #define SDL_USE_LIBUDEV 1
@@ -42,40 +42,26 @@
 
 typedef enum
 {
-    SDL_UDEV_DEVICEADDED = 0x0001,
+    SDL_UDEV_DEVICEADDED = 1,
     SDL_UDEV_DEVICEREMOVED
 } SDL_UDEV_deviceevent;
 
-/* A device can be any combination of these classes */
-typedef enum
-{
-    SDL_UDEV_DEVICE_MOUSE       = 0x0001,
-    SDL_UDEV_DEVICE_KEYBOARD    = 0x0002,
-    SDL_UDEV_DEVICE_JOYSTICK    = 0x0004,
-    SDL_UDEV_DEVICE_SOUND       = 0x0008
-} SDL_UDEV_deviceclass;
-
 typedef void (*SDL_UDEV_Callback)(SDL_UDEV_deviceevent udev_type, int udev_class, const char *devpath);
 
-typedef struct SDL_UDEV_CallbackList {
+typedef struct SDL_UDEV_CallbackList
+{
     SDL_UDEV_Callback callback;
     struct SDL_UDEV_CallbackList *next;
 } SDL_UDEV_CallbackList;
 
-typedef struct SDL_UDEV_PrivateData
+typedef struct SDL_UDEV_Symbols
 {
-    const char *udev_library;
-    void *udev_handle;
-    struct udev *udev;
-    struct udev_monitor *udev_mon;
-    int ref_count;
-    SDL_UDEV_CallbackList *first, *last;
-    
-    /* Function pointers */
     const char *(*udev_device_get_action)(struct udev_device *);
     const char *(*udev_device_get_devnode)(struct udev_device *);
     const char *(*udev_device_get_subsystem)(struct udev_device *);
+    struct udev_device *(*udev_device_get_parent_with_subsystem_devtype)(struct udev_device *udev_device, const char *subsystem, const char *devtype);
     const char *(*udev_device_get_property_value)(struct udev_device *, const char *);
+    const char *(*udev_device_get_sysattr_value)(struct udev_device *udev_device, const char *sysattr);
     struct udev_device *(*udev_device_new_from_syspath)(struct udev *, const char *);
     void (*udev_device_unref)(struct udev_device *);
     int (*udev_enumerate_add_match_property)(struct udev_enumerate *, const char *, const char *);
@@ -94,8 +80,21 @@ typedef struct SDL_UDEV_PrivateData
     void (*udev_monitor_unref)(struct udev_monitor *);
     struct udev *(*udev_new)(void);
     void (*udev_unref)(struct udev *);
-    struct udev_device * (*udev_device_new_from_devnum)(struct udev *udev, char type, dev_t devnum);
-    dev_t (*udev_device_get_devnum) (struct udev_device *udev_device);
+    struct udev_device *(*udev_device_new_from_devnum)(struct udev *udev, char type, dev_t devnum);
+    dev_t (*udev_device_get_devnum)(struct udev_device *udev_device);
+} SDL_UDEV_Symbols;
+
+typedef struct SDL_UDEV_PrivateData
+{
+    const char *udev_library;
+    void *udev_handle;
+    struct udev *udev;
+    struct udev_monitor *udev_mon;
+    int ref_count;
+    SDL_UDEV_CallbackList *first, *last;
+
+    /* Function pointers */
+    SDL_UDEV_Symbols syms;
 } SDL_UDEV_PrivateData;
 
 extern int SDL_UDEV_Init(void);
@@ -104,12 +103,14 @@ extern void SDL_UDEV_UnloadLibrary(void);
 extern int SDL_UDEV_LoadLibrary(void);
 extern void SDL_UDEV_Poll(void);
 extern void SDL_UDEV_Scan(void);
+extern SDL_bool SDL_UDEV_GetProductInfo(const char *device_path, Uint16 *vendor, Uint16 *product, Uint16 *version, int *class);
 extern int SDL_UDEV_AddCallback(SDL_UDEV_Callback cb);
 extern void SDL_UDEV_DelCallback(SDL_UDEV_Callback cb);
+extern const SDL_UDEV_Symbols *SDL_UDEV_GetUdevSyms(void);
+extern void SDL_UDEV_ReleaseUdevSyms(void);
 
+#endif /* HAVE_LIBUDEV_H && HAVE_LINUX_INPUT_H */
 
+#endif /* SDL_udev_h_ */
 
-
-#endif /* HAVE_LIBUDEV_H */
-
-#endif /* _SDL_udev_h */
+/* vi: set ts=4 sw=4 expandtab: */

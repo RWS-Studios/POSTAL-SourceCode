@@ -92,6 +92,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "System.h"
+#include <cstring>
 
 #ifdef PATHS_IN_INCLUDES
 	#include "GREEN/Image/Image.h"
@@ -277,12 +278,12 @@ int16_t RLaymage::SetPSD(char* pszFilename)
 	int16_t sReturn = SUCCESS;
 	int16_t i;
 
-	strcpy(m_szPhotoshopFilename, pszFilename);
+	strcpy_s(m_szPhotoshopFilename, sizeof(m_szPhotoshopFilename), pszFilename);
 
 	if (ReadPSDHeader(pszFilename) != SUCCESS)
 	{
 		TRACE("RLaymage::SetPSD - Failed - header could not be read\n");
-		goto error;		
+		goto error;
 	}
 
 	if (cf.Open(pszFilename, "rb", RFile::BigEndian) != SUCCESS)
@@ -295,7 +296,7 @@ int16_t RLaymage::SetPSD(char* pszFilename)
 	{
 		TRACE("RLaymage::SetPSD - Error cannot open channel file %s\n", pszFilename);
 		goto error;
-	}	
+	}
 
 	cf.Seek(m_lTellLayers, SEEK_SET);
 	cfChannel.Seek(m_lTellChannels, SEEK_SET);
@@ -313,7 +314,6 @@ error:
 	cfChannel.Close();
 	return FAILURE;
 }
-
 //////////////////////////////////////////////////////////////////////
 //
 // LoadPSD
@@ -337,12 +337,12 @@ int16_t RLaymage::LoadPSD(char* pszFilename)
 	int16_t sReturn = SUCCESS;
 	int16_t i;
 
-	strcpy(m_szPhotoshopFilename, pszFilename);
+	strcpy_s(m_szPhotoshopFilename, sizeof(m_szPhotoshopFilename), pszFilename);
 
 	if (ReadPSDHeader(pszFilename) != SUCCESS)
 	{
 		TRACE("RLaymage::LoadPSD - Failed - header could not be read\n");
-		goto error;		
+		goto error;
 	}
 
 	if (cf.Open(pszFilename, "rb", RFile::BigEndian) != SUCCESS)
@@ -355,7 +355,7 @@ int16_t RLaymage::LoadPSD(char* pszFilename)
 	{
 		TRACE("RLaymage::LoadPSD - Error cannot open channel file %s\n", pszFilename);
 		goto error;
-	}	
+	}
 
 	cf.Seek(m_lTellLayers, SEEK_SET);
 	cfChannel.Seek(m_lTellChannels, SEEK_SET);
@@ -852,12 +852,13 @@ int16_t RLaymage::ReadLayerInfo(int16_t sLayerNum, RFile* pcfLayer,
 		}
 	else
 		{
-		// If the layer name hasn't been set, set it to "background" to match the photoshop default name
-		if (m_apszLayerNames[sLayerNum] == 0)
+			// If the layer name hasn't been set, set it to "background" to match the photoshop default name
+			if (m_apszLayerNames[sLayerNum] == 0)
 			{
-			m_apszLayerNames[sLayerNum] = new char[20+1];
-			strcpy(m_apszLayerNames[sLayerNum], "background");
+				m_apszLayerNames[sLayerNum] = new char[20 + 1];
+				strcpy_s(m_apszLayerNames[sLayerNum], 21, "background");
 			}
+
 
 		// Allocate 4 channel buffers for Alpha, R, G, and B channels
 		if (AllocateChannelBuffers(m_lWidth * m_lHeight) == SUCCESS)
@@ -1488,16 +1489,18 @@ void RLaymage::FreeAllLayers(void)
 //
 //////////////////////////////////////////////////////////////////////
 
-int16_t RLaymage::GetLayerName(int16_t sLayer, char* pszNameBuffer)
+int16_t RLaymage::GetLayerName(int16_t sLayer, char* pszNameBuffer, size_t bufferSize)
 {
 	int16_t sReturn = FAILURE;
-	
-	if (pszNameBuffer && sLayer >= 0 && sLayer < m_sNumLayers)
+
+	if (pszNameBuffer && bufferSize > 0 && sLayer >= 0 && sLayer < m_sNumLayers)
 	{
-		strcpy(pszNameBuffer, m_apszLayerNames[sLayer]);	
-		sReturn = SUCCESS;
+		if (strcpy_s(pszNameBuffer, bufferSize, m_apszLayerNames[sLayer]) == 0) // Ensure successful copy
+		{
+			sReturn = SUCCESS;
+		}
 	}
-		
+
 	return sReturn;
 }
 

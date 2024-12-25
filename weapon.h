@@ -91,7 +91,7 @@ class CWeapon : public CThing
 		MineSndHalfLife			= 80
 		} Macros;
 
-	typedef enum
+	 enum
 	{
 		State_Idle,
 		State_Fire,

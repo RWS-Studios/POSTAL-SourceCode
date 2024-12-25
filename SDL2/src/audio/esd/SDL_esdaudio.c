@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,9 +18,9 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../../SDL_internal.h"
 
-#if SDL_AUDIO_DRIVER_ESD
+#ifdef SDL_AUDIO_DRIVER_ESD
 
 /* Allow access to an ESD network stream mixing buffer */
 
@@ -32,7 +32,6 @@
 
 #include "SDL_timer.h"
 #include "SDL_audio.h"
-#include "../SDL_audiomem.h"
 #include "../SDL_audio_c.h"
 #include "SDL_esdaudio.h"
 
@@ -65,21 +64,19 @@ static struct
 
 #undef SDL_ESD_SYM
 
-static void
-UnloadESDLibrary()
+static void UnloadESDLibrary(void)
 {
-    if (esd_handle != NULL) {
+    if (esd_handle) {
         SDL_UnloadObject(esd_handle);
         esd_handle = NULL;
     }
 }
 
-static int
-LoadESDLibrary(void)
+static int LoadESDLibrary(void)
 {
     int i, retval = -1;
 
-    if (esd_handle == NULL) {
+    if (!esd_handle) {
         esd_handle = SDL_LoadObject(esd_library);
         if (esd_handle) {
             retval = 0;
@@ -99,14 +96,12 @@ LoadESDLibrary(void)
 
 #else
 
-static void
-UnloadESDLibrary()
+static void UnloadESDLibrary(void)
 {
     return;
 }
 
-static int
-LoadESDLibrary(void)
+static int LoadESDLibrary(void)
 {
     return 0;
 }
@@ -115,8 +110,7 @@ LoadESDLibrary(void)
 
 
 /* This function waits until it is possible to write a full sound buffer */
-static void
-ESD_WaitDevice(_THIS)
+static void ESD_WaitDevice(_THIS)
 {
     Sint32 ticks;
 
@@ -129,7 +123,7 @@ ESD_WaitDevice(_THIS)
         /* Check every 10 loops */
         if (this->hidden->parent && (((++cnt) % 10) == 0)) {
             if (kill(this->hidden->parent, 0) < 0 && errno == ESRCH) {
-                this->enabled = 0;
+                SDL_OpenedAudioDeviceDisconnected(this);
             }
         }
     }
@@ -141,8 +135,7 @@ ESD_WaitDevice(_THIS)
     }
 }
 
-static void
-ESD_PlayDevice(_THIS)
+static void ESD_PlayDevice(_THIS)
 {
     int written = 0;
 
@@ -161,35 +154,26 @@ ESD_PlayDevice(_THIS)
 
     /* If we couldn't write, assume fatal error for now */
     if (written < 0) {
-        this->enabled = 0;
+        SDL_OpenedAudioDeviceDisconnected(this);
     }
 }
 
-static Uint8 *
-ESD_GetDeviceBuf(_THIS)
+static Uint8 *ESD_GetDeviceBuf(_THIS)
 {
     return (this->hidden->mixbuf);
 }
 
-static void
-ESD_CloseDevice(_THIS)
+static void ESD_CloseDevice(_THIS)
 {
-    if (this->hidden != NULL) {
-        SDL_FreeAudioMem(this->hidden->mixbuf);
-        this->hidden->mixbuf = NULL;
-        if (this->hidden->audio_fd >= 0) {
-            SDL_NAME(esd_close) (this->hidden->audio_fd);
-            this->hidden->audio_fd = -1;
-        }
-
-        SDL_free(this->hidden);
-        this->hidden = NULL;
+    if (this->hidden->audio_fd >= 0) {
+        SDL_NAME(esd_close) (this->hidden->audio_fd);
     }
+    SDL_free(this->hidden->mixbuf);
+    SDL_free(this->hidden);
 }
 
 /* Try to get the name of the program */
-static char *
-get_progname(void)
+static char *get_progname(void)
 {
     char *progname = NULL;
 #ifdef __LINUX__
@@ -201,7 +185,7 @@ get_progname(void)
     if (fp != NULL) {
         if (fgets(temp, sizeof(temp) - 1, fp)) {
             progname = SDL_strrchr(temp, '/');
-            if (progname == NULL) {
+            if (!progname) {
                 progname = temp;
             } else {
                 progname = progname + 1;
@@ -214,20 +198,18 @@ get_progname(void)
 }
 
 
-static int
-ESD_OpenDevice(_THIS, const char *devname, int iscapture)
+static int ESD_OpenDevice(_THIS, const char *devname)
 {
     esd_format_t format = (ESD_STREAM | ESD_PLAY);
     SDL_AudioFormat test_format = 0;
     int found = 0;
 
     /* Initialize all variables that we clean on shutdown */
-    this->hidden = (struct SDL_PrivateAudioData *)
-        SDL_malloc((sizeof *this->hidden));
-    if (this->hidden == NULL) {
+    this->hidden = (struct SDL_PrivateAudioData *)SDL_malloc(sizeof(*this->hidden));
+    if (!this->hidden) {
         return SDL_OutOfMemory();
     }
-    SDL_memset(this->hidden, 0, (sizeof *this->hidden));
+    SDL_zerop(this->hidden);
     this->hidden->audio_fd = -1;
 
     /* Convert audio spec to the ESD audio format */
@@ -252,7 +234,6 @@ ESD_OpenDevice(_THIS, const char *devname, int iscapture)
     }
 
     if (!found) {
-        ESD_CloseDevice(this);
         return SDL_SetError("Couldn't find any hardware audio formats");
     }
 
@@ -271,7 +252,6 @@ ESD_OpenDevice(_THIS, const char *devname, int iscapture)
                                    get_progname());
 
     if (this->hidden->audio_fd < 0) {
-        ESD_CloseDevice(this);
         return SDL_SetError("Couldn't open ESD connection");
     }
 
@@ -283,9 +263,8 @@ ESD_OpenDevice(_THIS, const char *devname, int iscapture)
 
     /* Allocate mixing buffer */
     this->hidden->mixlen = this->spec.size;
-    this->hidden->mixbuf = (Uint8 *) SDL_AllocAudioMem(this->hidden->mixlen);
-    if (this->hidden->mixbuf == NULL) {
-        ESD_CloseDevice(this);
+    this->hidden->mixbuf = (Uint8 *) SDL_malloc(this->hidden->mixlen);
+    if (!this->hidden->mixbuf) {
         return SDL_OutOfMemory();
     }
     SDL_memset(this->hidden->mixbuf, this->spec.silence, this->spec.size);
@@ -297,17 +276,15 @@ ESD_OpenDevice(_THIS, const char *devname, int iscapture)
     return 0;
 }
 
-static void
-ESD_Deinitialize(void)
+static void ESD_Deinitialize(void)
 {
     UnloadESDLibrary();
 }
 
-static int
-ESD_Init(SDL_AudioDriverImpl * impl)
+static SDL_bool ESD_Init(SDL_AudioDriverImpl * impl)
 {
     if (LoadESDLibrary() < 0) {
-        return 0;
+        return SDL_FALSE;
     } else {
         int connection = 0;
 
@@ -318,7 +295,7 @@ ESD_Init(SDL_AudioDriverImpl * impl)
         if (connection < 0) {
             UnloadESDLibrary();
             SDL_SetError("ESD: esd_open_sound failed (no audio server?)");
-            return 0;
+            return SDL_FALSE;
         }
         SDL_NAME(esd_close) (connection);
     }
@@ -330,14 +307,14 @@ ESD_Init(SDL_AudioDriverImpl * impl)
     impl->GetDeviceBuf = ESD_GetDeviceBuf;
     impl->CloseDevice = ESD_CloseDevice;
     impl->Deinitialize = ESD_Deinitialize;
-    impl->OnlyHasDefaultOutputDevice = 1;
+    impl->OnlyHasDefaultOutputDevice = SDL_TRUE;
 
-    return 1;   /* this audio target is available. */
+    return SDL_TRUE;   /* this audio target is available. */
 }
 
 
 AudioBootStrap ESD_bootstrap = {
-    "esd", "Enlightened Sound Daemon", ESD_Init, 0
+    "esd", "Enlightened Sound Daemon", ESD_Init, SDL_FALSE
 };
 
 #endif /* SDL_AUDIO_DRIVER_ESD */

@@ -916,7 +916,7 @@ int16_t rspStrafeRotate(void *pReturnArray,	// Output
 	
 	rspAddRotationPadding(pimSrc,sCenterX,sCenterY);
 	int16_t sSrcH = pimSrc->m_sHeight; // used for making a copy
-	int16_t sDstH = (sSrcH * dScale); // used for making a copy
+	int16_t sDstH = static_cast<int16_t>(sSrcH * dScale); // used for making a copy
 
 	// Make a copy of the input links so they can be center adjusted
 	int16_t *psLinkX = NULL, *psLinkY = NULL;
@@ -963,8 +963,9 @@ int16_t rspStrafeRotate(void *pReturnArray,	// Output
 		// Store the hot offset using the center of the RotBuf as origin
 		// Subtract this from position you wish center to appear
 		//
-		*(pHotX.pL) = rspSQRT2 / 4. * sDstH - sX;
-		*(pHotY.pL) = rspSQRT2 / 4. * sDstH - sY;
+		*(pHotX.pL) = static_cast<int16_t>(rspSQRT2 / 4. * sDstH - sX);
+		*(pHotY.pL) = static_cast<int16_t>(rspSQRT2 / 4. * sDstH - sY);
+
 			
 
 		// Dpo the links, if any:
