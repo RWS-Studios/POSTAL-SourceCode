@@ -44,7 +44,7 @@ color 244,size 36,`Android Port`;color 245,size 28,
 `Emile Belanger`;
 skip 25,
 color 244,size 36,`2015 Update`;color 245,size 28,
-`Rick Foltz`;
+`Lana Foltz`;
 `Emile Belanger`;
 skip 25,
 color 244,size 36,`Special Thanks`;color 245,size 28,
